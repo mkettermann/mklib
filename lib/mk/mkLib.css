@@ -1,0 +1,826 @@
+/* Variáveis de Temas */
+:root {
+	--tClaroTexto: #000;
+	--tClaroTextoHigh: #333;
+	--tClaroFundo: #fff;
+	--tClaroFundoForte: #f7f7f7;
+	--tClaroFundoHigh: #ddd;
+}
+
+/* Variaveis Atual */
+html {
+	--tTexto: var(--tClaroTexto);
+	--tTextoHigh: var(--tClaroTextoHigh);
+	--tFundo: var(--tClaroFundo);
+	--tFundoForte: var(--tClaroFundoForte);
+	--tFundoHigh: var(--tClaroFundoHigh);
+}
+
+/* BLOQUEIA SCROLL, Colocar no Body ou onde tiver scroll */
+.mkSemScrollY {
+	height: 100%;
+	overflow: hidden;
+}
+
+/* Oculta o item atual ao adicionar a classe nele */
+*.oculto {
+	display: none !important;
+}
+
+/* =======================
+	CSS PERSONALIZADO
+=========================*/
+/* Formato Botoes */
+button.mkBtn {
+	background: var(--tFundo);
+	color: var(--tTexto);
+	border-width: 1px;
+	border-style: outset;
+	border-color: var(--tTextoHigh);
+	border-radius: 5px;
+	padding: 0.2rem 0.6rem;
+}
+
+button.mkBtn:hover {
+	border-style: inset;
+	background: var(--tFundoHigh);
+	color: var(--tTexto);
+	text-shadow: -1px -1px var(--tFundo);
+}
+
+button.mkBtnInv {
+	background: transparent;
+	color: var(--tFundo);
+	border-width: 1px;
+	border-style: outset;
+	border-color: var(--tFundo);
+	border-radius: 5px;
+	padding: 0.2rem 0.6rem;
+}
+
+button.mkBtnInv:hover {
+	border-style: inset;
+	border-color: var(--tFundo);
+	color: var(--tFundo);
+	text-shadow: 1px 1px var(--tTexto);
+}
+
+/* Específicos */
+.mkCssFull {
+	width: 100% !important;
+	height: 100% !important;
+	background: #0009 !important;
+	border: 0px !important;
+}
+
+/* LI e Barra Navegacao */
+.mkAbas {
+	display: flex;
+	flex-wrap: wrap;
+	padding-left: 0;
+	margin-bottom: 0;
+	list-style: none;
+	background-color: transparent;
+	padding: 6px;
+	margin-bottom: -4px;
+}
+
+.mkAbas .mkAbaslink {
+	user-select: none;
+	text-decoration: none;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	border: 1px solid transparent;
+	padding: 5px 15px;
+	transition: 0.2s ease-in-out;
+}
+
+.mkAbas .mkAbaslink.active {
+	font-weight: bold;
+	cursor: default;
+	border: 1px solid var(--tFundoHigh);
+	box-shadow: -1px -1px 0px 0px var(--tTextoHigh);
+	border-bottom-color: transparent;
+	background: var(--tFundoForte);
+	color: var(--tTexto);
+}
+
+.mkAbas .mkAbaslink:not(.active):hover {
+	border: 1px solid var(--tFundoHigh);
+}
+
+.mkCard {
+	display: flex;
+	flex-direction: column;
+	padding: 0px 0px 0px 0px;
+	overflow: auto;
+}
+
+/* Status de Icone */
+.mkIco {
+	position: relative;
+	width: min-content;
+	align-self: center;
+}
+
+.mkIco::before {
+	content: "\A0";
+	font-size: 9pt;
+	position: absolute;
+	background: red;
+	bottom: 0px;
+	right: -12px;
+	width: 18px;
+	height: 17px;
+	border-radius: 50%;
+}
+
+.mkIco i {
+	border-radius: 50%;
+	padding: 4px 6px;
+}
+
+.mkIco .mkSverde {
+	border: 1px solid #0a0f;
+	background: #0a03;
+}
+
+.mkIco:has(.mkSverde)::before {
+	content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='black' class='bi bi-check' viewBox='0 0 16 16'> <path d='M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z'/%3E%3C/svg%3E");
+	background: #0a03;
+}
+
+.mkIco .mkSvermelho {
+	border: 1px solid #f00a;
+	background: #f003;
+	animation: mkBgVermelhoAni 1s ease-in-out alternate infinite;
+}
+
+.mkIco:has(.mkSvermelho)::before {
+	content: "X";
+	background: #f003;
+}
+
+.mkIco .mkSlaranja {
+	border: 1px solid #f90a;
+	background: #f903;
+}
+
+.mkIco:has(.mkSlaranja)::before {
+	content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='black' class='bi bi-dash' viewBox='0 0 16 16'><path d='M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z'/%3E%3C/svg%3E");
+	background: #f903;
+	animation: CarregadorMkAni 5s linear infinite;
+}
+
+.mkIco .mkScinza {
+	border: 1px solid #ccc;
+	background: #ccc3;
+}
+
+.mkIco:has(.mkScinza)::before {
+	content: "";
+	background: #ccc3;
+}
+
+@keyframes mkBgVermelhoAni {
+	from {
+		background: #f002;
+	}
+
+	to {
+		background: #f006;
+	}
+}
+
+/* =======================
+	LOADING
+=========================*/
+.CarregadorMkBlock {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	min-height: 100%;
+	min-width: 100%;
+	font-size: 2rem;
+	z-index: 5010;
+}
+
+.CarregadorMkBlock::before {
+	content: "";
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	z-index: 5001;
+	background-color: #000000bb;
+	min-height: 100%;
+	min-width: 100%;
+	width: 100%;
+	height: 100%;
+}
+
+.CarregadorMkTopoDireito {
+	position: absolute;
+	right: 3px;
+	top: 3px;
+	z-index: 5012;
+	background-color: transparent;
+	border: 1px solid transparent;
+	color: #ffffff;
+	border-color: #ffffff;
+	display: inline-block;
+	font-weight: 400;
+	line-height: 1.5;
+	text-align: center;
+	text-decoration: none;
+	vertical-align: middle;
+	cursor: pointer;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	user-select: none;
+	font-size: 2rem;
+	padding: 0.375rem 0.75rem;
+	border-radius: 0.25rem;
+	transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out,
+		border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+button.CarregadorMkTopoDireito:hover {
+	background-color: white;
+	color: #005500;
+}
+
+.CarregadorMk {
+	margin-top: 10px;
+	width: 80px;
+	height: 80px;
+	color: transparent;
+	background: transparent;
+	border: transparent double 10px;
+	border-left-color: var(--g5AzulEscuroCC);
+	border-left-style: solid;
+	border-right-color: var(--g5AzulEscuroCC);
+	border-right-style: solid;
+	border-top-color: var(--g5VerdeLima99);
+	border-bottom-color: var(--g5VerdeLima99);
+	border-radius: 100%;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	z-index: 5011;
+	animation: CarregadorMkAni 4000ms linear infinite;
+	overflow: hidden;
+}
+
+.CarregadorMk::before {
+	border: transparent solid 10px;
+	border-left-color: var(--g5BrancoSujo99);
+	border-right-color: var(--g5AzulClaro99);
+	content: "";
+	top: -10px;
+	left: -10px;
+	right: 0px;
+	bottom: 0px;
+	border-radius: 100%;
+	position: absolute;
+	animation: CarregadorMkAni 2s linear infinite;
+}
+
+.CarregadorMk::after {
+	border: var(--g5VerdeLima33) inset 3px;
+	position: absolute;
+	content: "";
+	top: 25px;
+	left: 25px;
+	right: 25px;
+	bottom: 25px;
+	animation: CarregadorMkAni 200ms linear infinite;
+}
+
+@keyframes CarregadorMkAni {
+	from {
+		transform: rotate(0deg);
+	}
+
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+.CarregadorMkSemScrollY {
+	height: 100%;
+	overflow: hidden;
+}
+
+/* =======================
+	MK Effect: Input Pendente (Chrome 105+)
+=========================*/
+.divInputInput {
+	min-height: 33px;
+	padding: 1px;
+}
+
+.divInputInput:has(.pending) {
+	position: relative;
+	box-sizing: border-box;
+	color: #000;
+	background: #fff;
+	background-clip: padding-box;
+	border: 5px solid transparent;
+	border-radius: 10px;
+	z-index: 2;
+	margin: -5px 0px;
+}
+
+.divInputInput:has(.pending)::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: -1;
+	margin: -5px;
+	border-radius: inherit;
+	background: #daa520;
+	animation: pulsarMk 1.5s ease-in-out alternate infinite;
+}
+
+@keyframes pulsarMk {
+	0%,
+	100% {
+		background: #ff660099;
+	}
+
+	50% {
+		background: transparent;
+	}
+}
+
+/* =======================
+	MK Effect: Offline
+=========================*/
+.offlineBlock {
+	position: absolute;
+	display: flex;
+	flex-wrap: wrap;
+	align-content: center;
+	justify-content: center;
+	bottom: 50%;
+	left: 0px;
+	width: 100%;
+	height: 100px;
+	min-height: 100px;
+	min-width: 100%;
+	font-size: 2rem;
+	z-index: 4010;
+	color: white;
+	background: #daa520;
+	animation: pulsarMk2 1.5s ease-in-out alternate infinite;
+	box-shadow: 3px 3px 2px 2px #000;
+}
+
+.offlineBlock button {
+	position: absolute;
+	right: 5px;
+	top: 20px;
+	z-index: 4012;
+	background-color: transparent;
+	border: 1px solid transparent;
+	color: #ffffff;
+	border-color: #ffffff;
+	display: inline-block;
+	font-weight: 400;
+	line-height: 1.5;
+	text-align: center;
+	text-decoration: none;
+	vertical-align: middle;
+	cursor: pointer;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	user-select: none;
+	font-size: 2rem;
+	padding: 0.375rem 0.75rem;
+	border-radius: 0.25rem;
+	transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out,
+		border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+@keyframes pulsarMk2 {
+	0%,
+	100% {
+		background: #ff4646ff;
+	}
+
+	50% {
+		background: #330000cc;
+	}
+}
+
+/* =======================
+	MK Effect: Pulsar Background
+=========================*/
+.pulsarFundo {
+	animation: pulsarFundo 1s ease-in-out alternate infinite;
+}
+
+@keyframes pulsarFundo {
+	0%,
+	100% {
+		background: #ff000099;
+	}
+
+	50% {
+		background: transparent;
+	}
+}
+
+/* =======================
+	MK Effect: Vidro
+=========================*/
+.iconeVidro {
+	margin-left: -20px;
+	display: flex;
+	z-index: 2;
+}
+
+.iconeVidro li {
+	position: relative;
+	list-style: none;
+	margin: 5px;
+	margin-top: 5px;
+}
+
+.iconeVidro li a {
+	position: relative;
+	width: 3.4rem;
+	height: 3.4rem;
+	font-size: 2rem;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border-radius: 10px;
+	border: 1px inset var(--g5BrancoSujo99);
+	text-decoration: none;
+	box-shadow: 1px 1px 2px black;
+	backdrop-filter: blur(1.2px);
+	transition: 1s;
+	overflow: hidden;
+}
+
+.iconeVidro li a:hover {
+	transform: translateY(10px);
+}
+
+.iconeVidro li a::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 20px;
+	height: 100%;
+	background: rgba(200, 255, 200, 0.2);
+	transform: skewX(45deg) translateX(100px);
+	transition: 0.5s;
+}
+
+.iconeVidro li a:hover::before {
+	transform: skewX(45deg) translateX(-150px);
+}
+
+/* =======================
+	MK Effect: TIMER
+=========================*/
+.timerOut {
+	display: flex;
+	width: 30px;
+	height: 30px;
+	font-size: 0.7rem;
+	border: 0px;
+	border-radius: 50%;
+	background: conic-gradient(
+		var(--g5VerdeLima),
+		calc(var(--m) - 0.01turn),
+		var(--g5VerdeLima),
+		calc(var(--m)),
+		var(--g5BrancoSujo),
+		calc(var(--m) + 0.01turn),
+		var(--g5BrancoSujo)
+	);
+	margin: auto;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+	box-shadow: 0px 0px 1px 1px var(--g5CinzaEscuro);
+	text-shadow: 0px 0px 1px #fff;
+	overflow: hidden;
+}
+
+.timerOut.red {
+	--g5VerdeLima: #ff8888;
+}
+
+/* =======================
+	MK Effect: ESCURECE
+=========================*/
+.mkEscurece {
+	filter: brightness(40%);
+}
+/* =======================
+	AREA MODAL
+=========================*/
+.mkModalBloco {
+	position: fixed;
+	display: flex;
+	flex-wrap: wrap;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	min-height: 100%;
+	min-width: 100%;
+	font-size: 2rem;
+	outline: 0;
+	z-index: 1060;
+	overflow-x: hidden;
+	overflow-y: auto;
+	background: #0005;
+}
+
+.mkModalConteudo {
+	width: calc(100% - 5rem);
+	height: calc(100vh - 5rem);
+	border: 1px outset var(--tFundoHigh);
+	box-shadow: -1px -1px 0px 0px var(--tFundo);
+	border-radius: 5px;
+	background: var(--tFundoHigh);
+	margin: auto auto;
+	overflow-x: hidden;
+	overflow-y: auto;
+	font-size: 1rem;
+	padding: 1px 2px 0px 1px;
+	display: flex;
+	flex-direction: column;
+}
+
+.mkModalTitulo {
+	border-radius: 10px;
+	margin-right: 2px;
+	border: 1px solid var(--tFundo);
+	background: transparent;
+}
+
+/* =======================
+	Barra de FASES
+=========================*/
+ul.mkUlFase {
+	--MkFaseCorFundo: var(--g5BrancoElevado);
+	--MkFaseCorEfeitoPassivo: var(--g5VerdeLima);
+	--MkFaseCorFundoIco: var(--g5BrancoElevado);
+	--MkFaseCorFundoIcoBack: var(--g5AzulEscuro66);
+	--MkFaseCorFundoIcoAtivo: var(--g5VerdeLimaCC);
+	--MkFaseCorTexto: var(--g5AzulEscuro);
+	--MkFaseCorTextoBack: var(--g5AzulEscuro);
+	--MkFaseCorTextoAtivo: var(--g5AzulClaro);
+	--MkFaseCorTextoDisabled: var(--g5CinzaEscuro66);
+	--MkFaseCorTextoIcoBack: var(--g5BrancoElevado);
+	--MkFaseCorTextoIcoAtivo: var(--g5AzulEscuro);
+	--MkFaseCorEfeitoTexto: var(--g5AzulClaro33);
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+	user-select: none;
+	list-style: none;
+	padding: 0px;
+	margin: 15px 0px;
+	font-size: 1rem;
+	font-weight: normal;
+	background: var(--MkFaseCorFundo);
+	background: linear-gradient(0deg, transparent 0%, var(--MkFaseCorFundo) 50%);
+	border-radius: 5px;
+}
+
+ul.mkUlFase li {
+	background: transparent;
+	flex: 1 0 0%;
+	text-align: center;
+}
+
+ul.mkUlFase li div {
+	width: 100%;
+	padding: 2px;
+}
+
+/*ICONE*/
+ul.mkUlFase li .mkFaseIco {
+	margin: 0px 0px -11px 0px;
+}
+
+ul.mkUlFase li .mkFaseIco i {
+	position: relative;
+	top: -16px;
+	border-radius: 50%;
+	padding: 5px 8px;
+	background: var(--MkFaseCorFundoIco);
+	box-shadow: 1px 1px 1px var(--MkFaseCorTextoDisabled);
+	outline: 1px solid var(--MkFaseCorFundoIcoAtivo);
+	outline-offset: -2px;
+	transition: 0.5s ease-in;
+}
+
+ul.mkUlFase li.mkFaseAtivo .mkFaseIco i {
+	outline: 1px solid var(--MkFaseCorTextoAtivo);
+}
+
+ul.mkUlFase li:not(.mkFaseBack):not(.mkFaseAtivo) .mkFaseIco i {
+	border: 1px outset var(--MkFaseCorFundoIcoBack);
+}
+
+/*COR*/
+ul.mkUlFase li a {
+	color: var(--MkFaseCorTexto);
+}
+
+ul.mkUlFase li a:hover * {
+	color: var(--MkFaseCorTextoAtivo);
+	cursor: pointer;
+}
+
+ul.mkUlFase li a:hover .mkFaseIco {
+	animation: mkEfeitoFase 1000ms ease-in-out infinite alternate;
+}
+
+ul.mkUlFase li.disabled a {
+	color: var(--MkFaseCorTextoDisabled);
+}
+
+ul.mkUlFase li.mkFaseBack a {
+	color: var(--MkFaseCorTextoBack);
+}
+
+ul.mkUlFase li.mkFaseAtivo a {
+	color: var(--MkFaseCorTextoAtivo);
+}
+
+ul.mkUlFase li.mkFaseBack .mkFaseIco i {
+	color: var(--MkFaseCorTextoIcoBack);
+	background: var(--MkFaseCorFundoIcoBack);
+	text-shadow: 1px 1px var(--MkFaseCorTexto);
+}
+
+ul.mkUlFase li.mkFaseAtivo .mkFaseIco i {
+	color: var(--MkFaseCorTextoIcoAtivo);
+	background: var(--MkFaseCorFundoIcoAtivo);
+	text-shadow: 1px 1px var(--MkFaseCorTextoIcoBack);
+}
+
+/*EFEITO*/
+ul.mkUlFase li .mkFaseEfeito {
+	padding: 2px 0px 0px 0px;
+}
+
+ul.mkUlFase li .mkFaseEfeito:nth-child(odd) {
+	background: var(--MkFaseCorEfeitoPassivo);
+}
+
+ul.mkUlFase li.mkFaseBack .mkFaseEfeito {
+	background: var(--MkFaseCorTexto);
+}
+
+ul.mkUlFase li.mkFaseAtivo .mkFaseEfeito {
+	background: linear-gradient(
+		90deg,
+		var(--MkFaseCorTexto) 20%,
+		var(--MkFaseCorEfeitoPassivo) 70%
+	);
+}
+
+ul.mkUlFase li.mkFaseAtivo .mkFaseEfeito:nth-child(even) {
+	background: linear-gradient(
+		90deg,
+		var(--MkFaseCorTexto) 20%,
+		transparent 70%
+	);
+}
+
+/* LABEL */
+ul.mkUlFase li label {
+	display: block;
+	position: relative;
+	transition: 0.5s;
+}
+
+ul.mkUlFase li label::before {
+	content: "";
+	position: absolute;
+	background: var(--MkFaseCorEfeitoTexto);
+	left: 10%;
+	width: 80%;
+	height: 1px;
+	top: 100%;
+	transition: transform 0.3s linear;
+	transform: scaleX(0);
+	transform-origin: right;
+}
+
+ul.mkUlFase li:hover label::before {
+	transform: scaleX(1);
+	transform-origin: left;
+}
+
+/* OUTROS */
+ul.mkUlFase a {
+	text-decoration: none;
+}
+
+ul.mkUlFase li.disabled a {
+	pointer-events: none;
+	cursor: default;
+}
+
+@keyframes mkEfeitoFase {
+	100% {
+		filter: drop-shadow(0px 0px 2px var(--MkFaseCorTextoAtivo));
+	}
+}
+
+/* .:ESTRATEGIAS MK CSS:.
+	MICRO FLEX POSICOES
+1 2 3
+4 5 6
+7 8 9 */
+.microPos1 {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: flex-start;
+	align-content: flex-start;
+}
+.microPos2 {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-content: flex-start;
+}
+.microPos3 {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: flex-end;
+	align-content: flex-start;
+}
+.microPos4 {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: flex-start;
+	align-content: center;
+}
+.microPos5 {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-content: center;
+}
+.microPos6 {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: flex-end;
+	align-content: center;
+}
+.microPos7 {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: flex-start;
+	align-content: flex-end;
+}
+.microPos8 {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-content: flex-end;
+}
+.microPos9 {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: flex-end;
+	align-content: flex-end;
+}
+
+/* INPUT vira SELECT (Menu DropDown)*/
+.mkInputArray {
+	border: 1px solid transparent;
+	/* background: red; */
+	cursor: pointer;
+	outline: 0;
+}
+.mkInputArray:focus {
+	outline: 0;
+}

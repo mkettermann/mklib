@@ -1,0 +1,135 @@
+.mkSelBloco {
+	--FundoSeletor: #070;
+	--FundoSeletorOpaco: #0707;
+	--FundoSeletorDesativado: #777;
+	--BordaItens: #000;
+	--FundoItens: #fff;
+	--FundoItensHover: linear-gradient(
+		0.25turn,
+		var(--FundoSeletor),
+		transparent
+	);
+	--FundoItensSel: var(--FundoSeletorOpaco);
+	--FlexinhaCor: #ccc;
+	--CorItensHover: #000;
+	--CorSeletor: var(--CorItensHover);
+	--CorItens: var(--BordaItens);
+
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: fit-content;
+	margin: auto;
+}
+
+.mkSelBloco:has(.mkSel[disabled]) {
+	cursor: not-allowed;
+}
+.mkSelBloco:has(.mkSel[disabled]) .mkSelPesquisa {
+	pointer-events: none;
+	opacity: 0.4;
+	--FundoSeletor: var(--FundoSeletorDesativado);
+}
+
+.mkSelPesquisa {
+	position: relative;
+	display: flex;
+	overflow: hidden;
+	text-decoration: none;
+	align-items: center;
+	border-radius: 5px;
+	background-color: var(--FundoSeletor);
+}
+
+.mkSelInputExibe {
+	background-color: transparent;
+	width: 100%;
+	cursor: pointer;
+	padding: 0px 0px 0px 2px;
+}
+
+.mkSelInputExibeArrow {
+	position: absolute;
+	right: 3px;
+	width: 7px;
+	height: 7px;
+	border: 3px solid transparent;
+	border-bottom: 3px solid var(--FlexinhaCor);
+	border-left: 3px solid var(--FlexinhaCor);
+	transform: rotate(-45deg);
+	background-color: var(--FundoSeletor);
+	box-shadow: 0px 0px 1px 2px var(--FundoSeletor);
+	pointer-events: none;
+}
+
+.mkSelBloco:has(input.mkSelInputExibe:focus) .mkSelInputExibeArrow {
+	transform: rotate(-225deg);
+}
+
+.mkSelBloco:has(input.mkSelInputExibe:focus) .mkSelList {
+	display: flex;
+}
+
+.mkSelList {
+	display: none;
+	flex-direction: column;
+	position: absolute;
+	z-index: +1000;
+	text-align: left;
+	background: var(--FundoItens);
+	color: var(--CorItens);
+	border: 1px solid var(--BordaItens);
+	border-radius: 8px;
+	cursor: pointer;
+	user-select: none;
+}
+.mkSelItem {
+	display: flex;
+	position: relative;
+	overflow: hidden;
+	padding: 0px 0px 0px 1px;
+	border-radius: 6px;
+}
+.mkSelItem:hover,
+.mkSelItem[data-s="1"]:hover {
+	background: var(--FundoItensHover);
+}
+
+.mkSelItemArrow {
+	position: absolute;
+	right: 0px;
+	pointer-events: none;
+	display: flex;
+	align-items: center;
+	height: 100%;
+}
+.mkSelItem[data-s="1"] {
+	color: var(--CorSeletor);
+	background: var(--FundoItensSel);
+	font-weight: 600;
+}
+.mkSelItem[data-s="1"] .mkSelItemArrow::before {
+	display: flex;
+	align-items: center;
+	padding: 0px 4px;
+	color: var(--CorSeletor);
+	background: var(--FundoItensSel);
+	min-height: 100%;
+	content: "\2714";
+}
+
+/* HIDE */
+.mkSecreto {
+	width: 1px;
+	min-width: 0px;
+	max-width: 1px;
+	height: 1px;
+	min-height: 0px;
+	max-height: 1px;
+	border: 0px;
+	overflow: hidden;
+	margin: 0px;
+	margin-bottom: -2px;
+	opacity: 0%;
+	z-index: -1;
+}
