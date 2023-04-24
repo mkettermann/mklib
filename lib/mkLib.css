@@ -744,13 +744,9 @@ ul.mkUlFase li.disabled a {
 		filter: drop-shadow(0px 0px 2px var(--MkFaseCorTextoAtivo));
 	}
 }
+
 /* .:ESTRATEGIAS MK CSS:.
-	MACRO GRID */
-.mkMacro2H {
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-}
-/* MICRO FLEX POSICOES
+	MICRO FLEX POSICOES
 1 2 3
 4 5 6
 7 8 9 */
@@ -818,13 +814,79 @@ ul.mkUlFase li.disabled a {
 	align-content: flex-end;
 }
 
-/* INPUT vira SELECT (Menu DropDown)*/
-.mkInputArray {
-	border: 1px solid transparent;
-	/* background: red; */
-	cursor: pointer;
-	outline: 0;
+/* SORT- */
+.mkEfeitoSobe {
+	position: relative;
 }
-.mkInputArray:focus {
-	outline: 0;
+.mkEfeitoSobe::after {
+	content: "";
+	display: flex;
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	width: 100%;
+	height: 100%;
+	background: linear-gradient(
+		0turn,
+		transparent,
+		transparent,
+		transparent,
+		transparent,
+		transparent,
+		transparent,
+		#00d1c3,
+		transparent,
+		transparent,
+		transparent,
+		transparent,
+		transparent,
+		transparent
+	);
+	border-radius: 2px;
+	background-size: auto 700%;
+	animation: mkMoveFundoY 4s infinite reverse;
+	animation-timing-function: cubic-bezier(0.65, 0.05, 0.36, 1);
+	mix-blend-mode: color-dodge;
+}
+.mkEfeitoDesce {
+	position: relative;
+}
+.mkEfeitoDesce::after {
+	content: "";
+	display: flex;
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	width: 100%;
+	height: 100%;
+	background: linear-gradient(
+		0turn,
+		transparent,
+		transparent,
+		transparent,
+		transparent,
+		transparent,
+		transparent,
+		#00d1c3,
+		transparent,
+		transparent,
+		transparent,
+		transparent,
+		transparent,
+		transparent
+	);
+	border-radius: 2px;
+	background-size: auto 700%;
+	animation: mkMoveFundoY 4s infinite;
+	animation-timing-function: cubic-bezier(0.65, 0.05, 0.36, 1);
+	mix-blend-mode: color-dodge;
+}
+
+@keyframes mkMoveFundoY {
+	0% {
+		background-position-y: 100%;
+	}
+	100% {
+		background-position-y: 0%;
+	}
 }
