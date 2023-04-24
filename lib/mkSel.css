@@ -1,15 +1,12 @@
 .mkSelBloco {
-	--FundoSeletor: #070;
-	--FundoSeletorOpaco: #0707;
+	--FundoSeletor: transparent;
+	--FundoSeletorOpaco: #0c0;
 	--FundoSeletorDesativado: #777;
 	--BordaItens: #000;
 	--FundoItens: #fff;
-	--FundoItensHover: linear-gradient(
-		0.25turn,
-		var(--FundoSeletor),
-		transparent
-	);
-	--FundoItensSel: var(--FundoSeletorOpaco);
+	--FundoItensHover: linear-gradient(0.25turn, #0c0, transparent);
+	--FundoItensSel: linear-gradient(0.25turn, transparent, #050);
+	--FundoItensSelArrow: linear-gradient(0.25turn, transparent, #040);
 	--FlexinhaCor: #ccc;
 	--CorItensHover: #000;
 	--CorSeletor: var(--CorItensHover);
@@ -50,15 +47,13 @@
 
 .mkSelInputExibeArrow {
 	position: absolute;
-	right: 3px;
+	right: 5px;
 	width: 7px;
 	height: 7px;
 	border: 3px solid transparent;
 	border-bottom: 3px solid var(--FlexinhaCor);
 	border-left: 3px solid var(--FlexinhaCor);
 	transform: rotate(-45deg);
-	background-color: var(--FundoSeletor);
-	box-shadow: 0px 0px 1px 2px var(--FundoSeletor);
 	pointer-events: none;
 }
 
@@ -112,7 +107,7 @@
 	align-items: center;
 	padding: 0px 4px;
 	color: var(--CorSeletor);
-	background: var(--FundoItensSel);
+	background: var(--FundoItensSelArrow);
 	min-height: 100%;
 	content: "\2714";
 }
