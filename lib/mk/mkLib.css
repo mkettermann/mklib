@@ -744,9 +744,13 @@ ul.mkUlFase li.disabled a {
 		filter: drop-shadow(0px 0px 2px var(--MkFaseCorTextoAtivo));
 	}
 }
-
 /* .:ESTRATEGIAS MK CSS:.
-	MICRO FLEX POSICOES
+	MACRO GRID */
+.mkMacro2H {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+}
+/* MICRO FLEX POSICOES
 1 2 3
 4 5 6
 7 8 9 */

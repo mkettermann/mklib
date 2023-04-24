@@ -106,7 +106,6 @@
 .mkSelItem[data-s="1"] {
 	color: var(--CorSeletor);
 	background: var(--FundoItensSel);
-	font-weight: 600;
 }
 .mkSelItem[data-s="1"] .mkSelItemArrow::before {
 	display: flex;
