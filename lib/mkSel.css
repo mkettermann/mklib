@@ -1,4 +1,7 @@
 .mkSelBloco {
+	--Main1: var(--g5AzulEscuro);
+	--Main2: var(--g5VerdeLima);
+	--Main2_33: var(--g5VerdeLima33);
 	--FundoSeletor: transparent;
 	--FundoSeletorOpaco: var(--g5AzulClaro99);
 	--FundoSeletorDesativado: #777;
@@ -23,6 +26,10 @@
 	outline: 0;
 }
 
+.mkSelBloco .mkSel {
+	width: 100%;
+}
+
 .mkSelBloco * {
 	outline: 0;
 	border: 0px;
@@ -35,6 +42,10 @@
 	pointer-events: none;
 	opacity: 0.4;
 	--FundoSeletor: var(--FundoSeletorDesativado);
+}
+.mkSelBloco:has(.mkSel.atualizar) .mkSelPesquisa input {
+	animation: mkEfeitoBordaGira 0.3s infinite;
+	border-radius: 10px;
 }
 
 .mkSelPesquisa {
@@ -90,19 +101,63 @@
 	text-align: left;
 	background: var(--FundoItens);
 	color: var(--CorItens);
+	--s: 30px;
+	--c: #fff;
+	--_g: #0000 8%, var(--c) 0 17%, #0000 0 58%;
+	background: linear-gradient(135deg, #0000 20.5%, var(--c) 0 29.5%, #0000 0) 0
+			calc(var(--s) / 4),
+		linear-gradient(45deg, var(--_g)) calc(var(--s) / 2) 0,
+		linear-gradient(135deg, var(--_g), var(--c) 0 67%, #0000 0),
+		linear-gradient(
+			45deg,
+			var(--_g),
+			var(--c) 0 67%,
+			#0000 0 83%,
+			var(--c) 0 92%,
+			#0000 0
+		),
+		#f7f7f7;
+	background-size: var(--s) var(--s);
+
 	border: 1px solid var(--BordaItens);
 	border-radius: 5px;
 	cursor: pointer;
 	user-select: none;
+	max-height: 300px;
+	overflow-y: auto;
+	width: max-content;
 }
+
 .mkSelItem {
 	display: flex;
 	position: relative;
-	overflow: hidden;
+	align-items: center;
 	border-radius: 6px;
+	height: 26px;
+	min-height: 26px;
+	max-height: 26px;
+	overflow: hidden;
 }
 .mkSelItem span {
 	padding: 3px 15px 3px 3px;
+}
+
+@media (max-width: 768px) {
+	.mkSelList {
+		width: calc(100% - 70px);
+		position: fixed;
+		height: calc(100% - 70px);
+		max-height: calc(100% - 70px);
+		min-height: calc(100% - 70px);
+	}
+	.mkSelList .mkSelItem {
+		height: 40px;
+		min-height: 40px;
+		max-height: 40px;
+	}
+	.mkSelItem span {
+		padding-left: 8px;
+	}
 }
 
 .mkSelItem:hover,
@@ -132,18 +187,65 @@
 	content: "\2714";
 }
 
-/* HIDE */
-.mkSecreto {
-	width: 0px !important;
-	min-width: 0px !important;
-	max-width: 0px !important;
-	height: 0px !important;
-	min-height: 0px !important;
-	max-height: 0px !important;
-	border: 0px !important;
-	overflow: hidden !important;
-	margin: 0px 0px 0px 0px !important;
-	opacity: 0% !important;
-	z-index: -1 !important;
-	padding: 0px !important;
+/* BOTOES DE MOVER PRA CIMA E PRA BAIXO */
+/* .mkSelItemDeCima {
+	width: 30%;
+	position: sticky;
+	background-color: var(--FundoSeletorDesativado);
+	border-top-left-radius: 50%;
+	border-top-right-radius: 50%;
+	color: var(--FundoItens);
+	text-align: center;
+	top: 0;
+	right: 0;
+}
+.mkSelItemDeCima:hover {
+	background-color: var(--Main2);
+}
+*/
+.mkSelItemDeBaixo {
+	position: sticky;
+	background-color: var(--FundoSeletorDesativado);
+	color: var(--FundoItens);
+	text-align: center;
+	bottom: 0px;
+	right: 0;
+}
+.mkSelItemDeBaixo:hover {
+	background-color: var(--Main2);
+	cursor: default;
+}
+
+/* KEYFRAMES*/
+@keyframes mkEfeitoBordaGira {
+	0% {
+		border-top: 1px solid var(--Main1);
+		border-right: 1px dashed var(--Main2);
+		border-bottom: 1px dashed var(--Main2);
+		border-left: 1px dashed var(--Main2);
+	}
+	25% {
+		border-top: 1px dashed var(--Main2);
+		border-right: 1px solid var(--Main1);
+		border-bottom: 1px dashed var(--Main2);
+		border-left: 1px dashed var(--Main2);
+	}
+	50% {
+		border-top: 1px dashed var(--Main2);
+		border-right: 1px dashed var(--Main2);
+		border-bottom: 1px solid var(--Main1);
+		border-left: 1px dashed var(--Main2);
+	}
+	75% {
+		border-top: 1px dashed var(--Main2);
+		border-right: 1px dashed var(--Main2);
+		border-bottom: 1px dashed var(--Main2);
+		border-left: 1px solid var(--Main1);
+	}
+	100% {
+		border-top: 1px solid var(--Main1);
+		border-right: 1px dashed var(--Main2);
+		border-bottom: 1px dashed var(--Main2);
+		border-left: 1px dashed var(--Main2);
+	}
 }
