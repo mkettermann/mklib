@@ -1,3 +1,3 @@
 "use strict";
-let mkt2 = "mkt2";
+let mkt2 = "TS Teste";
 console.log(mkt2);

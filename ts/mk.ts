@@ -1,2 +1,2 @@
-let mkt2: string = "mkt2";
+let mkt2: string = "TS Teste";
 console.log(mkt2);
