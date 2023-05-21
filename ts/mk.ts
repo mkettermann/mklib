@@ -13,8 +13,9 @@ var mkt2; // Variavel de Testes;
 enum t {
 	G = "GET", // Api Method GET
 	P = "POST", // Api Method POST
-	J = "application/json", // Header Json
-	H = "text/html", // Header HTML
+	J = "application/json", // ContentType JSON
+	H = "text/html", // ContentType HTML
+	F = "multipart/form-data", // ContentType FORM
 }
 
 class mk {
@@ -53,6 +54,53 @@ class mk {
 		return document.querySelector(query)!;
 	};
 
+	// Atalho para QuerySelectorAll. List []
+	static QAll = (query: string = "body"): Element[] => {
+		return Array.from(document.querySelectorAll(query));
+	};
+
+	// Atalho para AddEventListener
+	static Ao = (tipoEvento: string = "click", query: string, executar: any) => {
+		// CONVERTER PARA QUERY SELECTALL pois, tem o Pesquisar que pega todos os .iConsultas
+		mk.QAll(query).forEach((e) => {
+			e.addEventListener(tipoEvento, () => {
+				executar(e);
+			});
+		});
+	};
+
+	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+	//			LISTAGEM										\\
+	//___________________________________\\
+
+	// Retorna a pagina 1 e atualiza
+	static atualizarPorPagina = () => {
+		this.paginationAtual = 1;
+		mk.atualizarLista();
+	};
+
+	// LER (cRud) Metodo que inicia a coleta.
+	static iniciarGetList = async (url: string): Promise<void> => {
+		mk.Ao("input", "input[name='tablePorPagina']", () => {
+			mk.atualizarPorPagina();
+		});
+		let retorno = await mk.http(url, t.G, t.J).then();
+		if (retorno != null) {
+			mk.mkBoolToStringOA(mk.mkLimparOA(retorno));
+			if (Array.isArray(retorno)) {
+				for (let i = 0; i < retorno.length; i++) {
+					mk.aoReceberDados(retorno[i]);
+				}
+			} else {
+				if (typeof retorno == "object") {
+					mk.aoReceberDados(retorno);
+				}
+			}
+			this.fullDados = this.exibeDados = retorno;
+			mk.mkUpdateFiltro(); // Se remover aqui, verificar objFiltro em PlacasFixas
+		}
+	};
+
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 	//			Carregador									\\
 	//___________________________________\\
@@ -66,7 +114,7 @@ class mk {
 			let buttonCarregadorMkTopoDireito = document.createElement("button");
 			buttonCarregadorMkTopoDireito.className = "CarregadorMkTopoDireito";
 			buttonCarregadorMkTopoDireito.setAttribute("type", "button");
-			buttonCarregadorMkTopoDireito.setAttribute("onClick", "Mk.CarregarOFF()");
+			buttonCarregadorMkTopoDireito.setAttribute("onClick", "mk.CarregarOFF()");
 			let iCarregadorMk = document.createElement("i");
 			iCarregadorMk.className = "bi bi-x-lg";
 			buttonCarregadorMkTopoDireito.appendChild(iCarregadorMk);
@@ -93,28 +141,38 @@ class mk {
 		url: string,
 		metodo: string = t.G,
 		tipo: string = t.J,
-		sucesso: any = null,
-		objeto: any = null,
+		dados: any = null,
 		carregador: boolean = false
-	) => {
+	): Promise<object | null> => {
 		const mkaft: HTMLInputElement = document.getElementsByName(
 			"__RequestVerificationToken"
 		)[0] as HTMLInputElement;
+		let body: string | null = null;
+		if (dados) {
+			if (tipo == t.J) {
+				body = JSON.stringify(dados);
+			} else if (tipo == t.F) {
+				body = dados;
+			}
+		}
 		let h = {
 			method: metodo!,
 			headers: {
 				"Content-Type": tipo!,
 				"MKANTI-FORGERY-TOKEN": mkaft ? mkaft.value : "",
 			},
-			body: null,
+			body: body,
 		};
-		if (objeto) h.body = objeto;
 		if (carregador) {
 			this.CarregarON();
 		}
 		console.groupCollapsed(h.method + ": " + url);
 		console.time(url);
 		console.info(">> TYPE: " + h.headers["Content-Type"]);
+		console.groupCollapsed(">> Objeto Enviado");
+		console.info(dados);
+		console.info(body?.toString());
+		console.groupEnd();
 		console.groupEnd();
 		const pacoteHttp = await fetch(url, h);
 		if (!pacoteHttp.ok) {
@@ -127,7 +185,7 @@ class mk {
 			if (carregador) {
 				this.CarregarOFF();
 			}
-			return false;
+			return null;
 		}
 		let corpo: any = null;
 		if (tipo == t.J) {
@@ -144,25 +202,29 @@ class mk {
 		console.timeEnd(url);
 		console.info(corpo);
 		console.groupEnd();
-		if (sucesso != null) sucesso(corpo);
-		return true;
+		//if (sucesso != null) sucesso(corpo);
+		return corpo;
 	};
 }
 
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //			TEST												\\
 //___________________________________\\
-let json = mk.http("./Teste.json", t.G, t.J, null, null, true);
-json.then((r) => {
-	console.assert(r, "GET Json Falhou");
-});
+mk.iniciarGetList("./Teste.json");
+// mk.http("./Teste.json", t.G, t.J, null, true).then((r) => {
+// 	console.assert(r != null, "GET Json Falhou");
+// });
 
-let html = mk.http("./index.html", t.G, t.H, null, null, true);
-html.then((r) => {
-	console.assert(r, "GET Html Falhou");
-});
+// mk.http("./index.html", t.G, t.H, null, true).then((r) => {
+// 	console.assert(r != null, "GET Html Falhou");
+// });
 
-let post = mk.http("./index2.html", t.P, t.J, null, null, true);
-post.then((r) => {
-	console.assert(r, "POST Json Falhou");
-});
+// mk.http("./index.html?post=json", t.P, t.J, { a: "teste" }, true).then((r) => {
+// 	console.assert(r != null, "Post JSON Falhou");
+// });
+
+// let fd = new FormData();
+// fd.append("bb", "testeb");
+// mk.http("./index.html?post=form", t.P, t.F, fd, true).then((r) => {
+// 	console.assert(r != null, "Post FORM Falhou");
+// });

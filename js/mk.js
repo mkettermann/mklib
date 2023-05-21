@@ -6,6 +6,7 @@ var t;
     t["P"] = "POST";
     t["J"] = "application/json";
     t["H"] = "text/html";
+    t["F"] = "multipart/form-data";
 })(t || (t = {}));
 class mk {
     static fullDados = [];
@@ -34,6 +35,41 @@ class mk {
             return query;
         return document.querySelector(query);
     };
+    static QAll = (query = "body") => {
+        return Array.from(document.querySelectorAll(query));
+    };
+    static Ao = (tipoEvento = "click", query, executar) => {
+        mk.QAll(query).forEach((e) => {
+            e.addEventListener(tipoEvento, () => {
+                executar(e);
+            });
+        });
+    };
+    static atualizarPorPagina = () => {
+        this.paginationAtual = 1;
+        mk.atualizarLista();
+    };
+    static iniciarGetList = async (url) => {
+        mk.Ao("input", "input[name='tablePorPagina']", () => {
+            mk.atualizarPorPagina();
+        });
+        let retorno = await mk.http(url, t.G, t.J).then();
+        if (retorno != null) {
+            mk.mkBoolToStringOA(mk.mkLimparOA(retorno));
+            if (Array.isArray(retorno)) {
+                for (let i = 0; i < retorno.length; i++) {
+                    mk.aoReceberDados(retorno[i]);
+                }
+            }
+            else {
+                if (typeof retorno == "object") {
+                    mk.aoReceberDados(retorno);
+                }
+            }
+            this.fullDados = this.exibeDados = retorno;
+            mk.mkUpdateFiltro();
+        }
+    };
     static CarregarON = () => {
         if (mk.Q("body .CarregadorMkBlock") == null) {
             let divCarregadorMkBlock = document.createElement("div");
@@ -43,7 +79,7 @@ class mk {
             let buttonCarregadorMkTopoDireito = document.createElement("button");
             buttonCarregadorMkTopoDireito.className = "CarregadorMkTopoDireito";
             buttonCarregadorMkTopoDireito.setAttribute("type", "button");
-            buttonCarregadorMkTopoDireito.setAttribute("onClick", "Mk.CarregarOFF()");
+            buttonCarregadorMkTopoDireito.setAttribute("onClick", "mk.CarregarOFF()");
             let iCarregadorMk = document.createElement("i");
             iCarregadorMk.className = "bi bi-x-lg";
             buttonCarregadorMkTopoDireito.appendChild(iCarregadorMk);
@@ -60,24 +96,35 @@ class mk {
         }
         mk.Q("body").classList.remove("CarregadorMkSemScrollY");
     };
-    static http = async (url, metodo = t.G, tipo = t.J, sucesso = null, objeto = null, carregador = false) => {
+    static http = async (url, metodo = t.G, tipo = t.J, dados = null, carregador = false) => {
         const mkaft = document.getElementsByName("__RequestVerificationToken")[0];
+        let body = null;
+        if (dados) {
+            if (tipo == t.J) {
+                body = JSON.stringify(dados);
+            }
+            else if (tipo == t.F) {
+                body = dados;
+            }
+        }
         let h = {
             method: metodo,
             headers: {
                 "Content-Type": tipo,
                 "MKANTI-FORGERY-TOKEN": mkaft ? mkaft.value : "",
             },
-            body: null,
+            body: body,
         };
-        if (objeto)
-            h.body = objeto;
         if (carregador) {
             this.CarregarON();
         }
         console.groupCollapsed(h.method + ": " + url);
         console.time(url);
         console.info(">> TYPE: " + h.headers["Content-Type"]);
+        console.groupCollapsed(">> Objeto Enviado");
+        console.info(dados);
+        console.info(body?.toString());
+        console.groupEnd();
         console.groupEnd();
         const pacoteHttp = await fetch(url, h);
         if (!pacoteHttp.ok) {
@@ -88,7 +135,7 @@ class mk {
             if (carregador) {
                 this.CarregarOFF();
             }
-            return false;
+            return null;
         }
         let corpo = null;
         if (tipo == t.J) {
@@ -104,20 +151,7 @@ class mk {
         console.timeEnd(url);
         console.info(corpo);
         console.groupEnd();
-        if (sucesso != null)
-            sucesso(corpo);
-        return true;
+        return corpo;
     };
 }
-let json = mk.http("./Teste.json", t.G, t.J, null, null, true);
-json.then((r) => {
-    console.assert(r, "GET Json Falhou");
-});
-let html = mk.http("./index.html", t.G, t.H, null, null, true);
-html.then((r) => {
-    console.assert(r, "GET Html Falhou");
-});
-let post = mk.http("./index2.html", t.P, t.J, null, null, true);
-post.then((r) => {
-    console.assert(r, "POST Json Falhou");
-});
+mk.iniciarGetList("./Teste.json");
