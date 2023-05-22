@@ -1123,4 +1123,4 @@ class mk {
         }
     };
 }
-mk.iniciarGetList("./Teste2.json");
+mk.iniciarGetList("./Teste.json");

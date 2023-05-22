@@ -553,9 +553,9 @@ class mk {
 	static getMs = (dataYYYYMMDD: string | null = null) => {
 		if (dataYYYYMMDD != null) {
 			let dataCortada = dataYYYYMMDD.split("-");
-			let oDia = Number(dataCortada[2]);
-			let oMes = Number(dataCortada[1]) - 1;
-			let oAno = Number(dataCortada[0]);
+			let oDia: number = Number(dataCortada[2]);
+			let oMes: number = Number(dataCortada[1]) - 1;
+			let oAno: number = Number(dataCortada[0]);
 			return new Date(oAno, oMes, oDia) - 0;
 		} else return new Date() - 0;
 	};
@@ -1393,7 +1393,7 @@ class mk {
 	static mkAindaPendente = (form: string) => {
 		let temPendencia = false;
 		mk.QAll(form + " input").forEach((e) => {
-			if (mk.isVisible(e)) {
+			if (mk.isVisible(e as HTMLElement)) {
 				if (e.classList.contains("pending")) {
 					temPendencia = true;
 					e.classList.remove("valid");
@@ -1463,7 +1463,7 @@ class mk {
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //			TEST												\\
 //___________________________________\\
-mk.iniciarGetList("./Teste2.json");
+mk.iniciarGetList("./Teste.json");
 
 // mk.http("./Teste.json", t.G, t.J, null, true);
 // mk.http("./index.html", t.G, t.H, null, true);
