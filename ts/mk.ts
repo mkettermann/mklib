@@ -649,6 +649,64 @@ class mk {
 	};
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+	//			Conversores									\\
+	//___________________________________\\
+
+	// Converter de YYYY-MM-DD para DD/MM/YYYY
+	static mkYYYYMMDDtoDDMMYYYY = (dataYYYYMMDD: string): string => {
+		let arrayData = dataYYYYMMDD.split("-");
+		let stringRetorno = "";
+		if (arrayData.length >= 3) {
+			// Tenta evitar bug de conversao
+			stringRetorno = arrayData[2] + "/" + arrayData[1] + "/" + arrayData[0];
+		} else {
+			stringRetorno = dataYYYYMMDD;
+		}
+		return stringRetorno;
+	};
+
+	// Converter (OBJ / ARRAY) Formato Booleano em Sim/Não
+	static mkFormatarDataOA = (oa: object | object[]) => {
+		function mkFormatarDataOA_Execute(o: any) {
+			let busca = new RegExp("^[0-2][0-9]{3}[-][0-1][0-9][-][0-3][0-9]$"); // Entre 0000-00-00 a 2999-19-39
+			for (var propName in o) {
+				if (busca.test(o[propName])) {
+					o[propName] = mk.mkYYYYMMDDtoDDMMYYYY(o[propName]);
+				}
+			}
+			return o;
+		}
+		return mk.mkExecutaNoObj(oa, mkFormatarDataOA_Execute);
+	};
+
+	// Converter (OBJ / ARRAY) Formato Booleano em Sim/Não
+	static mkBoolToSimNaoOA = (oa: object | object[]) => {
+		function mkBoolToSimNaoOA_Execute(o: any) {
+			for (var propName in o) {
+				if (
+					o[propName].toString().toLowerCase() === "true" ||
+					o[propName] === true
+				) {
+					o[propName] = "Sim";
+				}
+				if (
+					o[propName].toString().toLowerCase() === "false" ||
+					o[propName] === false
+				) {
+					o[propName] = "N&atilde;o";
+				}
+			}
+			return o;
+		}
+		return mk.mkExecutaNoObj(oa, mkBoolToSimNaoOA_Execute);
+	};
+
+	// Converter (OBJ / ARRAY) Formatar para normalizar com a exibicao ao usuario.
+	static mkFormatarOA = (oa: object | object[]) => {
+		return mk.mkBoolToSimNaoOA(mk.mkFormatarDataOA(mk.mkLimparOA(oa)));
+	};
+
+	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 	//			Carregador									\\
 	//___________________________________\\
 
@@ -1555,11 +1613,12 @@ class mk {
 		if (este != null) {
 			let estaAba = Number(este.getAttribute("data-pag"));
 			let listaAbas = este.parentElement?.parentElement;
-			listaAbas.querySelectorAll("a").forEach((e) => {
+			listaAbas?.querySelectorAll("a").forEach((e) => {
 				e.classList.remove("active");
 			});
 			este.classList.add("active");
-			for (let i = 1; i <= listaAbas.getAttribute("data-mkabas"); i++) {
+			let totalAbas: number = Number(listaAbas?.getAttribute("data-mkabas"));
+			for (let i = 1; i <= totalAbas; i++) {
 				// Giro do 1 ao Total
 				mk.QAll(".mkAba" + i).forEach((e) => {
 					if (i == estaAba) {
@@ -1569,6 +1628,118 @@ class mk {
 					}
 				});
 			}
+		}
+	};
+
+	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+	//			MODAL												\\
+	//___________________________________\\
+
+	static mkModalBuild = async () => {
+		return await Promise.resolve(() => {
+			console.log("mkModalBuild() Ini");
+			let divmkModalBloco = document.createElement("div");
+			divmkModalBloco.className = "mkModalBloco";
+			let divmkModalConteudo = document.createElement("div");
+			divmkModalConteudo.className = "mkModalConteudo";
+			let divmkModalCarregando = document.createElement("div");
+			divmkModalCarregando.className = "text-center";
+			let buttonmkBtnInv = document.createElement("button");
+			buttonmkBtnInv.className = "mkBtnInv absolutoTopoDireito mkEfeitoDodge";
+			buttonmkBtnInv.setAttribute("type", "button");
+			buttonmkBtnInv.setAttribute("onClick", "Mk.mkAbrirModalFull_Hide()");
+			let iModalMk = document.createElement("i");
+			iModalMk.className = "bi bi-x-lg";
+			buttonmkBtnInv.appendChild(iModalMk);
+			divmkModalConteudo.appendChild(divmkModalCarregando);
+			divmkModalBloco.appendChild(divmkModalConteudo);
+			divmkModalBloco.appendChild(buttonmkBtnInv);
+			document.body.appendChild(divmkModalBloco);
+			console.log("mkModalBuild() Fim");
+		});
+	};
+
+	static mkModalClear() {
+		mk.Q(".mkModalBloco .mkModalConteudo").innerHTML = "";
+	}
+
+	static mkAModal = async (
+		url: string | null = null,
+		modelo: string | null = null,
+		conteudo: object | null = null
+	) => {
+		if (mk.Q("body .mkModalBloco") == null) {
+			console.log("mkAModal() Build precisa construir");
+			await mk.mkModalBuild();
+			console.log("mkAModal() Após Build");
+		}
+		mk.mkModalClear();
+
+		// POPULA MODAL com CONTEUDO
+		if (conteudo != null) {
+			if (modelo != null) {
+				// Criar LoadTemplate com promise e colocar um await aqui quando terminar de popular o template.
+				$(".mkModalBloco .mkModalConteudo").loadTemplate($(modelo), conteudo, {
+					complete: function () {
+						mk.mkExibirModalFull(url, modelo);
+					},
+				});
+			} else {
+				console.error("MODELO NULO");
+			}
+		} else {
+			console.error("CONTEUDO NULO");
+		}
+		return console.log("ok");
+	};
+
+	static mkExibirModalFull = async (
+		url: string | null = null,
+		modelo: string
+	) => {
+		mk.Q("body .mkModalBloco").classList.remove("oculto");
+		mk.Q("body").classList.add("mkSemScrollY");
+		if (url != null) {
+			await mk.mkAtualizarModalFull(url, modelo);
+		}
+
+		mk.aposModalFullAberto();
+	};
+
+	static mkAbrirModalFull_Hide = () => {
+		Mk.Q("body .mkModalBloco").classList.add("oculto");
+		Mk.Q("body").classList.remove("mkSemScrollY");
+	};
+
+	static mkAtualizarModalFull = (url = null, modelo = null) => {
+		if (url != null) {
+			Mk.GetJson(
+				url,
+				(parsedData) => {
+					// objetoSelecionado fica disponivel durante a tela Detail
+					Mk.objetoSelecionado = Mk.mkFormatarOA(Mk.aoReceberDados(parsedData)); // <= Ao Receber Dados
+					if (modelo != null) {
+						console.group("MODAL: Selecionado: ");
+						console.info(Mk.objetoSelecionado);
+						console.groupEnd();
+						$(".mkModalBloco .mkModalConteudo").loadTemplate(
+							$(modelo),
+							Mk.objetoSelecionado,
+							{
+								complete: function () {},
+							}
+						);
+					} else {
+						console.error("MODELO VEIO NULO");
+					}
+				},
+				function () {},
+				this.getJson,
+				false
+			);
+		} else {
+			console.info("URL NULA! Usando dados já previamente armazenados.");
+			Mk.mkExibirModalFull();
 		}
 	};
 }
