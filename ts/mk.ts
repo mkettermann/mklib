@@ -281,15 +281,6 @@ class mk {
 		return false;
 	};
 
-	static isJson = (s) => {
-		try {
-			JSON.parse(s);
-		} catch (e) {
-			return false;
-		}
-		return true;
-	};
-
 	/**
 	 * Permite a atualização do JSON de um seletor mkSel por url
 	 * @param {string} eName		Elemento JS
@@ -299,7 +290,7 @@ class mk {
 		let e = Mk.Q(eName);
 		let urlColeta = appPath + e.getAttribute("data-refill");
 		cod != null ? (urlColeta += cod) : null;
-		Mk.GetJson(
+		mk.GetJson(
 			urlColeta,
 			(parsedData) => {
 				let kv = parsedData;
@@ -319,21 +310,21 @@ class mk {
 
 	// Get Server On
 	static getServerOn = (urlDestino) => {
-		Mk.GetJson(
+		mk.GetJson(
 			urlDestino,
 			(parsedData) => {
 				if (parsedData !== true) {
 					Mk.detectedServerOff();
 				}
 			},
-			Mk.detectedServerOff,
+			mk.detectedServerOff,
 			this.getJson,
 			false
 		);
 	};
 
 	static detectedServerOff = () => {
-		if (Mk.Q("body .offlineBlock") == null) {
+		if (mk.Q("body .offlineBlock") == null) {
 			let divOfflineBlock = document.createElement("div");
 			divOfflineBlock.className = "offlineBlock";
 			let divOfflineBlockInterna = document.createElement("div");
@@ -352,82 +343,79 @@ class mk {
 			divOfflineBlock.appendChild(buttonOfflineBlock);
 			document.body.appendChild(divOfflineBlock);
 		}
-		Mk.Q("body .offlineBlock").classList.remove("oculto");
+		mk.Q("body .offlineBlock").classList.remove("oculto");
 	};
 	static detectedServerOff_display = () => {
-		Mk.Q("body .offlineBlock").classList.add("oculto");
+		mk.Q("body .offlineBlock").classList.add("oculto");
 	};
 
 	// Eventos HTML5
 	// Bloqueio de teclas especificas onKeyDown
-	static mkOnlyFloatKeys = (e) => {
+	static mkOnlyFloatKeys = (ev: KeyboardEvent) => {
 		// Input: UMA tecla QUALQUER
-		let tecla = e.key;
 		//=> Metodo filtrar: Bloquear apenas estes
 		//let proibido = "0123456789";
 		//let isNegado = false;
 		//for (var item in proibido) {
-		//    (item == tecla) ? isNegado = true : null;
+		//    (item == ev.key) ? isNegado = true : null;
 		//}
 		//=> Metodo filtrar: Liberar apenas estes
 		let permitido = "0123456789,-";
 		let isNegado = true;
 		for (var i = 0; i < permitido.length; i++) {
-			if (permitido[i] == tecla.toString()) {
-				//console.log(permitido[i] + " == " + tecla.toString());
+			if (permitido[i] == ev.key.toString()) {
+				//console.log(permitido[i] + " == " + ev.key.toString());
 				isNegado = false;
 			}
 		}
 
 		//=> Teclas especiais
-		tecla == "ArrowLeft" ? (isNegado = false) : null; // Liberar Setinha pra Esquerda
-		tecla == "ArrowRight" ? (isNegado = false) : null; // Liberar Setinha pra Direita
-		tecla == "Backspace" ? (isNegado = false) : null; // Liberar Backspace
-		tecla == "Delete" ? (isNegado = false) : null; // Liberar Deletar
-		tecla == "Tab" ? (isNegado = false) : null; // Liberar Deletar
-		isNegado ? e.preventDefault() : null;
+		ev.key == "ArrowLeft" ? (isNegado = false) : null; // Liberar Setinha pra Esquerda
+		ev.key == "ArrowRight" ? (isNegado = false) : null; // Liberar Setinha pra Direita
+		ev.key == "Backspace" ? (isNegado = false) : null; // Liberar Backspace
+		ev.key == "Delete" ? (isNegado = false) : null; // Liberar Deletar
+		ev.key == "Tab" ? (isNegado = false) : null; // Liberar Deletar
+		isNegado ? ev.preventDefault() : null;
 	};
 	// Bloqueios de eventos especificos (varios, exemplo: onContextMenu)
-	static mkEventBlock = (e) => {
+	static mkEventBlock = (ev: Event) => {
 		console.error("Negado");
-		e.preventDefault();
+		ev.preventDefault();
 	};
 
 	// Imprimir e Exportar de ListaPrecos
-	static mkTrocaPontoPorVirgula = (query) => {
-		Mk.QAll(query).forEach((e) => {
+	static mkTrocaPontoPorVirgula = (query: string): void => {
+		mk.QAll(query).forEach((e) => {
 			e.innerHTML = e.innerHTML.replaceAll(".", ",");
 		});
 	};
 
 	// Seleciona texto do elemento
-	static mkSelecionarInner = (este) => {
-		//if (document.body.createTextRange) {
-		// let range = document.body.createTextRange();
-		// range.moveToElementText($(".sort-vlrPrecoMinimo")[1]);
-		// range.select();
+	static mkSelecionarInner = (e: HTMLElement) => {
 		if (window.getSelection) {
 			const selection = window.getSelection();
 			const range = document.createRange();
-			range.selectNodeContents(este);
-			selection.removeAllRanges();
-			selection.addRange(range);
+			range.selectNodeContents(e);
+			selection?.removeAllRanges();
+			selection?.addRange(range);
 		}
 	};
 
-	static mkInputFormatarValor = (e) => {
+	static mkInputFormatarValor = (e: HTMLInputElement): void => {
 		// 123,45 (2 casas pos conversao float)
-		e.value = Mk.mkDuasCasas(e.value);
+		e.value = mk.mkDuasCasas(mk.mkFloat(e.value));
 	};
 
-	static mkMedia = (menor, maior) => {
-		return Mk.mkDuasCasas((Mk.mkFloat(menor) + Mk.mkFloat(maior)) / 2);
+	static mkMedia = (menor: string | number, maior: string | number): string => {
+		return mk.mkDuasCasas((mk.mkFloat(menor) + mk.mkFloat(maior)) / 2);
 	};
 
-	static mkFloat = (num) => {
-		let ret = num;
+	static mkFloat = (num: any): number => {
+		let ret: number;
 		if (typeof num != "number") {
-			ret = parseFloat(ret.toString().replaceAll(".", "").replaceAll(",", "."));
+			ret = parseFloat(num.toString().replaceAll(".", "").replaceAll(",", "."));
+		} else {
+			ret = num;
 		}
 		if (isNaN(ret)) {
 			ret = 0;
@@ -435,56 +423,48 @@ class mk {
 		return ret;
 	};
 
-	static mkDuasCasas = (num) => {
-		return Mk.mkFloat(num).toFixed(2).replaceAll(".", ","); // 2000,00
+	static mkDuasCasas = (num: number): string => {
+		return mk.mkFloat(num).toFixed(2).replaceAll(".", ","); // 2000,00
 		//        .toLocaleString('pt-br', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); // 2.000,00
 	};
 
-	static mkEmReais = (num) => {
-		return Mk.mkFloat(num).toLocaleString("pt-br", {
+	static mkEmReais = (num: number): string => {
+		return mk.mkFloat(num).toLocaleString("pt-br", {
 			style: "currency",
 			currency: "BRL",
 		}); // R$ 12.123,45
 	};
 
-	static mkBase64 = (arquivo, tagImg, tagHidden) => {
+	static mkBase64 = (arquivo: any, tagImg: string, tagHidden: string): void => {
 		// Verificar se esta nulo
 		let leitor = new FileReader();
 		leitor.onload = () => {
-			Mk.Q(tagImg).src = leitor.result;
-			Mk.Q(tagHidden).value = leitor.result;
+			(mk.Q(tagImg) as HTMLImageElement).src = leitor.result as string;
+			(mk.Q(tagHidden) as HTMLInputElement).value = leitor.result as string;
 		};
 		leitor.readAsDataURL(arquivo);
 	};
 
-	/*const mkBase64_Old = (arquivo, tagImg) => {
-		let leitor = new FileReader();
-		leitor.onload = () => {
-			$(tagImg).val(leitor.result);
-		}
-		leitor.readAsDataURL(arquivo);
-	}*/
-
-	// Clona tanto uma array quanto um objeto ao ser enviado por parametro.
+	// Clona tanto uma array quanto um objeto ao ser enviado por parametro. (map não clonou)
 	static mkClonarOA = (oa: object | object[]): object | object[] => {
 		if (Array.isArray(oa)) {
 			let temp: object[] = [];
 			oa.forEach((o) => {
-				let desItem = {};
-				for (let propName in o) {
-					desItem[propName as keyof typeof o] = o[propName as keyof typeof o];
+				let novoO: any = {};
+				for (let p in o) {
+					novoO[p] = o[p as keyof typeof o];
 				}
-				temp.push(desItem);
+				temp.push(novoO);
 			});
 			return temp;
 		} else {
-			let temp: object = {};
+			let novoO: object = {};
 			if (typeof oa === "object") {
-				for (var propName in oa) {
-					temp[propName] = oa[propName];
+				for (let p in oa) {
+					novoO[p as keyof typeof oa] = oa[p as keyof typeof oa];
 				}
 			}
-			return temp;
+			return novoO;
 		}
 	};
 

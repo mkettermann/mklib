@@ -209,20 +209,11 @@ class mk {
         }
         return false;
     };
-    static isJson = (s) => {
-        try {
-            JSON.parse(s);
-        }
-        catch (e) {
-            return false;
-        }
-        return true;
-    };
     static mkSelDlRefill = (eName, cod = null) => {
         let e = Mk.Q(eName);
         let urlColeta = appPath + e.getAttribute("data-refill");
         cod != null ? (urlColeta += cod) : null;
-        Mk.GetJson(urlColeta, (parsedData) => {
+        mk.GetJson(urlColeta, (parsedData) => {
             let kv = parsedData;
             if (typeof parsedData == "object") {
                 kv = JSON.stringify(parsedData);
@@ -237,14 +228,14 @@ class mk {
         }, null);
     };
     static getServerOn = (urlDestino) => {
-        Mk.GetJson(urlDestino, (parsedData) => {
+        mk.GetJson(urlDestino, (parsedData) => {
             if (parsedData !== true) {
                 Mk.detectedServerOff();
             }
-        }, Mk.detectedServerOff, this.getJson, false);
+        }, mk.detectedServerOff, this.getJson, false);
     };
     static detectedServerOff = () => {
-        if (Mk.Q("body .offlineBlock") == null) {
+        if (mk.Q("body .offlineBlock") == null) {
             let divOfflineBlock = document.createElement("div");
             divOfflineBlock.className = "offlineBlock";
             let divOfflineBlockInterna = document.createElement("div");
@@ -260,55 +251,57 @@ class mk {
             divOfflineBlock.appendChild(buttonOfflineBlock);
             document.body.appendChild(divOfflineBlock);
         }
-        Mk.Q("body .offlineBlock").classList.remove("oculto");
+        mk.Q("body .offlineBlock").classList.remove("oculto");
     };
     static detectedServerOff_display = () => {
-        Mk.Q("body .offlineBlock").classList.add("oculto");
+        mk.Q("body .offlineBlock").classList.add("oculto");
     };
-    static mkOnlyFloatKeys = (e) => {
-        let tecla = e.key;
+    static mkOnlyFloatKeys = (ev) => {
         let permitido = "0123456789,-";
         let isNegado = true;
         for (var i = 0; i < permitido.length; i++) {
-            if (permitido[i] == tecla.toString()) {
+            if (permitido[i] == ev.key.toString()) {
                 isNegado = false;
             }
         }
-        tecla == "ArrowLeft" ? (isNegado = false) : null;
-        tecla == "ArrowRight" ? (isNegado = false) : null;
-        tecla == "Backspace" ? (isNegado = false) : null;
-        tecla == "Delete" ? (isNegado = false) : null;
-        tecla == "Tab" ? (isNegado = false) : null;
-        isNegado ? e.preventDefault() : null;
+        ev.key == "ArrowLeft" ? (isNegado = false) : null;
+        ev.key == "ArrowRight" ? (isNegado = false) : null;
+        ev.key == "Backspace" ? (isNegado = false) : null;
+        ev.key == "Delete" ? (isNegado = false) : null;
+        ev.key == "Tab" ? (isNegado = false) : null;
+        isNegado ? ev.preventDefault() : null;
     };
-    static mkEventBlock = (e) => {
+    static mkEventBlock = (ev) => {
         console.error("Negado");
-        e.preventDefault();
+        ev.preventDefault();
     };
     static mkTrocaPontoPorVirgula = (query) => {
-        Mk.QAll(query).forEach((e) => {
+        mk.QAll(query).forEach((e) => {
             e.innerHTML = e.innerHTML.replaceAll(".", ",");
         });
     };
-    static mkSelecionarInner = (este) => {
+    static mkSelecionarInner = (e) => {
         if (window.getSelection) {
             const selection = window.getSelection();
             const range = document.createRange();
-            range.selectNodeContents(este);
-            selection.removeAllRanges();
-            selection.addRange(range);
+            range.selectNodeContents(e);
+            selection?.removeAllRanges();
+            selection?.addRange(range);
         }
     };
     static mkInputFormatarValor = (e) => {
-        e.value = Mk.mkDuasCasas(e.value);
+        e.value = mk.mkDuasCasas(mk.mkFloat(e.value));
     };
     static mkMedia = (menor, maior) => {
-        return Mk.mkDuasCasas((Mk.mkFloat(menor) + Mk.mkFloat(maior)) / 2);
+        return mk.mkDuasCasas((mk.mkFloat(menor) + mk.mkFloat(maior)) / 2);
     };
     static mkFloat = (num) => {
-        let ret = num;
+        let ret;
         if (typeof num != "number") {
-            ret = parseFloat(ret.toString().replaceAll(".", "").replaceAll(",", "."));
+            ret = parseFloat(num.toString().replaceAll(".", "").replaceAll(",", "."));
+        }
+        else {
+            ret = num;
         }
         if (isNaN(ret)) {
             ret = 0;
@@ -316,10 +309,10 @@ class mk {
         return ret;
     };
     static mkDuasCasas = (num) => {
-        return Mk.mkFloat(num).toFixed(2).replaceAll(".", ",");
+        return mk.mkFloat(num).toFixed(2).replaceAll(".", ",");
     };
     static mkEmReais = (num) => {
-        return Mk.mkFloat(num).toLocaleString("pt-br", {
+        return mk.mkFloat(num).toLocaleString("pt-br", {
             style: "currency",
             currency: "BRL",
         });
@@ -327,8 +320,8 @@ class mk {
     static mkBase64 = (arquivo, tagImg, tagHidden) => {
         let leitor = new FileReader();
         leitor.onload = () => {
-            Mk.Q(tagImg).src = leitor.result;
-            Mk.Q(tagHidden).value = leitor.result;
+            mk.Q(tagImg).src = leitor.result;
+            mk.Q(tagHidden).value = leitor.result;
         };
         leitor.readAsDataURL(arquivo);
     };
@@ -336,22 +329,22 @@ class mk {
         if (Array.isArray(oa)) {
             let temp = [];
             oa.forEach((o) => {
-                let desItem = {};
-                for (let propName in o) {
-                    desItem[propName] = o[propName];
+                let novoO = {};
+                for (let p in o) {
+                    novoO[p] = o[p];
                 }
-                temp.push(desItem);
+                temp.push(novoO);
             });
             return temp;
         }
         else {
-            let temp = {};
+            let novoO = {};
             if (typeof oa === "object") {
-                for (var propName in oa) {
-                    temp[propName] = oa[propName];
+                for (let p in oa) {
+                    novoO[p] = oa[p];
                 }
             }
-            return temp;
+            return novoO;
         }
     };
     static getFormFrom = (e) => {
