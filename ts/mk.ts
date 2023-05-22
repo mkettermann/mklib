@@ -10,14 +10,6 @@
 // - Bootstrap Modal
 var mkt2; // Variavel de Testes;
 
-enum t {
-	G = "GET", // Api Method GET
-	P = "POST", // Api Method POST
-	J = "application/json", // ContentType JSON
-	H = "text/html", // ContentType HTML
-	F = "multipart/form-data", // ContentType FORM
-}
-
 class mk {
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 	//			ATRIBUTOS										\\
@@ -42,6 +34,50 @@ class mk {
 		pagItensFim: 0,
 		pagPorPagina: 5,
 		totalPaginas: 0,
+	};
+
+	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+	//			TITULOS CONSTANTES					\\
+	//___________________________________\\
+	static t = {
+		G: "GET", // Api Method GET
+		P: "POST", // Api Method POST
+		J: "application/json", // ContentType JSON
+		H: "text/html", // ContentType HTML
+		F: "multipart/form-data", // ContentType FORM
+	};
+	static MESES = [
+		"Janeiro",
+		"Fevereiro",
+		"Março",
+		"Abril",
+		"Maio",
+		"Junho",
+		"Julho",
+		"Agosto",
+		"Setembro",
+		"Outubro",
+		"Novembro",
+		"Dezembro",
+	];
+	static CORES = {
+		VERMELHO: "#F00",
+		VERDE: "#0F0",
+		AZUL: "#00F",
+		BRANCO: "#FFF",
+		PRETO: "#000",
+		VERDEFLORESTA: "#070",
+		VERDEFOLHA: "#0A0",
+		VERDEABACATE: "#9F0",
+		AMARELO: "#FF0",
+		LARANJA: "#F90",
+		AZULESCURO: "#009",
+		AZULPISCINA: "#0FF",
+		AZULCEU: "#09F",
+		ROSA: "#F0F",
+		ROXO: "#70F",
+		MAGENTA: "#F09",
+		OURO: "#FB1",
 	};
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
@@ -116,9 +152,9 @@ class mk {
 	static mkGerarObjeto = (este) => {
 		let form = este;
 		if (typeof este != "object") {
-			form = Mk.Q(este);
+			form = mk.Q(este);
 		}
-		let rObjeto = Mk.mkLimparOA(
+		let rObjeto = mk.mkLimparOA(
 			Object.fromEntries(new FormData(form).entries())
 		);
 		console.groupCollapsed("Objeto Gerado: ");
@@ -430,30 +466,30 @@ class mk {
 	}*/
 
 	// Clona tanto uma array quanto um objeto ao ser enviado por parametro.
-	static mkClonarOA = (oa) => {
+	static mkClonarOA = (oa: object | object[]): object | object[] => {
 		if (Array.isArray(oa)) {
-			let temp = [];
-			oa.forEach((oriItem, i) => {
+			let temp: object[] = [];
+			oa.forEach((o) => {
 				let desItem = {};
-				for (var propName in oriItem) {
-					desItem[propName] = oriItem[propName];
+				for (let propName in o) {
+					desItem[propName as keyof typeof o] = o[propName as keyof typeof o];
 				}
 				temp.push(desItem);
 			});
 			return temp;
 		} else {
+			let temp: object = {};
 			if (typeof oa === "object") {
-				let temp = {};
 				for (var propName in oa) {
 					temp[propName] = oa[propName];
 				}
-				return temp;
 			}
+			return temp;
 		}
 	};
 
 	// Sobe os elementos até encontrar o form pertencente a este elemento. (Se limita ao BODY)
-	static getFormFrom = (e) => {
+	static getFormFrom = (e: any) => {
 		let eForm = e;
 		while (eForm.tagName != "FORM") {
 			eForm = eForm.parentElement;
@@ -468,8 +504,12 @@ class mk {
 	};
 
 	// Retorna uma array utilizando um template do que deve ser preenchido.
-	static encheArray = (arrTemplate, inicio = 1, total) => {
-		let novaArray = [];
+	static encheArray = (
+		arrTemplate: any[],
+		inicio = 1,
+		total: number | null
+	): any[] => {
+		let novaArray: any[] = [];
 		if (Array.isArray(arrTemplate)) {
 			if (arrTemplate.length > 0) {
 				if (arrTemplate.length < inicio) {
@@ -507,8 +547,12 @@ class mk {
 	};
 
 	// Retorna uma array dos últimos
-	static encheArrayUltimos = (arrTemplate, fim = 1, total) => {
-		let novaArray = [];
+	static encheArrayUltimos = (
+		arrTemplate: any[],
+		fim = 1,
+		total: number | null
+	): any[] => {
+		let novaArray: any[] = [];
 		if (Array.isArray(arrTemplate)) {
 			if (arrTemplate.length > 0) {
 				if (arrTemplate.length < fim) {
@@ -545,30 +589,30 @@ class mk {
 		return novaArray;
 	};
 
-	// Retorna a data de Hoje no formato: DD/MM/YYYY
-	static hoje = () => {
-		let mkFullData = Mk.hojeMkData() + " " + Mk.hojeMkHora();
-		return mkFullData;
+	// Retorna Milisegundos da data no formato Javascript
+	static getMs = (dataYYYYMMDD: string | null = null) => {
+		if (dataYYYYMMDD != null) {
+			let dataCortada = dataYYYYMMDD.split("-");
+			let oDia = Number(dataCortada[2]);
+			let oMes = Number(dataCortada[1]) - 1;
+			let oAno = Number(dataCortada[0]);
+			return new Date(oAno, oMes, oDia) - 0;
+		} else return new Date() - 0;
 	};
 
 	// Retorna Data do cliente de Hoje em:  DD/MM/YYYY
 	static hojeMkData = () => {
-		return new Date(Mk.getMs()).toLocaleDateString();
+		return new Date(mk.getMs()).toLocaleDateString();
 	};
 
 	static hojeMkHora = () => {
-		return new Date(Number(Mk.getMs())).toLocaleTimeString();
+		return new Date(Number(mk.getMs())).toLocaleTimeString();
 	};
 
-	// Retorna Milisegundos da data no formato Javascript
-	static getMs = (dataYYYYMMDD = null) => {
-		if (dataYYYYMMDD != null) {
-			let dataCortada = dataYYYYMMDD.split("-");
-			let oDia = Number(dataCortada[2]);
-			let oMes = Number(dataCortada[1] - 1);
-			let oAno = Number(dataCortada[0]);
-			return new Date(oAno, oMes, oDia) - 0;
-		} else return new Date() - 0;
+	// Retorna a data de Hoje no formato: DD/MM/YYYY
+	static hoje = () => {
+		let mkFullData = mk.hojeMkData() + " " + mk.hojeMkHora();
+		return mkFullData;
 	};
 
 	// Retorna Data do cliente de Hoje em:  YYYY-MM-DD
@@ -592,21 +636,21 @@ class mk {
 	};
 
 	static getDia = (ms = null) => {
-		if (ms != null) return Number(Mk.getFullData(ms).split("-")[2]);
-		else return Number(Mk.getFullData().split("-")[2]);
+		if (ms != null) return Number(mk.getFullData(ms).split("-")[2]);
+		else return Number(mk.getFullData().split("-")[2]);
 	};
 	static getMes = (ms = null) => {
-		if (ms != null) return Number(Mk.getFullData(ms).split("-")[1]);
-		else return Number(Mk.getFullData().split("-")[1]);
+		if (ms != null) return Number(mk.getFullData(ms).split("-")[1]);
+		else return Number(mk.getFullData().split("-")[1]);
 	};
 	static getAno = (ms = null) => {
-		if (ms != null) return Number(Mk.getFullData(ms).split("-")[0]);
-		else return Number(Mk.getFullData().split("-")[0]);
+		if (ms != null) return Number(mk.getFullData(ms).split("-")[0]);
+		else return Number(mk.getFullData().split("-")[0]);
 	};
 
-	static getDiasDiferenca = (msOld, msNew = null) => {
-		if (msNew == null) msNew = Mk.getHojeMS();
-		return Mk.transMsEmDias(msNew - msOld);
+	static getDiasDiferenca = (msOld: number, msNew: number | null = null) => {
+		if (msNew == null) msNew = mk.getMs();
+		return mk.transMsEmDias(msNew! - msOld);
 	};
 	// Para transformar uma diferenca de datas em Mes ou Ano,
 	// precisa de auxilio de um calendário,
@@ -615,32 +659,32 @@ class mk {
 	// ocorrerá um erro na conta quando houver meses com 31 dias
 	// E anos bissexto geram erros nos meses de fevereiro sem um calendario
 
-	static transMsEmSegundos = (ms) => {
+	static transMsEmSegundos = (ms: number) => {
 		return Math.trunc(ms / 1000); // 1000 ms == 1s
 	};
-	static transMsEmMinutos = (ms) => {
+	static transMsEmMinutos = (ms: number) => {
 		return Math.trunc(ms / 60000); // 1000 * 60
 	};
-	static transMsEmHoras = (ms) => {
+	static transMsEmHoras = (ms: number) => {
 		return Math.trunc(ms / 3600000); // 1000 * 3600
 	};
-	static transMsEmDias = (ms) => {
+	static transMsEmDias = (ms: number) => {
 		// 1000 * 3600 * 24 Considerando todo dia tiver 24 horas (~23h 56m 4.1s)
 		// (360º translacao / 86400000) = ~4.1
 		// Então o erro de 1 dia ocorre 1x ao ano (Dia represeta 1436min).
 		return Math.trunc(ms / 86400000);
 	};
 
-	static transSegundosEmMs = (s) => {
+	static transSegundosEmMs = (s: number) => {
 		return s * 1000;
 	};
-	static transMinutosEmMs = (m) => {
+	static transMinutosEmMs = (m: number) => {
 		return m * 60000;
 	};
-	static transMsEmHoras = (h) => {
+	static transHorasEmMs = (h: number) => {
 		return h * 3600000;
 	};
-	static transDiasEmMs = (d) => {
+	static transDiasEmMs = (d: number) => {
 		return d * 86400000;
 	};
 
@@ -682,8 +726,8 @@ class mk {
 	// Método principal de chamada Http. tanto GET quanto POST
 	static http = async (
 		url: string,
-		metodo: string = t.G,
-		tipo: string = t.J,
+		metodo: string = mk.t.G,
+		tipo: string = mk.t.J,
 		dados: any = null,
 		carregador: boolean = false
 	): Promise<any> => {
@@ -692,9 +736,9 @@ class mk {
 		)[0] as HTMLInputElement;
 		let body: string | null = null;
 		if (dados) {
-			if (tipo == t.J) {
+			if (tipo == mk.t.J) {
 				body = JSON.stringify(dados);
-			} else if (tipo == t.F) {
+			} else if (tipo == mk.t.F) {
 				body = dados;
 			}
 		}
@@ -712,7 +756,7 @@ class mk {
 		console.groupCollapsed(h.method + ": " + url);
 		console.time(url);
 		console.info(">> TYPE: " + h.headers["Content-Type"]);
-		if (metodo == t.P) {
+		if (metodo == mk.t.P) {
 			console.groupCollapsed(">> Objeto Enviado");
 			console.info(dados);
 			console.info(body?.toString());
@@ -733,7 +777,7 @@ class mk {
 			return null;
 		}
 		let corpo: any = null;
-		if (tipo == t.J) {
+		if (tipo == mk.t.J) {
 			corpo = await pacoteHttp.json();
 		} else {
 			corpo = await pacoteHttp.text();
@@ -1214,7 +1258,7 @@ class mk {
 		mk.Ao("input", "input[name='tablePorPagina']", () => {
 			mk.atualizarPorPagina();
 		});
-		let retorno = await mk.http(url, t.G, t.J);
+		let retorno = await mk.http(url, mk.t.G, mk.t.J);
 		if (retorno != null) {
 			mk.mkLimparOA(retorno);
 			mk.mkExecutaNoObj(retorno, mk.aoReceberDados);
@@ -1431,7 +1475,7 @@ class mk {
 					}, 10);
 				} else {
 					mk.CarregarOFF();
-					gerarToastErro(
+					console.error(
 						"&nbsp; Um ou mais campos do formul&aacute;rio n&atilde;o puderam ser validados por falta de resposta do servidor."
 					);
 				}

@@ -1,13 +1,5 @@
 "use strict";
 var mkt2;
-var t;
-(function (t) {
-    t["G"] = "GET";
-    t["P"] = "POST";
-    t["J"] = "application/json";
-    t["H"] = "text/html";
-    t["F"] = "multipart/form-data";
-})(t || (t = {}));
 class mk {
     static fullDados = [];
     static exibeDados = [];
@@ -29,6 +21,46 @@ class mk {
         pagItensFim: 0,
         pagPorPagina: 5,
         totalPaginas: 0,
+    };
+    static t = {
+        G: "GET",
+        P: "POST",
+        J: "application/json",
+        H: "text/html",
+        F: "multipart/form-data",
+    };
+    static MESES = [
+        "Janeiro",
+        "Fevereiro",
+        "Março",
+        "Abril",
+        "Maio",
+        "Junho",
+        "Julho",
+        "Agosto",
+        "Setembro",
+        "Outubro",
+        "Novembro",
+        "Dezembro",
+    ];
+    static CORES = {
+        VERMELHO: "#F00",
+        VERDE: "#0F0",
+        AZUL: "#00F",
+        BRANCO: "#FFF",
+        PRETO: "#000",
+        VERDEFLORESTA: "#070",
+        VERDEFOLHA: "#0A0",
+        VERDEABACATE: "#9F0",
+        AMARELO: "#FF0",
+        LARANJA: "#F90",
+        AZULESCURO: "#009",
+        AZULPISCINA: "#0FF",
+        AZULCEU: "#09F",
+        ROSA: "#F0F",
+        ROXO: "#70F",
+        MAGENTA: "#F09",
+        OURO: "#FB1",
     };
     static Q = (query = "body") => {
         if (query instanceof HTMLElement)
@@ -80,9 +112,9 @@ class mk {
     static mkGerarObjeto = (este) => {
         let form = este;
         if (typeof este != "object") {
-            form = Mk.Q(este);
+            form = mk.Q(este);
         }
-        let rObjeto = Mk.mkLimparOA(Object.fromEntries(new FormData(form).entries()));
+        let rObjeto = mk.mkLimparOA(Object.fromEntries(new FormData(form).entries()));
         console.groupCollapsed("Objeto Gerado: ");
         console.info(rObjeto);
         console.groupEnd();
@@ -303,23 +335,23 @@ class mk {
     static mkClonarOA = (oa) => {
         if (Array.isArray(oa)) {
             let temp = [];
-            oa.forEach((oriItem, i) => {
+            oa.forEach((o) => {
                 let desItem = {};
-                for (var propName in oriItem) {
-                    desItem[propName] = oriItem[propName];
+                for (let propName in o) {
+                    desItem[propName] = o[propName];
                 }
                 temp.push(desItem);
             });
             return temp;
         }
         else {
+            let temp = {};
             if (typeof oa === "object") {
-                let temp = {};
                 for (var propName in oa) {
                     temp[propName] = oa[propName];
                 }
-                return temp;
             }
+            return temp;
         }
     };
     static getFormFrom = (e) => {
@@ -401,26 +433,26 @@ class mk {
         }
         return novaArray;
     };
-    static hoje = () => {
-        let mkFullData = Mk.hojeMkData() + " " + Mk.hojeMkHora();
-        return mkFullData;
-    };
-    static hojeMkData = () => {
-        return new Date(Mk.getMs()).toLocaleDateString();
-    };
-    static hojeMkHora = () => {
-        return new Date(Number(Mk.getMs())).toLocaleTimeString();
-    };
     static getMs = (dataYYYYMMDD = null) => {
         if (dataYYYYMMDD != null) {
             let dataCortada = dataYYYYMMDD.split("-");
             let oDia = Number(dataCortada[2]);
-            let oMes = Number(dataCortada[1] - 1);
+            let oMes = Number(dataCortada[1]) - 1;
             let oAno = Number(dataCortada[0]);
             return new Date(oAno, oMes, oDia) - 0;
         }
         else
             return new Date() - 0;
+    };
+    static hojeMkData = () => {
+        return new Date(mk.getMs()).toLocaleDateString();
+    };
+    static hojeMkHora = () => {
+        return new Date(Number(mk.getMs())).toLocaleTimeString();
+    };
+    static hoje = () => {
+        let mkFullData = mk.hojeMkData() + " " + mk.hojeMkHora();
+        return mkFullData;
     };
     static getFullData = (ms = null) => {
         if (ms != null)
@@ -438,26 +470,26 @@ class mk {
     };
     static getDia = (ms = null) => {
         if (ms != null)
-            return Number(Mk.getFullData(ms).split("-")[2]);
+            return Number(mk.getFullData(ms).split("-")[2]);
         else
-            return Number(Mk.getFullData().split("-")[2]);
+            return Number(mk.getFullData().split("-")[2]);
     };
     static getMes = (ms = null) => {
         if (ms != null)
-            return Number(Mk.getFullData(ms).split("-")[1]);
+            return Number(mk.getFullData(ms).split("-")[1]);
         else
-            return Number(Mk.getFullData().split("-")[1]);
+            return Number(mk.getFullData().split("-")[1]);
     };
     static getAno = (ms = null) => {
         if (ms != null)
-            return Number(Mk.getFullData(ms).split("-")[0]);
+            return Number(mk.getFullData(ms).split("-")[0]);
         else
-            return Number(Mk.getFullData().split("-")[0]);
+            return Number(mk.getFullData().split("-")[0]);
     };
     static getDiasDiferenca = (msOld, msNew = null) => {
         if (msNew == null)
-            msNew = Mk.getHojeMS();
-        return Mk.transMsEmDias(msNew - msOld);
+            msNew = mk.getMs();
+        return mk.transMsEmDias(msNew - msOld);
     };
     static transMsEmSegundos = (ms) => {
         return Math.trunc(ms / 1000);
@@ -477,7 +509,7 @@ class mk {
     static transMinutosEmMs = (m) => {
         return m * 60000;
     };
-    static transMsEmHoras = (h) => {
+    static transHorasEmMs = (h) => {
         return h * 3600000;
     };
     static transDiasEmMs = (d) => {
@@ -509,14 +541,14 @@ class mk {
         }
         mk.Q("body").classList.remove("CarregadorMkSemScrollY");
     };
-    static http = async (url, metodo = t.G, tipo = t.J, dados = null, carregador = false) => {
+    static http = async (url, metodo = mk.t.G, tipo = mk.t.J, dados = null, carregador = false) => {
         const mkaft = document.getElementsByName("__RequestVerificationToken")[0];
         let body = null;
         if (dados) {
-            if (tipo == t.J) {
+            if (tipo == mk.t.J) {
                 body = JSON.stringify(dados);
             }
-            else if (tipo == t.F) {
+            else if (tipo == mk.t.F) {
                 body = dados;
             }
         }
@@ -534,7 +566,7 @@ class mk {
         console.groupCollapsed(h.method + ": " + url);
         console.time(url);
         console.info(">> TYPE: " + h.headers["Content-Type"]);
-        if (metodo == t.P) {
+        if (metodo == mk.t.P) {
             console.groupCollapsed(">> Objeto Enviado");
             console.info(dados);
             console.info(body?.toString());
@@ -553,7 +585,7 @@ class mk {
             return null;
         }
         let corpo = null;
-        if (tipo == t.J) {
+        if (tipo == mk.t.J) {
             corpo = await pacoteHttp.json();
         }
         else {
@@ -924,7 +956,7 @@ class mk {
         mk.Ao("input", "input[name='tablePorPagina']", () => {
             mk.atualizarPorPagina();
         });
-        let retorno = await mk.http(url, t.G, t.J);
+        let retorno = await mk.http(url, mk.t.G, mk.t.J);
         if (retorno != null) {
             mk.mkLimparOA(retorno);
             mk.mkExecutaNoObj(retorno, mk.aoReceberDados);
@@ -1087,7 +1119,7 @@ class mk {
                 }
                 else {
                     mk.CarregarOFF();
-                    gerarToastErro("&nbsp; Um ou mais campos do formul&aacute;rio n&atilde;o puderam ser validados por falta de resposta do servidor.");
+                    console.error("&nbsp; Um ou mais campos do formul&aacute;rio n&atilde;o puderam ser validados por falta de resposta do servidor.");
                 }
                 return false;
             }
