@@ -550,14 +550,14 @@ class mk {
 	};
 
 	// Retorna Milisegundos da data no formato Javascript
-	static getMs = (dataYYYYMMDD: string | null = null) => {
+	static getMs = (dataYYYYMMDD: string | null = null): number => {
 		if (dataYYYYMMDD != null) {
 			let dataCortada = dataYYYYMMDD.split("-");
 			let oDia: number = Number(dataCortada[2]);
 			let oMes: number = Number(dataCortada[1]) - 1;
 			let oAno: number = Number(dataCortada[0]);
-			return new Date(oAno, oMes, oDia) - 0;
-		} else return new Date() - 0;
+			return new Date(oAno, oMes, oDia).getTime();
+		} else return new Date().getTime();
 	};
 
 	// Retorna Data do cliente de Hoje em:  DD/MM/YYYY
@@ -1143,12 +1143,14 @@ class mk {
 				mk.filtraPagination();
 				mk.antesDePopularTabela();
 
-				// RESOLVER: Criar Funções de geração de template em javascript.
-				$(
-					"div.boxMain div.boxTable table.tableListagem tbody.listBody"
-				).loadTemplate(mk.Q("#template"), mk.exibePaginado, {
-					complete: mk.aoCompletarExibicao,
-				});
+				// XXX RESOLVER: Criar Funções de geração de template em javascript.
+				$(".tableListagem tbody.listBody").loadTemplate(
+					mk.Q("#template"),
+					mk.exibePaginado,
+					{
+						complete: mk.aoCompletarExibicao,
+					}
+				);
 			}
 		}
 	};
@@ -1385,6 +1387,7 @@ class mk {
 			});
 		});
 	};
+
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 	//			VALIDADOR										\\
 	//___________________________________\\
@@ -1458,12 +1461,122 @@ class mk {
 			mk.CarregarOFF(); // Loop infinito
 		}
 	};
+
+	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+	//			AREA FASEADO								\\
+	//___________________________________\\
+
+	// FUNCAO PARA ATUALIZAR OS LINKS DE FASES
+	static fUIFaseUpdateLinkFase = () => {
+		mk.QAll("ul.mkUlFase li a").forEach((e) => {
+			e.parentElement?.classList.remove("mkFaseBack");
+			e.parentElement?.classList.remove("mkFaseAtivo");
+			e.parentElement?.classList.remove("disabled");
+			let eNumPag = Number(e.getAttribute("data-pag"));
+			let bLibera = e.getAttribute("data-libera");
+			if (this.mkFaseAtual > eNumPag) {
+				e.parentElement?.classList.add("mkFaseBack");
+			}
+			if (this.mkFaseAtual == eNumPag) {
+				e.parentElement?.classList.add("mkFaseAtivo");
+			}
+			if (bLibera == "false") {
+				e.parentElement?.classList.add("disabled");
+			}
+		});
+	};
+
+	// FUNCAO PARA ATUALIZAR A TELINHA
+	static fUIFaseUpdateView = (obj: object) => {
+		for (
+			var i = 1;
+			i <= Number(mk.Q(".mkUlFase").getAttribute("data-totalfases"));
+			i++
+		) {
+			mk.Q(".modalFase" + i).classList.add("oculto");
+		}
+		this.mkFaseAtual = obj["destinoFase" as keyof typeof obj];
+		mk.Q(".modalFase" + this.mkFaseAtual).classList.remove("oculto");
+		mk.Q(".btnVoltar").classList.add("disabled");
+		if (this.mkFaseAtual > 1) {
+			mk.Q(".btnVoltar").classList.remove("disabled");
+		}
+		mk.Q(".btnAvancar").classList.remove("oculto");
+		mk.Q(".btnEnviar").classList.add("oculto");
+		if (
+			this.mkFaseAtual >=
+			Number(mk.Q(".mkUlFase").getAttribute("data-totalfases"))
+		) {
+			mk.Q(".btnAvancar").classList.add("oculto");
+			mk.Q(".btnEnviar").classList.remove("oculto");
+		}
+		mk.fUIFaseUpdateLinkFase();
+	};
+
+	// (OnClick BOTAO) FUNCAO VOLTAR A FASE
+	static fUIFaseVoltar = (esteForm: string) => {
+		let obj = {
+			destinoFase: this.mkFaseAtual - 1,
+			form: esteForm,
+		};
+		mk.fUIFaseUpdateView(obj);
+	};
+
+	// (OnClick BOTAO) FUNCAO AVANCAR A FASE
+	static fUIFaseAvancar = (esteForm: string) => {
+		let obj = {
+			destinoFase: this.mkFaseAtual + 1,
+			form: esteForm,
+		};
+		mk.mkValidaFull(obj.form, mk.fUIFaseLiberarView, obj);
+	};
+
+	// (OnClick BOTAO) FUNCAO LINK PARA FASE ESPECIFICA
+	static fUIFaseEspecifica = (e: HTMLElement) => {
+		let obj = {
+			destinoFase: Number(e.getAttribute("data-pag")),
+			form: mk.getFormFrom(e),
+		};
+		if (
+			obj.destinoFase < this.mkFaseAtual ||
+			e.getAttribute("data-libera") == "true"
+		) {
+			mk.mkValidaFull(obj.form, mk.fUIFaseLiberarView, obj);
+		}
+	};
+
+	static fUIFaseLiberarView = (obj: object) => {
+		this.sendObjFull = mk.mkGerarObjeto(obj["form" as keyof typeof obj]);
+		mk.fUIFaseUpdateView(obj);
+	};
+
+	// Metodo de controle de grupos de abas.
+	static mkClicarNaAba = (este: HTMLElement) => {
+		if (este != null) {
+			let estaAba = Number(este.getAttribute("data-pag"));
+			let listaAbas = este.parentElement?.parentElement;
+			listaAbas.querySelectorAll("a").forEach((e) => {
+				e.classList.remove("active");
+			});
+			este.classList.add("active");
+			for (let i = 1; i <= listaAbas.getAttribute("data-mkabas"); i++) {
+				// Giro do 1 ao Total
+				mk.QAll(".mkAba" + i).forEach((e) => {
+					if (i == estaAba) {
+						e.classList.remove("oculto");
+					} else {
+						e.classList.add("oculto");
+					}
+				});
+			}
+		}
+	};
 }
 
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //			TEST												\\
 //___________________________________\\
-mk.iniciarGetList("./Teste.json");
+//mk.iniciarGetList("./Teste.json");
 
 // mk.http("./Teste.json", t.G, t.J, null, true);
 // mk.http("./index.html", t.G, t.H, null, true);

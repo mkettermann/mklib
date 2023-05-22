@@ -421,10 +421,10 @@ class mk {
             let oDia = Number(dataCortada[2]);
             let oMes = Number(dataCortada[1]) - 1;
             let oAno = Number(dataCortada[0]);
-            return new Date(oAno, oMes, oDia) - 0;
+            return new Date(oAno, oMes, oDia).getTime();
         }
         else
-            return new Date() - 0;
+            return new Date().getTime();
     };
     static hojeMkData = () => {
         return new Date(mk.getMs()).toLocaleDateString();
