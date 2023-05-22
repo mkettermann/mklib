@@ -10,6 +10,11 @@
 // - Bootstrap Modal
 var mkt2; // Variavel de Testes;
 
+//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+//			GLOBAL VARS | CONST					\\
+//___________________________________\\
+declare const appPath: any;
+
 class mk {
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 	//			ATRIBUTOS										\\
@@ -149,10 +154,10 @@ class mk {
 	};
 
 	// Gerar Objeto a partir de um Form Entries
-	static mkGerarObjeto = (este) => {
-		let form = este;
+	static mkGerarObjeto = (este: any) => {
+		let form: HTMLFormElement = este;
 		if (typeof este != "object") {
-			form = mk.Q(este);
+			form = mk.Q(este) as HTMLFormElement;
 		}
 		let rObjeto = mk.mkLimparOA(
 			Object.fromEntries(new FormData(form).entries())
@@ -163,79 +168,80 @@ class mk {
 		return rObjeto;
 	};
 
-	/**
-	 *
-	 * @param {string} query
-	 * @param {any} valor
-	 * @returns element
-	 */
-	static QSet = (query = "body", valor = null) => {
+	static QSet = (query: HTMLElement | string = "body", valor: any = null) => {
 		if (valor != null) {
-			Mk.Q(query).value = valor;
+			(mk.Q(query) as HTMLInputElement).value = valor;
 		} else {
-			Mk.Q(query).value = "";
+			(mk.Q(query) as HTMLInputElement).value = "";
 		}
-		return Mk.Q(query);
+		return mk.Q(query);
 	};
 
-	/**
-	 * Seta todos os query com os valores das propriedades informadas nos campos.
-	 * O nome da propriedade precisa ser compatível com o PROPNAME do query.
-	 * @param {string} query
-	 * @param {object} obj
-	 * @returns [elements] modificados
-	 */
-	static QSetAll = (query = "input[name='#PROP#']", obj = null) => {
+	// Seta todos os query com os valores das propriedades informadas nos campos.
+	// O nome da propriedade precisa ser compatível com o PROPNAME do query.
+	static QSetAll = (
+		query: string = "input[name='#PROP#']",
+		o: object | null = null
+	) => {
 		let eAfetados = [];
-		if (typeof obj == "object" && !Array.isArray(obj)) {
-			if (obj.length != 0) {
-				for (let p in obj) {
-					let eDynamicQuery = Mk.Q(query.replace("#PROP#", p));
+		if (o != null) {
+			if (typeof o == "object" && !Array.isArray(o)) {
+				for (let p in o) {
+					let eDynamicQuery = mk.Q(
+						query.replace("#PROP#", p)
+					) as HTMLInputElement;
 					if (eDynamicQuery) {
-						if (obj[p]) {
-							eDynamicQuery.value = obj[p];
+						if (o[p as keyof typeof o]) {
+							eDynamicQuery.value = o[p as keyof typeof o];
 							eDynamicQuery.classList.add("atualizar");
 							eAfetados.push(eDynamicQuery);
 						}
 					}
 				}
-			} else console.warn("QSetAll - Array Vazia");
-		} else console.warn("QSetAll - Precisa receber um objeto");
+			} else console.warn("QSetAll - Precisa receber um objeto: " + o);
+		} else console.warn("QSetAll - Objeto não pode ser nulo: " + o);
 		return eAfetados;
 	};
 
-	static Qon = (query = "body") => {
-		let temp = Mk.Q(query);
-		temp.disabled = null;
+	static Qon = (query: HTMLElement | string = "body") => {
+		let temp = mk.Q(query);
+		(temp as HTMLButtonElement).disabled = false;
 		temp.classList.remove("disabled");
 		return temp;
 	};
 
-	static Qoff = (query = "body") => {
-		let temp = Mk.Q(query);
-		temp.disabled = true;
+	static Qoff = (query: HTMLElement | string = "body") => {
+		let temp = mk.Q(query);
+		(temp as HTMLButtonElement).disabled = true;
 		temp.classList.add("disabled");
 		return temp;
 	};
 
-	static QverOn = (query = "body") => {
-		let temp = Mk.Q(query);
+	static QverOn = (query: HTMLElement | string = "body") => {
+		let temp = mk.Q(query);
 		temp.classList.remove("oculto");
 		return temp;
 	};
 
-	static QverOff = (query = "body") => {
-		let temp = Mk.Q(query);
+	static QverOff = (query: HTMLElement | string = "body") => {
+		let temp = mk.Q(query);
 		temp.classList.add("oculto");
 		return temp;
 	};
 
-	static QdataGet = (query = "body", atributoNome) => {
-		return Mk.Q(query).getAttribute("data-" + atributoNome);
+	static QdataGet = (
+		query: HTMLElement | string = "body",
+		atributoNome: string
+	) => {
+		return mk.Q(query).getAttribute("data-" + atributoNome);
 	};
 
-	static QdataSet = (query = "body", atributoNome, atributoValor) => {
-		return Mk.Q(query).setAttribute("data-" + atributoNome, atributoValor);
+	static QdataSet = (
+		query: HTMLElement | string = "body",
+		atributoNome: string,
+		atributoValor: string
+	) => {
+		return mk.Q(query).setAttribute("data-" + atributoNome, atributoValor);
 	};
 
 	// static QaSet = (query = "body", atributoNome, atributoValor) => {
@@ -248,31 +254,19 @@ class mk {
 
 	static GetParam = (name = null) => {
 		if (name != null) {
-			return new URL(document.location).searchParams.get(name);
+			return new URL(document.location.toString()).searchParams.get(name);
 		} else {
-			return new URL(document.location).searchParams;
+			return new URL(document.location.toString()).searchParams;
 		}
 	};
 
-	// Verifica se ARRAY ou OBJETO e executa a função FUNC a cada objeto dentro de OA.
-	static mkExecutaNoObj = (oa, func) => {
-		if (Array.isArray(oa)) {
-			for (let i = 0; i < oa.length; i++) {
-				func(oa[i]);
-			}
-		} else {
-			func(oa);
-		}
-		return oa;
-	};
-
-	static isVisible = (e) => {
+	static isVisible = (e: HTMLElement) => {
 		return (
 			e.offsetWidth > 0 || e.offsetHeight > 0 || e.getClientRects().length > 0
 		);
 	};
 
-	static isFloat = (x) => {
+	static isFloat = (x: any): boolean => {
 		if (!isNaN(x)) {
 			if (parseInt(x) != parseFloat(x)) {
 				return true;
@@ -281,46 +275,32 @@ class mk {
 		return false;
 	};
 
-	/**
-	 * Permite a atualização do JSON de um seletor mkSel por url
-	 * @param {string} eName		Elemento JS
-	 * @param {string} url	String URL de consulta
-	 */
-	static mkSelDlRefill = (eName, cod = null) => {
-		let e = Mk.Q(eName);
-		let urlColeta = appPath + e.getAttribute("data-refill");
-		cod != null ? (urlColeta += cod) : null;
-		mk.GetJson(
-			urlColeta,
-			(parsedData) => {
-				let kv = parsedData;
-				if (typeof parsedData == "object") {
-					kv = JSON.stringify(parsedData);
-				}
-				if (Mk.isJson(kv)) {
-					e.setAttribute("data-selarray", kv);
-					e.classList.add("atualizar");
-				} else {
-					console.error("Resultado não é um JSON. (mkSelDlRefill)");
-				}
-			},
-			null
-		);
+	static mkSelDlRefill = async (eName: string, cod = null): Promise<void> => {
+		let e = mk.Q(eName);
+		let url = appPath + e.getAttribute("data-refill");
+		cod != null ? (url += cod) : null;
+		let retorno = await mk.http(url, mk.t.G, mk.t.J);
+		if (retorno != null) {
+			let kv = retorno;
+			if (typeof retorno == "object") {
+				kv = JSON.stringify(retorno);
+			}
+			if (mk.isJson(kv)) {
+				e.setAttribute("data-selarray", kv);
+				e.classList.add("atualizar");
+			} else {
+				console.error("Resultado não é um JSON. (mkSelDlRefill)");
+			}
+		}
 	};
 
 	// Get Server On
-	static getServerOn = (urlDestino) => {
-		mk.GetJson(
-			urlDestino,
-			(parsedData) => {
-				if (parsedData !== true) {
-					Mk.detectedServerOff();
-				}
-			},
-			mk.detectedServerOff,
-			this.getJson,
-			false
-		);
+	static getServerOn = async (url: string) => {
+		let retorno = await mk.http(url, mk.t.G, mk.t.J);
+		// Vem nulo caso falhe
+		if (retorno !== true) {
+			mk.detectedServerOff();
+		}
 	};
 
 	static detectedServerOff = () => {
@@ -1483,7 +1463,7 @@ class mk {
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //			TEST												\\
 //___________________________________\\
-mk.iniciarGetList("./Teste.json");
+mk.iniciarGetList("./Teste2.json");
 
 // mk.http("./Teste.json", t.G, t.J, null, true);
 // mk.http("./index.html", t.G, t.H, null, true);

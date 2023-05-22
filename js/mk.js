@@ -122,22 +122,22 @@ class mk {
     };
     static QSet = (query = "body", valor = null) => {
         if (valor != null) {
-            Mk.Q(query).value = valor;
+            mk.Q(query).value = valor;
         }
         else {
-            Mk.Q(query).value = "";
+            mk.Q(query).value = "";
         }
-        return Mk.Q(query);
+        return mk.Q(query);
     };
-    static QSetAll = (query = "input[name='#PROP#']", obj = null) => {
+    static QSetAll = (query = "input[name='#PROP#']", o = null) => {
         let eAfetados = [];
-        if (typeof obj == "object" && !Array.isArray(obj)) {
-            if (obj.length != 0) {
-                for (let p in obj) {
-                    let eDynamicQuery = Mk.Q(query.replace("#PROP#", p));
+        if (o != null) {
+            if (typeof o == "object" && !Array.isArray(o)) {
+                for (let p in o) {
+                    let eDynamicQuery = mk.Q(query.replace("#PROP#", p));
                     if (eDynamicQuery) {
-                        if (obj[p]) {
-                            eDynamicQuery.value = obj[p];
+                        if (o[p]) {
+                            eDynamicQuery.value = o[p];
                             eDynamicQuery.classList.add("atualizar");
                             eAfetados.push(eDynamicQuery);
                         }
@@ -145,58 +145,47 @@ class mk {
                 }
             }
             else
-                console.warn("QSetAll - Array Vazia");
+                console.warn("QSetAll - Precisa receber um objeto: " + o);
         }
         else
-            console.warn("QSetAll - Precisa receber um objeto");
+            console.warn("QSetAll - Objeto não pode ser nulo: " + o);
         return eAfetados;
     };
     static Qon = (query = "body") => {
-        let temp = Mk.Q(query);
-        temp.disabled = null;
+        let temp = mk.Q(query);
+        temp.disabled = false;
         temp.classList.remove("disabled");
         return temp;
     };
     static Qoff = (query = "body") => {
-        let temp = Mk.Q(query);
+        let temp = mk.Q(query);
         temp.disabled = true;
         temp.classList.add("disabled");
         return temp;
     };
     static QverOn = (query = "body") => {
-        let temp = Mk.Q(query);
+        let temp = mk.Q(query);
         temp.classList.remove("oculto");
         return temp;
     };
     static QverOff = (query = "body") => {
-        let temp = Mk.Q(query);
+        let temp = mk.Q(query);
         temp.classList.add("oculto");
         return temp;
     };
     static QdataGet = (query = "body", atributoNome) => {
-        return Mk.Q(query).getAttribute("data-" + atributoNome);
+        return mk.Q(query).getAttribute("data-" + atributoNome);
     };
     static QdataSet = (query = "body", atributoNome, atributoValor) => {
-        return Mk.Q(query).setAttribute("data-" + atributoNome, atributoValor);
+        return mk.Q(query).setAttribute("data-" + atributoNome, atributoValor);
     };
     static GetParam = (name = null) => {
         if (name != null) {
-            return new URL(document.location).searchParams.get(name);
+            return new URL(document.location.toString()).searchParams.get(name);
         }
         else {
-            return new URL(document.location).searchParams;
+            return new URL(document.location.toString()).searchParams;
         }
-    };
-    static mkExecutaNoObj = (oa, func) => {
-        if (Array.isArray(oa)) {
-            for (let i = 0; i < oa.length; i++) {
-                func(oa[i]);
-            }
-        }
-        else {
-            func(oa);
-        }
-        return oa;
     };
     static isVisible = (e) => {
         return (e.offsetWidth > 0 || e.offsetHeight > 0 || e.getClientRects().length > 0);
@@ -209,30 +198,30 @@ class mk {
         }
         return false;
     };
-    static mkSelDlRefill = (eName, cod = null) => {
-        let e = Mk.Q(eName);
-        let urlColeta = appPath + e.getAttribute("data-refill");
-        cod != null ? (urlColeta += cod) : null;
-        mk.GetJson(urlColeta, (parsedData) => {
-            let kv = parsedData;
-            if (typeof parsedData == "object") {
-                kv = JSON.stringify(parsedData);
+    static mkSelDlRefill = async (eName, cod = null) => {
+        let e = mk.Q(eName);
+        let url = appPath + e.getAttribute("data-refill");
+        cod != null ? (url += cod) : null;
+        let retorno = await mk.http(url, mk.t.G, mk.t.J);
+        if (retorno != null) {
+            let kv = retorno;
+            if (typeof retorno == "object") {
+                kv = JSON.stringify(retorno);
             }
-            if (Mk.isJson(kv)) {
+            if (mk.isJson(kv)) {
                 e.setAttribute("data-selarray", kv);
                 e.classList.add("atualizar");
             }
             else {
                 console.error("Resultado não é um JSON. (mkSelDlRefill)");
             }
-        }, null);
+        }
     };
-    static getServerOn = (urlDestino) => {
-        mk.GetJson(urlDestino, (parsedData) => {
-            if (parsedData !== true) {
-                Mk.detectedServerOff();
-            }
-        }, mk.detectedServerOff, this.getJson, false);
+    static getServerOn = async (url) => {
+        let retorno = await mk.http(url, mk.t.G, mk.t.J);
+        if (retorno !== true) {
+            mk.detectedServerOff();
+        }
     };
     static detectedServerOff = () => {
         if (mk.Q("body .offlineBlock") == null) {
@@ -1134,4 +1123,4 @@ class mk {
         }
     };
 }
-mk.iniciarGetList("./Teste.json");
+mk.iniciarGetList("./Teste2.json");
