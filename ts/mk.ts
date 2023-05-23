@@ -1635,7 +1635,7 @@ class mk {
 
 	static aposModalFullAberto = async () => {};
 
-	static mkAbrirModalFull_Hide = () => {
+	static mkAModal_Hide = () => {
 		mk.Q("body .mkModalBloco").classList.add("oculto");
 		mk.Q("body").classList.remove("mkSemScrollY");
 	};
@@ -1686,7 +1686,7 @@ class mk {
 		let buttonmkBtnInv = document.createElement("button");
 		buttonmkBtnInv.className = "mkBtnInv absolutoTopoDireito mkEfeitoDodge";
 		buttonmkBtnInv.setAttribute("type", "button");
-		buttonmkBtnInv.setAttribute("onClick", "Mk.mkAbrirModalFull_Hide()");
+		buttonmkBtnInv.setAttribute("onClick", "mk.mkAModal_Hide()");
 		let iModalMk = document.createElement("i");
 		iModalMk.className = "bi bi-x-lg";
 		buttonmkBtnInv.appendChild(iModalMk);
