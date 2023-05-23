@@ -649,7 +649,7 @@ class mk {
         let temp = [];
         if (Array.isArray(listaDados)) {
             listaDados.forEach((o) => {
-                if (o[nomeKey] == valorKey) {
+                if (o[nomeKey] != valorKey) {
                     temp.push(o);
                 }
             });
@@ -659,7 +659,6 @@ class mk {
         }
         return temp;
     };
-    static aposModalFullAberto = () => { };
     static aoCompletarExibicao = () => { };
     static antesDePopularTabela = () => { };
     static atualizarStatusLista = () => {
@@ -1250,28 +1249,59 @@ class mk {
             }
         }
     };
+    static aposModalFullAberto = () => { };
+    static mkAbrirModalFull_Hide = () => {
+        mk.Q("body .mkModalBloco").classList.add("oculto");
+        mk.Q("body").classList.remove("mkSemScrollY");
+    };
+    static mkAtualizarModalFull = async (url, modelo) => {
+        let retorno = await mk.http(url, mk.t.G, mk.t.J);
+        if (retorno != null) {
+            mk.objetoSelecionado = mk.mkFormatarOA(mk.aoReceberDados(retorno));
+            console.group("MODAL: Set Selecionado: ");
+            console.info(mk.objetoSelecionado);
+            console.groupEnd();
+            $(".mkModalBloco .mkModalConteudo").loadTemplate($(modelo), mk.objetoSelecionado, {
+                complete: function () {
+                    console.info("Modelo Atualizado com sucesso. (Fim)");
+                },
+            });
+        }
+        else {
+            console.info("URL Atualizar o modal retornou falha.");
+        }
+    };
+    static mkExibirModalFull = async (url = null, modelo) => {
+        mk.Q("body .mkModalBloco").classList.remove("oculto");
+        mk.Q("body").classList.add("mkSemScrollY");
+        if (url != null) {
+            await mk.mkAtualizarModalFull(url, modelo);
+        }
+        else {
+            console.info("URL NULA! Usando dados já previamente armazenados.");
+        }
+        mk.aposModalFullAberto();
+    };
     static mkModalBuild = async () => {
-        return await Promise.resolve(() => {
-            console.log("mkModalBuild() Ini");
-            let divmkModalBloco = document.createElement("div");
-            divmkModalBloco.className = "mkModalBloco";
-            let divmkModalConteudo = document.createElement("div");
-            divmkModalConteudo.className = "mkModalConteudo";
-            let divmkModalCarregando = document.createElement("div");
-            divmkModalCarregando.className = "text-center";
-            let buttonmkBtnInv = document.createElement("button");
-            buttonmkBtnInv.className = "mkBtnInv absolutoTopoDireito mkEfeitoDodge";
-            buttonmkBtnInv.setAttribute("type", "button");
-            buttonmkBtnInv.setAttribute("onClick", "Mk.mkAbrirModalFull_Hide()");
-            let iModalMk = document.createElement("i");
-            iModalMk.className = "bi bi-x-lg";
-            buttonmkBtnInv.appendChild(iModalMk);
-            divmkModalConteudo.appendChild(divmkModalCarregando);
-            divmkModalBloco.appendChild(divmkModalConteudo);
-            divmkModalBloco.appendChild(buttonmkBtnInv);
-            document.body.appendChild(divmkModalBloco);
-            console.log("mkModalBuild() Fim");
-        });
+        console.log("mkModalBuild() Ini");
+        let divmkModalBloco = document.createElement("div");
+        divmkModalBloco.className = "mkModalBloco";
+        let divmkModalConteudo = document.createElement("div");
+        divmkModalConteudo.className = "mkModalConteudo";
+        let divmkModalCarregando = document.createElement("div");
+        divmkModalCarregando.className = "text-center";
+        let buttonmkBtnInv = document.createElement("button");
+        buttonmkBtnInv.className = "mkBtnInv absolutoTopoDireito mkEfeitoDodge";
+        buttonmkBtnInv.setAttribute("type", "button");
+        buttonmkBtnInv.setAttribute("onClick", "Mk.mkAbrirModalFull_Hide()");
+        let iModalMk = document.createElement("i");
+        iModalMk.className = "bi bi-x-lg";
+        buttonmkBtnInv.appendChild(iModalMk);
+        divmkModalConteudo.appendChild(divmkModalCarregando);
+        divmkModalBloco.appendChild(divmkModalConteudo);
+        divmkModalBloco.appendChild(buttonmkBtnInv);
+        document.body.appendChild(divmkModalBloco);
+        console.log("mkModalBuild() Fim");
     };
     static mkModalClear() {
         mk.Q(".mkModalBloco .mkModalConteudo").innerHTML = "";
@@ -1299,38 +1329,6 @@ class mk {
             console.error("CONTEUDO NULO");
         }
         return console.log("ok");
-    };
-    static mkExibirModalFull = async (url = null, modelo) => {
-        mk.Q("body .mkModalBloco").classList.remove("oculto");
-        mk.Q("body").classList.add("mkSemScrollY");
-        if (url != null) {
-            await mk.mkAtualizarModalFull(url, modelo);
-        }
-        else {
-            console.info("URL NULA! Usando dados já previamente armazenados.");
-        }
-        mk.aposModalFullAberto();
-    };
-    static mkAbrirModalFull_Hide = () => {
-        mk.Q("body .mkModalBloco").classList.add("oculto");
-        mk.Q("body").classList.remove("mkSemScrollY");
-    };
-    static mkAtualizarModalFull = async (url, modelo) => {
-        let retorno = await mk.http(url, mk.t.G, mk.t.J);
-        if (retorno != null) {
-            mk.objetoSelecionado = mk.mkFormatarOA(mk.aoReceberDados(retorno));
-            console.group("MODAL: Set Selecionado: ");
-            console.info(mk.objetoSelecionado);
-            console.groupEnd();
-            $(".mkModalBloco .mkModalConteudo").loadTemplate($(modelo), mk.objetoSelecionado, {
-                complete: function () {
-                    console.info("Modelo Atualizado com sucesso. (Fim)");
-                },
-            });
-        }
-        else {
-            console.info("URL Atualizar o modal retornou falha.");
-        }
     };
 }
 mk.mkClicarNaAba(mk.Q(".mkAbas a.active"));
