@@ -22,7 +22,7 @@ class mk {
 	static fullDados: object[] = [];
 	static exibeDados: object[] = [];
 	static exibePaginado: object[] = [];
-	static sortDir = "d";
+	static sortDir = "a";
 	static sortBy = "";
 	static paginationAtual = 1;
 	static objFiltro: any = [];
@@ -1288,6 +1288,7 @@ class mk {
 
 	static adicionarDados = (objDados: object) => {
 		this.fullDados.push(mk.aoReceberDados(objDados));
+		// this.sortDir = "a";
 		mk.ordenarDados();
 		mk.atualizarLista();
 	};
@@ -1296,12 +1297,14 @@ class mk {
 		// Implementar setObjetoFromId
 		this.fullDados = mk.delObjetoFromId(nomeKey, valorKey, this.fullDados);
 		this.fullDados.push(mk.aoReceberDados(objDados));
+		// this.sortDir = "a";
 		mk.ordenarDados();
 		mk.atualizarLista();
 	};
 
 	static excluirDados = (nomeKey: any, valorKey: any) => {
 		this.fullDados = mk.delObjetoFromId(nomeKey, valorKey, this.fullDados);
+		// this.sortDir = "a";
 		mk.ordenarDados();
 		mk.atualizarLista();
 	};

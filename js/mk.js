@@ -4,7 +4,7 @@ class mk {
     static fullDados = [];
     static exibeDados = [];
     static exibePaginado = [];
-    static sortDir = "d";
+    static sortDir = "a";
     static sortBy = "";
     static paginationAtual = 1;
     static objFiltro = [];
