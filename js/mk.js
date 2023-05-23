@@ -1249,7 +1249,7 @@ class mk {
             }
         }
     };
-    static aposModalFullAberto = () => { };
+    static aposModalFullAberto = async () => { };
     static mkAbrirModalFull_Hide = () => {
         mk.Q("body .mkModalBloco").classList.add("oculto");
         mk.Q("body").classList.remove("mkSemScrollY");
@@ -1283,7 +1283,6 @@ class mk {
         mk.aposModalFullAberto();
     };
     static mkModalBuild = async () => {
-        console.log("mkModalBuild() Ini");
         let divmkModalBloco = document.createElement("div");
         divmkModalBloco.className = "mkModalBloco";
         let divmkModalConteudo = document.createElement("div");
@@ -1301,16 +1300,13 @@ class mk {
         divmkModalBloco.appendChild(divmkModalConteudo);
         divmkModalBloco.appendChild(buttonmkBtnInv);
         document.body.appendChild(divmkModalBloco);
-        console.log("mkModalBuild() Fim");
     };
     static mkModalClear() {
         mk.Q(".mkModalBloco .mkModalConteudo").innerHTML = "";
     }
     static mkAModal = async (url = null, modelo = null, conteudo = null) => {
         if (mk.Q("body .mkModalBloco") == null) {
-            console.log("mkAModal() Build precisa construir");
             await mk.mkModalBuild();
-            console.log("mkAModal() Após Build");
         }
         mk.mkModalClear();
         if (conteudo != null) {
@@ -1328,7 +1324,6 @@ class mk {
         else {
             console.error("CONTEUDO NULO");
         }
-        return console.log("ok");
     };
 }
 mk.mkClicarNaAba(mk.Q(".mkAbas a.active"));

@@ -1633,7 +1633,7 @@ class mk {
 	//			MODAL												\\
 	//___________________________________\\
 
-	static aposModalFullAberto = () => {};
+	static aposModalFullAberto = async () => {};
 
 	static mkAbrirModalFull_Hide = () => {
 		mk.Q("body .mkModalBloco").classList.add("oculto");
@@ -1677,7 +1677,6 @@ class mk {
 	};
 
 	static mkModalBuild = async () => {
-		console.log("mkModalBuild() Ini");
 		let divmkModalBloco = document.createElement("div");
 		divmkModalBloco.className = "mkModalBloco";
 		let divmkModalConteudo = document.createElement("div");
@@ -1695,7 +1694,6 @@ class mk {
 		divmkModalBloco.appendChild(divmkModalConteudo);
 		divmkModalBloco.appendChild(buttonmkBtnInv);
 		document.body.appendChild(divmkModalBloco);
-		console.log("mkModalBuild() Fim");
 	};
 
 	static mkModalClear() {
@@ -1708,9 +1706,7 @@ class mk {
 		conteudo: object | null = null
 	) => {
 		if (mk.Q("body .mkModalBloco") == null) {
-			console.log("mkAModal() Build precisa construir");
 			await mk.mkModalBuild();
-			console.log("mkAModal() Após Build");
 		}
 		mk.mkModalClear();
 
@@ -1729,7 +1725,6 @@ class mk {
 		} else {
 			console.error("CONTEUDO NULO");
 		}
-		return console.log("ok");
 	};
 }
 
