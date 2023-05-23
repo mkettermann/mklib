@@ -1342,3 +1342,6 @@ Object.defineProperty(mk, "mkFiltragemDados", {
 Object.defineProperty(mk, "mkValidaFull", {
     writable: false,
 });
+Object.defineProperty(mk, "t", {
+    writable: false,
+});
