@@ -1609,7 +1609,7 @@ class mk {
 	};
 
 	// Metodo de controle de grupos de abas.
-	static mkClicarNaAba = (este: HTMLElement) => {
+	static mkClicarNaAba = (este: HTMLElement | Element) => {
 		if (este != null) {
 			let estaAba = Number(este.getAttribute("data-pag"));
 			let listaAbas = este.parentElement?.parentElement;
@@ -1734,6 +1734,10 @@ class mk {
 		}
 	};
 }
+//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+//		AO INICIAR										\\
+//___________________________________\\
+mk.mkClicarNaAba(mk.Q(".mkAbas a.active")); // Inicia no ativo
 
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //			OBJETOS CONSTANTES					\\

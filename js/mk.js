@@ -1333,6 +1333,7 @@ class mk {
         }
     };
 }
+mk.mkClicarNaAba(mk.Q(".mkAbas a.active"));
 Object.defineProperty(mk, "http", {
     writable: false,
 });
