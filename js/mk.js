@@ -497,6 +497,48 @@ class mk {
     static transDiasEmMs = (d) => {
         return d * 86400000;
     };
+    static mkYYYYMMDDtoDDMMYYYY = (dataYYYYMMDD) => {
+        let arrayData = dataYYYYMMDD.split("-");
+        let stringRetorno = "";
+        if (arrayData.length >= 3) {
+            stringRetorno = arrayData[2] + "/" + arrayData[1] + "/" + arrayData[0];
+        }
+        else {
+            stringRetorno = dataYYYYMMDD;
+        }
+        return stringRetorno;
+    };
+    static mkFormatarDataOA = (oa) => {
+        function mkFormatarDataOA_Execute(o) {
+            let busca = new RegExp("^[0-2][0-9]{3}[-][0-1][0-9][-][0-3][0-9]$");
+            for (var propName in o) {
+                if (busca.test(o[propName])) {
+                    o[propName] = mk.mkYYYYMMDDtoDDMMYYYY(o[propName]);
+                }
+            }
+            return o;
+        }
+        return mk.mkExecutaNoObj(oa, mkFormatarDataOA_Execute);
+    };
+    static mkBoolToSimNaoOA = (oa) => {
+        function mkBoolToSimNaoOA_Execute(o) {
+            for (var propName in o) {
+                if (o[propName].toString().toLowerCase() === "true" ||
+                    o[propName] === true) {
+                    o[propName] = "Sim";
+                }
+                if (o[propName].toString().toLowerCase() === "false" ||
+                    o[propName] === false) {
+                    o[propName] = "N&atilde;o";
+                }
+            }
+            return o;
+        }
+        return mk.mkExecutaNoObj(oa, mkBoolToSimNaoOA_Execute);
+    };
+    static mkFormatarOA = (oa) => {
+        return mk.mkBoolToSimNaoOA(mk.mkFormatarDataOA(mk.mkLimparOA(oa)));
+    };
     static CarregarON = () => {
         if (mk.Q("body .CarregadorMkBlock") == null) {
             let divCarregadorMkBlock = document.createElement("div");
@@ -881,7 +923,7 @@ class mk {
                 mk.Q(".listBody").removeAttribute("hidden");
                 mk.filtraPagination();
                 mk.antesDePopularTabela();
-                $("div.boxMain div.boxTable table.tableListagem tbody.listBody").loadTemplate(mk.Q("#template"), mk.exibePaginado, {
+                $(".tableListagem tbody.listBody").loadTemplate(mk.Q("#template"), mk.exibePaginado, {
                     complete: mk.aoCompletarExibicao,
                 });
             }
@@ -1122,5 +1164,181 @@ class mk {
             mk.CarregarOFF();
         }
     };
+    static fUIFaseUpdateLinkFase = () => {
+        mk.QAll("ul.mkUlFase li a").forEach((e) => {
+            e.parentElement?.classList.remove("mkFaseBack");
+            e.parentElement?.classList.remove("mkFaseAtivo");
+            e.parentElement?.classList.remove("disabled");
+            let eNumPag = Number(e.getAttribute("data-pag"));
+            let bLibera = e.getAttribute("data-libera");
+            if (this.mkFaseAtual > eNumPag) {
+                e.parentElement?.classList.add("mkFaseBack");
+            }
+            if (this.mkFaseAtual == eNumPag) {
+                e.parentElement?.classList.add("mkFaseAtivo");
+            }
+            if (bLibera == "false") {
+                e.parentElement?.classList.add("disabled");
+            }
+        });
+    };
+    static fUIFaseUpdateView = (obj) => {
+        for (var i = 1; i <= Number(mk.Q(".mkUlFase").getAttribute("data-totalfases")); i++) {
+            mk.Q(".modalFase" + i).classList.add("oculto");
+        }
+        this.mkFaseAtual = obj["destinoFase"];
+        mk.Q(".modalFase" + this.mkFaseAtual).classList.remove("oculto");
+        mk.Q(".btnVoltar").classList.add("disabled");
+        if (this.mkFaseAtual > 1) {
+            mk.Q(".btnVoltar").classList.remove("disabled");
+        }
+        mk.Q(".btnAvancar").classList.remove("oculto");
+        mk.Q(".btnEnviar").classList.add("oculto");
+        if (this.mkFaseAtual >=
+            Number(mk.Q(".mkUlFase").getAttribute("data-totalfases"))) {
+            mk.Q(".btnAvancar").classList.add("oculto");
+            mk.Q(".btnEnviar").classList.remove("oculto");
+        }
+        mk.fUIFaseUpdateLinkFase();
+    };
+    static fUIFaseVoltar = (esteForm) => {
+        let obj = {
+            destinoFase: this.mkFaseAtual - 1,
+            form: esteForm,
+        };
+        mk.fUIFaseUpdateView(obj);
+    };
+    static fUIFaseAvancar = (esteForm) => {
+        let obj = {
+            destinoFase: this.mkFaseAtual + 1,
+            form: esteForm,
+        };
+        mk.mkValidaFull(obj.form, mk.fUIFaseLiberarView, obj);
+    };
+    static fUIFaseEspecifica = (e) => {
+        let obj = {
+            destinoFase: Number(e.getAttribute("data-pag")),
+            form: mk.getFormFrom(e),
+        };
+        if (obj.destinoFase < this.mkFaseAtual ||
+            e.getAttribute("data-libera") == "true") {
+            mk.mkValidaFull(obj.form, mk.fUIFaseLiberarView, obj);
+        }
+    };
+    static fUIFaseLiberarView = (obj) => {
+        this.sendObjFull = mk.mkGerarObjeto(obj["form"]);
+        mk.fUIFaseUpdateView(obj);
+    };
+    static mkClicarNaAba = (este) => {
+        if (este != null) {
+            let estaAba = Number(este.getAttribute("data-pag"));
+            let listaAbas = este.parentElement?.parentElement;
+            listaAbas?.querySelectorAll("a").forEach((e) => {
+                e.classList.remove("active");
+            });
+            este.classList.add("active");
+            let totalAbas = Number(listaAbas?.getAttribute("data-mkabas"));
+            for (let i = 1; i <= totalAbas; i++) {
+                mk.QAll(".mkAba" + i).forEach((e) => {
+                    if (i == estaAba) {
+                        e.classList.remove("oculto");
+                    }
+                    else {
+                        e.classList.add("oculto");
+                    }
+                });
+            }
+        }
+    };
+    static mkModalBuild = async () => {
+        return await Promise.resolve(() => {
+            console.log("mkModalBuild() Ini");
+            let divmkModalBloco = document.createElement("div");
+            divmkModalBloco.className = "mkModalBloco";
+            let divmkModalConteudo = document.createElement("div");
+            divmkModalConteudo.className = "mkModalConteudo";
+            let divmkModalCarregando = document.createElement("div");
+            divmkModalCarregando.className = "text-center";
+            let buttonmkBtnInv = document.createElement("button");
+            buttonmkBtnInv.className = "mkBtnInv absolutoTopoDireito mkEfeitoDodge";
+            buttonmkBtnInv.setAttribute("type", "button");
+            buttonmkBtnInv.setAttribute("onClick", "Mk.mkAbrirModalFull_Hide()");
+            let iModalMk = document.createElement("i");
+            iModalMk.className = "bi bi-x-lg";
+            buttonmkBtnInv.appendChild(iModalMk);
+            divmkModalConteudo.appendChild(divmkModalCarregando);
+            divmkModalBloco.appendChild(divmkModalConteudo);
+            divmkModalBloco.appendChild(buttonmkBtnInv);
+            document.body.appendChild(divmkModalBloco);
+            console.log("mkModalBuild() Fim");
+        });
+    };
+    static mkModalClear() {
+        mk.Q(".mkModalBloco .mkModalConteudo").innerHTML = "";
+    }
+    static mkAModal = async (url = null, modelo = null, conteudo = null) => {
+        if (mk.Q("body .mkModalBloco") == null) {
+            console.log("mkAModal() Build precisa construir");
+            await mk.mkModalBuild();
+            console.log("mkAModal() Após Build");
+        }
+        mk.mkModalClear();
+        if (conteudo != null) {
+            if (modelo != null) {
+                $(".mkModalBloco .mkModalConteudo").loadTemplate($(modelo), conteudo, {
+                    complete: function () {
+                        mk.mkExibirModalFull(url, modelo);
+                    },
+                });
+            }
+            else {
+                console.error("MODELO NULO");
+            }
+        }
+        else {
+            console.error("CONTEUDO NULO");
+        }
+        return console.log("ok");
+    };
+    static mkExibirModalFull = async (url = null, modelo) => {
+        mk.Q("body .mkModalBloco").classList.remove("oculto");
+        mk.Q("body").classList.add("mkSemScrollY");
+        if (url != null) {
+            await mk.mkAtualizarModalFull(url, modelo);
+        }
+        else {
+            console.info("URL NULA! Usando dados já previamente armazenados.");
+        }
+        mk.aposModalFullAberto();
+    };
+    static mkAbrirModalFull_Hide = () => {
+        mk.Q("body .mkModalBloco").classList.add("oculto");
+        mk.Q("body").classList.remove("mkSemScrollY");
+    };
+    static mkAtualizarModalFull = async (url, modelo) => {
+        let retorno = await mk.http(url, mk.t.G, mk.t.J);
+        if (retorno != null) {
+            mk.objetoSelecionado = mk.mkFormatarOA(mk.aoReceberDados(retorno));
+            console.group("MODAL: Set Selecionado: ");
+            console.info(mk.objetoSelecionado);
+            console.groupEnd();
+            $(".mkModalBloco .mkModalConteudo").loadTemplate($(modelo), mk.objetoSelecionado, {
+                complete: function () {
+                    console.info("Modelo Atualizado com sucesso. (Fim)");
+                },
+            });
+        }
+        else {
+            console.info("URL Atualizar o modal retornou falha.");
+        }
+    };
 }
-mk.iniciarGetList("./Teste.json");
+Object.defineProperty(mk, "GetJson", {
+    writable: false,
+});
+Object.defineProperty(mk, "GetText", {
+    writable: false,
+});
+Object.defineProperty(mk, "CFG", {
+    writable: false,
+});

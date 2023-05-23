@@ -1701,48 +1701,52 @@ class mk {
 		mk.Q("body").classList.add("mkSemScrollY");
 		if (url != null) {
 			await mk.mkAtualizarModalFull(url, modelo);
+		} else {
+			console.info("URL NULA! Usando dados já previamente armazenados.");
 		}
-
 		mk.aposModalFullAberto();
 	};
 
 	static mkAbrirModalFull_Hide = () => {
-		Mk.Q("body .mkModalBloco").classList.add("oculto");
-		Mk.Q("body").classList.remove("mkSemScrollY");
+		mk.Q("body .mkModalBloco").classList.add("oculto");
+		mk.Q("body").classList.remove("mkSemScrollY");
 	};
 
-	static mkAtualizarModalFull = (url = null, modelo = null) => {
-		if (url != null) {
-			Mk.GetJson(
-				url,
-				(parsedData) => {
-					// objetoSelecionado fica disponivel durante a tela Detail
-					Mk.objetoSelecionado = Mk.mkFormatarOA(Mk.aoReceberDados(parsedData)); // <= Ao Receber Dados
-					if (modelo != null) {
-						console.group("MODAL: Selecionado: ");
-						console.info(Mk.objetoSelecionado);
-						console.groupEnd();
-						$(".mkModalBloco .mkModalConteudo").loadTemplate(
-							$(modelo),
-							Mk.objetoSelecionado,
-							{
-								complete: function () {},
-							}
-						);
-					} else {
-						console.error("MODELO VEIO NULO");
-					}
-				},
-				function () {},
-				this.getJson,
-				false
+	static mkAtualizarModalFull = async (url: string, modelo: string) => {
+		let retorno = await mk.http(url, mk.t.G, mk.t.J);
+		if (retorno != null) {
+			// objetoSelecionado fica disponivel durante a tela Detail
+			mk.objetoSelecionado = mk.mkFormatarOA(mk.aoReceberDados(retorno)); // <= Ao Receber Dados
+			console.group("MODAL: Set Selecionado: ");
+			console.info(mk.objetoSelecionado);
+			console.groupEnd();
+			$(".mkModalBloco .mkModalConteudo").loadTemplate(
+				$(modelo),
+				mk.objetoSelecionado,
+				{
+					complete: function () {
+						console.info("Modelo Atualizado com sucesso. (Fim)");
+					},
+				}
 			);
 		} else {
-			console.info("URL NULA! Usando dados já previamente armazenados.");
-			Mk.mkExibirModalFull();
+			console.info("URL Atualizar o modal retornou falha.");
 		}
 	};
 }
+
+//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+//			OBJETOS CONSTANTES					\\
+//___________________________________\\
+Object.defineProperty(mk, "GetJson", {
+	writable: false,
+});
+Object.defineProperty(mk, "GetText", {
+	writable: false,
+});
+Object.defineProperty(mk, "CFG", {
+	writable: false,
+});
 
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //			TEST												\\
