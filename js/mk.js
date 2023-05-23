@@ -1333,12 +1333,12 @@ class mk {
         }
     };
 }
-Object.defineProperty(mk, "GetJson", {
+Object.defineProperty(mk, "http", {
     writable: false,
 });
-Object.defineProperty(mk, "GetText", {
+Object.defineProperty(mk, "mkFiltragemDados", {
     writable: false,
 });
-Object.defineProperty(mk, "CFG", {
+Object.defineProperty(mk, "mkValidaFull", {
     writable: false,
 });
