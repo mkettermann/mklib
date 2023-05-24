@@ -148,8 +148,8 @@
 		width: calc(100% - 70px);
 		position: fixed;
 		height: calc(100% - 70px);
-		max-height: calc(100% - 70px);
-		min-height: calc(100% - 70px);
+		/* max-height: calc(100% - 70px);
+		min-height: calc(100% - 70px); */
 	}
 	.mkSelList .mkSelItem {
 		height: 40px;
