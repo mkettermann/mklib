@@ -151,7 +151,9 @@
 		max-height: calc(100% - 70px);
 		min-height: calc(100% - 70px);
 	}
-	.mkSelList .mkSelItem {
+	.mkSelList .mkSelItem,
+	.mkSelList .mkSelItemDeCima,
+	.mkSelList .mkSelItemDeBaixo {
 		height: 40px;
 		min-height: 40px;
 		max-height: 40px;
