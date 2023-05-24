@@ -52,7 +52,7 @@
 .mkSelPesquisa {
 	position: relative;
 	display: flex;
-	overflow: hidden;
+	/* overflow: hidden; Tirei para ver a flexa de dentro da div de pesquisa */
 	text-decoration: none;
 	align-items: center;
 	border-radius: 5px;
@@ -68,6 +68,15 @@
 	padding: 0px 0px 0px 2px;
 }
 
+/* ARROW EXTERNO*/
+.mkSelBloco:has(.mkSel[data-selmoversel="true"]) {
+	/* background-color: yellow; */
+}
+.mkSelBloco:has(.mkSel[data-selmoversel="true"]) .mkSelPesquisa {
+	width: calc(100% - 50px);
+	/* background-color: lightgreen; */
+}
+
 .mkSelInputExibeArrow {
 	position: absolute;
 	right: 5px;
@@ -79,11 +88,55 @@
 	transform: rotate(-45deg);
 	pointer-events: none;
 }
-.mkSelInputExibeMarca {
+.mkSelArrowSelLeft {
 	position: absolute;
-	right: 20px;
-	width: 7px;
-	height: 7px;
+	left: -25px;
+	width: 24px;
+	height: 100%;
+	border: 1px outset;
+	border-top-left-radius: 50%;
+	border-bottom-left-radius: 50%;
+	line-height: 100%;
+	border-color: var(--FlexinhaCor);
+	color: var(--Main2);
+}
+.mkSelArrowSelRight {
+	position: absolute;
+	right: -25px;
+	width: 24px;
+	height: 100%;
+	border: 1px outset;
+	border-top-right-radius: 50%;
+	border-bottom-right-radius: 50%;
+	line-height: 100%;
+	border-color: var(--FlexinhaCor);
+	color: var(--Main2);
+	transition: 0.3s;
+}
+
+.mkSelArrowSelLeft:hover,
+.mkSelArrowSelRight:hover {
+	cursor: pointer;
+	border: 1px inset;
+	border-color: var(--FlexinhaCor);
+}
+
+.mkSelArrowSelLeft::before {
+	content: "\2BA8";
+}
+
+.mkSelArrowSelRight::before {
+	content: "\2BA8";
+	transform: rotate(180deg);
+}
+
+.mkSelArrowSelLeft:hover::before {
+	transform: translate(-5px, 1px) rotate(45deg) skew(-25deg) scale(1.15);
+	transition: 0.25s;
+}
+.mkSelArrowSelRight:hover::before {
+	transform: translate(5px, -1px) rotate(225deg) skew(-25deg) scale(1.15);
+	transition: 0.25s;
 }
 
 .mkSelBloco:has(input.mkSelInputExibe:focus) .mkSelInputExibeArrow {
