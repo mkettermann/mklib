@@ -18,6 +18,7 @@
 	--CorItensHover: #000;
 	--CorSeletor: var(--CorItensHover);
 	--CorItens: var(--BordaItens);
+	--mkSelIndex: 2000;
 
 	display: flex;
 	flex-direction: column;
@@ -97,7 +98,7 @@
 	display: none;
 	flex-direction: column;
 	position: absolute;
-	z-index: +1000;
+	z-index: calc(var(--mkSelIndex));
 	text-align: left;
 	background: var(--FundoItens);
 	color: var(--CorItens);
@@ -188,21 +189,20 @@
 }
 
 /* BOTOES DE MOVER PRA CIMA E PRA BAIXO */
-/* .mkSelItemDeCima {
-	width: 30%;
+.mkSelItemDeCima {
 	position: sticky;
 	background-color: var(--FundoSeletorDesativado);
-	border-top-left-radius: 50%;
-	border-top-right-radius: 50%;
 	color: var(--FundoItens);
 	text-align: center;
-	top: 0;
+	top: 0px;
 	right: 0;
+	z-index: calc(var(--mkSelIndex) + 1);
 }
 .mkSelItemDeCima:hover {
 	background-color: var(--Main2);
+	cursor: default;
 }
-*/
+
 .mkSelItemDeBaixo {
 	position: sticky;
 	background-color: var(--FundoSeletorDesativado);
