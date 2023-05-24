@@ -151,12 +151,16 @@
 		max-height: calc(100% - 70px);
 		min-height: calc(100% - 70px);
 	}
-	.mkSelList .mkSelItem,
-	.mkSelList .mkSelItemDeCima,
-	.mkSelList .mkSelItemDeBaixo {
+	.mkSelList .mkSelItem {
 		height: 40px;
 		min-height: 40px;
 		max-height: 40px;
+	}
+	.mkSelList .mkSelItemDeCima,
+	.mkSelList .mkSelItemDeBaixo {
+		height: 30px;
+		min-height: 30px;
+		max-height: 30px;
 	}
 	.mkSelItem span {
 		padding-left: 8px;
