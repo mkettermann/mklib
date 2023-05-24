@@ -69,9 +69,9 @@
 }
 
 /* ARROW EXTERNO*/
-.mkSelBloco:has(.mkSel[data-selmoversel="true"]) {
-	/* background-color: yellow; */
-}
+/*.mkSelBloco:has(.mkSel[data-selmoversel="true"]) {
+	 background-color: yellow; 
+}*/
 .mkSelBloco:has(.mkSel[data-selmoversel="true"]) .mkSelPesquisa {
 	width: calc(100% - 50px);
 	/* background-color: lightgreen; */
