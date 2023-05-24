@@ -93,7 +93,6 @@
 .mkSelBloco:has(input.mkSelInputExibe:focus) .mkSelList {
 	display: flex;
 }
-
 .mkSelList {
 	display: none;
 	flex-direction: column;
@@ -127,6 +126,9 @@
 	max-height: 300px;
 	overflow-y: auto;
 	width: max-content;
+}
+.mkSelBloco:has(input.mkSel[data-dev="true"]) .mkSelList {
+	display: flex;
 }
 
 .mkSelItem {

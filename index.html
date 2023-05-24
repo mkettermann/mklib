@@ -21,8 +21,21 @@
 			<div>
 				<h2>MK SEL (Seletor)</h2>
 				<br />
-				- Setar atributo <i>data-selmove="false"</i> para impedir flexas de
-				surgirem <br /><br />
+				<table>
+					<tr>
+						<td>- Impedir flexas de surgirem</td>
+						<td>
+							<b><i>data-selmove="false"</i></b>
+						</td>
+					</tr>
+					<tr>
+						<td>- Modo DEV:</td>
+						<td>
+							<b><i>data-dev="true"</i></b>
+						</td>
+					</tr>
+				</table>
+				<br />
 				<label>Comprido (Max 3 selecionados):</label>
 				<input
 					class="iConsultas mkSel text-box single-line"
@@ -43,13 +56,30 @@
 					value=""
 				/>
 				<br /><br />
-				<label>Seletor Curto:</label>
+				<label>Curto:</label>
 				<input
 					class="mkSel"
 					style="width: 150px"
 					data-selapenas="1"
 					data-selmove="false"
 					data-selarray='[{"k":"","v":"Todos"},{"k":"1","v":"Marcos"},{"k":"2","v":"Kettermann"}]'
+					type="text"
+					value=""
+				/>
+
+				<br /><br />
+				<label
+					>APENAS 1 com controle de SELETOR EXTERNO: (<b
+						><i>data-selmoversel="true"</i></b
+					>)</label
+				>
+				<input
+					class="mkSel"
+					style="width: 150px"
+					data-selapenas="1"
+					data-dev="true"
+					data-selmoversel="true"
+					data-selarray='[{"k":"","v":"Todos"},{"k":"1","v":"Acre "},{"k":"2","v":"Alagoas"},{"k":"3","v":"Amap\u00E1 "},{"k":"4","v":"Amazonas "},{"k":"5","v":"Bahia"},{"k":"6","v":"Cear\u00E1"},{"k":"7","v":"Distrito Federal "},{"k":"8","v":"Espirito Santo"},{"k":"9","v":"Goi\u00E1s"},{"k":"10","v":"Maranh\u00E3o"},{"k":"11","v":"Mato Grosso "},{"k":"12","v":"Mato Grosso do Sul"},{"k":"13","v":"Minas Gerais "},{"k":"14","v":"Par\u00E1"},{"k":"15","v":"Para\u00EDba"},{"k":"16","v":"Paran\u00E1"},{"k":"17","v":"Pernambuco"},{"k":"18","v":"Piau\u00ED"},{"k":"19","v":"Rio de Janeiro"},{"k":"20","v":"Rio Grande do Norte"},{"k":"21","v":"Rio Grande do Sul"},{"k":"22","v":"Rond\u00F4nia"},{"k":"23","v":"Roraima"},{"k":"24","v":"Santa Catarina"},{"k":"25","v":"S\u00E3o Paulo"},{"k":"26","v":"Sergipe"},{"k":"27","v":"Tocantins"}]'
 					type="text"
 					value=""
 				/>
