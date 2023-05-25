@@ -80,7 +80,9 @@
 .mkSelInputExibeArrow {
 	position: absolute;
 	right: 5px;
-	width: 7px;
+	width: 7px !important;
+	min-width: 7px !important;
+	max-width: 7px !important;
 	height: 7px;
 	border: 3px solid transparent;
 	border-bottom: 3px solid var(--FlexinhaCor);
@@ -122,21 +124,23 @@
 }
 
 .mkSelArrowSelLeft::before {
-	content: "\2BA8";
+	content: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 12.1'><path d='M15.9,0c.1,1.2.3,4.1-1.1,6a4.7,4.7,0,0,1-1.1,1c-3,2.2-7.9,1.6-10,2.3a.6.6,0,0,0-.6.5c-.5.8.4,2.1.2,2.3S.7,10.4,0,7.5c-.2-.7,2.7-4.9,3-4.6S2.3,5,2.9,5.8a.5.5,0,0,0,.7.2c4.1-.1,7.9-.2,10.1-2.4a5.1,5.1,0,0,0,.9-1A8.9,8.9,0,0,0,15.9,0Z'/></svg>");
+	width: 50%;
 }
 
 .mkSelArrowSelRight::before {
-	content: "\2BA8";
+	content: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 12.1'><path d='M15.9,0c.1,1.2.3,4.1-1.1,6a4.7,4.7,0,0,1-1.1,1c-3,2.2-7.9,1.6-10,2.3a.6.6,0,0,0-.6.5c-.5.8.4,2.1.2,2.3S.7,10.4,0,7.5c-.2-.7,2.7-4.9,3-4.6S2.3,5,2.9,5.8a.5.5,0,0,0,.7.2c4.1-.1,7.9-.2,10.1-2.4a5.1,5.1,0,0,0,.9-1A8.9,8.9,0,0,0,15.9,0Z'/></svg>");
+	width: 50%;
 	transform: rotate(180deg);
 }
 
 .mkSelArrowSelLeft:hover::before {
-	transform: translate(-5px, 1px) rotate(45deg) skew(-25deg) scale(1.15);
-	transition: 0.25s;
+	transform: translateX(-4px) rotate(55deg) scale(1.2) skew(-35deg);
+	transition: 3s cubic-bezier(0.1, 0, 0, 1);
 }
 .mkSelArrowSelRight:hover::before {
-	transform: translate(5px, -1px) rotate(225deg) skew(-25deg) scale(1.15);
-	transition: 0.25s;
+	transform: translateX(4px) rotate(235deg) scale(1.2) skew(-35deg);
+	transition: 3s cubic-bezier(0.1, 0, 0, 1);
 }
 
 .mkSelBloco:has(input.mkSelInputExibe:focus) .mkSelInputExibeArrow {
