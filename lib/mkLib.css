@@ -359,7 +359,11 @@ button.CarregadorMkTopoDireito:hover {
 	padding: 1px;
 }
 
-.divInputInput:has(.pending) {
+.divInputInput:has(.iConsultas) .field-validation-error {
+	display: none;
+}
+
+.divInputInput:has(.pending:not(.iConsultas)) {
 	position: relative;
 	box-sizing: border-box;
 	color: #000;
@@ -371,7 +375,7 @@ button.CarregadorMkTopoDireito:hover {
 	margin: -5px 0px;
 }
 
-.divInputInput:has(.pending)::before {
+.divInputInput:has(.pending:not(.iConsultas))::before {
 	content: "";
 	position: absolute;
 	top: 0;
@@ -627,6 +631,37 @@ button.CarregadorMkTopoDireito:hover {
 =========================*/
 .mkEscurece {
 	filter: brightness(40%);
+}
+
+/* =======================
+	MK Effect: ESTRELA
+=========================*/
+.mkTerremoto {
+	animation-name: estrela;
+	animation-duration: 0.2s;
+	animation-iteration-count: 3;
+	animation-timing-function: linear;
+}
+
+@keyframes estrela {
+	0% {
+		transform: translate(-1px, 1px);
+	}
+	20% {
+		transform: translate(0px, -1px);
+	}
+	40% {
+		transform: translate(1px, 1px);
+	}
+	60% {
+		transform: translate(-2px, 0px);
+	}
+	80% {
+		transform: translate(2px, 0px);
+	}
+	100% {
+		transform: translate(-1px, 1px);
+	}
 }
 
 /* =======================
