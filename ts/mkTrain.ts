@@ -1,4 +1,3 @@
-#!/usr/bin/node
 /**
  * Criado por Marcos Kettermann em 28/05/2023
  * Classe Util para manipulação de dados.
@@ -6,7 +5,7 @@
 
 class Mapeador extends Map {
 	vPadrao;
-	constructor(vPadrao) {
+	constructor(vPadrao: any) {
 		super();
 		this.vPadrao = vPadrao;
 	}
@@ -61,9 +60,14 @@ class mkHistogram {
 
 class mktrain {
 	static histogram = async () => {
-		process.stdin.setEncoding("utf-8");
+		const arq = fetch("./js/test.txt").then((data) => {
+			let texto = data.text();
+			return texto;
+		});
+		const coleta = await arq.then();
+		console.log("texto: " + coleta);
 		let h = new mkHistogram();
-		for await (let bloco of process.stdin) {
+		for await (let bloco of coleta) {
 			h.add(bloco);
 		}
 		return h;
@@ -71,6 +75,6 @@ class mktrain {
 }
 
 mktrain.histogram().then((r) => {
+	console.log("Resumo");
 	console.log(r.toString());
 });
-console.log("Executou");
