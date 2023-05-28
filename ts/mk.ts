@@ -428,15 +428,7 @@ class mk {
 	// Clona tanto uma array quanto um objeto ao ser enviado por parametro. (map não clonou)
 	static mkClonarOA = (oa: object | object[]): object | object[] => {
 		if (Array.isArray(oa)) {
-			let temp: object[] = [];
-			oa.forEach((o) => {
-				let novoO: any = {};
-				for (let p in o) {
-					novoO[p] = o[p as keyof typeof o];
-				}
-				temp.push(novoO);
-			});
-			return temp;
+			return Array.from(oa); // New Array sem referencia. ES6
 		} else {
 			let novoO: object = {};
 			if (typeof oa === "object") {

@@ -316,15 +316,7 @@ class mk {
     };
     static mkClonarOA = (oa) => {
         if (Array.isArray(oa)) {
-            let temp = [];
-            oa.forEach((o) => {
-                let novoO = {};
-                for (let p in o) {
-                    novoO[p] = o[p];
-                }
-                temp.push(novoO);
-            });
-            return temp;
+            return Array.from(oa);
         }
         else {
             let novoO = {};
