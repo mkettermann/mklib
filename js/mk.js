@@ -1102,9 +1102,12 @@ class mk {
         });
     };
     static TerremotoErros = (form) => {
+        console.log(form);
         mk.QAll(form + " input.input-validation-error").forEach((e) => {
-            e.nextElementSibling?.classList.remove("mkTerremoto");
             e.nextElementSibling?.classList.add("mkTerremoto");
+            setTimeout(() => {
+                e.nextElementSibling?.classList.remove("mkTerremoto");
+            }, 500);
         });
     };
     static mkAindaPendente = (form) => {
