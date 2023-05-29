@@ -1102,7 +1102,6 @@ class mk {
         });
     };
     static TerremotoErros = (form) => {
-        console.log(form);
         mk.QAll(form + " input.input-validation-error").forEach((e) => {
             e.nextElementSibling?.classList.add("mkTerremoto");
             setTimeout(() => {

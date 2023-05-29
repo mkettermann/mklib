@@ -1445,7 +1445,6 @@ class mk {
 
 	// Efeito de terremoto em campos com erros no formulario informado
 	static TerremotoErros = (form: string): void => {
-		console.log(form);
 		mk.QAll(form + " input.input-validation-error").forEach((e) => {
 			e.nextElementSibling?.classList.add("mkTerremoto");
 			setTimeout(() => {
