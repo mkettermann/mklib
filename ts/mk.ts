@@ -1443,6 +1443,14 @@ class mk {
 	//			VALIDADOR										\\
 	//___________________________________\\
 
+	// Efeito de terremoto em campos com erros no formulario informado
+	static TerremotoErros = (form: string): void => {
+		mk.QAll(form + " input.input-validation-error").forEach((e) => {
+			e.nextElementSibling?.classList.remove("mkTerremoto");
+			e.nextElementSibling?.classList.add("mkTerremoto");
+		});
+	};
+
 	// Funcao tipo isPendente para validacao para mkValida. Aqui valida Pendente apenas.
 	static mkAindaPendente = (form: string) => {
 		let temPendencia = false;
@@ -1502,6 +1510,7 @@ class mk {
 				fUIValidou(varRepassaA);
 			}
 		} else {
+			mk.TerremotoErros(form);
 			if (mk.mkCountValidate < 2) {
 				//Auto reexecutar pois o parse do unobtrutive se perde de primeira
 				setTimeout(() => {
