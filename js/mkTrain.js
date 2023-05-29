@@ -1,6 +1,6 @@
 "use strict";
-var _a;
 class Mapeador extends Map {
+    vPadrao;
     constructor(vPadrao) {
         super();
         this.vPadrao = vPadrao;
@@ -15,6 +15,8 @@ class Mapeador extends Map {
     }
 }
 class mkHistogram {
+    letrasConta;
+    letrasTotal;
     constructor() {
         this.letrasConta = new Mapeador(0);
         this.letrasTotal = 0;
@@ -48,21 +50,20 @@ class mkHistogram {
     }
 }
 class mktrain {
+    static histogram = async () => {
+        const arq = fetch("./js/test.txt").then((data) => {
+            let texto = data.text();
+            return texto;
+        });
+        const coleta = await arq.then();
+        console.log("texto: " + coleta);
+        let h = new mkHistogram();
+        for await (let bloco of coleta) {
+            h.add(bloco);
+        }
+        return h;
+    };
 }
-_a = mktrain;
-mktrain.histogram = async () => {
-    const arq = fetch("./js/test.txt").then((data) => {
-        let texto = data.text();
-        return texto;
-    });
-    const coleta = await arq.then();
-    console.log("texto: " + coleta);
-    let h = new mkHistogram();
-    for await (let bloco of coleta) {
-        h.add(bloco);
-    }
-    return h;
-};
 mktrain.histogram().then((r) => {
     console.log("Resumo");
     console.log(r.toString());

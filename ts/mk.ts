@@ -1473,6 +1473,7 @@ class mk {
 		$.validator.unobtrusive.parse(form);
 		var resultado = $(form).data("unobtrusiveValidation").validate();
 		console.info("ModelState é Valido? " + resultado);
+		resultado ? null : mk.TerremotoErros(form);
 		return resultado;
 	};
 
@@ -1508,9 +1509,9 @@ class mk {
 			if (liberado) {
 				mk.CarregarOFF();
 				fUIValidou(varRepassaA);
+				mk.mkCountValidate = 0;
 			}
 		} else {
-			mk.TerremotoErros(form);
 			if (mk.mkCountValidate < 2) {
 				//Auto reexecutar pois o parse do unobtrutive se perde de primeira
 				setTimeout(() => {
