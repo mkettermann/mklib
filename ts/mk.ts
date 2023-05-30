@@ -31,6 +31,7 @@ class mk {
 	static mkFaseAtual = 1;
 	static mkCountValidate = 0;
 	static contaOrdena = 0;
+	static debug = 0; // 0 / 1
 	static status = {
 		totalFull: this.fullDados.length,
 		totalFiltrado: this.exibeDados.length,
@@ -769,13 +770,14 @@ class mk {
 		// INFO DEV
 		console.groupCollapsed(pacote.method + ": " + url);
 		console.time(url);
-
-		console.groupCollapsed(">> Cabecalho do pacote");
-		console.info(Object.fromEntries(headers.entries()));
-		// console.groupCollapsed(">> Pacote full");
-		// console.info(pacote);
-		// console.groupEnd();
-		console.groupEnd();
+		if (mk.debug == 1) {
+			console.groupCollapsed(">> Cabecalho do pacote");
+			console.info(Object.fromEntries(headers.entries()));
+			console.groupCollapsed(">> Pacote full");
+			console.info(pacote);
+			console.groupEnd();
+			console.groupEnd();
+		}
 		if (metodo == mk.t.P) {
 			console.groupCollapsed(">> Objeto Enviado (Body)");
 			console.group(">>> Dados de entrada");
