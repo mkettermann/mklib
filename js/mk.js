@@ -565,11 +565,13 @@ class mk {
                 body = JSON.stringify(dados);
             }
             else if (tipo == mk.t.F) {
+                dados.append("__RequestVerificationToken", mkaft.value);
                 body = dados;
             }
         }
         let h = {
             method: metodo,
+            "MKANTI-FORGERY-TOKEN": mkaft ? mkaft.value : "",
             headers: {
                 "Content-Type": tipo,
                 "MKANTI-FORGERY-TOKEN": mkaft ? mkaft.value : "",
@@ -584,12 +586,23 @@ class mk {
         console.info(">> TYPE: " + h.headers["Content-Type"]);
         if (metodo == mk.t.P) {
             console.groupCollapsed(">> Objeto Enviado");
-            console.log("Dados: ");
+            console.group(">>> Dados");
             console.info(dados);
-            console.log("String: ");
+            console.groupEnd();
+            console.group(">>> Try String");
             console.info(body?.toString());
-            console.log("Obj From Entries Form: ");
-            console.log(Object.fromEntries(new FormData(dados).entries()));
+            console.groupEnd();
+            if (typeof dados == "object") {
+                mkt2 = dados;
+                if (dados.entries != null) {
+                    console.groupCollapsed(">>> Form Object");
+                    console.info(Object.fromEntries(dados.entries()));
+                    console.groupCollapsed(">>> Cabecalho Info");
+                    console.info(h);
+                    console.groupEnd();
+                    console.groupEnd();
+                }
+            }
             console.groupEnd();
         }
         console.groupEnd();
