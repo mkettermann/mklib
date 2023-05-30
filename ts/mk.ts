@@ -768,8 +768,12 @@ class mk {
 		console.info(">> TYPE: " + h.headers["Content-Type"]);
 		if (metodo == mk.t.P) {
 			console.groupCollapsed(">> Objeto Enviado");
+			console.log("Dados: ");
 			console.info(dados);
+			console.log("String: ");
 			console.info(body?.toString());
+			console.log("Obj From Entries Form: ");
+			console.log(Object.fromEntries(new FormData(dados).entries()));
 			console.groupEnd();
 		}
 		console.groupEnd();
