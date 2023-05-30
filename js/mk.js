@@ -560,16 +560,17 @@ class mk {
     static http = async (url, metodo = mk.t.G, tipo = mk.t.J, dados = null, carregador = false) => {
         const mkaft = document.getElementsByName("__RequestVerificationToken")[0];
         let body = null;
+        let headers = new Headers();
+        headers.append("MKANTI-FORGERY-TOKEN", mkaft ? mkaft.value : "");
         if (dados != null) {
             if (tipo == mk.t.J) {
+                headers.append("Content-Type", tipo);
                 body = JSON.stringify(dados);
             }
             else if (tipo == mk.t.F) {
                 body = dados;
             }
         }
-        let headers = new Headers();
-        headers.append("MKANTI-FORGERY-TOKEN", mkaft ? mkaft.value : "");
         let h = {
             method: metodo,
             headers: headers,

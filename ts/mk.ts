@@ -745,19 +745,22 @@ class mk {
 			"__RequestVerificationToken"
 		)[0] as HTMLInputElement;
 		let body: FormData | string | null = null;
+		let headers = new Headers();
+		headers.append("MKANTI-FORGERY-TOKEN", mkaft ? mkaft.value : "");
+		// headers.append(
+		// 	"Cookie",
+		// 	".AspNetCore.Antiforgery.roEbqH1HPvs=CfDJ8IoKGkN70cxNokOP1g22MmPzAzMAdqyRPbJ9W4F91bxMVSmIKlf1F5CxgneVRuXQlzmbVpA65yZa_xDz7ZUZb44zzHuK9YjPgBHYsgVddqB0qaHAebCvFjpeQWiY1DOFM8ucVcmsQaL__q-JigrvGsM"
+		// );
+
 		if (dados != null) {
 			if (tipo == mk.t.J) {
+				headers.append("Content-Type", tipo);
 				body = JSON.stringify(dados);
 			} else if (tipo == mk.t.F) {
 				body = dados;
 			}
 		}
-		let headers = new Headers();
-		// headers.append(
-		// 	"Cookie",
-		// 	".AspNetCore.Antiforgery.roEbqH1HPvs=CfDJ8IoKGkN70cxNokOP1g22MmPzAzMAdqyRPbJ9W4F91bxMVSmIKlf1F5CxgneVRuXQlzmbVpA65yZa_xDz7ZUZb44zzHuK9YjPgBHYsgVddqB0qaHAebCvFjpeQWiY1DOFM8ucVcmsQaL__q-JigrvGsM"
-		// );
-		headers.append("MKANTI-FORGERY-TOKEN", mkaft ? mkaft.value : "");
+
 		let h = {
 			method: metodo!,
 			headers: headers,
