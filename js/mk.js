@@ -571,7 +571,7 @@ class mk {
                 body = dados;
             }
         }
-        let h = {
+        let pacote = {
             method: metodo,
             headers: headers,
             body: body,
@@ -579,31 +579,30 @@ class mk {
         if (carregador) {
             this.CarregarON();
         }
-        console.groupCollapsed(h.method + ": " + url);
+        console.groupCollapsed(pacote.method + ": " + url);
         console.time(url);
+        console.groupCollapsed(">> Cabecalho do pacote");
+        console.info(Object.fromEntries(headers.entries()));
+        console.groupEnd();
         if (metodo == mk.t.P) {
-            console.groupCollapsed(">> Objeto Enviado");
-            console.group(">>> Dados");
+            console.groupCollapsed(">> Objeto Enviado (Body)");
+            console.group(">>> Dados de entrada");
             console.info(dados);
             console.groupEnd();
-            console.group(">>> Try String");
+            console.groupCollapsed(">>> Processado em String");
             console.info(body?.toString());
             console.groupEnd();
             if (typeof dados == "object") {
-                mkt2 = dados;
                 if (dados.entries != null) {
                     console.groupCollapsed(">>> Form Object");
                     console.info(Object.fromEntries(dados.entries()));
-                    console.groupCollapsed(">>> Cabecalho Info");
-                    console.info(h);
-                    console.groupEnd();
                     console.groupEnd();
                 }
             }
             console.groupEnd();
         }
         console.groupEnd();
-        const pacoteHttp = await fetch(url, h);
+        const pacoteHttp = await fetch(url, pacote);
         if (!pacoteHttp.ok) {
             console.groupCollapsed("HTTP RETURN: " + pacoteHttp.status + " " + pacoteHttp.statusText);
             console.error("HTTP RETURN: Não retornou 200.");
@@ -624,7 +623,7 @@ class mk {
         if (carregador) {
             this.CarregarOFF();
         }
-        console.groupCollapsed("RET " + h.method + " " + tipo.toUpperCase().split("/")[1] + ":");
+        console.groupCollapsed("RET " + pacote.method + " " + tipo.toUpperCase().split("/")[1] + ":");
         console.timeEnd(url);
         console.info(corpo);
         console.groupEnd();

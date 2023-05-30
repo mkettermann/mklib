@@ -747,10 +747,6 @@ class mk {
 		let body: FormData | string | null = null;
 		let headers = new Headers();
 		headers.append("MKANTI-FORGERY-TOKEN", mkaft ? mkaft.value : "");
-		// headers.append(
-		// 	"Cookie",
-		// 	".AspNetCore.Antiforgery.roEbqH1HPvs=CfDJ8IoKGkN70cxNokOP1g22MmPzAzMAdqyRPbJ9W4F91bxMVSmIKlf1F5CxgneVRuXQlzmbVpA65yZa_xDz7ZUZb44zzHuK9YjPgBHYsgVddqB0qaHAebCvFjpeQWiY1DOFM8ucVcmsQaL__q-JigrvGsM"
-		// );
 
 		if (dados != null) {
 			if (tipo == mk.t.J) {
@@ -761,7 +757,7 @@ class mk {
 			}
 		}
 
-		let h = {
+		let pacote = {
 			method: metodo!,
 			headers: headers,
 			body: body,
@@ -769,32 +765,38 @@ class mk {
 		if (carregador) {
 			this.CarregarON();
 		}
-		console.groupCollapsed(h.method + ": " + url);
+
+		// INFO DEV
+		console.groupCollapsed(pacote.method + ": " + url);
 		console.time(url);
-		//console.info(">> TYPE: " + h.headers["Content-Type"]);
+
+		console.groupCollapsed(">> Cabecalho do pacote");
+		console.info(Object.fromEntries(headers.entries()));
+		// console.groupCollapsed(">> Pacote full");
+		// console.info(pacote);
+		// console.groupEnd();
+		console.groupEnd();
 		if (metodo == mk.t.P) {
-			console.groupCollapsed(">> Objeto Enviado");
-			console.group(">>> Dados");
+			console.groupCollapsed(">> Objeto Enviado (Body)");
+			console.group(">>> Dados de entrada");
 			console.info(dados);
 			console.groupEnd();
-			console.group(">>> Try String");
+			console.groupCollapsed(">>> Processado em String");
 			console.info(body?.toString());
 			console.groupEnd();
 			if (typeof dados == "object") {
-				mkt2 = dados;
 				if (dados.entries != null) {
 					console.groupCollapsed(">>> Form Object");
 					console.info(Object.fromEntries(dados.entries()));
-					console.groupCollapsed(">>> Cabecalho Info");
-					console.info(h);
-					console.groupEnd();
 					console.groupEnd();
 				}
 			}
 			console.groupEnd();
 		}
 		console.groupEnd();
-		const pacoteHttp = await fetch(url, h);
+
+		// EXECUCAO
+		const pacoteHttp = await fetch(url, pacote);
 		if (!pacoteHttp.ok) {
 			console.groupCollapsed(
 				"HTTP RETURN: " + pacoteHttp.status + " " + pacoteHttp.statusText
@@ -817,7 +819,7 @@ class mk {
 			this.CarregarOFF();
 		}
 		console.groupCollapsed(
-			"RET " + h.method + " " + tipo.toUpperCase().split("/")[1] + ":"
+			"RET " + pacote.method + " " + tipo.toUpperCase().split("/")[1] + ":"
 		);
 		console.timeEnd(url);
 		console.info(corpo);
