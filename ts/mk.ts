@@ -738,28 +738,29 @@ class mk {
 		url: string,
 		metodo: string = mk.t.G,
 		tipo: string = mk.t.J,
-		dados: any = null,
+		dados: FormData | null | any = null,
 		carregador: boolean = false
 	): Promise<any> => {
 		const mkaft: HTMLInputElement = document.getElementsByName(
 			"__RequestVerificationToken"
 		)[0] as HTMLInputElement;
-		let body: string | null = null;
-		if (dados) {
+		let body: FormData | string | null = null;
+		if (dados != null) {
 			if (tipo == mk.t.J) {
 				body = JSON.stringify(dados);
 			} else if (tipo == mk.t.F) {
-				dados.append("__RequestVerificationToken", mkaft.value);
 				body = dados;
 			}
 		}
+		let headers = new Headers();
+		// headers.append(
+		// 	"Cookie",
+		// 	".AspNetCore.Antiforgery.roEbqH1HPvs=CfDJ8IoKGkN70cxNokOP1g22MmPzAzMAdqyRPbJ9W4F91bxMVSmIKlf1F5CxgneVRuXQlzmbVpA65yZa_xDz7ZUZb44zzHuK9YjPgBHYsgVddqB0qaHAebCvFjpeQWiY1DOFM8ucVcmsQaL__q-JigrvGsM"
+		// );
+		headers.append("MKANTI-FORGERY-TOKEN", mkaft ? mkaft.value : "");
 		let h = {
 			method: metodo!,
-			"MKANTI-FORGERY-TOKEN": mkaft ? mkaft.value : "",
-			headers: {
-				"Content-Type": tipo!,
-				"MKANTI-FORGERY-TOKEN": mkaft ? mkaft.value : "",
-			},
+			headers: headers,
 			body: body,
 		};
 		if (carregador) {
@@ -767,7 +768,7 @@ class mk {
 		}
 		console.groupCollapsed(h.method + ": " + url);
 		console.time(url);
-		console.info(">> TYPE: " + h.headers["Content-Type"]);
+		//console.info(">> TYPE: " + h.headers["Content-Type"]);
 		if (metodo == mk.t.P) {
 			console.groupCollapsed(">> Objeto Enviado");
 			console.group(">>> Dados");
@@ -1502,7 +1503,7 @@ class mk {
 	// Parametro(fUIValidou)        Funcao a ser executada apos a validacao ser aprovada e recebida
 	// Parametro(varRepassaA)       Variavel/Objeto que pode ser passada da solicitacao ate a resposta.
 	static mkValidaFull = (
-		form: string,
+		form: string | HTMLFormElement,
 		fUIValidou: any,
 		varRepassaA: any = null
 	) => {
@@ -1615,7 +1616,7 @@ class mk {
 	static fUIFaseEspecifica = (e: HTMLElement) => {
 		let obj = {
 			destinoFase: Number(e.getAttribute("data-pag")),
-			form: mk.getFormFrom(e),
+			form: "#" + mk.getFormFrom(e).id,
 		};
 		if (
 			obj.destinoFase < this.mkFaseAtual ||

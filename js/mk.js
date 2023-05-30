@@ -560,22 +560,19 @@ class mk {
     static http = async (url, metodo = mk.t.G, tipo = mk.t.J, dados = null, carregador = false) => {
         const mkaft = document.getElementsByName("__RequestVerificationToken")[0];
         let body = null;
-        if (dados) {
+        if (dados != null) {
             if (tipo == mk.t.J) {
                 body = JSON.stringify(dados);
             }
             else if (tipo == mk.t.F) {
-                dados.append("__RequestVerificationToken", mkaft.value);
                 body = dados;
             }
         }
+        let headers = new Headers();
+        headers.append("MKANTI-FORGERY-TOKEN", mkaft ? mkaft.value : "");
         let h = {
             method: metodo,
-            "MKANTI-FORGERY-TOKEN": mkaft ? mkaft.value : "",
-            headers: {
-                "Content-Type": tipo,
-                "MKANTI-FORGERY-TOKEN": mkaft ? mkaft.value : "",
-            },
+            headers: headers,
             body: body,
         };
         if (carregador) {
@@ -583,7 +580,6 @@ class mk {
         }
         console.groupCollapsed(h.method + ": " + url);
         console.time(url);
-        console.info(">> TYPE: " + h.headers["Content-Type"]);
         if (metodo == mk.t.P) {
             console.groupCollapsed(">> Objeto Enviado");
             console.group(">>> Dados");
@@ -1236,7 +1232,7 @@ class mk {
     static fUIFaseEspecifica = (e) => {
         let obj = {
             destinoFase: Number(e.getAttribute("data-pag")),
-            form: mk.getFormFrom(e),
+            form: "#" + mk.getFormFrom(e).id,
         };
         if (obj.destinoFase < this.mkFaseAtual ||
             e.getAttribute("data-libera") == "true") {
