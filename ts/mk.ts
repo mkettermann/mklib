@@ -6,7 +6,7 @@
 // - $ Unobtrutive Validate (Está vinculado ao Data Annotation do C#)
 // - $ LoadTemplate
 // - Bootstrap Toast
-// - Bootstrap Dropdown
+// - Bootstrap Dropdown (quase)
 // - Bootstrap Modal
 var mkt2; // Variavel de Testes;
 
