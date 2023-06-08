@@ -490,6 +490,13 @@ class mk {
     static transDiasEmMs = (d) => {
         return d * 86400000;
     };
+    static frequencia = (array) => {
+        let f = {};
+        for (let e of array) {
+            f[e] ? f[e]++ : (f[e] = 1);
+        }
+        return f;
+    };
     static mkYYYYMMDDtoDDMMYYYY = (dataYYYYMMDD) => {
         let arrayData = dataYYYYMMDD.split("-");
         let stringRetorno = "";

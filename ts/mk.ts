@@ -641,6 +641,16 @@ class mk {
 		return d * 86400000;
 	};
 
+	// Calculo de frequencia
+	// Conta o total do que tem dentro da array e retorna a frequencia destes;
+	static frequencia = (array: any): object => {
+		let f: any = {};
+		for (let e of array) {
+			f[e] ? f[e]++ : (f[e] = 1);
+		}
+		return f;
+	};
+
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 	//			Conversores									\\
 	//___________________________________\\
