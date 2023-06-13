@@ -6,7 +6,7 @@
 // - $ Unobtrutive Validate (Está vinculado ao Data Annotation do C#)
 // - $ LoadTemplate
 // - Bootstrap Toast
-// - Bootstrap Dropdown
+// - Bootstrap Dropdown (quase)
 // - Bootstrap Modal
 var mkt2; // Variavel de Testes;
 
@@ -639,6 +639,16 @@ class mk {
 	};
 	static transDiasEmMs = (d: number) => {
 		return d * 86400000;
+	};
+
+	// Calculo de frequencia
+	// Conta o total do que tem dentro da array e retorna a frequencia destes;
+	static frequencia = (array: any): object => {
+		let f: any = {};
+		for (let e of array) {
+			f[e] ? f[e]++ : (f[e] = 1);
+		}
+		return f;
 	};
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
