@@ -1347,7 +1347,375 @@ class mk {
         }
     };
 }
+const mkSelRenderizar = () => {
+    document.querySelectorAll("input.mkSel").forEach((e) => {
+        if (!e.parentElement?.classList.contains("mkSelBloco")) {
+            let ePai = e.parentElement;
+            let ePos = Array.from(ePai?.children).indexOf(e);
+            let divMkSeletorBloco = document.createElement("div");
+            let divMkSeletorPesquisa = document.createElement("div");
+            let divMkSeletorInputExibe = document.createElement("input");
+            let divMkSeletorInputExibeArrow = document.createElement("div");
+            let divMkSeletorList = document.createElement("div");
+            divMkSeletorBloco.className = "mkSelBloco";
+            divMkSeletorPesquisa.className = "mkSelPesquisa";
+            divMkSeletorInputExibe.className = "mkSelInputExibe";
+            divMkSeletorInputExibeArrow.className = "mkSelInputExibeArrow";
+            divMkSeletorList.className = "mkSelList";
+            ePai?.insertBefore(divMkSeletorBloco, ePai?.children[ePos]);
+            divMkSeletorBloco.appendChild(e);
+            divMkSeletorBloco.appendChild(divMkSeletorPesquisa);
+            divMkSeletorBloco.appendChild(divMkSeletorList);
+            divMkSeletorPesquisa.appendChild(divMkSeletorInputExibe);
+            divMkSeletorPesquisa.appendChild(divMkSeletorInputExibeArrow);
+            if (e.getAttribute("data-selmoversel") == "true" &&
+                e.getAttribute("data-selapenas") == "1") {
+                let divMkSelArrowSelLeft = document.createElement("div");
+                let divMkSelArrowSelRight = document.createElement("div");
+                divMkSelArrowSelLeft.className = "mkSelArrowSelLeft microPos6";
+                divMkSelArrowSelRight.className = "mkSelArrowSelRight microPos4";
+                divMkSeletorPesquisa.appendChild(divMkSelArrowSelLeft);
+                divMkSeletorPesquisa.appendChild(divMkSelArrowSelRight);
+                divMkSelArrowSelLeft.setAttribute("onclick", "mkSelLeftSel(this)");
+                divMkSelArrowSelRight.setAttribute("onclick", "mkSelRightSel(this)");
+            }
+            divMkSeletorBloco.setAttribute("style", e.getAttribute("style") ?? "");
+            e.removeAttribute("style");
+            e.setAttribute("readonly", "true");
+            divMkSeletorInputExibe.setAttribute("placeholder", "Filtro \u{1F50D}");
+            divMkSeletorInputExibe.setAttribute("onfocus", "mkSelPesquisaFocus(this)");
+            divMkSeletorInputExibe.setAttribute("onblur", "mkSelPesquisaBlur(this)");
+            divMkSeletorInputExibe.setAttribute("oninput", "mkSelPesquisaInput(this)");
+            divMkSeletorList.addEventListener("scroll", (ev) => {
+                mkSelMoveu(ev.target);
+            });
+            mkSelPopularLista(e);
+            mkSelUpdate(e);
+            if (e.getAttribute("data-dev") != "true") {
+                e.classList.add("mkSecreto");
+            }
+        }
+        else {
+            if (e.classList.contains("atualizar")) {
+                e.classList.remove("atualizar");
+                mkSelPopularLista(e);
+                mkSelUpdate(e);
+                e.dispatchEvent(new Event("input"));
+                e.dispatchEvent(new Event("change"));
+            }
+            mkSelReposicionar(e.parentElement.children[2]);
+        }
+    });
+};
+const mkSelSelecionar = (eItem) => {
+    let ePrincipal = eItem.parentElement?.parentElement?.firstElementChild;
+    let KV = mkSelGetKV(ePrincipal);
+    let selLimit = Number(ePrincipal?.getAttribute("data-selapenas"));
+    if (selLimit == 1) {
+        ePrincipal.value = eItem.getAttribute("data-k");
+        ePrincipal?.dispatchEvent(new Event("input"));
+        (eItem?.parentElement?.previousElementSibling?.firstElementChild).value =
+            eItem.innerHTML;
+    }
+    else if (selLimit > 1 || selLimit < 0) {
+        let itemK = eItem.getAttribute("data-k");
+        let jaSelecionado = 0;
+        let arraySelecionado = [];
+        KV.forEach((ObjKV) => {
+            arraySelecionado.push(ObjKV.k.toString());
+            if (ObjKV.k == itemK)
+                jaSelecionado++;
+        });
+        if (jaSelecionado > 0) {
+            arraySelecionado.splice(arraySelecionado.indexOf(itemK), 1);
+        }
+        else {
+            if (arraySelecionado.length < selLimit || selLimit < 0) {
+                arraySelecionado.push(itemK);
+            }
+        }
+        arraySelecionado.forEach((item) => {
+            if (item == "") {
+                arraySelecionado.splice(arraySelecionado.indexOf(item), 1);
+            }
+        });
+        if (arraySelecionado.length == 0) {
+            ePrincipal.value = ePrincipal.defaultValue;
+        }
+        else {
+            ePrincipal.value = JSON.stringify(arraySelecionado);
+        }
+        ePrincipal.dispatchEvent(new Event("input"));
+        setTimeout(() => {
+            eItem.parentElement.previousElementSibling.firstElementChild.focus();
+        }, 1);
+    }
+    mkSelUpdate(ePrincipal);
+    ePrincipal.dispatchEvent(new Event("change"));
+};
+const mkSelLeftSel = (e) => {
+    let eAlvo = null;
+    Array.from(e.parentElement?.nextElementSibling?.children).forEach((el) => {
+        if (el.getAttribute("data-s") == "1") {
+            eAlvo = el.previousElementSibling;
+            return;
+        }
+    });
+    if (eAlvo == null) {
+        mkSelSelecionar(e.parentElement?.nextElementSibling?.lastElementChild);
+    }
+    else {
+        if (eAlvo.classList.contains("mkSelItemDeCima")) {
+            eAlvo = eAlvo.parentElement.lastElementChild.previousElementSibling;
+        }
+        mkSelSelecionar(eAlvo);
+    }
+};
+const mkSelRightSel = (e) => {
+    let eAlvo = null;
+    Array.from(e.parentElement.nextElementSibling.children).forEach((el) => {
+        if (el.getAttribute("data-s") == "1") {
+            eAlvo = el.nextElementSibling;
+            return;
+        }
+    });
+    if (eAlvo == null) {
+        mkSelSelecionar(e.parentElement.nextElementSibling.firstElementChild);
+    }
+    else {
+        if (eAlvo.classList.contains("mkSelItemDeBaixo")) {
+            eAlvo = eAlvo.parentElement.firstElementChild.nextElementSibling;
+        }
+        mkSelSelecionar(eAlvo);
+    }
+};
+const mkSelPopularLista = (e) => {
+    if (e.getAttribute("data-selarray") != "") {
+        let eList = e.nextElementSibling.nextElementSibling;
+        eList.innerHTML = "";
+        try {
+            let seletorArray = JSON.parse(e.getAttribute("data-selarray"));
+            if (seletorArray != null) {
+                let c = 0;
+                seletorArray.forEach((o) => {
+                    if (o.k != null) {
+                        c++;
+                        let divMkSeletorItem = document.createElement("div");
+                        let divMkSeletorItemTexto = document.createElement("span");
+                        let divMkSeletorItemArrow = document.createElement("div");
+                        divMkSeletorItem.className = "mkSelItem";
+                        divMkSeletorItemArrow.className = "mkSelItemArrow";
+                        divMkSeletorItem.setAttribute("data-k", o.k);
+                        divMkSeletorItem.setAttribute("onmousedown", "mkSelSelecionar(this)");
+                        divMkSeletorItemTexto.innerHTML = o.v;
+                        divMkSeletorItem.appendChild(divMkSeletorItemTexto);
+                        divMkSeletorItem.appendChild(divMkSeletorItemArrow);
+                        eList.appendChild(divMkSeletorItem);
+                    }
+                });
+                if (c <= 0) {
+                    eList.innerHTML = "Nenhuma opção";
+                }
+                else if (c > 10) {
+                    if (e.getAttribute("data-selmove") != "false") {
+                        let divMkSelCima = document.createElement("div");
+                        divMkSelCima.className = "mkSelItemDeCima microPos2";
+                        divMkSelCima.setAttribute("onmousemove", "mkSelMoveCima(this);");
+                        divMkSelCima.innerHTML = "↑ ↑ ↑";
+                        eList.insertBefore(divMkSelCima, eList.firstElementChild);
+                        let divMkSelBaixo = document.createElement("div");
+                        divMkSelBaixo.className = "mkSelItemDeBaixo microPos8";
+                        divMkSelBaixo.setAttribute("onmousemove", "mkSelMoveBaixo(this);");
+                        divMkSelBaixo.innerHTML = "↓ ↓ ↓";
+                        eList.appendChild(divMkSelBaixo);
+                    }
+                }
+            }
+        }
+        catch {
+            console.error("Erro durante conversao para Json:" + e.getAttribute("data-selarray"));
+        }
+    }
+};
+const mkSelPesquisaFocus = (e) => {
+    mkSelUpdate(e.parentElement.previousElementSibling);
+    e.value = "";
+    let eList = e.parentElement.nextElementSibling;
+    Array.from(eList.children).forEach((el) => {
+        el.style.display = "";
+    });
+    if (eList.firstElementChild.classList.contains("mkSelItemDeCima") &&
+        eList.scrollTop == 0)
+        eList.firstElementChild.style.display = "none";
+    mkSelReposicionar(e.parentElement.nextElementSibling);
+};
+const getParentScrollTop = (e) => {
+    let eHtml = e;
+    let soma = 0;
+    while (eHtml.tagName != "HTML") {
+        soma += eHtml.scrollTop;
+        eHtml = eHtml.parentElement;
+    }
+    return soma;
+};
+const mkSelReposicionar = (eList) => {
+    let eRef = eList.previousElementSibling;
+    eList.style.minWidth = eRef.offsetWidth + "px";
+    let wLargura = window.innerWidth;
+    if (wLargura < 768) {
+        eList.style.top = 35 + "px";
+        eList.style.left = 35 + "px";
+    }
+    else {
+        eList.style.top =
+            eRef.offsetTop - getParentScrollTop(eRef) + eRef.offsetHeight + 2 + "px";
+        eList.style.left = eRef.offsetLeft + "px";
+        let posXCantoOpostoRef = eRef.offsetLeft + eRef.offsetWidth;
+        let posXCantoOpostoList = eList.offsetLeft + eList.offsetWidth;
+        if (posXCantoOpostoList > mk.Q("body").offsetWidth) {
+            eList.style.left = posXCantoOpostoRef - eList.offsetWidth - 1 + "px";
+        }
+    }
+};
+const mkSelPesquisaBlur = (e) => {
+    mkSelUpdate(e.parentElement.previousElementSibling);
+};
+const mkSelPesquisaInput = (e) => {
+    let cVisivel = 0;
+    let eList = e.parentElement.nextElementSibling;
+    Array.from(eList.children).forEach((el) => {
+        let exibe = false;
+        if (el.classList.contains("mkSelItem")) {
+            if (el.firstElementChild.innerHTML
+                .toLowerCase()
+                .match(e.value.toLowerCase())) {
+                exibe = true;
+                cVisivel++;
+            }
+        }
+        if (exibe) {
+            el.style.display = "";
+        }
+        else {
+            el.style.display = "none";
+        }
+    });
+    if (cVisivel > 10) {
+        eList.firstElementChild.style.display = "";
+        eList.lastElementChild.style.display = "";
+    }
+};
+const mkSelMoveu = (e) => {
+    if (e.firstElementChild.classList.contains("mkSelItemDeCima")) {
+        if (e.scrollTop == 0) {
+            e.firstElementChild.style.display = "none";
+            e.lastElementChild.style.display = "";
+        }
+        else if (e.scrollTop + e.clientHeight >= e.scrollHeight) {
+            e.firstElementChild.style.display = "";
+            e.lastElementChild.style.display = "none";
+        }
+        else {
+            e.firstElementChild.style.display = "";
+            e.lastElementChild.style.display = "";
+        }
+    }
+};
+const mkSelMoveCima = (e) => {
+    let eList = e.parentElement;
+    eList.scrollTop = eList.scrollTop - 5;
+    mkSelMoveu(eList);
+};
+const mkSelMoveBaixo = (e) => {
+    let eList = e.parentElement;
+    eList.scrollTop = eList.scrollTop + 5;
+    mkSelMoveu(eList);
+};
+const mkSelUpdate = (e, KV = null) => {
+    if (KV == null) {
+        KV = mkSelGetKV(e);
+    }
+    Array.from(e.nextElementSibling.nextElementSibling.children).forEach((el) => {
+        el.setAttribute("data-s", "0");
+    });
+    KV.forEach((o) => {
+        Array.from(e.nextElementSibling.nextElementSibling.children).forEach((item) => {
+            if (item.getAttribute("data-k") == o.k) {
+                item.setAttribute("data-s", "1");
+            }
+        });
+    });
+    mkSelSetDisplay(e, KV);
+};
+const mkSelGetKV = (e) => {
+    let kSels;
+    let kOpcoes;
+    if (mkIsJson(e.value)) {
+        kSels = JSON.parse(e.value);
+        if (!Array.isArray(kSels)) {
+            kSels = [{ k: kSels }];
+        }
+        else {
+            kSels = [];
+            JSON.parse(e.value).forEach((kSel) => {
+                kSels.push({ k: kSel });
+            });
+        }
+    }
+    else
+        kSels = [{ k: e.value }];
+    if (mkIsJson(e.getAttribute("data-selarray"))) {
+        kOpcoes = JSON.parse(e.getAttribute("data-selarray"));
+        if (!Array.isArray(kOpcoes)) {
+            kOpcoes = [{ k: kOpcoes, v: "\u{2209} Opções" }];
+        }
+    }
+    else
+        kOpcoes = null;
+    if (kOpcoes != null) {
+        kSels.forEach((objKv) => {
+            kOpcoes.forEach((opcao) => {
+                if (opcao.k == objKv.k) {
+                    objKv.v = opcao.v;
+                }
+            });
+        });
+    }
+    return kSels;
+};
+const mkSelSetDisplay = (e, KV) => {
+    if (KV.length <= 0) {
+        console.warn("Não foi possível encontrar os itens selecionados.");
+        e.nextElementSibling.firstElementChild.value = "Opções \u{2209}";
+    }
+    else {
+        if (KV.length == 1) {
+            let display = "-- Selecione --";
+            if (KV[0].v != null) {
+                display = KV[0].v;
+            }
+            e.nextElementSibling.firstElementChild.value = display;
+        }
+        else if (KV.length > 1) {
+            e.nextElementSibling.firstElementChild.value =
+                "[" + KV.length + "] Selecionados";
+        }
+    }
+};
+const mkIsJson = (s) => {
+    try {
+        JSON.parse(s);
+    }
+    catch (e) {
+        return false;
+    }
+    return true;
+};
 mk.mkClicarNaAba(mk.Q(".mkAbas a.active"));
+mkSelRenderizar();
+setInterval(() => {
+    mkSelRenderizar();
+}, 500);
 Object.defineProperty(mk, "http", {
     writable: false,
 });
