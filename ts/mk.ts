@@ -1922,25 +1922,28 @@ const mkSelSelecionar = (eItem: any) => {
 // Selecionar o anterior ao atual
 const mkSelLeftSel = (e: any) => {
 	let eAlvo = null;
-	Array.from(e.parentElement?.nextElementSibling?.children).forEach((el) => {
-		if ((el as HTMLInputElement).getAttribute("data-s") == "1") {
-			eAlvo = (el as HTMLInputElement).previousElementSibling;
-			return;
+	Array.from(e.parentElement?.nextElementSibling?.children).forEach(
+		(el: any) => {
+			if (el.getAttribute("data-s") == "1") {
+				eAlvo = (el as HTMLInputElement).previousElementSibling;
+				return;
+			}
 		}
-	});
+	);
 	if (eAlvo == null) {
 		mkSelSelecionar(e.parentElement?.nextElementSibling?.lastElementChild);
 	} else {
-		if (eAlvo.classList.contains("mkSelItemDeCima")) {
-			eAlvo = eAlvo.parentElement.lastElementChild.previousElementSibling;
+		if ((eAlvo as HTMLElement).classList.contains("mkSelItemDeCima")) {
+			eAlvo = (eAlvo as HTMLElement).parentElement?.lastElementChild
+				?.previousElementSibling;
 		}
 		mkSelSelecionar(eAlvo);
 	}
 };
 // Selecionar o próximo ao atual
-const mkSelRightSel = (e) => {
+const mkSelRightSel = (e: any) => {
 	let eAlvo = null;
-	Array.from(e.parentElement.nextElementSibling.children).forEach((el) => {
+	Array.from(e.parentElement.nextElementSibling.children).forEach((el: any) => {
 		if (el.getAttribute("data-s") == "1") {
 			eAlvo = el.nextElementSibling;
 			return;
@@ -1949,14 +1952,15 @@ const mkSelRightSel = (e) => {
 	if (eAlvo == null) {
 		mkSelSelecionar(e.parentElement.nextElementSibling.firstElementChild);
 	} else {
-		if (eAlvo.classList.contains("mkSelItemDeBaixo")) {
-			eAlvo = eAlvo.parentElement.firstElementChild.nextElementSibling;
+		if ((eAlvo as HTMLElement).classList.contains("mkSelItemDeBaixo")) {
+			eAlvo = (eAlvo as HTMLElement).parentElement?.firstElementChild
+				?.nextElementSibling;
 		}
 		mkSelSelecionar(eAlvo);
 	}
 };
 
-const mkSelPopularLista = (e) => {
+const mkSelPopularLista = (e: any) => {
 	// GERA CADA ITEM DA LISTA COM BASE NO JSON
 	if (e.getAttribute("data-selarray") != "") {
 		let eList = e.nextElementSibling.nextElementSibling;
@@ -1966,7 +1970,7 @@ const mkSelPopularLista = (e) => {
 			if (seletorArray != null) {
 				let c = 0;
 				/* ITENS */
-				seletorArray.forEach((o) => {
+				seletorArray.forEach((o: any) => {
 					if (o.k != null) {
 						c++;
 						let divMkSeletorItem = document.createElement("div");
@@ -2012,14 +2016,14 @@ const mkSelPopularLista = (e) => {
 };
 
 /* EVENTO de Pesquisa (FOCUS) */
-const mkSelPesquisaFocus = (e) => {
+const mkSelPesquisaFocus = (e: any) => {
 	// Atualiza Itens Selecionados, caso houve mudança sem atualizar.
 	mkSelUpdate(e.parentElement.previousElementSibling);
 	// Limpa o Display
 	e.value = "";
 	// Limpa o resultado do filtro anterior
 	let eList = e.parentElement.nextElementSibling;
-	Array.from(eList.children).forEach((el) => {
+	Array.from(eList.children).forEach((el: any) => {
 		el.style.display = "";
 	});
 	// Se iniciar no topo, subir as setas pra cima.
@@ -2035,7 +2039,7 @@ const mkSelPesquisaFocus = (e) => {
 	mkSelReposicionar(e.parentElement.nextElementSibling);
 };
 
-const getParentScrollTop = (e) => {
+const getParentScrollTop = (e: any) => {
 	let eHtml = e;
 	let soma = 0;
 	while (eHtml.tagName != "HTML") {
@@ -2045,7 +2049,7 @@ const getParentScrollTop = (e) => {
 	return soma;
 };
 
-const mkSelReposicionar = (eList) => {
+const mkSelReposicionar = (eList: any) => {
 	let eRef = eList.previousElementSibling;
 	// Posiciona E Redimenciona a lista.
 	eList.style.minWidth = eRef.offsetWidth + "px";
@@ -2067,21 +2071,21 @@ const mkSelReposicionar = (eList) => {
 		// Depois, verifica se saiu da tela
 		let posXCantoOpostoRef = eRef.offsetLeft + eRef.offsetWidth;
 		let posXCantoOpostoList = eList.offsetLeft + eList.offsetWidth;
-		if (posXCantoOpostoList > mk.Q("body").offsetWidth) {
+		if (posXCantoOpostoList > (mk.Q("body") as HTMLElement).offsetWidth) {
 			eList.style.left = posXCantoOpostoRef - eList.offsetWidth - 1 + "px";
 		}
 	}
 };
 
 /* EVENTO de Pesquisa (BLUR) */
-const mkSelPesquisaBlur = (e) => {
+const mkSelPesquisaBlur = (e: any) => {
 	mkSelUpdate(e.parentElement.previousElementSibling);
 };
 /* EVENTO de Pesquisa (INPUT) */
-const mkSelPesquisaInput = (e) => {
+const mkSelPesquisaInput = (e: any) => {
 	let cVisivel = 0;
 	let eList = e.parentElement.nextElementSibling;
-	Array.from(eList.children).forEach((el) => {
+	Array.from(eList.children).forEach((el: any) => {
 		let exibe = false;
 
 		if (el.classList.contains("mkSelItem")) {
@@ -2107,7 +2111,7 @@ const mkSelPesquisaInput = (e) => {
 };
 
 // Receber e = div .mkSelList
-const mkSelMoveu = (e) => {
+const mkSelMoveu = (e: any) => {
 	if (e.firstElementChild.classList.contains("mkSelItemDeCima")) {
 		if (e.scrollTop == 0) {
 			e.firstElementChild.style.display = "none";
@@ -2123,31 +2127,31 @@ const mkSelMoveu = (e) => {
 };
 
 // Receber e = div .mkSelItemDeCima
-const mkSelMoveCima = (e) => {
+const mkSelMoveCima = (e: any) => {
 	let eList = e.parentElement;
 	eList.scrollTop = eList.scrollTop - 5;
 	mkSelMoveu(eList);
 };
 // Receber e = div .mkSelItemDeBaixo
-const mkSelMoveBaixo = (e) => {
+const mkSelMoveBaixo = (e: any) => {
 	let eList = e.parentElement;
 	eList.scrollTop = eList.scrollTop + 5;
 	mkSelMoveu(eList);
 };
 
 /* ATUALIZA Display e Selecionados*/
-const mkSelUpdate = (e, KV = null) => {
+const mkSelUpdate = (e: any, KV: any[] | null = null) => {
 	if (KV == null) {
 		KV = mkSelGetKV(e);
 	}
 	// Desmarcar todos mkSelItem pra 0
 	Array.from(e.nextElementSibling.nextElementSibling.children).forEach((el) => {
-		el.setAttribute("data-s", "0");
+		(el as HTMLElement).setAttribute("data-s", "0");
 	});
 	KV.forEach((o) => {
 		/* Marcar mkSelItem pra 1 onde tem K selecionado */
 		Array.from(e.nextElementSibling.nextElementSibling.children).forEach(
-			(item) => {
+			(item: any) => {
 				if (item.getAttribute("data-k") == o.k) {
 					item.setAttribute("data-s", "1");
 				}
@@ -2159,9 +2163,9 @@ const mkSelUpdate = (e, KV = null) => {
 };
 
 // Retorna o Objeto em formato KV dos itens selecionados do elemento E
-const mkSelGetKV = (e) => {
-	let kSels;
-	let kOpcoes;
+const mkSelGetKV = (e: any) => {
+	let kSels: any[];
+	let kOpcoes: any;
 	// Lista de Selecoes vira K do KV
 	if (mkIsJson(e.value)) {
 		kSels = JSON.parse(e.value);
@@ -2169,7 +2173,7 @@ const mkSelGetKV = (e) => {
 			kSels = [{ k: kSels }];
 		} else {
 			kSels = [];
-			JSON.parse(e.value).forEach((kSel) => {
+			JSON.parse(e.value).forEach((kSel: any) => {
 				kSels.push({ k: kSel });
 			});
 		}
@@ -2184,7 +2188,7 @@ const mkSelGetKV = (e) => {
 	if (kOpcoes != null) {
 		// Acrescentar V ao KV
 		kSels.forEach((objKv) => {
-			kOpcoes.forEach((opcao) => {
+			kOpcoes.forEach((opcao: any) => {
 				if (opcao.k == objKv.k) {
 					objKv.v = opcao.v;
 				}
@@ -2194,7 +2198,7 @@ const mkSelGetKV = (e) => {
 	return kSels;
 };
 
-const mkSelSetDisplay = (e, KV) => {
+const mkSelSetDisplay = (e: any, KV: any) => {
 	if (KV.length <= 0) {
 		console.warn("Não foi possível encontrar os itens selecionados.");
 		e.nextElementSibling.firstElementChild.value = "Opções \u{2209}";
@@ -2212,7 +2216,7 @@ const mkSelSetDisplay = (e, KV) => {
 	}
 };
 
-const mkIsJson = (s) => {
+const mkIsJson = (s: any) => {
 	try {
 		JSON.parse(s);
 	} catch (e) {
