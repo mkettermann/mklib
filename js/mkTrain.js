@@ -1,60 +1,16 @@
 "use strict";
-class Mapeador extends Map {
-    vPadrao;
-    constructor(vPadrao) {
-        super();
-        this.vPadrao = vPadrao;
-    }
-    get(key) {
-        if (this.has(key)) {
-            return super.get(key);
-        }
-        else {
-            return this.vPadrao;
-        }
-    }
-}
-class mktrain {
-    static histogram = async () => {
-        const arq = fetch("./js/test.txt").then((data) => {
-            let texto = data.text();
-            return texto;
-        });
-        const coleta = await arq.then();
-        let h = new mkHistogram();
-        for await (let c of coleta) {
-            h.add(c);
-        }
-        return h;
-    };
-}
-mktrain.histogram().then((r) => {
+mkHistogram.histogram("./js/test.txt").then((r) => {
     console.log("Resumo");
     console.log(r.toString());
 });
-let ma = [
+let matrizStrings = [
     ["a", "b", "c"],
     ["d", 1, "f"],
     ["g", "h", "i"],
 ];
-const girarMatriz = () => {
-    let res = false;
-    computar: if (ma) {
-        for (let x = 0; x < ma.length; x++) {
-            let l = ma[x];
-            if (!l)
-                break computar;
-            for (let y = 0; y < l.length; y++) {
-                let cell = l[y];
-                if (typeof cell !== "string")
-                    break computar;
-                console.log(cell);
-            }
-        }
-        res = true;
-    }
-    return res;
-};
+console.log(matrizApenasScrings(matrizStrings)
+    ? "Apenas Strings na matriz"
+    : "Matriz contém outros valores. Processo interrompido com labels.");
 let b = "999";
 let teste = {
     a: 1,
@@ -83,6 +39,9 @@ const s = {
             throw new Error("Número serial só pode alterar por um número maior.");
     },
 };
-const s2 = Object.create(s);
-const s3 = Object.assign(s);
-const s4 = mk.mkMerge(s);
+const s2 = Object.create(teste);
+const s3 = Object.assign(teste);
+const s4 = mk.mkMerge(teste);
+console.log(s2);
+console.log(s3);
+console.log(JSON.stringify(s4));

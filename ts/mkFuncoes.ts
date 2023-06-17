@@ -1,3 +1,19 @@
+class Mapeador extends Map {
+	vPadrao;
+	constructor(vPadrao: any) {
+		super();
+		this.vPadrao = vPadrao;
+	}
+
+	get(key: any) {
+		if (this.has(key)) {
+			return super.get(key);
+		} else {
+			return this.vPadrao;
+		}
+	}
+}
+
 class mkHistogram {
 	letrasConta: Mapeador;
 	letrasTotal: number;
@@ -35,4 +51,34 @@ class mkHistogram {
 		);
 		return linhas.join("\n");
 	}
+
+	static histogram = async (fonte: string) => {
+		const arq = fetch(fonte).then((data) => {
+			let texto = data.text();
+			return texto;
+		});
+		const coleta = await arq.then();
+		let h = new mkHistogram();
+		for await (let c of coleta) {
+			h.add(c);
+		}
+		return h;
+	};
 }
+
+// Interromper fora break externo com condição no centro.
+const matrizApenasScrings = (matriz: any) => {
+	let res = false;
+	computar: if (matriz) {
+		for (let x = 0; x < matriz.length; x++) {
+			let l = matriz[x];
+			if (!l) break computar;
+			for (let y = 0; y < l.length; y++) {
+				let cell = l[y];
+				if (typeof cell !== "string") break computar;
+			}
+		}
+		res = true;
+	}
+	return res;
+};
