@@ -276,6 +276,23 @@ class mk {
 		return false;
 	};
 
+	static mkInfoObject = (o: any) => {
+		let tab: any[] = [];
+		console.group("MK Info Object: ");
+		console.log(o);
+		for (let p in o) {
+			let tabitem = {
+				PROPRIEDADE: p,
+				OWN: s.hasOwnProperty(p),
+				"TYPE OF": (typeof o[p]).toUpperCase(),
+				ENUMERABLE: s.propertyIsEnumerable(p),
+			};
+			tab.push(tabitem);
+		}
+		console.table(tab);
+		console.groupEnd();
+	};
+
 	static mkSelDlRefill = async (eName: string, cod = null): Promise<void> => {
 		let e = mk.Q(eName);
 		let url = appPath + e.getAttribute("data-refill");

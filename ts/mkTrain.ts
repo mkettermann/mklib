@@ -1,6 +1,6 @@
 /**
  * Criado por Marcos Kettermann em 28/05/2023
- * Classe Util para manipulação de dados.
+ * Treino / Teste de funções
  */
 
 // mkHistogram.histogram("./js/test.txt").then((r) => {
@@ -20,26 +20,17 @@
 // 		: "Matriz contém outros valores. Processo interrompido com labels."
 // );
 
-let b = "999";
-let teste = {
+const s = {
+	_num: 0,
+
 	a: 1,
 	b: 3,
 	toString: function () {
-		return `(${this.a}, ${b})`;
+		return `(${this.a}, ${this.b})`;
 	},
 	toLocaleString: function () {
 		return `(${this.a.toLocaleString()},${this.b.toLocaleString()})`;
 	},
-};
-console.log(teste);
-teste.toString();
-
-for (let item in teste) {
-	console.log(String(teste));
-}
-
-const s = {
-	_num: 0,
 
 	get proximo() {
 		return this._num++;
@@ -49,10 +40,16 @@ const s = {
 		else throw new Error("Número serial só pode alterar por um número maior.");
 	},
 };
-
-const s2 = Object.create(teste);
-const s3 = Object.assign(teste);
-const s4 = mk.mkMerge(teste);
+// console.log(s);
+// console.log(s.propertyIsEnumerable("toString"));
+const s2 = Object.create(s);
 console.log(s2);
-console.log(s3);
-console.log(JSON.stringify(s4));
+console.log(s2.propertyIsEnumerable("toString"));
+// const s3 = Object.assign(s);
+// console.log(s3);
+// console.log(s3.propertyIsEnumerable("toString"));
+// const s4 = mk.mkMerge(s);
+// console.log(s4);
+// console.log(s4.propertyIsEnumerable("toString"));
+
+mk.mkInfoObject(s);

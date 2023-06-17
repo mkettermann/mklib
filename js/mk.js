@@ -199,6 +199,22 @@ class mk {
         }
         return false;
     };
+    static mkInfoObject = (o) => {
+        let tab = [];
+        console.group("MK Info Object: ");
+        console.log(o);
+        for (let p in o) {
+            let tabitem = {
+                PROPRIEDADE: p,
+                OWN: s.hasOwnProperty(p),
+                "TYPE OF": (typeof o[p]).toUpperCase(),
+                ENUMERABLE: s.propertyIsEnumerable(p),
+            };
+            tab.push(tabitem);
+        }
+        console.table(tab);
+        console.groupEnd();
+    };
     static mkSelDlRefill = async (eName, cod = null) => {
         let e = mk.Q(eName);
         let url = appPath + e.getAttribute("data-refill");

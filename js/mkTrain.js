@@ -1,22 +1,14 @@
 "use strict";
-let b = "999";
-let teste = {
+const s = {
+    _num: 0,
     a: 1,
     b: 3,
     toString: function () {
-        return `(${this.a}, ${b})`;
+        return `(${this.a}, ${this.b})`;
     },
     toLocaleString: function () {
         return `(${this.a.toLocaleString()},${this.b.toLocaleString()})`;
     },
-};
-console.log(teste);
-teste.toString();
-for (let item in teste) {
-    console.log(String(teste));
-}
-const s = {
-    _num: 0,
     get proximo() {
         return this._num++;
     },
@@ -27,9 +19,7 @@ const s = {
             throw new Error("Número serial só pode alterar por um número maior.");
     },
 };
-const s2 = Object.create(teste);
-const s3 = Object.assign(teste);
-const s4 = mk.mkMerge(teste);
+const s2 = Object.create(s);
 console.log(s2);
-console.log(s3);
-console.log(JSON.stringify(s4));
+console.log(s2.propertyIsEnumerable("toString"));
+mk.mkInfoObject(s);
