@@ -122,3 +122,14 @@ const s = {
 
 const s2 = Object.create(s);
 const s3 = Object.assign(s);
+
+const merge = (o, ...fontes) => {
+	for (let fonte of fontes) {
+		for (let k of Object.keys(fonte)) {
+			if (!(k in o)) {
+				o[k] = fonte[k];
+			}
+		}
+	}
+	return o;
+};
