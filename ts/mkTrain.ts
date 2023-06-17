@@ -135,3 +135,4 @@ const s = {
 const s2 = Object.create(s);
 const s3 = Object.assign(s);
 const s4 = mk.mkMerge(s);
+const s5 = "ok";
