@@ -1,16 +1,4 @@
 "use strict";
-mkHistogram.histogram("./js/test.txt").then((r) => {
-    console.log("Resumo");
-    console.log(r.toString());
-});
-let matrizStrings = [
-    ["a", "b", "c"],
-    ["d", 1, "f"],
-    ["g", "h", "i"],
-];
-console.log(matrizApenasScrings(matrizStrings)
-    ? "Apenas Strings na matriz"
-    : "Matriz contém outros valores. Processo interrompido com labels.");
 let b = "999";
 let teste = {
     a: 1,
