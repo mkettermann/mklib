@@ -78,3 +78,59 @@ mktrain.histogram().then((r) => {
 	console.log("Resumo");
 	console.log(r.toString());
 });
+
+// Matriz de strings com um inteiro
+let ma = [
+	["a", "b", "c"],
+	["d", 1, "f"],
+	["g", "h", "i"],
+];
+// Interromper fora break externo com condição no centro.
+const girarMatriz = () => {
+	let res = false;
+	computar: if (ma) {
+		for (let x = 0; x < ma.length; x++) {
+			let l = ma[x];
+			if (!l) break computar;
+			for (let y = 0; y < l.length; y++) {
+				let cell = l[y];
+				if (typeof cell !== "string") break computar;
+				console.log(cell);
+			}
+		}
+		res = true;
+	}
+	return res;
+};
+let b = "999";
+let teste = {
+	a: 1,
+	b: 3,
+	toString: function () {
+		return `(${this.a}, ${b})`;
+	},
+	toLocaleString: function () {
+		return `(${this.a.toLocaleString()},${this.b.toLocaleString()})`;
+	},
+};
+console.log(teste);
+teste.toString();
+
+for (let item in teste) {
+	console.log(String(teste));
+}
+
+const s = {
+	_num: 0,
+
+	get proximo() {
+		return this._num++;
+	},
+	set proximo(n) {
+		if (n > this._num) this._num = n;
+		else throw new Error("Número serial só pode alterar por um número maior.");
+	},
+};
+
+const s2 = Object.create(s);
+const s3 = Object.assign(s);

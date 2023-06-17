@@ -329,6 +329,16 @@ class mk {
             return novoO;
         }
     };
+    static mkMerge = (o, ...fontes) => {
+        for (let fonte of fontes) {
+            for (let k of Object.keys(fonte)) {
+                if (!(k in o)) {
+                    o[k] = fonte[k];
+                }
+            }
+        }
+        return o;
+    };
     static getFormFrom = (e) => {
         let eForm = e;
         while (eForm.tagName != "FORM") {

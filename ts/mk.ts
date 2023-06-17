@@ -441,6 +441,17 @@ class mk {
 		}
 	};
 
+	static mkMerge = (o: any, ...fontes: any): object => {
+		for (let fonte of fontes) {
+			for (let k of Object.keys(fonte)) {
+				if (!(k in o)) {
+					o[k] = fonte[k];
+				}
+			}
+		}
+		return o;
+	};
+
 	// Sobe os elementos até encontrar o form pertencente a este elemento. (Se limita ao BODY)
 	static getFormFrom = (e: any) => {
 		let eForm = e;
