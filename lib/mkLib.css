@@ -46,6 +46,327 @@ html {
 }
 
 /* =======================
+	MK Seletor
+=========================*/
+
+.mkSelBloco {
+	--Main1: var(--g5AzulEscuro);
+	--Main2: var(--g5VerdeLima);
+	--Main2_33: var(--g5VerdeLima33);
+	--FundoSeletor: transparent;
+	--FundoSeletorOpaco: var(--g5AzulClaro99);
+	--FundoSeletorDesativado: #777;
+	--BordaItens: #000;
+	--FundoItens: #fff;
+	--FundoItensHover: linear-gradient(0.25turn, var(--g5AzulClaro), transparent);
+	--FundoItensSel: linear-gradient(0.25turn, transparent, var(--g5VerdeLima));
+	--FundoItensSelArrow: linear-gradient(
+		0.25turn,
+		transparent,
+		var(--g5VerdeLima)
+	);
+	--FlexinhaCor: var(--g5AzulClaro66);
+	--CorItensHover: #000;
+	--CorSeletor: var(--CorItensHover);
+	--CorItens: var(--BordaItens);
+	--mkSelIndex: 2000;
+
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	border: 0px solid transparent;
+	outline: 0;
+}
+
+.mkSelBloco .mkSel {
+	width: 100%;
+}
+
+.mkSelBloco * {
+	outline: 0;
+	border: 0px;
+}
+
+.mkSelBloco:has(.mkSel[disabled]) {
+	cursor: not-allowed;
+}
+.mkSelBloco:has(.mkSel[disabled]) .mkSelPesquisa {
+	pointer-events: none;
+	opacity: 0.4;
+	--FundoSeletor: var(--FundoSeletorDesativado);
+}
+.mkSelBloco:has(.mkSel.atualizar) .mkSelPesquisa input {
+	animation: mkEfeitoBordaGira 0.3s infinite;
+	border-radius: 10px;
+}
+
+.mkSelPesquisa {
+	position: relative;
+	display: flex;
+	/* overflow: hidden; Tirei para ver a flexa de dentro da div de pesquisa */
+	text-decoration: none;
+	align-items: center;
+	border-radius: 5px;
+	background-color: var(--FundoSeletor);
+	width: 100%;
+	height: 100%;
+}
+
+.mkSelInputExibe {
+	background-color: transparent;
+	width: 100%;
+	cursor: pointer;
+	padding: 0px 0px 0px 2px;
+}
+
+/* ARROW EXTERNO*/
+/*.mkSelBloco:has(.mkSel[data-selmoversel="true"]) {
+	 background-color: yellow; 
+}*/
+.mkSelBloco:has(.mkSel[data-selmoversel="true"]) .mkSelPesquisa {
+	width: calc(100% - 50px);
+	/* background-color: lightgreen; */
+}
+
+.mkSelInputExibeArrow {
+	position: absolute;
+	right: 5px;
+	width: 7px !important;
+	min-width: 7px !important;
+	max-width: 7px !important;
+	height: 7px;
+	border: 3px solid transparent;
+	border-bottom: 3px solid var(--FlexinhaCor);
+	border-left: 3px solid var(--FlexinhaCor);
+	transform: rotate(-45deg);
+	pointer-events: none;
+}
+.mkSelArrowSelLeft {
+	position: absolute;
+	left: -25px;
+	width: 24px;
+	height: 100%;
+	border: 1px outset;
+	border-top-left-radius: 50%;
+	border-bottom-left-radius: 50%;
+	line-height: 100%;
+	border-color: var(--FlexinhaCor);
+	color: var(--Main2);
+}
+.mkSelArrowSelRight {
+	position: absolute;
+	right: -25px;
+	width: 24px;
+	height: 100%;
+	border: 1px outset;
+	border-top-right-radius: 50%;
+	border-bottom-right-radius: 50%;
+	line-height: 100%;
+	border-color: var(--FlexinhaCor);
+	color: var(--Main2);
+	transition: 0.3s;
+}
+
+.mkSelArrowSelLeft:hover,
+.mkSelArrowSelRight:hover {
+	cursor: pointer;
+	border: 1px inset;
+	border-color: var(--FlexinhaCor);
+}
+
+.mkSelArrowSelLeft::before {
+	content: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 12.1'><path d='M15.9,0c.1,1.2.3,4.1-1.1,6a4.7,4.7,0,0,1-1.1,1c-3,2.2-7.9,1.6-10,2.3a.6.6,0,0,0-.6.5c-.5.8.4,2.1.2,2.3S.7,10.4,0,7.5c-.2-.7,2.7-4.9,3-4.6S2.3,5,2.9,5.8a.5.5,0,0,0,.7.2c4.1-.1,7.9-.2,10.1-2.4a5.1,5.1,0,0,0,.9-1A8.9,8.9,0,0,0,15.9,0Z'/></svg>");
+	width: 50%;
+}
+
+.mkSelArrowSelRight::before {
+	content: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 12.1'><path d='M15.9,0c.1,1.2.3,4.1-1.1,6a4.7,4.7,0,0,1-1.1,1c-3,2.2-7.9,1.6-10,2.3a.6.6,0,0,0-.6.5c-.5.8.4,2.1.2,2.3S.7,10.4,0,7.5c-.2-.7,2.7-4.9,3-4.6S2.3,5,2.9,5.8a.5.5,0,0,0,.7.2c4.1-.1,7.9-.2,10.1-2.4a5.1,5.1,0,0,0,.9-1A8.9,8.9,0,0,0,15.9,0Z'/></svg>");
+	width: 50%;
+	transform: rotate(180deg);
+}
+
+.mkSelArrowSelLeft:hover::before {
+	transform: translateX(-4px) rotate(55deg) scale(1.2) skew(-35deg);
+	transition: 3s cubic-bezier(0.1, 0, 0, 1);
+}
+.mkSelArrowSelRight:hover::before {
+	transform: translateX(4px) rotate(235deg) scale(1.2) skew(-35deg);
+	transition: 3s cubic-bezier(0.1, 0, 0, 1);
+}
+
+.mkSelBloco:has(input.mkSelInputExibe:focus) .mkSelInputExibeArrow {
+	transform: rotate(-225deg);
+}
+
+.mkSelBloco:has(input.mkSelInputExibe:focus) .mkSelList {
+	display: flex;
+}
+.mkSelList {
+	display: none;
+	flex-direction: column;
+	position: absolute;
+	z-index: calc(var(--mkSelIndex));
+	text-align: left;
+	background: var(--FundoItens);
+	color: var(--CorItens);
+	--s: 30px;
+	--c: #fff;
+	--_g: #0000 8%, var(--c) 0 17%, #0000 0 58%;
+	background: linear-gradient(135deg, #0000 20.5%, var(--c) 0 29.5%, #0000 0) 0
+			calc(var(--s) / 4),
+		linear-gradient(45deg, var(--_g)) calc(var(--s) / 2) 0,
+		linear-gradient(135deg, var(--_g), var(--c) 0 67%, #0000 0),
+		linear-gradient(
+			45deg,
+			var(--_g),
+			var(--c) 0 67%,
+			#0000 0 83%,
+			var(--c) 0 92%,
+			#0000 0
+		),
+		#f7f7f7;
+	background-size: var(--s) var(--s);
+
+	border: 1px solid var(--BordaItens);
+	border-radius: 5px;
+	cursor: pointer;
+	user-select: none;
+	max-height: 300px;
+	overflow-y: auto;
+	width: max-content;
+}
+.mkSelBloco:has(input.mkSel[data-dev="true"]) .mkSelList {
+	display: flex;
+}
+
+.mkSelItem {
+	display: flex;
+	position: relative;
+	align-items: center;
+	border-radius: 6px;
+	height: 26px;
+	min-height: 26px;
+	max-height: 26px;
+	overflow: hidden;
+}
+.mkSelItem span {
+	padding: 3px 15px 3px 3px;
+}
+
+@media (max-width: 768px) {
+	.mkSelList {
+		width: calc(100% - 70px);
+		position: fixed;
+		height: calc(100% - 70px);
+		/* max-height: calc(100% - 70px);
+		min-height: calc(100% - 70px); */
+	}
+	.mkSelList .mkSelItem {
+		height: 40px;
+		min-height: 40px;
+		max-height: 40px;
+	}
+	.mkSelList .mkSelItemDeCima,
+	.mkSelList .mkSelItemDeBaixo {
+		height: 30px;
+		min-height: 30px;
+		max-height: 30px;
+	}
+	.mkSelItem span {
+		padding-left: 8px;
+	}
+}
+
+.mkSelItem:hover,
+.mkSelItem[data-s="1"]:hover {
+	background: var(--FundoItensHover);
+}
+
+.mkSelItemArrow {
+	position: absolute;
+	right: 0px;
+	pointer-events: none;
+	display: flex;
+	align-items: center;
+	height: 100%;
+}
+.mkSelItem[data-s="1"] {
+	color: var(--CorSeletor);
+	background: var(--FundoItensSel);
+}
+.mkSelItem[data-s="1"] .mkSelItemArrow::before {
+	display: flex;
+	align-items: center;
+	padding: 0px 4px;
+	color: var(--CorSeletor);
+	background: var(--FundoItensSelArrow);
+	min-height: 100%;
+	content: "\2714";
+}
+
+/* BOTOES DE MOVER PRA CIMA E PRA BAIXO */
+.mkSelItemDeCima {
+	position: sticky;
+	background-color: var(--FundoSeletorDesativado);
+	color: var(--FundoItens);
+	text-align: center;
+	top: 0px;
+	right: 0;
+	z-index: calc(var(--mkSelIndex) + 1);
+}
+.mkSelItemDeCima:hover {
+	background-color: var(--Main2);
+	cursor: default;
+}
+
+.mkSelItemDeBaixo {
+	position: sticky;
+	background-color: var(--FundoSeletorDesativado);
+	color: var(--FundoItens);
+	text-align: center;
+	bottom: 0px;
+	right: 0;
+}
+.mkSelItemDeBaixo:hover {
+	background-color: var(--Main2);
+	cursor: default;
+}
+
+/* KEYFRAMES*/
+@keyframes mkEfeitoBordaGira {
+	0% {
+		border-top: 1px solid var(--Main1);
+		border-right: 1px dashed var(--Main2);
+		border-bottom: 1px dashed var(--Main2);
+		border-left: 1px dashed var(--Main2);
+	}
+	25% {
+		border-top: 1px dashed var(--Main2);
+		border-right: 1px solid var(--Main1);
+		border-bottom: 1px dashed var(--Main2);
+		border-left: 1px dashed var(--Main2);
+	}
+	50% {
+		border-top: 1px dashed var(--Main2);
+		border-right: 1px dashed var(--Main2);
+		border-bottom: 1px solid var(--Main1);
+		border-left: 1px dashed var(--Main2);
+	}
+	75% {
+		border-top: 1px dashed var(--Main2);
+		border-right: 1px dashed var(--Main2);
+		border-bottom: 1px dashed var(--Main2);
+		border-left: 1px solid var(--Main1);
+	}
+	100% {
+		border-top: 1px solid var(--Main1);
+		border-right: 1px dashed var(--Main2);
+		border-bottom: 1px dashed var(--Main2);
+		border-left: 1px dashed var(--Main2);
+	}
+}
+
+/* =======================
 	CSS PERSONALIZADO
 =========================*/
 /* Formato Botoes */
