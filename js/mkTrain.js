@@ -107,3 +107,18 @@ teste.toString();
 for (let item in teste) {
 	console.log(String(teste));
 }
+
+const s = {
+	_num: 0,
+
+	get proximo() {
+		return this._num++;
+	},
+	set proximo(n) {
+		if (n > this._num) this._num = n;
+		else throw new Error("Número serial só pode alterar por um número maior.");
+	},
+};
+
+const s2 = Object.create(s);
+const s3 = Object.assign(s);
