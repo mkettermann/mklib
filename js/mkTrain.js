@@ -90,5 +90,20 @@ const girarMatriz = () => {
 	}
 	return res;
 };
+let b = "999";
+let teste = {
+	a: 1,
+	b: 3,
+	toString: function () {
+		return `(${this.a}, ${b})`;
+	},
+	toLocaleString: function () {
+		return `(${this.a.toLocaleString()},${this.b.toLocaleString()})`;
+	},
+};
+console.log(teste);
+teste.toString();
 
-// =)
+for (let item in teste) {
+	console.log(String(teste));
+}
