@@ -19,12 +19,18 @@
 // 		? "Apenas Strings na matriz"
 // 		: "Matriz contém outros valores. Processo interrompido com labels."
 // );
-
+const fsymbol = Symbol("mk");
 const s = {
 	_num: 0,
 
 	a: 1,
-	b: 3,
+	b: "3",
+	c: Symbol("mk"),
+	[fsymbol]() {
+		return this.a + 1;
+	},
+	d: [],
+	e: [],
 	toString: function () {
 		return `(${this.a}, ${this.b})`;
 	},
@@ -40,16 +46,12 @@ const s = {
 		else throw new Error("Número serial só pode alterar por um número maior.");
 	},
 };
-// console.log(s);
-// console.log(s.propertyIsEnumerable("toString"));
+console.log(s);
 const s2 = Object.create(s);
 console.log(s2);
-console.log(s2.propertyIsEnumerable("toString"));
-// const s3 = Object.assign(s);
-// console.log(s3);
-// console.log(s3.propertyIsEnumerable("toString"));
-// const s4 = mk.mkMerge(s);
-// console.log(s4);
-// console.log(s4.propertyIsEnumerable("toString"));
+const s3 = Object.assign(s);
+console.log(s3);
+const s4 = mk.mkMerge(s);
+console.log(s4);
 
-mk.mkInfoObject(s);
+mk.mkInfoObject(s3);

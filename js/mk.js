@@ -200,19 +200,52 @@ class mk {
         return false;
     };
     static mkInfoObject = (o) => {
+        function modeloInfo(prop, obj) {
+            return {
+                PROPRIEDADE: prop,
+                "TYPE OF": (typeof obj[prop]).toUpperCase(),
+                ENUMERABLE: obj.propertyIsEnumerable(prop),
+                OWN: obj.hasOwnProperty(prop),
+                KEYS: obj[prop] in Object.keys(obj),
+                "KEYS OWN": obj[prop] in Object.getOwnPropertyNames(obj),
+                "Refl Keys": obj[prop] in Reflect.ownKeys(obj),
+            };
+        }
+        function hasInModelo() { }
         let tab = [];
         console.group("MK Info Object: ");
+        console.info("Inicial toString: " + o.toString());
+        console.warn("Inicial Stringfy: " + JSON.stringify(o));
         console.log(o);
         for (let p in o) {
-            let tabitem = {
-                PROPRIEDADE: p,
-                OWN: s.hasOwnProperty(p),
-                "TYPE OF": (typeof o[p]).toUpperCase(),
-                ENUMERABLE: s.propertyIsEnumerable(p),
-            };
-            tab.push(tabitem);
+            let oNovo = modeloInfo(p, o);
+            if (!(oNovo.PROPRIEDADE in tab)) {
+                tab.push(oNovo);
+            }
         }
-        console.table(tab);
+        let arrayKeys = Object.keys(o);
+        for (let i = 0; i < arrayKeys.length; i++) {
+            let oNovo = modeloInfo(arrayKeys[i], o);
+            console.log(oNovo.PROPRIEDADE);
+            console.log(tab);
+            if (!(oNovo.PROPRIEDADE in tab)) {
+                tab.push(oNovo);
+            }
+        }
+        let arraySym = Object.getOwnPropertySymbols(o);
+        for (let i = 0; i < arraySym.length; i++) {
+            let oNovo = modeloInfo(arraySym[i], o);
+            if (!(oNovo.PROPRIEDADE in tab)) {
+                tab.push(oNovo);
+            }
+        }
+        console.log(tab);
+        let tabarray = Array.from(tab);
+        mk.ordenar(tabarray, "TYPE OF", true);
+        console.table(tabarray);
+        console.log(o);
+        console.info("Final toString: " + o.toString());
+        console.warn("Final Stringfy: " + JSON.stringify(o));
         console.groupEnd();
     };
     static mkSelDlRefill = async (eName, cod = null) => {
