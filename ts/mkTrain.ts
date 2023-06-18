@@ -9,13 +9,13 @@
 // });
 
 // Matriz de strings com um inteiro
-// let matrizStrings = [
-// 	["a", "b", "c"],
-// 	["d", 1, "f"],
-// 	["g", "h", "i"],
-// ];
+let a = [
+	["a", "b", "c"],
+	["d", 1, "f"],
+	["g", "h", "i"],
+];
 // console.log(
-// 	matrizApenasScrings(matrizStrings)
+// 	matrizApenasScrings(a)
 // 		? "Apenas Strings na matriz"
 // 		: "Matriz contém outros valores. Processo interrompido com labels."
 // );
