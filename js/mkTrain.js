@@ -26,4 +26,5 @@ const s = {
 var herdado = Object.create(s);
 herdado = mk.mkMerge(herdado, s);
 console.log(herdado);
-mk.mkInfoObject(herdado);
+mk.mkInfoObject(s);
+console.assert(typeof herdado == "object");

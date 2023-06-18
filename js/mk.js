@@ -237,8 +237,6 @@ class mk {
             console.group("MK Info Object: ");
             console.info("TO STRING: " + o.toString());
             let stringfyObj = JSON.stringify(o);
-            mkt = o;
-            mkt2 = Object.getOwnPropertyNames(o);
             console.log(o);
             preparar("toString", o, tab2, "TESTE");
             preparar("toLocaleString", o, tab2, "TESTE");
@@ -268,6 +266,9 @@ class mk {
             let stringfyObjPos = JSON.stringify(o);
             if (stringfyObj != stringfyObjPos) {
                 console.warn("O Objeto sofreu alteração durante a consulta: " + JSON.stringify(o));
+            }
+            else {
+                console.log(JSON.stringify(o));
             }
             console.groupEnd();
         }
