@@ -281,8 +281,9 @@ class mk {
 	static mkInfoObject = (o: any) => {
 		function modeloInfo(prop: any, obj: any) {
 			return {
-				PROPRIEDADE: prop,
 				"TYPE OF": (typeof obj[prop]).toUpperCase(),
+				PROPRIEDADE: prop,
+				"VALUE OF": obj[prop],
 				ENUMERABLE: obj.propertyIsEnumerable(prop),
 				OWN: obj.hasOwnProperty(prop),
 				KEYS: obj[prop] in Object.keys(obj),
@@ -290,7 +291,15 @@ class mk {
 				"Refl Keys": obj[prop] in Reflect.ownKeys(obj),
 			};
 		}
-		function hasInModelo() {}
+		function hasInModelo(obj: any, array: any) {
+			let resultado = false;
+			array.forEach((o: any) => {
+				if (o.PROPRIEDADE == obj.PROPRIEDADE) {
+					resultado = true;
+				}
+			});
+			return resultado;
+		}
 
 		let tab: any = [];
 		console.group("MK Info Object: ");
@@ -299,16 +308,21 @@ class mk {
 		console.log(o);
 		for (let p in o) {
 			let oNovo = modeloInfo(p, o);
-			if (!(oNovo.PROPRIEDADE in tab)) {
+			if (!hasInModelo(oNovo, tab)) {
 				tab.push(oNovo);
 			}
 		}
 		let arrayKeys = Object.keys(o);
 		for (let i = 0; i < arrayKeys.length; i++) {
 			let oNovo = modeloInfo(arrayKeys[i], o);
-			console.log(oNovo.PROPRIEDADE);
-			console.log(tab);
-			if (!(oNovo.PROPRIEDADE in tab)) {
+			if (!hasInModelo(oNovo, tab)) {
+				tab.push(oNovo);
+			}
+		}
+		let arrayOwnNames = Object.getOwnPropertyNames(o);
+		for (let i = 0; i < arrayOwnNames.length; i++) {
+			let oNovo = modeloInfo(arrayOwnNames[i], o);
+			if (!hasInModelo(oNovo, tab)) {
 				tab.push(oNovo);
 			}
 		}
@@ -316,14 +330,12 @@ class mk {
 		let arraySym = Object.getOwnPropertySymbols(o);
 		for (let i = 0; i < arraySym.length; i++) {
 			let oNovo = modeloInfo(arraySym[i], o);
-			if (!(oNovo.PROPRIEDADE in tab)) {
+			if (!hasInModelo(oNovo, tab)) {
 				tab.push(oNovo);
 			}
 		}
-		console.log(tab);
-		let tabarray = Array.from(tab);
-		mk.ordenar(tabarray, "TYPE OF", true);
-		console.table(tabarray);
+		mk.ordenar(tab, "KEYS", true);
+		console.table(tab);
 		console.log(o);
 		console.info("Final toString: " + o.toString());
 		console.warn("Final Stringfy: " + JSON.stringify(o));
