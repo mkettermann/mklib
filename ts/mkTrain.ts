@@ -19,40 +19,39 @@
 // 		? "Apenas Strings na matriz"
 // 		: "Matriz contém outros valores. Processo interrompido com labels."
 // );
-const fsymbol = Symbol("mk");
-const s = {
-	_num: 0,
+// const fsymbol = Symbol("mk");
+// const s = {
+// 	_num: 0,
 
-	a: 1,
-	b: "3",
-	c: Symbol("mk"),
-	[fsymbol]() {
-		return this.a + 1;
-	},
-	d: [],
-	e: [],
-	toString: function () {
-		return `(${this.a}, ${this.b})`;
-	},
-	// toLocaleString: function () {
-	// 	return `(${this.a.toLocaleString()},${this.b.toLocaleString()})`;
-	// },
+// 	a: 1,
+// 	b: "3",
+// 	c: Symbol("mk"),
+// 	[fsymbol]() {
+// 		return this.a + 1;
+// 	},
+// 	d: [],
+// 	e: ["eu","sou", "eu", "mesmo"],
+// 	toString: function () {
+// 		return `(${this.a}, ${this.b})`;
+// 	},
+// 	// toLocaleString: function () {
+// 	// 	return `(${this.a.toLocaleString()},${this.b.toLocaleString()})`;
+// 	// },
 
-	get proximo() {
-		return this._num++;
-	},
-	set proximo(n) {
-		if (n > this._num) this._num = n;
-		else throw new Error("Número serial só pode alterar por um número maior.");
-	},
-};
+// 	get proximo() {
+// 		return this._num++;
+// 	},
+// 	set proximo(n) {
+// 		if (n > this._num) this._num = n;
+// 		else throw new Error("Número serial só pode alterar por um número maior.");
+// 	},
+// };
 // console.log(s);
 // const s2 = Object.create(s);
 // console.log(s2);
 // const s3 = Object.assign(s);
 // console.log(s3);
-var herdado = Object.create(s);
-herdado = mk.mkMerge(herdado, s);
-console.log(herdado);
-mk.mkInfoObject(s);
-console.assert(typeof herdado == "object");
+// var herdado = Object.create(s);
+// herdado = mk.mkMerge(herdado, s);
+// console.log(herdado);
+// mk.mkInfoObject(s);
