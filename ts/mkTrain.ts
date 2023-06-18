@@ -34,9 +34,9 @@ const s = {
 	toString: function () {
 		return `(${this.a}, ${this.b})`;
 	},
-	toLocaleString: function () {
-		return `(${this.a.toLocaleString()},${this.b.toLocaleString()})`;
-	},
+	// toLocaleString: function () {
+	// 	return `(${this.a.toLocaleString()},${this.b.toLocaleString()})`;
+	// },
 
 	get proximo() {
 		return this._num++;
@@ -51,7 +51,8 @@ const s2 = Object.create(s);
 console.log(s2);
 const s3 = Object.assign(s);
 console.log(s3);
-const s4 = mk.mkMerge(s);
-console.log(s4);
+var clonado = Object.create(s);
+clonado = mk.mkMerge(clonado, s);
+console.log(clonado);
 
-mk.mkInfoObject(s3);
+mk.mkInfoObject([]);

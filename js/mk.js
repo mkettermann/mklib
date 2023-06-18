@@ -200,64 +200,68 @@ class mk {
         return false;
     };
     static mkInfoObject = (o) => {
-        function modeloInfo(prop, obj) {
+        function modeloInfo(prop, obj, iteradoEm) {
             return {
                 "TYPE OF": (typeof obj[prop]).toUpperCase(),
                 PROPRIEDADE: prop,
                 "VALUE OF": obj[prop],
-                ENUMERABLE: obj.propertyIsEnumerable(prop),
+                ENUMERABLE: obj.propertyIsEnumerable(prop.toString()),
                 OWN: obj.hasOwnProperty(prop),
                 KEYS: obj[prop] in Object.keys(obj),
                 "KEYS OWN": obj[prop] in Object.getOwnPropertyNames(obj),
                 "Refl Keys": obj[prop] in Reflect.ownKeys(obj),
+                "ITERADO EM": iteradoEm,
             };
         }
-        function hasInModelo(obj, array) {
+        function hasInModelo(obj, array, iteradoEm) {
             let resultado = false;
             array.forEach((o) => {
                 if (o.PROPRIEDADE == obj.PROPRIEDADE) {
+                    o["ITERADO EM"] += "|" + iteradoEm;
                     resultado = true;
                 }
             });
             return resultado;
         }
-        let tab = [];
-        console.group("MK Info Object: ");
-        console.info("Inicial toString: " + o.toString());
-        console.warn("Inicial Stringfy: " + JSON.stringify(o));
-        console.log(o);
-        for (let p in o) {
-            let oNovo = modeloInfo(p, o);
-            if (!hasInModelo(oNovo, tab)) {
-                tab.push(oNovo);
+        function preparar(p, o, array, iteradoEm) {
+            let oNovo = modeloInfo(p, o, iteradoEm);
+            if (!hasInModelo(oNovo, tab, iteradoEm)) {
+                array.push(oNovo);
             }
+        }
+        let tab = [];
+        let tab2 = [];
+        console.group("MK Info Object: ");
+        console.info("TO STRING: " + o.toString());
+        let stringfyObj = JSON.stringify(o);
+        console.log(o);
+        preparar("toLocaleString", o, tab2, "TESTE");
+        for (let p in o) {
+            preparar(p, o, tab, "IN");
         }
         let arrayKeys = Object.keys(o);
         for (let i = 0; i < arrayKeys.length; i++) {
-            let oNovo = modeloInfo(arrayKeys[i], o);
-            if (!hasInModelo(oNovo, tab)) {
-                tab.push(oNovo);
-            }
+            preparar(arrayKeys[i], o, tab, "KEYS");
         }
         let arrayOwnNames = Object.getOwnPropertyNames(o);
         for (let i = 0; i < arrayOwnNames.length; i++) {
-            let oNovo = modeloInfo(arrayOwnNames[i], o);
-            if (!hasInModelo(oNovo, tab)) {
-                tab.push(oNovo);
-            }
+            preparar(arrayOwnNames[i], o, tab, "OWNN");
         }
         let arraySym = Object.getOwnPropertySymbols(o);
         for (let i = 0; i < arraySym.length; i++) {
-            let oNovo = modeloInfo(arraySym[i], o);
-            if (!hasInModelo(oNovo, tab)) {
-                tab.push(oNovo);
-            }
+            preparar(arraySym[i], o, tab, "OWNS");
+        }
+        let arrayReflect = Reflect.ownKeys(o);
+        for (let i = 0; i < arrayReflect.length; i++) {
+            preparar(arrayReflect[i], o, tab, "REFL");
         }
         mk.ordenar(tab, "KEYS", true);
         console.table(tab);
-        console.log(o);
-        console.info("Final toString: " + o.toString());
-        console.warn("Final Stringfy: " + JSON.stringify(o));
+        console.table(tab2);
+        let stringfyObjPos = JSON.stringify(o);
+        if (stringfyObj != stringfyObjPos) {
+            console.warn("O Objeto sofreu alteração durante a consulta: " + JSON.stringify(o));
+        }
         console.groupEnd();
     };
     static mkSelDlRefill = async (eName, cod = null) => {
