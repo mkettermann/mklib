@@ -23,12 +23,7 @@ const s = {
             throw new Error("Número serial só pode alterar por um número maior.");
     },
 };
-console.log(s);
-const s2 = Object.create(s);
-console.log(s2);
-const s3 = Object.assign(s);
-console.log(s3);
-var clonado = Object.create(s);
-clonado = mk.mkMerge(clonado, s);
-console.log(clonado);
-mk.mkInfoObject([]);
+var herdado = Object.create(s);
+herdado = mk.mkMerge(herdado, s);
+console.log(herdado);
+mk.mkInfoObject(herdado);
