@@ -1640,8 +1640,8 @@ const mkSelPesquisaFocus = (e) => {
     Array.from(eList.children).forEach((el) => {
         el.style.display = "";
     });
-    if (eList.firstElementChild.classList.contains("mkSelItemDeCima") &&
-        eList.scrollTop == 0)
+    let temOsDeCima = eList.firstElementChild?.classList.contains("mkSelItemDeCima");
+    if (temOsDeCima && eList.scrollTop == 0)
         eList.firstElementChild.style.display = "none";
     mkSelReposicionar(e.parentElement.nextElementSibling);
 };

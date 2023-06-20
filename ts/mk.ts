@@ -2120,10 +2120,10 @@ const mkSelPesquisaFocus = (e: any) => {
 		el.style.display = "";
 	});
 	// Se iniciar no topo, subir as setas pra cima.
-	if (
-		eList.firstElementChild.classList.contains("mkSelItemDeCima") &&
-		eList.scrollTop == 0
-	)
+	let temOsDeCima =
+		eList.firstElementChild?.classList.contains("mkSelItemDeCima");
+
+	if (temOsDeCima && eList.scrollTop == 0)
 		eList.firstElementChild.style.display = "none";
 	// if (Number(e.getAttribute("data-selapenas")) == 1) {
 	// 	eList.scrollTop = 0;
