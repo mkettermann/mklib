@@ -1143,7 +1143,7 @@ class mk {
 	 * Busca as mesmas propriedades no filtro e nos itens de fullDados;
 	 * Uma lista exibeDados eh formada por referencia de memoria a partir dos resultados encontrados apos filtro.
 	 * //Mk.fullDados.filter(o => {return o.codPessoa < 5}).map(o => {return o.codPessoa + " - " + o.nomPessoa}).join("<br>");
-	 * //Não é possível utilizar o filter em array, pois nesse caso estamos girando 2 filter ao mesmo tempo e comparando os parametros.
+	 * //Não é possível utilizar o filter(), pois nesse caso estamos girando 2 filter ao mesmo tempo e comparando os parametros.
 	 */
 	static mkFiltragemDados = () => {
 		if (Array.isArray(this.fullDados)) {
