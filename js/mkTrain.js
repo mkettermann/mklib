@@ -6,3 +6,4 @@ let a = [
 ];
 let ma = "Marcos";
 let ar = Array.from(ma);
+let spa = new Array(5);

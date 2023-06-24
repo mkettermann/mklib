@@ -57,3 +57,4 @@ let a = [
 // mk.mkInfoObject(s);
 let ma = "Marcos";
 let ar = Array.from(ma);
+let spa = new Array(5);
