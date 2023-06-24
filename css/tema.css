@@ -1,11 +1,12 @@
 :root {
 	--bordaMaster: #331166;
 	--fundoHead: #331166;
-	--corHead: #00dd33;
+	--corHead: #0f0;
 	--fundoPrincipal: #445544;
 	--corPrincipal: #f0fff0;
 	--corPrincipal33: #f0fff033;
 	--fundoMenu: #221133;
-	--corLink: lime;
-	--corLinkHover: #99ffcc;
+	--corLink: #0f0;
+	--corLinkHover: white;
+	--corLinkEfeito: magenta;
 }
