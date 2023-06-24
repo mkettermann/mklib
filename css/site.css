@@ -32,10 +32,10 @@ div.Corpo {
 	flex-direction: row;
 }
 nav {
+	z-index: 90;
 	border: 0px solid transparent;
-	width: 90px;
-	/* padding-top: 2rem; */
-	/* flex: 0 0 20%; */
+	width: 100px;
+	/* border: 1px solid blue; */
 }
 main {
 	flex: 0 1 100%;
@@ -50,7 +50,7 @@ footer {
 }
 nav .Menu {
 	transform: translateX(-60%);
-	position: sticky;
+	position: fixed;
 	top: 0;
 	width: fit-content;
 	transition: 1s cubic-bezier(0.2, 0, 0.5, 2);
@@ -121,6 +121,11 @@ nav .Menu:hover {
 	padding: 0px 2rem 0.5rem 2rem;
 	transform: scale(2);
 	overflow: hidden;
+}
+
+.h1 {
+	font-size: 1.5rem;
+	text-decoration: underline dashed;
 }
 
 /* Outros */
