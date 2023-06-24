@@ -55,3 +55,5 @@ let a = [
 // herdado = mk.mkMerge(herdado, s);
 // console.log(herdado);
 // mk.mkInfoObject(s);
+let ma = "Marcos";
+let ar = Array.from(ma);
