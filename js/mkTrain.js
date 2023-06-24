@@ -5,5 +5,6 @@ let a = [
     ["g", "h", "i"],
 ];
 let ma = "Marcos";
-let ar = Array.from(ma);
+let num = "1326243788956";
+let ar = Array.from(num);
 let spa = new Array(5);
