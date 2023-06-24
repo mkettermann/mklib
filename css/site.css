@@ -1,0 +1,72 @@
+/* Global */
+body {
+	background-color: var(--fundoPrincipal);
+	color: var(--corPrincipal);
+}
+
+/* Estilo do Site*/
+header {
+	position: sticky;
+	top: 0rem;
+	z-index: 100;
+	background: var(--fundoHead);
+	color: var(--corHead);
+	border: 0px;
+	border-color: var(--bordaMaster);
+	border-style: inset;
+	border-bottom-width: 5px;
+	padding: 0px;
+	border-radius: 50%;
+	border-top-left-radius: 0%;
+	border-top-right-radius: 0%;
+	height: 2rem;
+	min-height: 2rem;
+	max-height: 2rem;
+	margin-top: -2rem;
+	font-size: 2rem;
+	/* margin-top: -16px; */
+	/* display: none; */
+}
+div.Corpo {
+	display: flex;
+	flex-direction: row;
+}
+nav {
+	border: 1px solid blue;
+	padding-top: 2rem;
+	/* flex: 0 0 20%; */
+}
+main {
+	border: 1px solid lime;
+	flex: 0 1 100%;
+	padding-top: 2rem;
+}
+footer {
+	text-align: center;
+	font-size: 0.7rem;
+}
+nav .Menu {
+	transition: 1s;
+	padding: 5px 20px 5px 5px;
+	white-space: nowrap;
+	overflow-x: hidden;
+	background-color: var(--fundoMenu);
+	border: 0px;
+	border-right: 3px;
+	border-bottom: 4px;
+	border-style: inset;
+	border-color: var(--bordaMaster);
+	border-radius: 0px;
+	border-bottom-right-radius: 15px;
+	border-top-right-radius: 15px;
+	transform: translateX(-60%);
+}
+nav .Menu:hover {
+	transition: 0.3s ease-in-out;
+	transform: translateX(0%);
+}
+
+/* Outros */
+input {
+	width: 100%;
+}
