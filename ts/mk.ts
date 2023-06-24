@@ -247,11 +247,11 @@ class mk {
 	};
 
 	// static QaSet = (query = "body", atributoNome, atributoValor) => {
-	// 	return Mk.Q(query).setAttribute(atributoNome, atributoValor);
+	// 	return mk.Q(query).setAttribute(atributoNome, atributoValor);
 	// };
 
 	// static QaGet = (query = "body", atributoNome) => {
-	// 	return Mk.Q(query).getAttribute(atributoNome);
+	// 	return mk.Q(query).getAttribute(atributoNome);
 	// };
 
 	static GetParam = (name = null) => {
@@ -397,7 +397,7 @@ class mk {
 			buttonOfflineBlock.setAttribute("type", "button");
 			buttonOfflineBlock.setAttribute(
 				"onClick",
-				"Mk.detectedServerOff_display()"
+				"mk.detectedServerOff_display()"
 			);
 			let iOfflineBlock = document.createElement("i");
 			iOfflineBlock.className = "bi bi-x-lg";
@@ -1142,7 +1142,7 @@ class mk {
 	 * FullFiltroFull
 	 * Busca as mesmas propriedades no filtro e nos itens de fullDados;
 	 * Uma lista exibeDados eh formada por referencia de memoria a partir dos resultados encontrados apos filtro.
-	 * //Mk.fullDados.filter(o => {return o.codPessoa < 5}).map(o => {return o.codPessoa + " - " + o.nomPessoa}).join("<br>");
+	 * //mk.fullDados.filter(o => {return o.codPessoa < 5}).map(o => {return o.codPessoa + " - " + o.nomPessoa}).join("<br>");
 	 * //Não é possível utilizar o filter(), pois nesse caso estamos girando 2 filter ao mesmo tempo e comparando os parametros.
 	 */
 	static mkFiltragemDados = () => {
@@ -1159,7 +1159,7 @@ class mk {
 						// console.log(
 						// 	propFiltro +
 						// 		"(" +
-						// 		typeof Mk.objFiltro[propFiltro] +
+						// 		typeof mk.objFiltro[propFiltro] +
 						// 		"): " +
 						// 		m +
 						// 		" >> " +
