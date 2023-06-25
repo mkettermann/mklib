@@ -1076,41 +1076,34 @@ class mk {
 		mk.Q(".tablePaginacao .paginate_Ultima a").innerHTML =
 			mk.status.totalPaginas.toString();
 
-		if (this.paginationAtual == 1) {
-			mk.Q(".tablePaginacao .pagBack").classList.add("disabled");
-		} else {
-			mk.Q(".tablePaginacao .pagBack").classList.remove("disabled");
-		}
-		if (this.paginationAtual >= mk.status.totalPaginas) {
-			mk.Q(".tablePaginacao .pagNext").classList.add("disabled");
-		} else {
-			mk.Q(".tablePaginacao .pagNext").classList.remove("disabled");
-		}
-		if (mk.status.totalPaginas > 2) {
-			mk.Q(".tablePaginacao .pageCod2").classList.remove("oculto");
-		} else {
-			mk.Q(".tablePaginacao .pageCod2").classList.add("oculto");
-		}
-		if (mk.status.totalPaginas > 3) {
-			mk.Q(".tablePaginacao .pageCod3").classList.remove("oculto");
-		} else {
-			mk.Q(".tablePaginacao .pageCod3").classList.add("oculto");
-		}
-		if (mk.status.totalPaginas > 4) {
-			mk.Q(".tablePaginacao .pageCod4").classList.remove("oculto");
-		} else {
-			mk.Q(".tablePaginacao .pageCod4").classList.add("oculto");
-		}
-		if (mk.status.totalPaginas > 5) {
-			mk.Q(".tablePaginacao .pageCod5").classList.remove("oculto");
-		} else {
-			mk.Q(".tablePaginacao .pageCod5").classList.add("oculto");
-		}
-		if (mk.status.totalPaginas > 6) {
-			mk.Q(".tablePaginacao .pageCod6").classList.remove("oculto");
-		} else {
-			mk.Q(".tablePaginacao .pageCod6").classList.add("oculto");
-		}
+		this.paginationAtual == 1
+			? mk.Qoff(".tablePaginacao .pagBack")
+			: mk.Qon(".tablePaginacao .pagBack");
+
+		this.paginationAtual >= mk.status.totalPaginas
+			? mk.Qoff(".tablePaginacao .pagNext")
+			: mk.Qon(".tablePaginacao .pagNext");
+
+		mk.status.totalPaginas > 2
+			? mk.QverOn(".tablePaginacao .pageCod2")
+			: mk.QverOff(".tablePaginacao .pageCod2");
+
+		mk.status.totalPaginas > 3
+			? mk.QverOn(".tablePaginacao .pageCod3")
+			: mk.QverOff(".tablePaginacao .pageCod3");
+
+		mk.status.totalPaginas > 4
+			? mk.QverOn(".tablePaginacao .pageCod4")
+			: mk.QverOff(".tablePaginacao .pageCod4");
+
+		mk.status.totalPaginas > 5
+			? mk.QverOn(".tablePaginacao .pageCod5")
+			: mk.QverOff(".tablePaginacao .pageCod5");
+
+		mk.status.totalPaginas > 6
+			? mk.QverOn(".tablePaginacao .pageCod6")
+			: mk.QverOff(".tablePaginacao .pageCod6");
+
 		if (this.paginationAtual < 5) {
 			// INI
 			mk.Q(".tablePaginacao .pageCod2").classList.remove("disabled");
@@ -1426,7 +1419,13 @@ class mk {
 	};
 
 	// LER (cRud) Metodo que inicia a coleta.
-	static iniciarGetList = async (url: string): Promise<void> => {
+	static iniciarGetList = async (
+		url: string,
+		resumoViaInclude: boolean = false
+	): Promise<void> => {
+		if (resumoViaInclude) {
+			await mk.mkInclude();
+		}
 		mk.Ao("input", "input[name='tablePorPagina']", () => {
 			mk.atualizarPorPagina();
 		});
@@ -1918,6 +1917,26 @@ class mk {
 		};
 		mk.mkExecutaNoObj(dadosOA, mkMoldeOAA_Execute);
 		mk.Q(repositorio).innerHTML = listaNode;
+	};
+
+	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+	//			MK Include									\\
+	//___________________________________\\
+
+	static mkInclude = async () => {
+		mk.QAll("body *").forEach(async (e) => {
+			let destino = e.getAttribute("mkInclude");
+			if (destino != null) {
+				console.log("Incluindo: " + destino);
+				let retorno = await mk.http(destino, mk.t.G, mk.t.H);
+				if (retorno != null) {
+					e.innerHTML = retorno;
+					//mk.mkNoteToScript(mk.Q(".conteudo"));
+				} else {
+					console.log("Falhou ao coletar dados");
+				}
+			}
+		});
 	};
 }
 
