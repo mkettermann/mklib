@@ -1048,9 +1048,7 @@ class mk {
                 mk.Q(".listBody").removeAttribute("hidden");
                 mk.filtraPagination();
                 mk.antesDePopularTabela();
-                $(".tableListagem tbody.listBody").loadTemplate(mk.Q("#template"), mk.exibePaginado, {
-                    complete: mk.aoCompletarExibicao,
-                });
+                mk.mkMoldeOA(mk.exibePaginado, "#modelo", ".tableListagem .listBody");
             }
         }
     };
@@ -1461,7 +1459,21 @@ class mk {
             console.error("CONTEUDO NULO");
         }
     };
-    static mkMolda = async () => { };
+    static mkMoldeOA = async (dadosOA, modelo = "#modelo", repositorio = ".tableListagem .listBody") => {
+        let conteudoTemplate = mk.Q(modelo).innerHTML;
+        let listaNode = "";
+        function mkMoldeOAA_Execute(o) {
+            let node = conteudoTemplate;
+            for (let k of Object.keys(o)) {
+                if (o[k] !== null && o[k] !== "") {
+                    node = node.replaceAll("${" + k + "}", o[k].toString());
+                }
+            }
+            listaNode += node;
+        }
+        mk.mkExecutaNoObj(dadosOA, mkMoldeOAA_Execute);
+        mk.Q(repositorio).innerHTML = listaNode;
+    };
 }
 const mkSelRenderizar = () => {
     document.querySelectorAll("input.mkSel").forEach((e) => {

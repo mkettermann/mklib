@@ -1351,14 +1351,16 @@ class mk {
 				mk.filtraPagination();
 				mk.antesDePopularTabela();
 
+				mk.mkMoldeOA(mk.exibePaginado, "#modelo", ".tableListagem .listBody");
+
 				// XXX RESOLVER: Criar Funções de geração de template em javascript.
-				$(".tableListagem tbody.listBody").loadTemplate(
-					mk.Q("#template"),
-					mk.exibePaginado,
-					{
-						complete: mk.aoCompletarExibicao,
-					}
-				);
+				// $(".tableListagem tbody.listBody").loadTemplate(
+				// 	mk.Q("#template"),
+				// 	mk.exibePaginado,
+				// 	{
+				// 		complete: mk.aoCompletarExibicao,
+				// 	}
+				// );
 			}
 		}
 	};
@@ -1898,7 +1900,25 @@ class mk {
 	//			MK Molde (Template)					\\
 	//___________________________________\\
 
-	static mkMolda = async () => {};
+	static mkMoldeOA = async (
+		dadosOA: object[] | object,
+		modelo: string = "#modelo",
+		repositorio: string = ".tableListagem .listBody"
+	) => {
+		let conteudoTemplate = mk.Q(modelo).innerHTML;
+		let listaNode = "";
+		function mkMoldeOAA_Execute(o: any) {
+			let node: any = conteudoTemplate;
+			for (let k of Object.keys(o)) {
+				if (o[k as keyof typeof o] !== null && o[k as keyof typeof o] !== "") {
+					node = node.replaceAll("${" + k + "}", o[k].toString());
+				}
+			}
+			listaNode += node;
+		}
+		mk.mkExecutaNoObj(dadosOA, mkMoldeOAA_Execute);
+		mk.Q(repositorio).innerHTML = listaNode;
+	};
 }
 
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
