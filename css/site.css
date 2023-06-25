@@ -172,11 +172,12 @@ input {
 }
 .tableListagem th {
 	border: 1px solid var(--fundoMenu);
+	vertical-align: middle;
+	height: 25px;
 }
 .listBody td {
 	text-align: center;
 	vertical-align: middle;
-	white-space: nowrap;
 	overflow: auto;
 	max-height: 20px;
 	min-height: 20px;

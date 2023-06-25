@@ -1516,7 +1516,7 @@ ul.mkUlFase li.disabled a {
 	right: 0;
 	top: -1px;
 	height: 100%;
-	animation: mkSortY 2s infinite reverse cubic-bezier(0.4, -0.4, 0, 1);
+	animation: mkSortY 3s infinite reverse cubic-bezier(0.4, -0.4, 0, 1);
 }
 
 .mkEfeitoSobe::after {
@@ -1561,7 +1561,7 @@ ul.mkUlFase li.disabled a {
 	top: -1px;
 	height: 100%;
 	right: 0;
-	animation: mkSortY 2s infinite cubic-bezier(1, 0, 0.4, 1.4);
+	animation: mkSortY 3s infinite cubic-bezier(1, 0, 0.4, 1.4);
 }
 
 @keyframes mkSortY {
