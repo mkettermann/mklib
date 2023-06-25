@@ -577,6 +577,27 @@ class mk {
     static transDiasEmMs = (d) => {
         return d * 86400000;
     };
+    static mkGeraElemento(node, nomeElemento = "script") {
+        let elemento = document.createElement(nomeElemento);
+        elemento.text = node.innerHTML;
+        let i = -1, attrs = node.attributes, attr;
+        while (++i < attrs.length) {
+            elemento.setAttribute((attr = attrs[i]).name, attr.value);
+        }
+        return elemento;
+    }
+    static mkNoteToScript(node) {
+        if (node.tagName === "SCRIPT") {
+            node.parentNode.replaceChild(mk.mkGeraElemento(node, "script"), node);
+        }
+        else {
+            var i = -1, children = node.childNodes;
+            while (++i < children.length) {
+                mk.mkNoteToScript(children[i]);
+            }
+        }
+        return node;
+    }
     static frequencia = (array) => {
         let f = {};
         for (let e of array) {

@@ -734,6 +734,38 @@ class mk {
 		return d * 86400000;
 	};
 
+	// Injeção de elementos via http
+	static mkGeraElemento(node: any, nomeElemento: string = "script") {
+		// Cria Elemento
+		let elemento: any = document.createElement(nomeElemento);
+		// Popular Elemento
+		elemento.text = node.innerHTML;
+		// Set Atributos
+		let i = -1,
+			attrs = node.attributes,
+			attr;
+		while (++i < attrs.length) {
+			elemento.setAttribute((attr = attrs[i]).name, attr.value);
+		}
+		// Retorna Elemento
+		return elemento;
+	}
+	// Função Recursiva que substitui node de Script por elemento de Script
+	static mkNoteToScript(node: any) {
+		// Apenas Scripts
+		if (node.tagName === "SCRIPT") {
+			node.parentNode.replaceChild(mk.mkGeraElemento(node, "script"), node);
+		} else {
+			// Recursividade sobre filhos
+			var i = -1,
+				children = node.childNodes;
+			while (++i < children.length) {
+				mk.mkNoteToScript(children[i]);
+			}
+		}
+		return node;
+	}
+
 	// Calculo de frequencia
 	// Conta o total do que tem dentro da array e retorna a frequencia destes;
 	static frequencia = (array: any): object => {
