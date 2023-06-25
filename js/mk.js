@@ -1461,6 +1461,7 @@ class mk {
             console.error("CONTEUDO NULO");
         }
     };
+    static mkMolda = async () => { };
 }
 const mkSelRenderizar = () => {
     document.querySelectorAll("input.mkSel").forEach((e) => {
