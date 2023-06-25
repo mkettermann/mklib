@@ -1077,7 +1077,7 @@ class mk {
         if (resumoViaInclude) {
             await mk.mkInclude();
         }
-        mk.Ao("input", "input[name='tablePorPagina']", () => {
+        mk.Ao("input", "input[name='tablePorPagina']", async () => {
             mk.atualizarPorPagina();
         });
         let retorno = await mk.http(url, mk.t.G, mk.t.J);
