@@ -162,8 +162,6 @@ input {
 .divListagem {
 	box-shadow: 0px 0px 5px 1px var(--corPrincipal33);
 	border: 1px solid var(--bordaMaster);
-	border-radius: 10px;
-	overflow: auto;
 }
 .tableListagem thead {
 	background: var(--fundoHead);

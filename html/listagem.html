@@ -1,72 +1,93 @@
-<h1 class="microPos2 h1">Listagem</h2>
+<h1 class="microPos2 h1">Listagem</h1>
 <div>Exemplo de Tabela de Usuários:</div>
 <div class="divListagem">
-<table class="tableListagem">
-	<thead>
-		<tr>
-			<th class="sort-mNome">Usuário</th>
-			<th class="sort-mDataCadastro">Data Cadastro</th>
-			<th class="sort-mDataUltimoAcesso">Último Acesso</th>
-			<th class="sort-mTotalAcessos">Tot. Acessos</th>
-			<th class="sort-mStatus">Status</th>
-			<th class="acao">Editar</th>
-		</tr>
-	</thead>
-	<tbody class="listBody"></tbody>
-</table>
+	<table class="tableListagem">
+		<thead>
+			<tr>
+				<th class="sort-mNome">Usuário</th>
+				<th class="sort-mDataCadastro">Data Cadastro</th>
+				<th class="sort-mDataUltimoAcesso">Último Acesso</th>
+				<th class="sort-mTotalAcessos">Tot. Acessos</th>
+				<th class="sort-mStatus">Status</th>
+				<th class="acao">Editar</th>
+			</tr>
+		</thead>
+		<tbody class="listBody"></tbody>
+	</table>
 </div>
 <div class="i">
 	<div class="j">
-			<div class="tableResultado">
-					Total de Registros <span class="tableTotal">??</span><span class="tableInicioFim"> - Exibindo do 
-							<span class="tableIni">??</span> ao 
-							<span class="tableFim">??</span>.
-					</span>
-			</div>
+		<div class="tableResultado">
+			Total de Registros <span class="tableTotal">??</span
+			><span class="tableInicioFim">
+				- Exibindo do <span class="tableIni">??</span> ao
+				<span class="tableFim">??</span>.
+			</span>
+		</div>
 	</div>
 	<div class="j">
-			<ul class="pagination justify-content-center tablePaginacao">
-					<li class="paginate_button page-item pagBack" id="paginate_back">
-							<a onclick="mk.mudaPagina('back')" data-dt-idx="0" class="page-link">Anterior</a>
-					</li>
-					<li class="paginate_button page-item active" id="paginate_Um">
-							<a onclick="mk.mudaPagina(this)" class="page-link">1</a>
-					</li>
-					<!-- MEIO -->
-					<li class="paginate_button page-item page_meio pageCod2 oculto">
-							<a onclick="mk.mudaPagina(this)" class="page-link">??</a>
-					</li>
-					<li class="paginate_button page-item page_meio pageCod3 pagNantes oculto">
-							<a onclick="mk.mudaPagina(this)" class="page-link">??</a>
-					</li>
-					<li class="paginate_button page-item page_meio pageCod4 pagNatual oculto">
-							<a onclick="mk.mudaPagina(this)" class="page-link">??</a>
-					</li>
-					<li class="paginate_button page-item page_meio pageCod5 pagNdepois oculto">
-							<a onclick="mk.mudaPagina(this)" class="page-link">??</a>
-					</li>
-					<li class="paginate_button page-item page_meio pageCod6 disabled oculto">
-							<a onclick="mk.mudaPagina(this)" class="page-link">??</a>
-					</li>
-					<!-- FIM MEIO -->
-					<li class="paginate_button page-item paginate_Ultima">
-							<a onclick="mk.mudaPagina(this)" class="page-link">Carregando...</a>
-					</li>
-					<li class="paginate_button page-item pagNext" id="paginate_next">
-							<a onclick="mk.mudaPagina('next')" data-dt-idx="8" class="page-link">Próxima</a>
-					</li>
-			</ul>
+		<ul class="pagination justify-content-center tablePaginacao">
+			<li class="paginate_button page-item pagBack" id="paginate_back">
+				<a onclick="mk.mudaPagina('back')" data-dt-idx="0" class="page-link"
+					>Anterior</a
+				>
+			</li>
+			<li class="paginate_button page-item active" id="paginate_Um">
+				<a onclick="mk.mudaPagina(this)" class="page-link">1</a>
+			</li>
+			<!-- MEIO -->
+			<li class="paginate_button page-item page_meio pageCod2 oculto">
+				<a onclick="mk.mudaPagina(this)" class="page-link">??</a>
+			</li>
+			<li class="paginate_button page-item page_meio pageCod3 pagNantes oculto">
+				<a onclick="mk.mudaPagina(this)" class="page-link">??</a>
+			</li>
+			<li class="paginate_button page-item page_meio pageCod4 pagNatual oculto">
+				<a onclick="mk.mudaPagina(this)" class="page-link">??</a>
+			</li>
+			<li
+				class="paginate_button page-item page_meio pageCod5 pagNdepois oculto"
+			>
+				<a onclick="mk.mudaPagina(this)" class="page-link">??</a>
+			</li>
+			<li class="paginate_button page-item page_meio pageCod6 disabled oculto">
+				<a onclick="mk.mudaPagina(this)" class="page-link">??</a>
+			</li>
+			<!-- FIM MEIO -->
+			<li class="paginate_button page-item paginate_Ultima">
+				<a onclick="mk.mudaPagina(this)" class="page-link">Carregando...</a>
+			</li>
+			<li class="paginate_button page-item pagNext" id="paginate_next">
+				<a onclick="mk.mudaPagina('next')" data-dt-idx="8" class="page-link"
+					>Próxima</a
+				>
+			</li>
+		</ul>
 	</div>
 	<div class="j text-end">
-			<span class="tableExibePorPagina microPos6">
-					<span>Registros por P&aacute;gina:</span>
-					<input name="tablePorPagina"
-								 value="6"
-								 style="width: 40px"
-								 class="mkSel"
-								 data-selapenas="1"
-								 data-selarray='[{"k":6,"v":"6"},{"k":10,"v":"10"},{"k":25,"v":"25"},{"k":50,"v":"50"},{"k":100,"v":"100"}]' />
-			</span>
+		<span class="tableExibePorPagina microPos6">
+			<span>Registros por P&aacute;gina:</span>
+			<input
+				name="tablePorPagina"
+				value="6"
+				style="width: 40px"
+				class="mkSel"
+				data-selapenas="1"
+				data-selarray='[{"k":6,"v":"6"},{"k":10,"v":"10"},{"k":25,"v":"25"},{"k":50,"v":"50"},{"k":100,"v":"100"}]'
+			/>
+		</span>
 	</div>
 </div>
+<script type="text/html" id="template">
+	<tr data-id="mId">
+		<td class="sort-mNome" data-content="mNome"></td>
+		<td class="sort-mDataCadastro" data-content="mDataCadastro"></td>
+		<td class="sort-mDataUltimoAcesso" data-content="mDataUltimoAcesso"></td>
+		<td class="sort-mTotalAcessos" data-content="mTotalAcessos"></td>
+		<td class="sort-mStatus" data-class="mStatus"></td>
+		<td class="acao">
+			<a onclick="aoClicarEditar(this);">Editar</a>
+		</td>
+	</tr>
+</script>
 <script src="/js/listagem.js"></script>
