@@ -845,45 +845,40 @@ class mk {
             ? mk.QverOn(".tablePaginacao .pageCod6")
             : mk.QverOff(".tablePaginacao .pageCod6");
         if (this.paginationAtual < 5) {
-            mk.Q(".tablePaginacao .pageCod2").classList.remove("disabled");
+            mk.Qon(".tablePaginacao .pageCod2");
             mk.Q(".tablePaginacao .pageCod2 a").innerHTML = "2";
             mk.Q(".tablePaginacao .pageCod3 a").innerHTML = "3";
             mk.Q(".tablePaginacao .pageCod4 a").innerHTML = "4";
             mk.Q(".tablePaginacao .pageCod5 a").innerHTML = "5";
             mk.Q(".tablePaginacao .pageCod6 a").innerHTML = "...";
-            mk.Q(".tablePaginacao .pageCod6").classList.add("disabled");
+            mk.Qoff(".tablePaginacao .pageCod6");
         }
         else {
             if (mk.status.totalPaginas - this.paginationAtual < 4) {
-                mk.Q(".tablePaginacao .pageCod2").classList.add("disabled");
+                mk.Qoff(".tablePaginacao .pageCod2");
                 mk.Q(".tablePaginacao .pageCod2 a").innerHTML = "...";
                 mk.Q(".tablePaginacao .pageCod3 a").innerHTML = (mk.status.totalPaginas - 4).toString();
                 mk.Q(".tablePaginacao .pageCod4 a").innerHTML = (mk.status.totalPaginas - 3).toString();
                 mk.Q(".tablePaginacao .pageCod5 a").innerHTML = (mk.status.totalPaginas - 2).toString();
                 mk.Q(".tablePaginacao .pageCod6 a").innerHTML = (mk.status.totalPaginas - 1).toString();
-                mk.Q(".tablePaginacao .pageCod6").classList.remove("disabled");
+                mk.Qon(".tablePaginacao .pageCod6");
             }
             else {
-                mk.Q(".tablePaginacao .pageCod2").classList.add("disabled");
+                mk.Qoff(".tablePaginacao .pageCod2");
                 mk.Q(".tablePaginacao .pageCod2 a").innerHTML = "...";
                 mk.Q(".tablePaginacao .pageCod3 a").innerHTML = (this.paginationAtual - 1).toString();
                 mk.Q(".tablePaginacao .pageCod4 a").innerHTML =
                     this.paginationAtual.toString();
                 mk.Q(".tablePaginacao .pageCod5 a").innerHTML = (this.paginationAtual + 1).toString();
                 mk.Q(".tablePaginacao .pageCod6 a").innerHTML = "...";
-                mk.Q(".tablePaginacao .pageCod6").classList.add("disabled");
+                mk.Qoff(".tablePaginacao .pageCod6");
             }
         }
         mk.ativaPaginaAtual();
         this.exibePaginado = [];
-        this.exibeDados.forEach((item, i) => {
+        this.exibeDados.forEach((o, i) => {
             if (i + 1 >= mk.status.pagItensIni && i + 1 <= mk.status.pagItensFim) {
-                let objItem = new Object();
-                let o = item;
-                for (var propName in o) {
-                    objItem[propName] = o[propName];
-                }
-                this.exibePaginado.push(objItem);
+                this.exibePaginado.push(mk.mkClonarOA(o));
             }
         });
     };

@@ -1670,7 +1670,21 @@ html:has(.bodyCentro) {
 .tableListagem th {
 	text-align: center;
 }
+/* Listagem: Paginacao */
+.pagination {
+	display: flex;
+	flex-direction: row;
+}
+.paginate_button {
+	padding: 0px 5px;
+	cursor: pointer;
+	border: 1px solid lime;
+}
+.paginate_button.disabled {
+	filter: grayscale(1);
+}
 
+/*Layout*/
 .i {
 	display: flex;
 	flex-direction: row;

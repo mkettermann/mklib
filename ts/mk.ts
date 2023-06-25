@@ -1106,17 +1106,17 @@ class mk {
 
 		if (this.paginationAtual < 5) {
 			// INI
-			mk.Q(".tablePaginacao .pageCod2").classList.remove("disabled");
+			mk.Qon(".tablePaginacao .pageCod2");
 			mk.Q(".tablePaginacao .pageCod2 a").innerHTML = "2";
 			mk.Q(".tablePaginacao .pageCod3 a").innerHTML = "3";
 			mk.Q(".tablePaginacao .pageCod4 a").innerHTML = "4";
 			mk.Q(".tablePaginacao .pageCod5 a").innerHTML = "5";
 			mk.Q(".tablePaginacao .pageCod6 a").innerHTML = "...";
-			mk.Q(".tablePaginacao .pageCod6").classList.add("disabled");
+			mk.Qoff(".tablePaginacao .pageCod6");
 		} else {
 			// END
 			if (mk.status.totalPaginas - this.paginationAtual < 4) {
-				mk.Q(".tablePaginacao .pageCod2").classList.add("disabled");
+				mk.Qoff(".tablePaginacao .pageCod2");
 				mk.Q(".tablePaginacao .pageCod2 a").innerHTML = "...";
 				mk.Q(".tablePaginacao .pageCod3 a").innerHTML = (
 					mk.status.totalPaginas - 4
@@ -1130,10 +1130,10 @@ class mk {
 				mk.Q(".tablePaginacao .pageCod6 a").innerHTML = (
 					mk.status.totalPaginas - 1
 				).toString();
-				mk.Q(".tablePaginacao .pageCod6").classList.remove("disabled");
+				mk.Qon(".tablePaginacao .pageCod6");
 			} else {
 				// MID
-				mk.Q(".tablePaginacao .pageCod2").classList.add("disabled");
+				mk.Qoff(".tablePaginacao .pageCod2");
 				mk.Q(".tablePaginacao .pageCod2 a").innerHTML = "...";
 				mk.Q(".tablePaginacao .pageCod3 a").innerHTML = (
 					this.paginationAtual - 1
@@ -1144,21 +1144,15 @@ class mk {
 					this.paginationAtual + 1
 				).toString();
 				mk.Q(".tablePaginacao .pageCod6 a").innerHTML = "...";
-				mk.Q(".tablePaginacao .pageCod6").classList.add("disabled");
+				mk.Qoff(".tablePaginacao .pageCod6");
 			}
 		}
 		mk.ativaPaginaAtual();
 		this.exibePaginado = [];
 		// Clonagem de Paginado
-		this.exibeDados.forEach((item, i) => {
+		this.exibeDados.forEach((o, i) => {
 			if (i + 1 >= mk.status.pagItensIni && i + 1 <= mk.status.pagItensFim) {
-				let objItem = new Object();
-				let o = item;
-				for (var propName in o) {
-					// Se converter toString aqui, tratar Objetos de forma diferente
-					objItem[propName as keyof typeof o] = o[propName as keyof typeof o];
-				}
-				this.exibePaginado.push(objItem);
+				this.exibePaginado.push(mk.mkClonarOA(o));
 			}
 		});
 	};
