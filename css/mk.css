@@ -1513,9 +1513,10 @@ ul.mkUlFase li.disabled a {
 	content: "\2191";
 	font-size: 1rem;
 	position: absolute;
-	top: -5px;
 	right: 0;
-	animation: mkSortY 3s infinite reverse cubic-bezier(0.4, -0.4, 0, 1);
+	top: -1px;
+	height: 100%;
+	animation: mkSortY 2s infinite reverse cubic-bezier(0.4, -0.4, 0, 1);
 }
 
 .mkEfeitoSobe::after {
@@ -1557,9 +1558,32 @@ ul.mkUlFase li.disabled a {
 	content: "\2193";
 	font-size: 1rem;
 	position: absolute;
-	top: -5px;
+	top: -1px;
+	height: 100%;
 	right: 0;
-	animation: mkSortY 3s infinite cubic-bezier(1, 0, 0.4, 1.4);
+	animation: mkSortY 2s infinite cubic-bezier(1, 0, 0.4, 1.4);
+}
+
+@keyframes mkSortY {
+	0% {
+		opacity: 0;
+		transform: translateY(0%);
+	}
+
+	20% {
+		opacity: 1;
+		transform: translateY(0%);
+	}
+
+	80% {
+		opacity: 1;
+		transform: translateY(50%);
+	}
+
+	100% {
+		opacity: 0;
+		transform: translateY(50%);
+	}
 }
 
 .mkEfeitoDesce::after {
@@ -1600,28 +1624,6 @@ ul.mkUlFase li.disabled a {
 
 	100% {
 		background-position-y: 0%;
-	}
-}
-
-@keyframes mkSortY {
-	0% {
-		opacity: 0;
-		transform: translateY(0%);
-	}
-
-	20% {
-		opacity: 1;
-		transform: translateY(0%);
-	}
-
-	80% {
-		opacity: 1;
-		transform: translateY(140%);
-	}
-
-	100% {
-		opacity: 0;
-		transform: translateY(140%);
 	}
 }
 
