@@ -1649,3 +1649,32 @@ html:has(.bodyCentro) {
 .mkEfeitoClip {
 	clip-path: url(#mkClip);
 }
+
+/* LISTAGEM */
+.divListagem {
+	overflow: auto;
+	border-radius: 10px;
+	margin: 3px;
+}
+.tableListagem {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.tableListagem thead {
+	position: sticky;
+	top: -1px;
+	user-select: none;
+}
+
+.tableListagem th {
+	text-align: center;
+}
+
+.i {
+	display: flex;
+	flex-direction: row;
+}
+.j {
+	flex: 1 0 0%;
+}

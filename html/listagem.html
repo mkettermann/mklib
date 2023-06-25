@@ -1,5 +1,6 @@
 <h1 class="microPos2 h1">Listagem</h2>
-<div>Tabela de Usuários</div>
+<div>Exemplo de Tabela de Usuários:</div>
+<div class="divListagem">
 <table class="tableListagem">
 	<thead>
 		<tr>
@@ -13,4 +14,59 @@
 	</thead>
 	<tbody class="listBody"></tbody>
 </table>
+</div>
+<div class="i">
+	<div class="j">
+			<div class="tableResultado">
+					Total de Registros <span class="tableTotal">??</span><span class="tableInicioFim"> - Exibindo do 
+							<span class="tableIni">??</span> ao 
+							<span class="tableFim">??</span>.
+					</span>
+			</div>
+	</div>
+	<div class="j">
+			<ul class="pagination justify-content-center tablePaginacao">
+					<li class="paginate_button page-item pagBack" id="paginate_back">
+							<a onclick="mk.mudaPagina('back')" data-dt-idx="0" class="page-link">Anterior</a>
+					</li>
+					<li class="paginate_button page-item active" id="paginate_Um">
+							<a onclick="mk.mudaPagina(this)" class="page-link">1</a>
+					</li>
+					<!-- MEIO -->
+					<li class="paginate_button page-item page_meio pageCod2 oculto">
+							<a onclick="mk.mudaPagina(this)" class="page-link">??</a>
+					</li>
+					<li class="paginate_button page-item page_meio pageCod3 pagNantes oculto">
+							<a onclick="mk.mudaPagina(this)" class="page-link">??</a>
+					</li>
+					<li class="paginate_button page-item page_meio pageCod4 pagNatual oculto">
+							<a onclick="mk.mudaPagina(this)" class="page-link">??</a>
+					</li>
+					<li class="paginate_button page-item page_meio pageCod5 pagNdepois oculto">
+							<a onclick="mk.mudaPagina(this)" class="page-link">??</a>
+					</li>
+					<li class="paginate_button page-item page_meio pageCod6 disabled oculto">
+							<a onclick="mk.mudaPagina(this)" class="page-link">??</a>
+					</li>
+					<!-- FIM MEIO -->
+					<li class="paginate_button page-item paginate_Ultima">
+							<a onclick="mk.mudaPagina(this)" class="page-link">Carregando...</a>
+					</li>
+					<li class="paginate_button page-item pagNext" id="paginate_next">
+							<a onclick="mk.mudaPagina('next')" data-dt-idx="8" class="page-link">Próxima</a>
+					</li>
+			</ul>
+	</div>
+	<div class="j text-end">
+			<span class="tableExibePorPagina microPos6">
+					<span>Registros por P&aacute;gina:</span>
+					<input name="tablePorPagina"
+								 value="6"
+								 style="width: 40px"
+								 class="mkSel"
+								 data-selapenas="1"
+								 data-selarray='[{"k":6,"v":"6"},{"k":10,"v":"10"},{"k":25,"v":"25"},{"k":50,"v":"50"},{"k":100,"v":"100"}]' />
+			</span>
+	</div>
+</div>
 <script src="/js/listagem.js"></script>

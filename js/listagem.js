@@ -1,2 +1,4 @@
 "use strict";
-console.log("Listagem");
+console.log("Carregou Listagem");
+mk.iniciarGetList("/data/usersExemplo.json");
+mk.GerarAoSort();
