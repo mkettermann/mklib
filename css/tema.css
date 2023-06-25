@@ -2,11 +2,14 @@
 	--bordaMaster: #331166;
 	--fundoHead: #331166;
 	--corHead: #0f0;
+	--corHeadEfeito: #f0c;
 	--fundoPrincipal: #445544;
 	--corPrincipal: #f0fff0;
 	--corPrincipal33: #f0fff033;
 	--fundoMenu: #221133;
 	--corLink: #0f0;
-	--corLinkHover: white;
+	--corLinkHover: #fff;
 	--corLinkEfeito: magenta;
+	--corTitulo: var(--bordaMaster);
+	--fundoTitulo: linear-gradient(0.25turn, #f0fff011, #f0fff099, #f0fff011);
 }

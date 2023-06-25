@@ -1,4 +1,7 @@
 /* Global */
+body * {
+	font-family: Consolas;
+}
 body {
 	background-color: var(--fundoPrincipal);
 	color: var(--corPrincipal);
@@ -24,8 +27,15 @@ header {
 	max-height: 2rem;
 	margin-top: -2rem;
 	font-size: 2rem;
+	letter-spacing: 0.7rem;
+	animation: sombraTitulo 5s ease-in-out infinite alternate;
 	/* margin-top: -16px; */
 	/* display: none; */
+}
+@keyframes sombraTitulo {
+	to {
+		text-shadow: 0px 0px 5px var(--corHeadEfeito);
+	}
 }
 div.Corpo {
 	display: flex;
@@ -39,7 +49,9 @@ nav {
 }
 main {
 	flex: 0 1 100%;
-	padding-top: 2rem;
+	margin-top: 2.1rem;
+	border: 3px double #0003;
+	border-radius: 15px;
 }
 footer {
 	position: fixed;
@@ -49,7 +61,7 @@ footer {
 	font-size: 0.7rem;
 }
 nav .Menu {
-	transform: translateX(-60%);
+	transform: translateX(calc(-100% + 85px));
 	position: fixed;
 	top: 0;
 	width: fit-content;
@@ -115,7 +127,7 @@ nav .Menu:hover {
 
 /* Icones SVG*/
 .MenuLink span:nth-child(1) {
-	padding-right: 0.5rem;
+	padding-right: 5rem;
 }
 .MenuLink span:nth-child(2) {
 	padding: 0px 2rem 0.5rem 2rem;
@@ -124,8 +136,21 @@ nav .Menu:hover {
 }
 
 .h1 {
+	z-index: 2;
+	position: sticky;
+	top: 40px;
 	font-size: 1.5rem;
-	text-decoration: underline dashed;
+	text-decoration: underline wavy;
+	text-decoration-color: var(--fundoTitulo);
+	font-weight: bold;
+	letter-spacing: 0.2rem;
+	font-style: italic;
+	color: var(--corTitulo);
+	text-shadow: 2px 2px 5px var(--fundoMenu);
+	background: var(--fundoTitulo);
+	border-radius: 15px;
+	padding-bottom: 0.5rem;
+	backdrop-filter: blur(1.5px);
 }
 
 /* Outros */

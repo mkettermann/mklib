@@ -4,7 +4,7 @@ const menuAbrir = async (e) => {
     if (destino != null) {
         let retorno = await mk.http(destino, mk.t.G, mk.t.H);
         if (retorno != null) {
-            mk.Q("main").innerHTML = retorno;
+            mk.Q(".conteudo").innerHTML = retorno;
         }
         else {
             console.log("Falhou ao coletar dados");
