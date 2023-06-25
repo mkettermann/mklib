@@ -1907,7 +1907,7 @@ class mk {
 	) => {
 		let conteudoTemplate = mk.Q(modelo).innerHTML;
 		let listaNode = "";
-		function mkMoldeOAA_Execute(o: any) {
+		let mkMoldeOAA_Execute = (o: any) => {
 			let node: any = conteudoTemplate;
 			for (let k of Object.keys(o)) {
 				if (o[k as keyof typeof o] !== null && o[k as keyof typeof o] !== "") {
@@ -1915,7 +1915,7 @@ class mk {
 				}
 			}
 			listaNode += node;
-		}
+		};
 		mk.mkExecutaNoObj(dadosOA, mkMoldeOAA_Execute);
 		mk.Q(repositorio).innerHTML = listaNode;
 	};

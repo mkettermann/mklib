@@ -1462,7 +1462,7 @@ class mk {
     static mkMoldeOA = async (dadosOA, modelo = "#modelo", repositorio = ".tableListagem .listBody") => {
         let conteudoTemplate = mk.Q(modelo).innerHTML;
         let listaNode = "";
-        function mkMoldeOAA_Execute(o) {
+        let mkMoldeOAA_Execute = (o) => {
             let node = conteudoTemplate;
             for (let k of Object.keys(o)) {
                 if (o[k] !== null && o[k] !== "") {
@@ -1470,7 +1470,7 @@ class mk {
                 }
             }
             listaNode += node;
-        }
+        };
         mk.mkExecutaNoObj(dadosOA, mkMoldeOAA_Execute);
         mk.Q(repositorio).innerHTML = listaNode;
     };

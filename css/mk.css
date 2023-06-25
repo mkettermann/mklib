@@ -1659,6 +1659,7 @@ html:has(.bodyCentro) {
 .tableListagem {
 	width: 100%;
 	border-collapse: collapse;
+	margin-bottom: 2px;
 }
 
 .tableListagem thead {

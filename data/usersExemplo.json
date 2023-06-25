@@ -4,14 +4,16 @@
 		"mNome": "Alano dos Anjos",
 		"mDataCadastro": "1990-01-21",
 		"mDataUltimoAcesso": "2023-06-24",
-		"mTotalAcessos": 345
+		"mTotalAcessos": 345,
+		"mStatus": "True"
 	},
 	{
 		"mId": 2,
 		"mNome": "Beltrano Silva",
 		"mDataCadastro": "2000-06-06",
 		"mDataUltimoAcesso": "2023-06-23",
-		"mTotalAcessos": 77
+		"mTotalAcessos": 77,
+		"mStatus": "False"
 	},
 	{
 		"mId": 3,
@@ -25,6 +27,7 @@
 		"mNome": "Fulano Santos",
 		"mDataCadastro": "2010-01-06",
 		"mDataUltimoAcesso": "2023-06-17",
-		"mTotalAcessos": 1
+		"mTotalAcessos": 1,
+		"mStatus": null
 	}
 ]
