@@ -52,6 +52,7 @@ main {
 	margin-top: 2.1rem;
 	border: 3px double #0003;
 	border-radius: 15px;
+	padding: 0px 5px 5px 5px;
 }
 footer {
 	position: fixed;
@@ -138,7 +139,7 @@ nav .Menu:hover {
 .h1 {
 	z-index: 2;
 	position: sticky;
-	top: 40px;
+	top: 32px;
 	font-size: 1.5rem;
 	text-decoration: underline wavy;
 	text-decoration-color: var(--fundoTitulo);
@@ -151,6 +152,7 @@ nav .Menu:hover {
 	border-radius: 15px;
 	padding-bottom: 0.5rem;
 	backdrop-filter: blur(1.5px);
+	margin-bottom: 8px;
 }
 
 /* Outros */
