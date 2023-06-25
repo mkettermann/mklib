@@ -5,7 +5,7 @@
 		"mDataCadastro": "2010-01-06",
 		"mDataUltimoAcesso": "2023-06-17",
 		"mTotalAcessos": 1,
-		"mStatus": null
+		"mStatus": "True"
 	},
 	{
 		"mId": 1,
@@ -20,7 +20,8 @@
 		"mNome": "Ciclano Santos",
 		"mDataCadastro": "2008-02-06",
 		"mDataUltimoAcesso": "2023-06-23",
-		"mTotalAcessos": 114
+		"mTotalAcessos": 114,
+		"mStatus": "True"
 	},
 	{
 		"mId": 2,
@@ -35,41 +36,47 @@
 		"mNome": "Douglas Amaro",
 		"mDataCadastro": "2007-07-07",
 		"mDataUltimoAcesso": "2023-06-25",
-		"mTotalAcessos": 30
+		"mTotalAcessos": 30,
+		"mStatus": "True"
 	},
 	{
 		"mId": 6,
 		"mNome": "Douglas Bezerra",
 		"mDataCadastro": "2003-09-15",
 		"mDataUltimoAcesso": "2023-06-01",
-		"mTotalAcessos": 1
+		"mTotalAcessos": 1,
+		"mStatus": "True"
 	},
 	{
 		"mId": 7,
 		"mNome": "Marcos dos Anjos",
 		"mDataCadastro": "2012-12-12",
 		"mDataUltimoAcesso": "2022-01-01",
-		"mTotalAcessos": 3
+		"mTotalAcessos": 3,
+		"mStatus": "True"
 	},
 	{
 		"mId": 8,
 		"mNome": "Silvano Silva Santos",
 		"mDataCadastro": "2023-01-01",
 		"mDataUltimoAcesso": "2023-06-25",
-		"mTotalAcessos": 123
+		"mTotalAcessos": 123,
+		"mStatus": "False"
 	},
 	{
 		"mId": 9,
 		"mNome": "Aparecido",
 		"mDataCadastro": "2019-12-31",
 		"mDataUltimoAcesso": "2023-01-31",
-		"mTotalAcessos": 14
+		"mTotalAcessos": 14,
+		"mStatus": "True"
 	},
 	{
 		"mId": 10,
 		"mNome": "Alana Ferreira",
 		"mDataCadastro": "2000-01-31",
 		"mDataUltimoAcesso": "2022-12-31",
-		"mTotalAcessos": 11
+		"mTotalAcessos": 11,
+		"mStatus": "True"
 	}
 ]
