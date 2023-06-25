@@ -182,3 +182,18 @@ input {
 	border: 1px solid var(--bordaMaster);
 	padding: 3px 6px;
 }
+.paginate_button {
+	border: 1px solid var(--bordaMaster);
+}
+.paginate_button.pagBack {
+	border-bottom-left-radius: 20px;
+	border-top-left-radius: 0px;
+}
+.paginate_button.pagNext {
+	border-bottom-right-radius: 20px;
+	border-top-right-radius: 0px;
+}
+.paginate_button.active,
+.paginate_button:hover {
+	background-color: var(--fundoHead);
+}
