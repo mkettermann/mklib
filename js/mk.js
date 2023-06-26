@@ -1858,7 +1858,7 @@ mk.mkClicarNaAba(mk.Q(".mkAbas a.active"));
 mkSelRenderizar();
 setInterval(() => {
     mkSelRenderizar();
-}, 500);
+}, 300);
 Object.defineProperty(mk, "http", {
     writable: false,
 });

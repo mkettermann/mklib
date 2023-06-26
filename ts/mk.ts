@@ -2419,7 +2419,7 @@ mk.mkClicarNaAba(mk.Q(".mkAbas a.active")); // Inicia no ativo
 mkSelRenderizar();
 setInterval(() => {
 	mkSelRenderizar();
-}, 500);
+}, 300);
 
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //			OBJETOS CONSTANTES					\\
