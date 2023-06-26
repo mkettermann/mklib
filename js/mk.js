@@ -1439,19 +1439,19 @@ class mk {
     static mkToValue = (mk, o) => {
         let ret = "";
         if (mk.indexOf("${") >= 0) {
-            let split = mk.split("${");
-            ret = split[0];
-            for (let i in split) {
+            let ini = mk.split("${");
+            ret = ini[0];
+            for (let i in ini) {
                 if (i == "0")
                     continue;
-                let fecha = split[i].indexOf("}");
-                let key = split[i].slice(0, fecha);
+                let end = ini[i].indexOf("}");
+                let key = ini[i].slice(0, end);
                 if (key in o) {
                     ret += o[key];
                 }
                 else {
                 }
-                ret += split[i].slice(fecha + 1);
+                ret += ini[i].slice(end + 1);
             }
         }
         else {
@@ -1468,6 +1468,8 @@ class mk {
             listaNode += node;
         };
         mk.mkExecutaNoObj(dadosOA, mkMoldeOAA_Execute);
+        listaNode = listaNode.replaceAll("&lt;", "<");
+        listaNode = listaNode.replaceAll("&gt;", ">");
         mk.Q(repositorio).innerHTML = listaNode;
     };
     static mkInclude = async () => {

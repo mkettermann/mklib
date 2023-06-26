@@ -1896,24 +1896,22 @@ class mk {
 	static mkToValue = (mk: string, o: any) => {
 		let ret: string = "";
 		if (mk.indexOf("${") >= 0) {
-			let split = mk.split("${");
-			ret = split[0];
-			for (let i in split) {
+			let ini = mk.split("${");
+			ret = ini[0];
+			for (let i in ini) {
 				if (i == "0") continue;
-				let fecha: number = split[i].indexOf("}");
-				let key: string = split[i].slice(0, fecha);
+				let end: number = ini[i].indexOf("}");
+				let key: string = ini[i].slice(0, end);
 				if (key in o) {
 					ret += o[key];
 				} else {
 					//ret += key;
 				}
-				ret += split[i].slice(fecha + 1);
+				ret += ini[i].slice(end + 1);
 			}
 		} else {
 			ret = mk;
 		}
-		//console.log(ret);
-		//ret = fmk.replaceAll("${" + k + "}", v.toString());
 		return ret;
 	};
 
@@ -1930,6 +1928,9 @@ class mk {
 			listaNode += node;
 		};
 		mk.mkExecutaNoObj(dadosOA, mkMoldeOAA_Execute);
+		//Allow Tags
+		listaNode = listaNode.replaceAll("&lt;", "<");
+		listaNode = listaNode.replaceAll("&gt;", ">");
 		mk.Q(repositorio).innerHTML = listaNode;
 	};
 

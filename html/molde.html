@@ -1,2 +1,46 @@
 <h1 class="microPos2 h1">Molde</h1>
-<div>Em manutenção</div>
+<div>Popula um template html.</div>
+<table class="tableListagem">
+	<thead>
+		<tr>
+			<th>Template:</th>
+			<th>Objeto: (onInput)</th>
+			<th>Resultado:</th>
+		</tr>
+	</thead>
+	<tbody class="listBody">
+		<tr>
+			<td>
+				<div id="modelo" type="text" contenteditable="true">
+					Olá ${nome}!<br /><br />
+					Segue 'aqui' um "exemplo" de /template/ através de \objeto\.
+					<br /><br />
+					Show? \t\n\' né?.
+				</div>
+			</td>
+			<td style="vertical-align: top">
+				<input
+					id="inputTeste"
+					type="text"
+					name="nome"
+					value="Teste"
+					oninput="paraObjeto(this)"
+				/>
+			</td>
+			<td style="vertical-align: top"><div class="resultado"></div></td>
+		</tr>
+	</tbody>
+</table>
+<script defer>
+	var objeto = {};
+	function paraObjeto(e) {
+		objeto[e.name] = e.value;
+		mk.mkMoldeOA(objeto, "#modelo", ".resultado");
+	}
+
+	// Inicia executando
+	paraObjeto(mk.Q("#inputTeste"));
+	// mk.Ao("input", "#modelo", (e) => {
+	// 	e.innerHTML = e.value;
+	// });
+</script>
