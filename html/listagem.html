@@ -43,7 +43,9 @@
 <script type="text/html" id="modelo">
 	<tr id="${mId}">
 		<td class="sort-mNome">${mNome}</td>
-		<td class="sort-mDataCadastro">${mDataCadastro}</td>
+		<td class="sort-mDataCadastro">
+			<input type="date" value="${mDataCadastro}" />
+		</td>
 		<td class="sort-mDataUltimoAcesso">${mDataUltimoAcesso}</td>
 		<td class="sort-mTotalAcessos">${mTotalAcessos}</td>
 		<td class="sort-mStatus ${mStatus}"></td>

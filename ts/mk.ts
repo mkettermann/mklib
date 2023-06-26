@@ -1893,6 +1893,12 @@ class mk {
 	//			MK Molde (Template)					\\
 	//___________________________________\\
 
+	static mkToValue = (mk: string, k: string, v: any) => {
+		let ret: string;
+		ret = mk.replaceAll("${" + k + "}", v.toString());
+		return ret;
+	};
+
 	static mkMoldeOA = async (
 		dadosOA: object[] | object,
 		modelo: string = "#modelo",
@@ -1904,7 +1910,7 @@ class mk {
 			let node: any = conteudoTemplate;
 			for (let k of Object.keys(o)) {
 				if (o[k as keyof typeof o] !== null && o[k as keyof typeof o] !== "") {
-					node = node.replaceAll("${" + k + "}", o[k].toString());
+					node = mk.mkToValue(node, k, o[k]);
 				}
 			}
 			listaNode += node;

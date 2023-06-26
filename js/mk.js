@@ -1436,6 +1436,11 @@ class mk {
             console.error("CONTEUDO NULO");
         }
     };
+    static mkToValue = (mk, k, v) => {
+        let ret;
+        ret = mk.replaceAll("${" + k + "}", v.toString());
+        return ret;
+    };
     static mkMoldeOA = async (dadosOA, modelo = "#modelo", repositorio = ".tableListagem .listBody") => {
         let conteudoTemplate = mk.Q(modelo).innerHTML;
         let listaNode = "";
@@ -1443,7 +1448,7 @@ class mk {
             let node = conteudoTemplate;
             for (let k of Object.keys(o)) {
                 if (o[k] !== null && o[k] !== "") {
-                    node = node.replaceAll("${" + k + "}", o[k].toString());
+                    node = mk.mkToValue(node, k, o[k]);
                 }
             }
             listaNode += node;
