@@ -1436,9 +1436,27 @@ class mk {
             console.error("CONTEUDO NULO");
         }
     };
-    static mkToValue = (mk, k, v) => {
-        let ret;
-        ret = mk.replaceAll("${" + k + "}", v.toString());
+    static mkToValue = (mk, o) => {
+        let ret = "";
+        if (mk.indexOf("${") >= 0) {
+            let split = mk.split("${");
+            ret = split[0];
+            for (let i in split) {
+                if (i == "0")
+                    continue;
+                let fecha = split[i].indexOf("}");
+                let key = split[i].slice(0, fecha);
+                if (key in o) {
+                    ret += o[key];
+                }
+                else {
+                }
+                ret += split[i].slice(fecha + 1);
+            }
+        }
+        else {
+            ret = mk;
+        }
         return ret;
     };
     static mkMoldeOA = async (dadosOA, modelo = "#modelo", repositorio = ".tableListagem .listBody") => {
@@ -1446,11 +1464,7 @@ class mk {
         let listaNode = "";
         let mkMoldeOAA_Execute = (o) => {
             let node = conteudoTemplate;
-            for (let k of Object.keys(o)) {
-                if (o[k] !== null && o[k] !== "") {
-                    node = mk.mkToValue(node, k, o[k]);
-                }
-            }
+            node = mk.mkToValue(node, o);
             listaNode += node;
         };
         mk.mkExecutaNoObj(dadosOA, mkMoldeOAA_Execute);

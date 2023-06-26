@@ -1893,9 +1893,27 @@ class mk {
 	//			MK Molde (Template)					\\
 	//___________________________________\\
 
-	static mkToValue = (mk: string, k: string, v: any) => {
-		let ret: string;
-		ret = mk.replaceAll("${" + k + "}", v.toString());
+	static mkToValue = (mk: string, o: any) => {
+		let ret: string = "";
+		if (mk.indexOf("${") >= 0) {
+			let split = mk.split("${");
+			ret = split[0];
+			for (let i in split) {
+				if (i == "0") continue;
+				let fecha: number = split[i].indexOf("}");
+				let key: string = split[i].slice(0, fecha);
+				if (key in o) {
+					ret += o[key];
+				} else {
+					//ret += key;
+				}
+				ret += split[i].slice(fecha + 1);
+			}
+		} else {
+			ret = mk;
+		}
+		//console.log(ret);
+		//ret = fmk.replaceAll("${" + k + "}", v.toString());
 		return ret;
 	};
 
@@ -1908,11 +1926,7 @@ class mk {
 		let listaNode = "";
 		let mkMoldeOAA_Execute = (o: any) => {
 			let node: any = conteudoTemplate;
-			for (let k of Object.keys(o)) {
-				if (o[k as keyof typeof o] !== null && o[k as keyof typeof o] !== "") {
-					node = mk.mkToValue(node, k, o[k]);
-				}
-			}
+			node = mk.mkToValue(node, o);
 			listaNode += node;
 		};
 		mk.mkExecutaNoObj(dadosOA, mkMoldeOAA_Execute);
