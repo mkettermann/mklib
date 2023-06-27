@@ -1461,31 +1461,37 @@ class mk {
         return ret;
     };
     static mkMoldeOA = async (dadosOA, modelo = "#modelo", repositorio = ".tableListagem .listBody") => {
-        let conteudoTemplate = mk.Q(modelo).innerHTML;
-        let listaNode = "";
-        let mkMoldeOAA_Execute = (o) => {
-            let node = conteudoTemplate;
-            node = mk.mkToValue(node, o);
-            listaNode += node;
-        };
-        mk.mkExecutaNoObj(dadosOA, mkMoldeOAA_Execute);
-        listaNode = listaNode.replaceAll("&lt;", "<");
-        listaNode = listaNode.replaceAll("&gt;", ">");
-        mk.Q(repositorio).innerHTML = listaNode;
+        return new Promise((r) => {
+            let conteudoTemplate = mk.Q(modelo).innerHTML;
+            let listaNode = "";
+            let mkMoldeOAA_Execute = (o) => {
+                let node = conteudoTemplate;
+                node = mk.mkToValue(node, o);
+                listaNode += node;
+            };
+            mk.mkExecutaNoObj(dadosOA, mkMoldeOAA_Execute);
+            listaNode = listaNode.replaceAll("&lt;", "<");
+            listaNode = listaNode.replaceAll("&gt;", ">");
+            mk.Q(repositorio).innerHTML = listaNode;
+            r(null);
+        });
     };
     static mkInclude = async () => {
-        mk.QAll("body *").forEach(async (e) => {
-            let destino = e.getAttribute("mkInclude");
-            if (destino != null) {
-                console.log("Incluindo: " + destino);
-                let retorno = await mk.http(destino, mk.t.G, mk.t.H);
-                if (retorno != null) {
-                    e.innerHTML = retorno;
+        return new Promise((r) => {
+            mk.QAll("body *").forEach(async (e) => {
+                let destino = e.getAttribute("mkInclude");
+                if (destino != null) {
+                    console.log("Incluindo: " + destino);
+                    let retorno = await mk.http(destino, mk.t.G, mk.t.H);
+                    if (retorno != null) {
+                        e.innerHTML = retorno;
+                    }
+                    else {
+                        console.log("Falhou ao coletar dados");
+                    }
+                    r(retorno);
                 }
-                else {
-                    console.log("Falhou ao coletar dados");
-                }
-            }
+            });
         });
     };
 }

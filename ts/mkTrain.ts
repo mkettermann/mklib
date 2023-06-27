@@ -9,11 +9,11 @@
 // });
 
 // Matriz de strings com um inteiro
-let a = [
-	["a", "b", "c"],
-	["d", 1, "f"],
-	["g", "h", "i"],
-];
+// let a = [
+// 	["a", "b", "c"],
+// 	["d", 1, "f"],
+// 	["g", "h", "i"],
+// ];
 // console.log(
 // 	matrizApenasScrings(a)
 // 		? "Apenas Strings na matriz"
@@ -55,6 +55,24 @@ let a = [
 // herdado = mk.mkMerge(herdado, s);
 // console.log(herdado);
 // mk.mkInfoObject(s);
-let ma = "Marcos";
-let num = "1326243788956";
-let ar = Array.from(num);
+// let ma = "Marcos";
+// let num = "1326243788956";
+// let ar = Array.from(num);
+
+// const log = async (t: any) => {
+// 	return new Promise((r) => {
+// 		setTimeout(() => {
+// 			console.log(t);
+// 			r(t);
+// 		}, t);
+// 	});
+// };
+// const multi = async () => {
+// 	// return log(await log(await log(1000)));
+// 	await log(50);
+// 	await log(1500);
+// 	await log(50);
+// 	await log(1500);
+// 	await log(50);
+// };
+// multi();

@@ -1916,18 +1916,21 @@ class mk {
 		modelo: string = "#modelo",
 		repositorio: string = ".tableListagem .listBody"
 	) => {
-		let conteudoTemplate = mk.Q(modelo).innerHTML;
-		let listaNode = "";
-		let mkMoldeOAA_Execute = (o: any) => {
-			let node: any = conteudoTemplate;
-			node = mk.mkToValue(node, o);
-			listaNode += node;
-		};
-		mk.mkExecutaNoObj(dadosOA, mkMoldeOAA_Execute);
-		//Allow Tags
-		listaNode = listaNode.replaceAll("&lt;", "<");
-		listaNode = listaNode.replaceAll("&gt;", ">");
-		mk.Q(repositorio).innerHTML = listaNode;
+		return new Promise((r) => {
+			let conteudoTemplate = mk.Q(modelo).innerHTML;
+			let listaNode = "";
+			let mkMoldeOAA_Execute = (o: any) => {
+				let node: any = conteudoTemplate;
+				node = mk.mkToValue(node, o);
+				listaNode += node;
+			};
+			mk.mkExecutaNoObj(dadosOA, mkMoldeOAA_Execute);
+			//Allow Tags
+			listaNode = listaNode.replaceAll("&lt;", "<");
+			listaNode = listaNode.replaceAll("&gt;", ">");
+			mk.Q(repositorio).innerHTML = listaNode;
+			r(null);
+		});
 	};
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
@@ -1935,18 +1938,21 @@ class mk {
 	//___________________________________\\
 
 	static mkInclude = async () => {
-		mk.QAll("body *").forEach(async (e) => {
-			let destino = e.getAttribute("mkInclude");
-			if (destino != null) {
-				console.log("Incluindo: " + destino);
-				let retorno = await mk.http(destino, mk.t.G, mk.t.H);
-				if (retorno != null) {
-					e.innerHTML = retorno;
-					//mk.mkNoteToScript(mk.Q(".conteudo"));
-				} else {
-					console.log("Falhou ao coletar dados");
+		return new Promise((r) => {
+			mk.QAll("body *").forEach(async (e) => {
+				let destino = e.getAttribute("mkInclude");
+				if (destino != null) {
+					console.log("Incluindo: " + destino);
+					let retorno = await mk.http(destino, mk.t.G, mk.t.H);
+					if (retorno != null) {
+						e.innerHTML = retorno;
+						//mk.mkNoteToScript(mk.Q(".conteudo"));
+					} else {
+						console.log("Falhou ao coletar dados");
+					}
+					r(retorno);
 				}
-			}
+			});
 		});
 	};
 }
