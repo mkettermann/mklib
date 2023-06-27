@@ -1295,7 +1295,7 @@ class mk {
 	 * Executa a filtragem dos dados;
 	 * POPULA a lista atravez de uma nova lista: exibePaginado;
 	 */
-	static atualizarLista = () => {
+	static atualizarLista = async () => {
 		let tablePaginacao = mk.Q(".tablePaginacao");
 		// Apenas executa a atualização e filtro, se a tablePaginacao estiver presente na página.
 		if (tablePaginacao) {
@@ -1338,16 +1338,12 @@ class mk {
 				mk.filtraPagination();
 				mk.antesDePopularTabela();
 
-				mk.mkMoldeOA(mk.exibePaginado, "#modelo", ".tableListagem .listBody");
-
-				// XXX RESOLVER: Criar Funções de geração de template em javascript.
-				// $(".tableListagem tbody.listBody").loadTemplate(
-				// 	mk.Q("#template"),
-				// 	mk.exibePaginado,
-				// 	{
-				// 		complete: mk.aoCompletarExibicao,
-				// 	}
-				// );
+				await mk.mkMoldeOA(
+					mk.exibePaginado,
+					"#modelo",
+					".tableListagem .listBody"
+				);
+				mk.aoCompletarExibicao();
 			}
 		}
 	};

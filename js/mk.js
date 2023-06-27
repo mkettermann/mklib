@@ -983,7 +983,7 @@ class mk {
             this.exibeDados = [];
         }
     };
-    static atualizarLista = () => {
+    static atualizarLista = async () => {
         let tablePaginacao = mk.Q(".tablePaginacao");
         if (tablePaginacao) {
             mk.mkFiltragemDados();
@@ -1022,7 +1022,8 @@ class mk {
                 mk.Q(".listBody").removeAttribute("hidden");
                 mk.filtraPagination();
                 mk.antesDePopularTabela();
-                mk.mkMoldeOA(mk.exibePaginado, "#modelo", ".tableListagem .listBody");
+                await mk.mkMoldeOA(mk.exibePaginado, "#modelo", ".tableListagem .listBody");
+                mk.aoCompletarExibicao();
             }
         }
     };
