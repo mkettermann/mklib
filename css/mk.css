@@ -1048,29 +1048,49 @@ button.CarregadorMkTopoDireito:hover {
 	margin: auto auto;
 	overflow-x: hidden;
 	overflow-y: auto;
-	font-size: 1.5rem;
 	padding: 3px;
 	display: flex;
 	flex-direction: column;
 	text-align: center;
+	animation: mkEfeitoSurgir 0.5s;
+	font-size: 1.2rem;
 }
 .mkConfirmadorTitulo {
-	background-color: var(--tFundo);
+	display: flex;
+	align-items: center;
+	font-size: 1.4rem;
+	background-color: var(--tClaroTextoHigh);
+	color: var(--tFundoHigh);
 	border-radius: 5px;
 	width: 100%;
+}
+.mkConfirmadorTitulo svg {
+	margin-left: 5px;
+}
+.mkConfirmadorTitulo span {
+	flex: 0 1 100%;
 }
 .mkConfirmadorArea button {
 	margin: 5px auto;
 }
 
+@keyframes mkEfeitoSurgir {
+	from {
+		transform: scale(0) translate(200%, 200%);
+	}
+	to {
+		transform: scale(1) translate(0%, 0%);
+	}
+}
+
 /* =======================
 	UI ESTILO BOTAO
 =========================*/
-.Botao {
+.bBotao {
 	color: var(--botaoCor);
 	background: var(--botaoFundo);
-	background: var(--botaoEfeito);
-	box-shadow: 4px 4px 4px 0px var(--botaoCor);
+	background: var(--botaoFundo2);
+	box-shadow: 2px 2px 4px 0px var(--botaoCor);
 	border-width: 1px;
 	border-style: outset;
 	border-color: var(--botaoFundo);
@@ -1078,42 +1098,102 @@ button.CarregadorMkTopoDireito:hover {
 	padding: 7px 50px;
 	background-size: auto 200%;
 	transition: 0.3s;
-	text-shadow: 1px 1px var(--botaoCorHover);
 	letter-spacing: 3px;
 }
-.Botao:hover {
+.bBotao:hover {
 	transition: 0.3s;
 	border-style: inset;
 	color: var(--botaoCorHover);
 	background: var(--botaoFHover);
 	background-size: auto 200%;
-	animation: mkMoveFundoY 0.6s reverse forwards;
+	animation: mkMoveFundoY 0.3s reverse forwards;
 	animation-timing-function: cubic-bezier(0.65, 0.05, 0.36, 1);
 	box-shadow: 1px 1px 4px 1px var(--botaoCor);
-	text-shadow: -1px -1px var(--botaoCor);
-	transform: translate(2px, 2px);
+	transform: translate(1px, 1px);
 }
 
 .bVerde {
 	--botaoFundo: #090;
-	--botaoEfeito: linear-gradient(0deg, #090 0%, #090 10%, #fff 70%, #fff 100%);
+	--botaoFundo2: linear-gradient(0deg, #090 0%, #090 10%, #fff 70%, #fff 100%);
 	--botaoFHover: linear-gradient(0deg, #090 0%, #090 10%, #fff 70%, #fff 100%);
 	--botaoCorHover: #fff;
 	--botaoCor: #000;
 }
 .bVermelho {
 	--botaoFundo: #900;
-	--botaoEfeito: linear-gradient(0deg, #900 0%, #900 10%, #fff 70%, #fff 100%);
+	--botaoFundo2: linear-gradient(0deg, #900 0%, #900 10%, #fff 70%, #fff 100%);
 	--botaoFHover: linear-gradient(0deg, #900 0%, #900 10%, #fff 70%, #fff 100%);
 	--botaoCorHover: #fff;
 	--botaoCor: #000;
 }
 .bCinza {
 	--botaoFundo: #777;
-	--botaoEfeito: linear-gradient(0deg, #777 0%, #777 10%, #fff 70%, #fff 100%);
+	--botaoFundo2: linear-gradient(0deg, #777 0%, #777 10%, #fff 70%, #fff 100%);
 	--botaoFHover: linear-gradient(0deg, #777 0%, #777 10%, #fff 70%, #fff 100%);
 	--botaoCorHover: #fff;
 	--botaoCor: #000;
+}
+.icoSim {
+	position: relative;
+}
+.icoSim::before {
+	content: "";
+	position: absolute;
+	width: 10px;
+	height: 17px;
+	top: -8px;
+	left: -8px;
+	border: 0px solid transparent;
+	border-right: 4px solid limegreen;
+	border-bottom: 4px solid limegreen;
+	border-radius: 5px;
+	transform: rotate(45deg);
+}
+.icoSim::after {
+	content: "";
+	position: absolute;
+	width: 25px;
+	height: 25px;
+	top: -11px;
+	left: -15px;
+	border: 2px solid limegreen;
+	border-radius: 50%;
+}
+
+.icoNao {
+	position: relative;
+}
+.icoNao::before {
+	content: "";
+	position: absolute;
+	width: 10px;
+	height: 17px;
+	top: -10px;
+	left: -6px;
+	border: 0px solid transparent;
+	border-right: 3px solid darkgray;
+	border-radius: 2px;
+	transform: rotate(45deg);
+}
+.icoNao::after {
+	content: "";
+	position: absolute;
+	width: 10px;
+	height: 17px;
+	top: -10px;
+	left: -1px;
+	border: 0px solid transparent;
+	border-left: 3px solid darkgray;
+	border-radius: 2px;
+	transform: rotate(-45deg);
+}
+
+.icoNao:hover::before,
+.icoNao:hover::after {
+	border-radius: 5px;
+}
+.icoSim:hover::after {
+	border-width: 3px;
 }
 
 /* =======================
