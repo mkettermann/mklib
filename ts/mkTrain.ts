@@ -76,3 +76,47 @@
 // 	await log(50);
 // };
 // multi();
+
+// THIS Object
+// let o = {
+// 	m: function () {
+// 		let self = this;
+// 		console.log(this === o);
+// 		console.log(this);
+// 		const f = () => {
+// 			console.log(this == o);
+// 			console.log(self === o);
+// 		};
+// 		f();
+// 	},
+// };
+// o.m();
+
+// SCOPE FUNCTION
+// function counter() {
+// 	let n = 0;
+// 	return {
+// 		count: function () {
+// 			return n++;
+// 		},
+// 		reset: function () {
+// 			n = 0;
+// 		},
+// 	};
+// }
+// let c = counter();
+
+// NO Scope vars
+// uniqueInteger.counter = 0;
+// function uniqueInteger() {
+// 	return uniqueInteger.counter++;
+// }
+// uniqueInteger();
+
+// SCOPE var
+let uniqueInteger = (function () {
+	let counter = 0;
+	return function () {
+		return counter++;
+	};
+})();
