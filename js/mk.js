@@ -1497,6 +1497,15 @@ class mk {
     static mkConfirma = async () => {
         return new Promise((r) => {
             let resultado = false;
+            let eConfirmar = Array.from(mk.Q("body").children).find((e) => e.classList.contains("mkConfirmadorBloco"));
+            if (!eConfirmar) {
+                let divMkConfirmarBloco = document.createElement("div");
+                let divMkConfirmarArea = document.createElement("div");
+                divMkConfirmarBloco.className = "mkConfirmadorBloco";
+                divMkConfirmarArea.className = "mkConfirmadorArea";
+                mk.Q("body").appendChild(divMkConfirmarBloco);
+                divMkConfirmarBloco.appendChild(divMkConfirmarArea);
+            }
             setTimeout(retornar, 1000);
             function retornar() {
                 return r(resultado);

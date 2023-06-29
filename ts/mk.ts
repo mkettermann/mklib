@@ -1961,7 +1961,17 @@ class mk {
 		return new Promise((r) => {
 			let resultado = false;
 			// 1. Colocar objeto statico na frente da tela
-
+			let eConfirmar = Array.from(mk.Q("body").children).find((e) =>
+				e.classList.contains("mkConfirmadorBloco")
+			);
+			if (!eConfirmar) {
+				let divMkConfirmarBloco = document.createElement("div");
+				let divMkConfirmarArea = document.createElement("div");
+				divMkConfirmarBloco.className = "mkConfirmadorBloco";
+				divMkConfirmarArea.className = "mkConfirmadorArea";
+				mk.Q("body").appendChild(divMkConfirmarBloco);
+				divMkConfirmarBloco.appendChild(divMkConfirmarArea);
+			}
 			// 2. Popular objeto com os parametros corretos
 			// 3. Ao clicar no Confirmar, executar confirmou()
 			setTimeout(retornar, 1000);
