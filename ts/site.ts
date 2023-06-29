@@ -28,7 +28,9 @@ const aoIncrementar = async (e) => {
 
 	//edit(alvo, novoValor);
 
-	mk.mkConfirma().then((r) => {
-		r ? edit(alvo, novoValor) : console.log("Você não confirmou");
-	});
+	mk.mkConfirma("Você aumentá o incremento em 1 unidade. Tem Certeza?").then(
+		(r) => {
+			r ? edit(alvo, novoValor) : console.log("Você não confirmou");
+		}
+	);
 };
