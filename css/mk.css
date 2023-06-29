@@ -1049,16 +1049,18 @@ button.CarregadorMkTopoDireito:hover {
 	overflow-x: hidden;
 	overflow-y: auto;
 	font-size: 1.5rem;
-	padding: 5px;
+	padding: 3px;
 	display: flex;
 	flex-direction: column;
 	text-align: center;
 }
 .mkConfirmadorTitulo {
-	background-color: red;
+	background-color: var(--tFundo);
+	border-radius: 5px;
+	width: 100%;
 }
 .mkConfirmadorArea button {
-	margin: 15px;
+	margin: 5px auto;
 }
 
 /* =======================
@@ -1073,11 +1075,11 @@ button.CarregadorMkTopoDireito:hover {
 	border-style: outset;
 	border-color: var(--botaoFundo);
 	border-radius: 15px;
-	padding: 8px 60px;
+	padding: 7px 50px;
 	background-size: auto 200%;
 	transition: 0.3s;
 	text-shadow: 1px 1px var(--botaoCorHover);
-	letter-spacing: 5px;
+	letter-spacing: 3px;
 }
 .Botao:hover {
 	transition: 0.3s;
@@ -1087,7 +1089,7 @@ button.CarregadorMkTopoDireito:hover {
 	background-size: auto 200%;
 	animation: mkMoveFundoY 0.6s reverse forwards;
 	animation-timing-function: cubic-bezier(0.65, 0.05, 0.36, 1);
-	box-shadow: 1px 1px 5px 1px var(--botaoCor);
+	box-shadow: 1px 1px 4px 1px var(--botaoCor);
 	text-shadow: -1px -1px var(--botaoCor);
 	transform: translate(2px, 2px);
 }
@@ -1107,10 +1109,10 @@ button.CarregadorMkTopoDireito:hover {
 	--botaoCor: #000;
 }
 .bCinza {
-	--botaoFundo: #999;
-	--botaoEfeito: linear-gradient(0deg, #999 0%, #999 10%, #fff 70%, #fff 100%);
-	--botaoFHover: linear-gradient(0deg, #999 0%, #999 10%, #fff 70%, #fff 100%);
-	--botaoCorHover: #000;
+	--botaoFundo: #777;
+	--botaoEfeito: linear-gradient(0deg, #777 0%, #777 10%, #fff 70%, #fff 100%);
+	--botaoFHover: linear-gradient(0deg, #777 0%, #777 10%, #fff 70%, #fff 100%);
+	--botaoCorHover: #fff;
 	--botaoCor: #000;
 }
 

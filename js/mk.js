@@ -1510,8 +1510,8 @@ class mk {
                 divMkConfirmarTitulo.className = "mkConfirmadorTitulo";
                 divMkConfirmarBotoes.className = "fsb";
                 divMkConfirmarSim.className = "Botao bVerde";
-                divMkConfirmarNao.className = "Botao bVermelho";
-                divMkConfirmarTitulo.innerHTML = "Confirme";
+                divMkConfirmarNao.className = "Botao bCinza";
+                divMkConfirmarTitulo.innerHTML = "Confirmação";
                 divMkConfirmarSim.innerHTML = "Sim";
                 divMkConfirmarNao.innerHTML = "Não";
                 mk.Q("body").appendChild(divMkConfirmarBloco);
