@@ -92,7 +92,22 @@
 // };
 // o.m();
 
-// SCOPE FUNCTION
+// NO Scope vars
+// uniqueInteger.counter = 0;
+// function uniqueInteger() {
+// 	return uniqueInteger.counter++;
+// }
+// uniqueInteger();
+
+// SCOPE var
+// let uniqueInteger = (function () {
+// 	let counter = 0;
+// 	return function () {
+// 		return counter++;
+// 	};
+// })();
+
+// SCOPE RETURN FUNCTION
 // function counter() {
 // 	let n = 0;
 // 	return {
@@ -106,17 +121,21 @@
 // }
 // let c = counter();
 
-// NO Scope vars
-// uniqueInteger.counter = 0;
-// function uniqueInteger() {
-// 	return uniqueInteger.counter++;
+// Spread Operator Function FALHOU
+// function timed(f) {
+// 	return function (...args) {
+// 		console.log(`Entrando na funcao ${f.name}`);
+// 		let startTime = Date.now();
+// 		try {
+// 			return f(...args);
+// 		} finally {
+// 			console.log(`Saindo ${f.name} apos ${Date.now() - startTime}ms`);
+// 		}
+// 	};
 // }
-// uniqueInteger();
-
-// SCOPE var
-let uniqueInteger = (function () {
-	let counter = 0;
-	return function () {
-		return counter++;
-	};
-})();
+// function demo(n) {
+// 	let sum = 0;
+// 	for (let i = 0; i <= n; n++) sum += i;
+// 	return sum;
+// }
+//timed(demo)(100);
