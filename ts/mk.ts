@@ -1960,7 +1960,6 @@ class mk {
 	static mkConfirma = async () => {
 		return new Promise((r) => {
 			let resultado = false;
-			// 1. Colocar objeto statico na frente da tela
 			let eConfirmar = Array.from(mk.Q("body").children).find((e) =>
 				e.classList.contains("mkConfirmadorBloco")
 			);

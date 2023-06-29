@@ -1148,6 +1148,8 @@ button.CarregadorMkTopoDireito:hover {
 	border-bottom: 4px solid limegreen;
 	border-radius: 5px;
 	transform: rotate(45deg);
+
+	box-shadow: 2px 1px 1px 0px #0005;
 }
 .icoSim::after {
 	content: "";
@@ -1158,6 +1160,7 @@ button.CarregadorMkTopoDireito:hover {
 	left: -15px;
 	border: 2px solid limegreen;
 	border-radius: 50%;
+	box-shadow: 1px 1px 0px 0px #0005;
 }
 
 .icoNao {
@@ -1190,7 +1193,8 @@ button.CarregadorMkTopoDireito:hover {
 
 .icoNao:hover::before,
 .icoNao:hover::after {
-	border-radius: 5px;
+	border-radius: 3px;
+	border-color: white;
 }
 .icoSim:hover::after {
 	border-width: 3px;
