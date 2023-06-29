@@ -1965,8 +1965,11 @@ class mk {
 					resposta = true;
 				if (mk.Q(".mkConfirmadorBloco .mkConfirmadorArea .bBotao.icoNao.true"))
 					resposta = false;
-				if (resposta) {
-					clearInterval(checkResposta);
+				console.log("Resposta: " + resposta);
+				if (resposta !== null) {
+					mk.Q(".mkConfirmadorBloco .icoSim").classList.remove("true");
+					mk.Q(".mkConfirmadorBloco .icoNao").classList.remove("true");
+					mk.Q(".mkConfirmadorBloco").classList.add("oculto");
 					retornar(resposta);
 				}
 			}
@@ -2003,11 +2006,13 @@ class mk {
 				divMkConfirmarArea.appendChild(divMkConfirmarBotoes);
 				divMkConfirmarBotoes.appendChild(divMkConfirmarSim);
 				divMkConfirmarBotoes.appendChild(divMkConfirmarNao);
+			} else {
+				mk.Q(".mkConfirmadorBloco").classList.remove("oculto");
 			}
-			const checkResposta = setInterval(verficiarResposta, 10);
-			mkt = checkResposta;
+			const checkResposta = setInterval(verficiarResposta, 100);
 			// Função de conclusão.
 			function retornar(resultado: boolean = false) {
+				clearInterval(checkResposta);
 				return r(resultado);
 			}
 		});
