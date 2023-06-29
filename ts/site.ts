@@ -13,3 +13,22 @@ const menuAbrir = async (e: Element) => {
 	}
 };
 menuAbrir(mk.Q(".MenuLink.inicio"));
+
+const aoIncrementar = async (e) => {
+	function edit(alvo: HTMLInputElement, novoValor: number) {
+		alvo.value = novoValor.toString();
+		return novoValor;
+	}
+	let alvo = e?.previousElementSibling;
+	let valorAtual = alvo?.value;
+	let novoValor = Number(valorAtual) + 1;
+	// console.log("Alvo: " + alvo);
+	// console.log("Valor: " + valorAtual);
+	// console.log("Novo Valor: " + novoValor);
+
+	//edit(alvo, novoValor);
+
+	mk.mkConfirma().then((r) => {
+		r ? edit(alvo, novoValor) : console.log("Você não confirmou");
+	});
+};

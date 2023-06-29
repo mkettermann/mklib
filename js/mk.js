@@ -1494,6 +1494,15 @@ class mk {
             });
         });
     };
+    static mkConfirma = async () => {
+        return new Promise((r) => {
+            let resultado = false;
+            setTimeout(retornar, 1000);
+            function retornar() {
+                return r(resultado);
+            }
+        });
+    };
 }
 const mkSelRenderizar = () => {
     document.querySelectorAll("input.mkSel").forEach((e) => {

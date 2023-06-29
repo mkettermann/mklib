@@ -16,3 +16,15 @@ const menuAbrir = async (e) => {
     }
 };
 menuAbrir(mk.Q(".MenuLink.inicio"));
+const aoIncrementar = async (e) => {
+    function edit(alvo, novoValor) {
+        alvo.value = novoValor.toString();
+        return novoValor;
+    }
+    let alvo = e?.previousElementSibling;
+    let valorAtual = alvo?.value;
+    let novoValor = Number(valorAtual) + 1;
+    mk.mkConfirma().then((r) => {
+        r ? edit(alvo, novoValor) : console.log("Você não confirmou");
+    });
+};

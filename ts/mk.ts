@@ -88,12 +88,9 @@ class mk {
 	};
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-	//			MK UTIL											\\
+	//			MK FUNCOES UTIL							\\
 	//___________________________________\\
 
-	/*----------------------------------/
-	\       FUNCOES UTEIS (UTIL)       /
-	/--------------------------------*/
 	// Atalho para QuerySelector que retorna apenas o primeiro elemento da query.
 	static Q = (query: HTMLElement | string = "body") => {
 		if (query instanceof HTMLElement) return query;
@@ -1955,7 +1952,27 @@ class mk {
 			});
 		});
 	};
-}
+
+	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+	//			MK UI Confirmar							\\
+	//___________________________________\\
+
+	static mkConfirma = async () => {
+		return new Promise((r) => {
+			let resultado = false;
+			// 1. Colocar objeto statico na frente da tela
+
+			// 2. Popular objeto com os parametros corretos
+			// 3. Ao clicar no Confirmar, executar confirmou()
+			setTimeout(retornar, 1000);
+
+			// Função de conclusão.
+			function retornar() {
+				return r(resultado);
+			}
+		});
+	};
+} // <<< FIM MK Class
 
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //			MK Seletor									\\
