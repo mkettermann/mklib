@@ -1967,10 +1967,25 @@ class mk {
 			if (!eConfirmar) {
 				let divMkConfirmarBloco = document.createElement("div");
 				let divMkConfirmarArea = document.createElement("div");
+				let divMkConfirmarTitulo = document.createElement("div");
+				let divMkConfirmarBotoes = document.createElement("div");
+				let divMkConfirmarSim = document.createElement("button");
+				let divMkConfirmarNao = document.createElement("button");
 				divMkConfirmarBloco.className = "mkConfirmadorBloco";
-				divMkConfirmarArea.className = "mkConfirmadorArea";
+				divMkConfirmarArea.className = "mkConfirmadorArea microPos5 tb fsb";
+				divMkConfirmarTitulo.className = "mkConfirmadorTitulo";
+				divMkConfirmarBotoes.className = "fsb";
+				divMkConfirmarSim.className = "Botao bVerde";
+				divMkConfirmarNao.className = "Botao bVermelho";
+				divMkConfirmarTitulo.innerHTML = "Confirme";
+				divMkConfirmarSim.innerHTML = "Sim";
+				divMkConfirmarNao.innerHTML = "Não";
 				mk.Q("body").appendChild(divMkConfirmarBloco);
 				divMkConfirmarBloco.appendChild(divMkConfirmarArea);
+				divMkConfirmarArea.appendChild(divMkConfirmarTitulo);
+				divMkConfirmarArea.appendChild(divMkConfirmarBotoes);
+				divMkConfirmarBotoes.appendChild(divMkConfirmarSim);
+				divMkConfirmarBotoes.appendChild(divMkConfirmarNao);
 			}
 			// 2. Popular objeto com os parametros corretos
 			// 3. Ao clicar no Confirmar, executar confirmou()
