@@ -1965,7 +1965,7 @@ class mk {
 					resposta = true;
 				if (mk.Q(".mkConfirmadorBloco .mkConfirmadorArea .bBotao.icoNao.true"))
 					resposta = false;
-				console.log("Resposta: " + resposta);
+				// console.log("Resposta: " + resposta);
 				if (resposta !== null) {
 					mk.Q(".mkConfirmadorBloco .icoSim").classList.remove("true");
 					mk.Q(".mkConfirmadorBloco .icoNao").classList.remove("true");
