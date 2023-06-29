@@ -1978,13 +1978,15 @@ class mk {
 			);
 			if (!eConfirmar) {
 				let divMkConfirmarBloco = document.createElement("div");
+				let divMkConfirmarFora = document.createElement("div");
 				let divMkConfirmarArea = document.createElement("div");
 				let divMkConfirmarTitulo = document.createElement("div");
 				let divMkConfirmarTexto = document.createElement("div");
 				let divMkConfirmarBotoes = document.createElement("div");
 				let divMkConfirmarSim = document.createElement("button");
 				let divMkConfirmarNao = document.createElement("button");
-				divMkConfirmarBloco.className = "mkConfirmadorBloco";
+				divMkConfirmarBloco.className = "mkConfirmadorBloco microPos5";
+				divMkConfirmarFora.className = "mkConfirmadorFora";
 				divMkConfirmarArea.className = "mkConfirmadorArea microPos5 tb fsb";
 				divMkConfirmarTitulo.className = "mkConfirmadorTitulo";
 				divMkConfirmarTexto.className = "mkConfirmadorTexto";
@@ -1997,9 +1999,11 @@ class mk {
 				divMkConfirmarTexto.innerHTML = texto;
 				divMkConfirmarSim.innerHTML = "Sim";
 				divMkConfirmarNao.innerHTML = "Não";
+				divMkConfirmarFora.setAttribute("onclick", "console.log('c');");
 				divMkConfirmarSim.setAttribute("onclick", "this.classList.add(true);");
 				divMkConfirmarNao.setAttribute("onclick", "this.classList.add(true);");
 				mk.Q("body").appendChild(divMkConfirmarBloco);
+				divMkConfirmarBloco.appendChild(divMkConfirmarFora);
 				divMkConfirmarBloco.appendChild(divMkConfirmarArea);
 				divMkConfirmarArea.appendChild(divMkConfirmarTitulo);
 				divMkConfirmarArea.appendChild(divMkConfirmarTexto);
