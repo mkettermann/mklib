@@ -1502,6 +1502,7 @@ class mk {
                     resposta = true;
                 if (mk.Q(".mkConfirmadorBloco .mkConfirmadorArea .bBotao.icoNao.true"))
                     resposta = false;
+                console.log("Resposta: " + resposta);
                 if (resposta !== null) {
                     mk.Q(".mkConfirmadorBloco .icoSim").classList.remove("true");
                     mk.Q(".mkConfirmadorBloco .icoNao").classList.remove("true");
@@ -1532,7 +1533,7 @@ class mk {
                 divMkConfirmarTexto.innerHTML = texto;
                 divMkConfirmarSim.innerHTML = "Sim";
                 divMkConfirmarNao.innerHTML = "Não";
-                divMkConfirmarFora.setAttribute("onclick", "console.log('c');");
+                divMkConfirmarFora.setAttribute("onclick", "console.warn('Essa funcionalidade não está disponível no momento.')");
                 divMkConfirmarSim.setAttribute("onclick", "this.classList.add(true);");
                 divMkConfirmarNao.setAttribute("onclick", "this.classList.add(true);");
                 mk.Q("body").appendChild(divMkConfirmarBloco);
