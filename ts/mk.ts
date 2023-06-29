@@ -2015,6 +2015,7 @@ class mk {
 				divMkConfirmarBotoes.appendChild(divMkConfirmarNao);
 			} else {
 				mk.Q(".mkConfirmadorBloco").classList.remove("oculto");
+				mk.Q(".mkConfirmadorTexto").innerHTML = texto;
 			}
 			const checkResposta = setInterval(verficiarResposta, 100);
 			// Função de conclusão.

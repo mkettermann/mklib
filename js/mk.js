@@ -1547,6 +1547,7 @@ class mk {
             }
             else {
                 mk.Q(".mkConfirmadorBloco").classList.remove("oculto");
+                mk.Q(".mkConfirmadorTexto").innerHTML = texto;
             }
             const checkResposta = setInterval(verficiarResposta, 100);
             function retornar(resultado = false) {
