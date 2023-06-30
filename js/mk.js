@@ -336,10 +336,13 @@ class mk {
         ev.key == "Backspace" ? (isNegado = false) : null;
         ev.key == "Delete" ? (isNegado = false) : null;
         ev.key == "Tab" ? (isNegado = false) : null;
-        isNegado ? ev.preventDefault() : null;
+        if (isNegado) {
+            ev.preventDefault();
+            console.warn("Negado");
+        }
     };
     static mkEventBlock = (ev) => {
-        console.error("Negado");
+        console.warn("Negado");
         ev.preventDefault();
     };
     static mkTrocaPontoPorVirgula = (query) => {
@@ -1607,6 +1610,7 @@ class mk {
                 divMkSeletorInputExibe.setAttribute("onfocus", "mk.mkSelPesquisaFocus(this)");
                 divMkSeletorInputExibe.setAttribute("onblur", "mk.mkSelPesquisaBlur(this)");
                 divMkSeletorInputExibe.setAttribute("oninput", "mk.mkSelPesquisaInput(this)");
+                divMkSeletorInputExibe.setAttribute("onkeydown", "mk.mkSelPesquisaKeyDown(event)");
                 divMkSeletorList.addEventListener("scroll", (ev) => {
                     mk.mkSelMoveu(ev.target);
                 });
@@ -1806,6 +1810,24 @@ class mk {
     };
     static mkSelPesquisaBlur = (e) => {
         mk.mkSelUpdate(e.parentElement.previousElementSibling);
+    };
+    static mkSelPesquisaKeyDown = (ev) => {
+        let isNegado = false;
+        console.log(ev);
+        if (ev.key == "ArrowUp") {
+            isNegado = true;
+            let eList = ev.srcElement.parentElement.nextElementSibling;
+            let array = Array.from(eList.children);
+            let eM = array.find((e) => e.getAttribute("data-m") == "1");
+            if (!eM)
+                array[array.length - 1].setAttribute("data-m", "1");
+            console.log(eM);
+        }
+        if (ev.key == "ArrowDown")
+            isNegado = true;
+        if (isNegado) {
+            ev.preventDefault();
+        }
     };
     static mkSelPesquisaInput = (e) => {
         let cVisivel = 0;

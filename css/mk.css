@@ -59,6 +59,11 @@ html {
 	--BordaItens: #000;
 	--FundoItens: #fff;
 	--FundoItensHover: linear-gradient(0.25turn, var(--g5AzulClaro), transparent);
+	--FundoItensMarK: linear-gradient(
+		0.25turn,
+		var(--g5AzulEscuro99),
+		transparent
+	);
 	--FundoItensSel: linear-gradient(0.25turn, transparent, var(--g5VerdeLima));
 	--FundoItensSelArrow: linear-gradient(
 		0.25turn,
@@ -289,6 +294,10 @@ html {
 .mkSelItem:hover,
 .mkSelItem[data-s="1"]:hover {
 	background: var(--FundoItensHover);
+}
+
+.mkSelItem[data-m="1"] {
+	background: var(--FundoItensMarK);
 }
 
 .mkSelItemArrow {
