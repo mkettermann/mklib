@@ -1,10 +1,8 @@
 // Transformar para uma unidade em TS:
 // - $ JQuery Framework JS
-// - $ Load
 // - $ Mask
 // - $ Print
 // - $ Unobtrutive Validate (Está vinculado ao Data Annotation do C#)
-// - $ LoadTemplate
 // - Bootstrap Toast
 // - Bootstrap Dropdown (quase)
 // - Bootstrap Modal
@@ -1803,15 +1801,17 @@ class mk {
 			console.group("MODAL: Set Selecionado: ");
 			console.info(mk.objetoSelecionado);
 			console.groupEnd();
-			$(".mkModalBloco .mkModalConteudo").loadTemplate(
-				$(modelo),
-				mk.objetoSelecionado,
-				{
-					complete: function () {
+			await mk
+				.mkMoldeOA(
+					mk.objetoSelecionado,
+					modelo,
+					".mkModalBloco .mkModalConteudo"
+				)
+				.then((r) => {
+					if (r) {
 						console.info("Modelo Atualizado com sucesso. (Fim)");
-					},
-				}
-			);
+					}
+				});
 		} else {
 			console.info("URL Atualizar o modal retornou falha.");
 		}
@@ -1868,12 +1868,13 @@ class mk {
 		// POPULA MODAL com CONTEUDO
 		if (conteudo != null) {
 			if (modelo != null) {
-				// Criar LoadTemplate com promise e colocar um await aqui quando terminar de popular o template.
-				$(".mkModalBloco .mkModalConteudo").loadTemplate($(modelo), conteudo, {
-					complete: function () {
-						mk.mkExibirModalFull(url, modelo);
-					},
-				});
+				await mk
+					.mkMoldeOA(conteudo, modelo, ".mkModalBloco .mkModalConteudo")
+					.then(async (r) => {
+						if (r) {
+							await mk.mkExibirModalFull(url, modelo);
+						}
+					});
 			} else {
 				console.error("MODELO NULO");
 			}
@@ -1883,7 +1884,7 @@ class mk {
 	};
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-	//			MK Molde (Template)					\\
+	//			MK Molde (Template/Modelo)	\\
 	//___________________________________\\
 
 	static mkToValue = (mk: string, o: any) => {
@@ -1939,7 +1940,7 @@ class mk {
 			listaNode = listaNode.replaceAll("&lt;", "<");
 			listaNode = listaNode.replaceAll("&gt;", ">");
 			eRepositorio.innerHTML = listaNode;
-			r(this);
+			r(this); // class mk
 		});
 	};
 
