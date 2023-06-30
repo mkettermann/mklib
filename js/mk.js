@@ -1373,10 +1373,12 @@ class mk {
             console.group("MODAL: Set Selecionado: ");
             console.info(mk.objetoSelecionado);
             console.groupEnd();
-            $(".mkModalBloco .mkModalConteudo").loadTemplate($(modelo), mk.objetoSelecionado, {
-                complete: function () {
+            await mk
+                .mkMoldeOA(mk.objetoSelecionado, modelo, ".mkModalBloco .mkModalConteudo")
+                .then((r) => {
+                if (r) {
                     console.info("Modelo Atualizado com sucesso. (Fim)");
-                },
+                }
             });
         }
         else {
@@ -1423,10 +1425,12 @@ class mk {
         mk.mkModalClear();
         if (conteudo != null) {
             if (modelo != null) {
-                $(".mkModalBloco .mkModalConteudo").loadTemplate($(modelo), conteudo, {
-                    complete: function () {
-                        mk.mkExibirModalFull(url, modelo);
-                    },
+                await mk
+                    .mkMoldeOA(conteudo, modelo, ".mkModalBloco .mkModalConteudo")
+                    .then(async (r) => {
+                    if (r) {
+                        await mk.mkExibirModalFull(url, modelo);
+                    }
                 });
             }
             else {
