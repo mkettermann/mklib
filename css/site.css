@@ -7,6 +7,20 @@ body {
 	color: var(--corPrincipal);
 }
 
+::-webkit-scrollbar {
+	width: var(--scrollSize);
+	height: var(--scrollSize);
+}
+
+::-webkit-scrollbar-track {
+	background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+	border-radius: 15px;
+	border: var(--scrollSize) solid var(--scrollColor);
+}
+
 /* Estilo do Site*/
 header {
 	position: sticky;

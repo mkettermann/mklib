@@ -12,4 +12,6 @@
 	--corLinkEfeito: magenta;
 	--corTitulo: var(--bordaMaster);
 	--fundoTitulo: linear-gradient(0.25turn, #f0fff011, #f0fff099, #f0fff011);
+	--scrollSize: 5px;
+	--scrollColor: var(--bordaMaster);
 }
