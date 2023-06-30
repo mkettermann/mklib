@@ -2316,6 +2316,7 @@ class mk {
 		let eList = e.parentElement.nextElementSibling;
 		Array.from(eList.children).forEach((el: any) => {
 			el.style.display = "";
+			el.removeAttribute("data-m");
 		});
 		// Se iniciar no topo, subir as setas pra cima.
 		let temOsDeCima =
@@ -2380,25 +2381,65 @@ class mk {
 	/* EVENTO de Pesquisa (KEYDOWN) */
 	static mkSelPesquisaKeyDown = (ev: any) => {
 		let isNegado = false;
-		//console.log(ev);
-		if (ev.key == "ArrowUp") {
+		if (ev.key == "ArrowUp" || ev.key == "ArrowDown") {
 			isNegado = true;
 			let eList = ev.srcElement.parentElement.nextElementSibling;
-			let array: any = Array.from(eList.children);
+			let array: any = Array.from(eList.children).filter((e: any) => {
+				return e.style.display != "none";
+			});
 			let eM = array.find((e: any) => e.getAttribute("data-m") == "1");
-			if (eM) {
-				array.forEach((e: any) => e.removeAttribute("data-m"));
-				if (array[array.indexOf(eM) - 1]) {
-					array[array.indexOf(eM) - 1].setAttribute("data-m", "1");
+			Array.from(eList.children).forEach((e: any) =>
+				e.removeAttribute("data-m")
+			);
+			if (ev.key == "ArrowUp") {
+				let ultimo = array[array.length - 1];
+				let peNultimo = array[array.length - 2];
+				if (eM) {
+					let indexProximo = array.indexOf(eM) - 1;
+					if (
+						array[indexProximo] &&
+						!array[indexProximo].classList.contains("mkSelItemDeCima")
+					) {
+						array[indexProximo].setAttribute("data-m", "1");
+					} else {
+						if (ultimo.classList.contains("mkSelItemDeBaixo")) {
+							peNultimo.setAttribute("data-m", "1");
+						} else {
+							ultimo.setAttribute("data-m", "1");
+						}
+					}
 				} else {
-					array[array.length - 1].setAttribute("data-m", "1");
+					if (ultimo.classList.contains("mkSelItemDeBaixo")) {
+						peNultimo.setAttribute("data-m", "1");
+					} else {
+						ultimo.setAttribute("data-m", "1");
+					}
 				}
-			} else {
-				array[array.length - 1].setAttribute("data-m", "1");
 			}
-			//console.log(eM);
+			if (ev.key == "ArrowDown") {
+				if (eM) {
+					let indexProximo = array.indexOf(eM) + 1;
+					if (
+						array[indexProximo] &&
+						!array[indexProximo].classList.contains("mkSelItemDeBaixo")
+					) {
+						array[indexProximo].setAttribute("data-m", "1");
+					} else {
+						if (array[0].classList.contains("mkSelItemDeCima")) {
+							array[1].setAttribute("data-m", "1");
+						} else {
+							array[0].setAttribute("data-m", "1");
+						}
+					}
+				} else {
+					if (array[0].classList.contains("mkSelItemDeCima")) {
+						array[1].setAttribute("data-m", "1");
+					} else {
+						array[0].setAttribute("data-m", "1");
+					}
+				}
+			}
 		}
-		if (ev.key == "ArrowDown") isNegado = true;
 		if (isNegado) {
 			ev.preventDefault();
 		}

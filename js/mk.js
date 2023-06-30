@@ -1770,6 +1770,7 @@ class mk {
         let eList = e.parentElement.nextElementSibling;
         Array.from(eList.children).forEach((el) => {
             el.style.display = "";
+            el.removeAttribute("data-m");
         });
         let temOsDeCima = eList.firstElementChild?.classList.contains("mkSelItemDeCima");
         if (temOsDeCima && eList.scrollTop == 0)
@@ -1813,26 +1814,67 @@ class mk {
     };
     static mkSelPesquisaKeyDown = (ev) => {
         let isNegado = false;
-        if (ev.key == "ArrowUp") {
+        if (ev.key == "ArrowUp" || ev.key == "ArrowDown") {
             isNegado = true;
             let eList = ev.srcElement.parentElement.nextElementSibling;
-            let array = Array.from(eList.children);
+            let array = Array.from(eList.children).filter((e) => {
+                return e.style.display != "none";
+            });
             let eM = array.find((e) => e.getAttribute("data-m") == "1");
-            if (eM) {
-                array.forEach((e) => e.removeAttribute("data-m"));
-                if (array[array.indexOf(eM) - 1]) {
-                    array[array.indexOf(eM) - 1].setAttribute("data-m", "1");
+            Array.from(eList.children).forEach((e) => e.removeAttribute("data-m"));
+            if (ev.key == "ArrowUp") {
+                let ultimo = array[array.length - 1];
+                let peNultimo = array[array.length - 2];
+                if (eM) {
+                    let indexProximo = array.indexOf(eM) - 1;
+                    if (array[indexProximo] &&
+                        !array[indexProximo].classList.contains("mkSelItemDeCima")) {
+                        array[indexProximo].setAttribute("data-m", "1");
+                    }
+                    else {
+                        if (ultimo.classList.contains("mkSelItemDeBaixo")) {
+                            peNultimo.setAttribute("data-m", "1");
+                        }
+                        else {
+                            ultimo.setAttribute("data-m", "1");
+                        }
+                    }
                 }
                 else {
-                    array[array.length - 1].setAttribute("data-m", "1");
+                    if (ultimo.classList.contains("mkSelItemDeBaixo")) {
+                        peNultimo.setAttribute("data-m", "1");
+                    }
+                    else {
+                        ultimo.setAttribute("data-m", "1");
+                    }
                 }
             }
-            else {
-                array[array.length - 1].setAttribute("data-m", "1");
+            if (ev.key == "ArrowDown") {
+                if (eM) {
+                    let indexProximo = array.indexOf(eM) + 1;
+                    if (array[indexProximo] &&
+                        !array[indexProximo].classList.contains("mkSelItemDeBaixo")) {
+                        array[indexProximo].setAttribute("data-m", "1");
+                    }
+                    else {
+                        if (array[0].classList.contains("mkSelItemDeCima")) {
+                            array[1].setAttribute("data-m", "1");
+                        }
+                        else {
+                            array[0].setAttribute("data-m", "1");
+                        }
+                    }
+                }
+                else {
+                    if (array[0].classList.contains("mkSelItemDeCima")) {
+                        array[1].setAttribute("data-m", "1");
+                    }
+                    else {
+                        array[0].setAttribute("data-m", "1");
+                    }
+                }
             }
         }
-        if (ev.key == "ArrowDown")
-            isNegado = true;
         if (isNegado) {
             ev.preventDefault();
         }
