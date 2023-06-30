@@ -2381,7 +2381,11 @@ class mk {
 	/* EVENTO de Pesquisa (KEYDOWN) */
 	static mkSelPesquisaKeyDown = (ev: any) => {
 		let isNegado = false;
-		if (ev.key == "ArrowUp" || ev.key == "ArrowDown") {
+		//console.log(ev);
+		if (ev.key == "Escape") {
+			ev.srcElement.blur();
+		}
+		if (ev.key == "ArrowUp" || ev.key == "ArrowDown" || ev.key == "Enter") {
 			isNegado = true;
 			let eList = ev.srcElement.parentElement.nextElementSibling;
 			let array: any = Array.from(eList.children).filter((e: any) => {
@@ -2391,7 +2395,12 @@ class mk {
 			Array.from(eList.children).forEach((e: any) =>
 				e.removeAttribute("data-m")
 			);
+			if (ev.key == "Enter") {
+				mk.mkSelSelecionar(eM);
+				ev.srcElement.blur();
+			}
 			if (ev.key == "ArrowUp") {
+				isNegado = true;
 				let ultimo = array[array.length - 1];
 				let peNultimo = array[array.length - 2];
 				if (eM) {
@@ -2417,6 +2426,7 @@ class mk {
 				}
 			}
 			if (ev.key == "ArrowDown") {
+				isNegado = true;
 				if (eM) {
 					let indexProximo = array.indexOf(eM) + 1;
 					if (
