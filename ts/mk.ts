@@ -2380,14 +2380,23 @@ class mk {
 	/* EVENTO de Pesquisa (KEYDOWN) */
 	static mkSelPesquisaKeyDown = (ev: any) => {
 		let isNegado = false;
-		console.log(ev);
+		//console.log(ev);
 		if (ev.key == "ArrowUp") {
 			isNegado = true;
 			let eList = ev.srcElement.parentElement.nextElementSibling;
 			let array: any = Array.from(eList.children);
-			let eM = array.find((e) => e.getAttribute("data-m") == "1");
-			if (!eM) array[array.length - 1].setAttribute("data-m", "1");
-			console.log(eM);
+			let eM = array.find((e: any) => e.getAttribute("data-m") == "1");
+			if (eM) {
+				array.forEach((e: any) => e.removeAttribute("data-m"));
+				if (array[array.indexOf(eM) - 1]) {
+					array[array.indexOf(eM) - 1].setAttribute("data-m", "1");
+				} else {
+					array[array.length - 1].setAttribute("data-m", "1");
+				}
+			} else {
+				array[array.length - 1].setAttribute("data-m", "1");
+			}
+			//console.log(eM);
 		}
 		if (ev.key == "ArrowDown") isNegado = true;
 		if (isNegado) {

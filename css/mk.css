@@ -296,10 +296,6 @@ html {
 	background: var(--FundoItensHover);
 }
 
-.mkSelItem[data-m="1"] {
-	background: var(--FundoItensMarK);
-}
-
 .mkSelItemArrow {
 	position: absolute;
 	right: 0px;
@@ -322,6 +318,10 @@ html {
 	background: var(--FundoItensSelArrow);
 	min-height: 100%;
 	content: "\2714";
+}
+
+.mkSelItem[data-m="1"] {
+	background: var(--FundoItensMarK);
 }
 
 /* BOTOES DE MOVER PRA CIMA E PRA BAIXO */

@@ -1813,15 +1813,23 @@ class mk {
     };
     static mkSelPesquisaKeyDown = (ev) => {
         let isNegado = false;
-        console.log(ev);
         if (ev.key == "ArrowUp") {
             isNegado = true;
             let eList = ev.srcElement.parentElement.nextElementSibling;
             let array = Array.from(eList.children);
             let eM = array.find((e) => e.getAttribute("data-m") == "1");
-            if (!eM)
+            if (eM) {
+                array.forEach((e) => e.removeAttribute("data-m"));
+                if (array[array.indexOf(eM) - 1]) {
+                    array[array.indexOf(eM) - 1].setAttribute("data-m", "1");
+                }
+                else {
+                    array[array.length - 1].setAttribute("data-m", "1");
+                }
+            }
+            else {
                 array[array.length - 1].setAttribute("data-m", "1");
-            console.log(eM);
+            }
         }
         if (ev.key == "ArrowDown")
             isNegado = true;
