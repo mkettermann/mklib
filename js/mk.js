@@ -1462,18 +1462,27 @@ class mk {
     };
     static mkMoldeOA = async (dadosOA, modelo = "#modelo", repositorio = ".tableListagem .listBody") => {
         return new Promise((r) => {
-            let conteudoTemplate = mk.Q(modelo).innerHTML;
+            let eModelo = mk.Q(modelo);
+            if (eModelo == null) {
+                console.error("Modelo (Template) informado (" + modelo + ") não encontrado.");
+                return r(null);
+            }
+            let eRepositorio = mk.Q(repositorio);
+            if (eRepositorio == null) {
+                console.error("Repositório informado (" + repositorio + ") não encontrado.");
+                return r(null);
+            }
             let listaNode = "";
             let mkMoldeOAA_Execute = (o) => {
-                let node = conteudoTemplate;
+                let node = eModelo.innerHTML;
                 node = mk.mkToValue(node, o);
                 listaNode += node;
             };
             mk.mkExecutaNoObj(dadosOA, mkMoldeOAA_Execute);
             listaNode = listaNode.replaceAll("&lt;", "<");
             listaNode = listaNode.replaceAll("&gt;", ">");
-            mk.Q(repositorio).innerHTML = listaNode;
-            r(null);
+            eRepositorio.innerHTML = listaNode;
+            r(this);
         });
     };
     static mkInclude = async () => {
@@ -1502,7 +1511,6 @@ class mk {
                     resposta = true;
                 if (mk.Q(".mkConfirmadorBloco .mkConfirmadorArea .bBotao.icoNao.true"))
                     resposta = false;
-                console.log("Resposta: " + resposta);
                 if (resposta !== null) {
                     mk.Q(".mkConfirmadorBloco .icoSim").classList.remove("true");
                     mk.Q(".mkConfirmadorBloco .icoNao").classList.remove("true");

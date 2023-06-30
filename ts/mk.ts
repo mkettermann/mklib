@@ -1914,10 +1914,23 @@ class mk {
 		repositorio: string = ".tableListagem .listBody"
 	) => {
 		return new Promise((r) => {
-			let conteudoTemplate = mk.Q(modelo).innerHTML;
+			let eModelo = mk.Q(modelo);
+			if (eModelo == null) {
+				console.error(
+					"Modelo (Template) informado (" + modelo + ") não encontrado."
+				);
+				return r(null);
+			}
+			let eRepositorio = mk.Q(repositorio);
+			if (eRepositorio == null) {
+				console.error(
+					"Repositório informado (" + repositorio + ") não encontrado."
+				);
+				return r(null);
+			}
 			let listaNode = "";
 			let mkMoldeOAA_Execute = (o: any) => {
-				let node: any = conteudoTemplate;
+				let node: any = eModelo.innerHTML;
 				node = mk.mkToValue(node, o);
 				listaNode += node;
 			};
@@ -1925,8 +1938,8 @@ class mk {
 			//Allow Tags
 			listaNode = listaNode.replaceAll("&lt;", "<");
 			listaNode = listaNode.replaceAll("&gt;", ">");
-			mk.Q(repositorio).innerHTML = listaNode;
-			r(null);
+			eRepositorio.innerHTML = listaNode;
+			r(this);
 		});
 	};
 
@@ -1965,7 +1978,7 @@ class mk {
 					resposta = true;
 				if (mk.Q(".mkConfirmadorBloco .mkConfirmadorArea .bBotao.icoNao.true"))
 					resposta = false;
-				console.log("Resposta: " + resposta);
+				//console.log("Resposta: " + resposta);
 				if (resposta !== null) {
 					mk.Q(".mkConfirmadorBloco .icoSim").classList.remove("true");
 					mk.Q(".mkConfirmadorBloco .icoNao").classList.remove("true");
