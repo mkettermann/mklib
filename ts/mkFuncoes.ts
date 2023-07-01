@@ -94,6 +94,7 @@ const avaliarFuncoes = (alvo: any, stream: boolean = false) => {
 		let _f = o[f];
 		o[f] = function (...args: any[]) {
 			let ini = new Date().getTime();
+			//console.log(this.name);
 			if (stream) console.time(f);
 			let result = _f.apply(this, args);
 			let int = new Date().getTime() - ini;
