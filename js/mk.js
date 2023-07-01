@@ -15,6 +15,7 @@ class mk {
     static mkCountValidate = 0;
     static contaOrdena = 0;
     static debug = 0;
+    static arrayFuncoes;
     static status = {
         totalFull: this.fullDados.length,
         totalFiltrado: this.exibeDados.length,
@@ -2010,9 +2011,53 @@ class mk {
             }
         }
     };
+    static avaliarFuncoes = (alvo, stream = false) => {
+        let fUnitario = new Set();
+        function tempoFuncao(o, f) {
+            let _f = o[f];
+            o[f] = function (...args) {
+                let ini = new Date().getTime();
+                if (stream)
+                    console.time(f);
+                let result = _f.apply(this, args);
+                let int = new Date().getTime() - ini;
+                if (stream)
+                    console.timeEnd(f);
+                let index = this.arrayFuncoes.findIndex((o) => o.Funcao == _f.name);
+                if (index >= 0) {
+                    let exe = this.arrayFuncoes[index].Execucoes;
+                    let tMedio = this.arrayFuncoes[index].TempoMedio;
+                    this.arrayFuncoes[index].Execucoes = ++exe;
+                    this.arrayFuncoes[index].TempoMedio =
+                        (tMedio * (exe - 1) + int) / exe;
+                }
+                return result;
+            };
+        }
+        for (let p in alvo) {
+            if (typeof alvo[p] == "function") {
+                let o = {
+                    Funcao: alvo[p].name,
+                    TempoMedio: 0,
+                    Execucoes: 0,
+                };
+                fUnitario.add(o);
+            }
+        }
+        this.arrayFuncoes = Array.from(fUnitario);
+        for (let k of this.arrayFuncoes) {
+            tempoFuncao(alvo, k.Funcao);
+        }
+        setTimeout(() => {
+            console.log("ALVO: " + alvo.name + " TIPO: " + typeof alvo);
+            console.table(Array.from(this.arrayFuncoes));
+        }, 1000);
+        return this;
+    };
 }
 mk.mkClicarNaAba(mk.Q(".mkAbas a.active"));
 mk.mkSelRenderizar();
 setInterval(() => {
     mk.mkSelRenderizar();
 }, 300);
+mk.avaliarFuncoes(mk);
