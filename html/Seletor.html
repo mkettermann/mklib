@@ -1,58 +1,10 @@
-<style>
-	ul {
-		border: 1px solid var(--bordaMaster);
-	}
-	li {
-		display: flex;
-		flex-direction: row;
-	}
-	li div {
-		padding: 5px;
-		border-bottom: 1px solid var(--tTextoHigh);
-	}
-	li div:nth-child(1) {
-		flex: 0 0 70%;
-	}
-	li div:nth-child(2) {
-		flex: 0 0 30%;
-	}
-	li:nth-child(1) div {
-		font-weight: bold;
-		border: 1px solid var(--bordaMaster);
-		background-color: darkgreen;
-		color: yellowgreen;
-	}
-</style>
 <h1 class="microPos2 h1">Seletor</h1>
-<br />
-<ul>
-	<li>
-		<div>Descrição da Propriedade</div>
-		<div>Uso da Propriedade</div>
-	</li>
-	<li>
-		<div>- Impedir flexas de surgirem:</div>
-		<div>data-selmove="false"</div>
-	</li>
-	<li>
-		<div>- Modo DEV:</div>
-		<div>data-dev="true"</div>
-	</li>
-	<li>
-		<div>
-			Seta Lateral. Move o item selecionado (1 apenas) para cima ou para baixo
-			clicando nas setas.
-		</div>
-		<div>data-selmoversel="true"</div>
-	</li>
-</ul>
-<br />
 <div class="i">
 	<div class="j">
 		<label>Comprido (Max 3 selecionados):</label>
 		<input
 			class="iConsultas mkSel text-box single-line"
-			style="width: 100px"
+			style="width: 150px"
 			data-mkfformato="string"
 			data-refill="/RetornaOsDeBaixo/Marca/"
 			data-selapenas="3"
@@ -83,11 +35,7 @@
 	</div>
 </div>
 <br /><br />
-<label
-	>APENAS 1 com controle de SELETOR EXTERNO: (<b
-		><i>data-selmoversel="true"</i></b
-	>)</label
->
+<label>Seletor Externo: (data-selmoversel="true")</label>
 <input
 	class="mkSel"
 	style="width: 150px"
@@ -99,3 +47,92 @@
 	type="text"
 	value="16"
 />
+<br />
+<ul class="tabela">
+	<li>
+		<div>Funcionalidade do Seletor</div>
+		<div>Modo de uso</div>
+	</li>
+	<li>
+		<div>
+			LIMITADOR DE SELEÇÃO. <br />(1) Permite apenas um clique e se fecha
+			(normal). <br />(-1) Libera até 4 bilhões de itens selecionados. <br />(2
+			ou +) Seleciona e permanece aberto (multiselect).
+		</div>
+		<div>
+			<ol>
+				<li>&raquo; selapenas="(limite)"</li>
+				<li>&raquo; selapenas="1"</li>
+				<li>&raquo; selapenas="-1"</li>
+				<li>&raquo; selapenas="3"</li>
+			</ol>
+		</div>
+	</li>
+	<li>
+		<div>O Seletor vem juntamente com a biblioteca MK</div>
+		<div>Padrão</div>
+	</li>
+	<li>
+		<div>
+			FLEXAS SOBE E DESCE. Quando o seletor possui muitas opções.
+			Automaticamente surgem flexas para subir ou descer. Caso não deseja
+			renderizar elas junto, utilize essa propriedade juntamente com o input.
+		</div>
+		<div>data-selmove="false"</div>
+	</li>
+	<li>
+		<div>
+			FILTRO. O Seletor possui filtro sob listagem de opções com reação direta
+			por tecla pressionada.
+		</div>
+		<div>Padrão</div>
+	</li>
+	<li>
+		<div>
+			ARRAY DE OPÇÕES Chave-Valor. Para popular o seletor com opções para
+			seleção, basta informar o parametro data-selarray e dentro, uma array de
+			objetos com propriedade 'k' e 'v' que, respectivamente, são chave e valor.
+			Neste exemplo:
+			<small
+				style="font-size: small; font-style: italic; background-color: #444"
+			>
+				[{"k":"","v":"Todos"},{"k":"1","v":"Sim"},{"k":"2","v":"Não"}]
+			</small>
+			Todos representa vazio, 1 para Sim e 2 para não. Você pode utilizar JSON
+			para converter ou desconverter nessa propriedade.
+		</div>
+		<div>data-selarray=""</div>
+	</li>
+	<li>
+		<div>
+			MODO DEV é uma propriedade que deixa o seletor em um formato aberto para
+			edição e visualização em tempo integral. É possível visualizar um campo
+			contendo os valores chave selecionados, um campo de display e filtro e por
+			fim a lista de opções permanece aberta mesmo sem foco no filtro.
+		</div>
+		<div>data-dev="true"</div>
+	</li>
+	<li>
+		<div>
+			SETAS LATERAIS. Move o item selecionado (1 apenas) para cima ou para baixo
+			clicando nas setas.
+		</div>
+		<div>data-selmoversel="true"</div>
+	</li>
+	<li>
+		<div>
+			USO POR TECLADO. Os seletores possuem a funcionalidade de utilizar as
+			teclas: enter, esc, tab, setas para cima e seta para baixo. Com isso é
+			possível navegar entre os seletores, navegar entre as opções dos
+			seletores, selecionar uma opção ou cancelar apenas utilizando um teclado.
+		</div>
+		<div>
+			<ol>
+				<li>&raquo; Esc</li>
+				<li>&raquo; Enter</li>
+				<li>&raquo; Seta para Cima</li>
+				<li>&raquo; Seta para Baixo</li>
+			</ol>
+		</div>
+	</li>
+</ul>
