@@ -76,3 +76,47 @@ const matrizApenasScrings = (matriz) => {
     }
     return res;
 };
+const avaliarFuncoes = () => {
+    let auditoriaFuncoes = new Set();
+    let arrayFuncoes;
+    function tempoFuncao(o, f) {
+        let _f = o[f];
+        o[f] = function (...args) {
+            let ini = new Date().getTime();
+            let result = _f.apply(this, args);
+            let int = new Date().getTime() - ini;
+            let index = arrayFuncoes.findIndex((o) => o.Funcao == _f.name);
+            let exe = arrayFuncoes[index].Execucoes;
+            let tMedio = arrayFuncoes[index].TempoMedio;
+            arrayFuncoes[index].Execucoes = ++exe;
+            arrayFuncoes[index].TempoMedio = (tMedio * (exe - 1) + int) / exe;
+            if (_f.name == "http")
+                console.log("Tempo: " +
+                    int +
+                    " Media: " +
+                    arrayFuncoes[index].TempoMedio +
+                    " Exe: " +
+                    exe +
+                    " Executado: " +
+                    arrayFuncoes[index].Execucoes);
+            return result;
+        };
+    }
+    for (let p in mk) {
+        if (typeof mk[p] == "function") {
+            let o = {
+                Funcao: mk[p].name,
+                TempoMedio: 0,
+                Execucoes: 0,
+            };
+            auditoriaFuncoes.add(o);
+        }
+    }
+    arrayFuncoes = Array.from(auditoriaFuncoes);
+    for (let k of arrayFuncoes) {
+        tempoFuncao(mk, k.Funcao);
+    }
+    setTimeout(() => {
+        console.table(Array.from(arrayFuncoes));
+    }, 1000);
+};
