@@ -160,3 +160,42 @@
 // };
 // tempoFuncao(o, "m");
 // o.m("oi");
+
+// HERANCA THIS
+// console.log("1: ", this, " RAIZ");
+// let estaA = () => {
+// 	console.log("2: ", this);
+// };
+// let thisObjeto = {
+// 	a: () => {
+// 		console.log("4: ", this);
+// 		function a_interno() {
+// 			console.log("5: ", this);
+// 		}
+// 		return a_interno();
+// 	},
+// 	b: function () {
+// 		console.log("6:", this);
+// 		let b_interno = () => {
+// 			console.log("7: ", this);
+// 		};
+// 		return b_interno();
+// 	},
+// 	c: function () {
+// 		return {
+// 			d: () => {
+// 				console.log("8: ", this);
+// 			},
+// 		};
+// 	},
+// };
+// estaA();
+// let estaC = function funcaoThis(x, y) {
+// 	console.log("3: ", this, x, y);
+// }.bind(
+// 	thisObjeto,
+// 	"x"
+// )("y");
+// thisObjeto.a();
+// thisObjeto.b();
+// thisObjeto.c().d();
