@@ -92,18 +92,6 @@ header {
 		box-shadow: 0px 0px 15px 0px white;
 	}
 }
-.tituloMk span.y {
-	animation: girar 2s infinite alternate cubic-bezier(0, 0.7, 1, 0.24);
-	transform-origin: 0% 200%;
-}
-@keyframes girar {
-	0% {
-		transform: rotate(20deg);
-	}
-	100% {
-		transform: rotate(-20deg);
-	}
-}
 .tituloMk span.s {
 	animation: esbranquecer 4s infinite alternate cubic-bezier(0, 0.7, 1, 0.24);
 }
