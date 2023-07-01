@@ -139,3 +139,26 @@
 // 	return sum;
 // }
 //timed(demo)(100);
+
+// function tempoFuncao(o, f) {
+// 	let _f = o[f];
+// 	o[f] = function (...args) {
+// 		let ini = new Date().getTime();
+// 		console.time(f);
+// 		let result = _f.apply(this, args);
+// 		let int = new Date().getTime() - ini;
+// 		console.log("Função '" + _f.name + "' processou em " + int + "ms");
+// 		console.timeEnd(f);
+// 		return result;
+// 	};
+// }
+
+// let o = {
+// 	m: function (msg) {
+// 		console.log("funcao m inicial " + msg);
+// 		console.log(this);
+// 	},
+// };
+
+// tempoFuncao(o, "m");
+// o.m("oi");
