@@ -1498,7 +1498,6 @@ class mk {
             mk.QAll("body *").forEach(async (e) => {
                 let destino = e.getAttribute("mkInclude");
                 if (destino != null) {
-                    console.log("Incluindo: " + destino);
                     let retorno = await mk.http(destino, mk.t.G, mk.t.H);
                     if (retorno != null) {
                         e.innerHTML = retorno;
@@ -2017,15 +2016,3 @@ mk.mkSelRenderizar();
 setInterval(() => {
     mk.mkSelRenderizar();
 }, 300);
-Object.defineProperty(mk, "http", {
-    writable: false,
-});
-Object.defineProperty(mk, "mkFiltragemDados", {
-    writable: false,
-});
-Object.defineProperty(mk, "mkValidaFull", {
-    writable: false,
-});
-Object.defineProperty(mk, "t", {
-    writable: false,
-});
