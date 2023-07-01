@@ -76,3 +76,41 @@ const matrizApenasScrings = (matriz) => {
     }
     return res;
 };
+let arrayFuncoes;
+const avaliarFuncoes = (alvo, stream = false) => {
+    let fUnitario = new Set();
+    function tempoFuncao(o, f) {
+        let _f = o[f];
+        o[f] = function (...args) {
+            let ini = new Date().getTime();
+            if (stream)
+                console.time(f);
+            let result = _f.apply(this, args);
+            let int = new Date().getTime() - ini;
+            if (stream)
+                console.timeEnd(f);
+            let index = arrayFuncoes.findIndex((o) => o.Funcao == _f.name);
+            if (index >= 0) {
+                let exe = arrayFuncoes[index].Execucoes;
+                let tMedio = arrayFuncoes[index].TempoMedio;
+                arrayFuncoes[index].Execucoes = ++exe;
+                arrayFuncoes[index].TempoMedio = (tMedio * (exe - 1) + int) / exe;
+            }
+            return result;
+        };
+    }
+    for (let p in alvo) {
+        if (typeof alvo[p] == "function") {
+            let o = {
+                Funcao: alvo[p].name,
+                TempoMedio: 0,
+                Execucoes: 0,
+            };
+            fUnitario.add(o);
+        }
+    }
+    arrayFuncoes = Array.from(fUnitario);
+    for (let k of arrayFuncoes) {
+        tempoFuncao(alvo, k.Funcao);
+    }
+};

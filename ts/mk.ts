@@ -2593,57 +2593,6 @@ class mk {
 			}
 		}
 	};
-
-	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-	//			Avaliacao de funcoes				\\
-	//___________________________________\\
-	static avaliarFuncoes = (alvo: any, stream: boolean = false) => {
-		let fUnitario = new Set();
-		// Converter para Teste
-		function tempoFuncao(o: any, f: any) {
-			let _f = o[f];
-			o[f] = function (...args: any[]) {
-				let ini = new Date().getTime();
-				if (stream) console.time(f);
-				let result = _f.apply(this, args);
-				let int = new Date().getTime() - ini;
-				//console.log("Função '" + _f.name + "' processou em " + int + "ms");
-				if (stream) console.timeEnd(f);
-				let index = this.arrayFuncoes.findIndex(
-					(o: any) => o.Funcao == _f.name
-				);
-				if (index >= 0) {
-					let exe = this.arrayFuncoes[index].Execucoes;
-					let tMedio = this.arrayFuncoes[index].TempoMedio;
-					this.arrayFuncoes[index].Execucoes = ++exe;
-					this.arrayFuncoes[index].TempoMedio =
-						(tMedio * (exe - 1) + int) / exe;
-				}
-				return result;
-			};
-		}
-		// Popular Set
-		for (let p in alvo) {
-			if (typeof alvo[p] == "function") {
-				let o = {
-					Funcao: alvo[p].name,
-					TempoMedio: 0,
-					Execucoes: 0,
-				};
-				fUnitario.add(o);
-			}
-		}
-		// Executa Converter no alvo
-		this.arrayFuncoes = Array.from(fUnitario);
-		for (let k of this.arrayFuncoes) {
-			tempoFuncao(alvo, k.Funcao);
-		}
-		setTimeout(() => {
-			console.log("ALVO: " + alvo.name + " TIPO: " + typeof alvo);
-			console.table(Array.from(this.arrayFuncoes));
-		}, 1000);
-		return this;
-	};
 } // <<< FIM MK Class
 
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
@@ -2656,23 +2605,22 @@ mk.mkSelRenderizar();
 setInterval(() => {
 	mk.mkSelRenderizar();
 }, 300);
-mk.avaliarFuncoes(mk);
 
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //			OBJETOS CONSTANTES					\\
 //___________________________________\\
-// Object.defineProperty(mk, "http", {
-// 	writable: false,
-// });
-// Object.defineProperty(mk, "mkFiltragemDados", {
-// 	writable: false,
-// });
-// Object.defineProperty(mk, "mkValidaFull", {
-// 	writable: false,
-// });
-// Object.defineProperty(mk, "t", {
-// 	writable: false,
-// });
+Object.defineProperty(mk, "http", {
+	writable: false,
+});
+Object.defineProperty(mk, "mkFiltragemDados", {
+	writable: false,
+});
+Object.defineProperty(mk, "mkValidaFull", {
+	writable: false,
+});
+Object.defineProperty(mk, "t", {
+	writable: false,
+});
 
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //			TEST												\\

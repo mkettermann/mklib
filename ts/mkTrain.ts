@@ -152,13 +152,11 @@
 // 		return result;
 // 	};
 // }
-
 // let o = {
 // 	m: function (msg) {
 // 		console.log("funcao m inicial " + msg);
 // 		console.log(this);
 // 	},
 // };
-
 // tempoFuncao(o, "m");
 // o.m("oi");
