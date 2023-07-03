@@ -1200,18 +1200,18 @@ class mk {
 							// Filtro por numero exado. Provavelmente sejam duas arrays (MultiSelect), O filtro precisa encontrar tudo no objeto.
 							let filtroInvertido = false;
 							if (this.isJson(k.conteudo)) {
-								let arrayK = JSON.parse(k.conteudo); // << No objFiltro
-								let numerosMDaString = m.toString().split(","); // String de Numeros em Array de Strings
-								if (Array.isArray(arrayK)) {
-									arrayK.forEach((numeroK: any) => {
+								let arrayM = m.toString().split(","); // String de Numeros em Array de Strings
+								let mayBeArrayK = JSON.parse(k.conteudo); // << No objFiltro
+								if (Array.isArray(mayBeArrayK)) {
+									mayBeArrayK.forEach((numeroK: any) => {
 										// A cada numero encontrado pos split na string do item verificado
-										filtroInvertido = numerosMDaString.some((numeroM: any) => {
+										filtroInvertido = arrayM.some((numeroM: any) => {
 											return Number(numeroM) == Number(numeroK);
 										});
 									});
 								} else {
-									filtroInvertido = numerosMDaString.some((numeroM: any) => {
-										return Number(numeroM) == Number(arrayK);
+									filtroInvertido = arrayM.some((numeroM: any) => {
+										return Number(numeroM) == Number(mayBeArrayK);
 									});
 								}
 								if (!filtroInvertido) {

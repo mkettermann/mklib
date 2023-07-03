@@ -905,18 +905,18 @@ class mk {
                         else if (k.formato === "stringNumerosVirgula") {
                             let filtroInvertido = false;
                             if (this.isJson(k.conteudo)) {
-                                let arrayK = JSON.parse(k.conteudo);
-                                let numerosMDaString = m.toString().split(",");
-                                if (Array.isArray(arrayK)) {
-                                    arrayK.forEach((numeroK) => {
-                                        filtroInvertido = numerosMDaString.some((numeroM) => {
+                                let arrayM = m.toString().split(",");
+                                let mayBeArrayK = JSON.parse(k.conteudo);
+                                if (Array.isArray(mayBeArrayK)) {
+                                    mayBeArrayK.forEach((numeroK) => {
+                                        filtroInvertido = arrayM.some((numeroM) => {
                                             return Number(numeroM) == Number(numeroK);
                                         });
                                     });
                                 }
                                 else {
-                                    filtroInvertido = numerosMDaString.some((numeroM) => {
-                                        return Number(numeroM) == Number(arrayK);
+                                    filtroInvertido = arrayM.some((numeroM) => {
+                                        return Number(numeroM) == Number(mayBeArrayK);
                                     });
                                 }
                                 if (!filtroInvertido) {
