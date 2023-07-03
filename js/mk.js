@@ -905,18 +905,12 @@ class mk {
                         else if (k.formato === "stringNumerosVirgula") {
                             let filtroInvertido = false;
                             let numerosMDaString = m.toString().split(",");
-                            if (this.isJson(k.conteudo)) {
-                                JSON.parse(k.conteudo).map((numeroK) => {
-                                    filtroInvertido = numerosMDaString.some((numeroM) => {
-                                        return Number(numeroM) == Number(numeroK);
-                                    });
-                                    if (!filtroInvertido) {
-                                        podeExibir = false;
-                                    }
-                                });
+                            filtroInvertido = numerosMDaString.some((numeroM) => {
+                                return Number(numeroM) == Number(k.conteudo);
+                            });
+                            if (!filtroInvertido) {
+                                podeExibir = false;
                             }
-                            else
-                                console.warn("Não é um JSON");
                         }
                         else if (k.formato === "number") {
                             if (Number(m) !== Number(k.conteudo) &&
