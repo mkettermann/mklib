@@ -904,13 +904,20 @@ class mk {
                         }
                         else if (k.formato === "stringNumerosVirgula") {
                             let filtroInvertido = false;
-                            let numerosMDaString = m.toString().split(",");
-                            filtroInvertido = numerosMDaString.some((numeroM) => {
-                                return Number(numeroM) == Number(k.conteudo);
-                            });
-                            if (!filtroInvertido) {
-                                podeExibir = false;
+                            if (this.isJson(k.conteudo)) {
+                                let arrayK = JSON.parse(k.conteudo);
+                                let numerosMDaString = m.toString().split(",");
+                                arrayK.forEach((numeroK) => {
+                                    filtroInvertido = numerosMDaString.some((numeroM) => {
+                                        return Number(numeroM) == Number(numeroK);
+                                    });
+                                    if (!filtroInvertido) {
+                                        podeExibir = false;
+                                    }
+                                });
                             }
+                            else
+                                console.warn("Não é um JSON");
                         }
                         else if (k.formato === "number") {
                             if (Number(m) !== Number(k.conteudo) &&

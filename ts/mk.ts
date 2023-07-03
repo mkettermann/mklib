@@ -1197,17 +1197,23 @@ class mk {
 								podeExibir = false;
 							}
 						} else if (k.formato === "stringNumerosVirgula") {
-							// Filtro por numero exado. Conteudo tem um array de numeros.
+							// Filtro por numero exado. São duas arrays, O filtro precisa encontrar tudo no objeto.
 							let filtroInvertido = false;
-							let numerosMDaString = m.toString().split(","); // String de Numeros em Array de Strings
-							// A cada numero encontrado pos split na string do item verificado
-							filtroInvertido = numerosMDaString.some((numeroM: any) => {
-								// Encontrar ao menos 1 true no array interno. (Resolve o XOR)
-								return Number(numeroM) == Number(k.conteudo);
-							});
-							if (!filtroInvertido) {
-								podeExibir = false;
-							}
+							if (this.isJson(k.conteudo)) {
+								let arrayK = JSON.parse(k.conteudo); // << No objFiltro
+								let numerosMDaString = m.toString().split(","); // String de Numeros em Array de Strings
+								//console.log("ArrayK: ", arrayK);
+								arrayK.forEach((numeroK: any) => {
+									// A cada numero encontrado pos split na string do item verificado
+									filtroInvertido = numerosMDaString.some((numeroM: any) => {
+										// Encontrar ao menos 1 true no array interno. (Resolve o XOR)
+										return Number(numeroM) == Number(numeroK);
+									});
+									if (!filtroInvertido) {
+										podeExibir = false;
+									}
+								});
+							} else console.warn("Não é um JSON");
 						} else if (k.formato === "number") {
 							// Filtro por numero exado. Apenas exibe este exato numero.
 							// Ignorar filtro com 0
