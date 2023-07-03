@@ -907,14 +907,21 @@ class mk {
                             if (this.isJson(k.conteudo)) {
                                 let arrayK = JSON.parse(k.conteudo);
                                 let numerosMDaString = m.toString().split(",");
-                                arrayK.forEach((numeroK) => {
-                                    filtroInvertido = numerosMDaString.some((numeroM) => {
-                                        return Number(numeroM) == Number(numeroK);
+                                if (Array.isArray(arrayK)) {
+                                    arrayK.forEach((numeroK) => {
+                                        filtroInvertido = numerosMDaString.some((numeroM) => {
+                                            return Number(numeroM) == Number(numeroK);
+                                        });
                                     });
-                                    if (!filtroInvertido) {
-                                        podeExibir = false;
-                                    }
-                                });
+                                }
+                                else {
+                                    filtroInvertido = numerosMDaString.some((numeroM) => {
+                                        return Number(numeroM) == Number(arrayK);
+                                    });
+                                }
+                                if (!filtroInvertido) {
+                                    podeExibir = false;
+                                }
                             }
                             else
                                 console.warn("Não é um JSON");
