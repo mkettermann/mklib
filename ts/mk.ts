@@ -751,7 +751,7 @@ class mk {
 		return elemento;
 	}
 	// Função Recursiva que substitui node de Script por elemento de Script
-	static mkNoteToScript(node: any) {
+	static mkNodeToScript(node: any) {
 		// Apenas Scripts
 		if (node.tagName === "SCRIPT") {
 			node.parentNode.replaceChild(mk.mkGeraElemento(node, "script"), node);
@@ -760,7 +760,7 @@ class mk {
 			var i = -1,
 				children = node.childNodes;
 			while (++i < children.length) {
-				mk.mkNoteToScript(children[i]);
+				mk.mkNodeToScript(children[i]);
 			}
 		}
 		return node;
@@ -1962,7 +1962,7 @@ class mk {
 					let retorno = await mk.http(destino, mk.t.G, mk.t.H);
 					if (retorno != null) {
 						e.innerHTML = retorno;
-						//mk.mkNoteToScript(mk.Q(".conteudo"));
+						//mk.mkNodeToScript(mk.Q(".conteudo"));
 					} else {
 						console.log("Falhou ao coletar dados");
 					}

@@ -590,14 +590,14 @@ class mk {
         }
         return elemento;
     }
-    static mkNoteToScript(node) {
+    static mkNodeToScript(node) {
         if (node.tagName === "SCRIPT") {
             node.parentNode.replaceChild(mk.mkGeraElemento(node, "script"), node);
         }
         else {
             var i = -1, children = node.childNodes;
             while (++i < children.length) {
-                mk.mkNoteToScript(children[i]);
+                mk.mkNodeToScript(children[i]);
             }
         }
         return node;
