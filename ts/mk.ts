@@ -137,6 +137,7 @@ class mk {
 
 	// Converter (OBJ / ARRAY) Limpar Nulos e Vazios
 	static mkLimparOA = (oa: object | object[]) => {
+		// Trocar para arrow
 		function mkLimparOA_Execute(o: any) {
 			for (var propName in o) {
 				if (
