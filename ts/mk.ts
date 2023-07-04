@@ -2349,19 +2349,25 @@ class mk {
 		e.value = "";
 		// Limpa o resultado do filtro anterior
 		let eList = e.parentElement.nextElementSibling;
+		let ePrimeiroSel: any = null;
 		Array.from(eList.children).forEach((el: any) => {
 			el.style.display = "";
 			el.removeAttribute("data-m");
+			if (el.getAttribute("data-s") == 1 && ePrimeiroSel == null)
+				ePrimeiroSel = el;
 		});
-		// Se iniciar no topo, subir as setas pra cima.
+		// Se iniciar no topo, sumir as setas pra cima.
 		let temOsDeCima =
 			eList.firstElementChild?.classList.contains("mkSelItemDeCima");
-
 		if (temOsDeCima && eList.scrollTop == 0)
 			eList.firstElementChild.style.display = "none";
-		// if (Number(e.getAttribute("data-selapenas")) == 1) {
-		// 	eList.scrollTop = 0;
-		// }
+
+		// Faz movimento no scroll até o primeiro item selecionado
+		eList.scrollTop =
+			ePrimeiroSel.offsetTop -
+			eList.offsetTop -
+			(eList.offsetHeight - eList.clientHeight) / 2;
+
 		// Atualizar posição da Lista.
 		mk.mkSelReposicionar(e.parentElement.nextElementSibling);
 	};
@@ -2423,6 +2429,7 @@ class mk {
 		if (ev.key == "ArrowUp" || ev.key == "ArrowDown" || ev.key == "Enter") {
 			isNegado = true;
 			let eList = ev.srcElement.parentElement.nextElementSibling;
+			let eListItem;
 			let array: any = Array.from(eList.children).filter((e: any) => {
 				return e.style.display != "none";
 			});
@@ -2438,27 +2445,33 @@ class mk {
 				isNegado = true;
 				let ultimo = array[array.length - 1];
 				let peNultimo = array[array.length - 2];
+
 				if (eM) {
 					let indexProximo = array.indexOf(eM) - 1;
 					if (
 						array[indexProximo] &&
 						!array[indexProximo].classList.contains("mkSelItemDeCima")
 					) {
-						array[indexProximo].setAttribute("data-m", "1");
+						eListItem = array[indexProximo];
 					} else {
 						if (ultimo.classList.contains("mkSelItemDeBaixo")) {
-							peNultimo.setAttribute("data-m", "1");
+							eListItem = peNultimo;
 						} else {
-							ultimo.setAttribute("data-m", "1");
+							eListItem = ultimo;
 						}
 					}
 				} else {
 					if (ultimo.classList.contains("mkSelItemDeBaixo")) {
-						peNultimo.setAttribute("data-m", "1");
+						eListItem = peNultimo;
 					} else {
-						ultimo.setAttribute("data-m", "1");
+						eListItem = ultimo;
 					}
 				}
+				eListItem.setAttribute("data-m", "1");
+				eList.scrollTop =
+					eListItem.offsetTop -
+					eList.offsetTop -
+					(eList.offsetHeight - eList.clientHeight) / 2;
 			}
 			if (ev.key == "ArrowDown") {
 				isNegado = true;
@@ -2468,21 +2481,26 @@ class mk {
 						array[indexProximo] &&
 						!array[indexProximo].classList.contains("mkSelItemDeBaixo")
 					) {
-						array[indexProximo].setAttribute("data-m", "1");
+						eListItem = array[indexProximo];
 					} else {
 						if (array[0].classList.contains("mkSelItemDeCima")) {
-							array[1].setAttribute("data-m", "1");
+							eListItem = array[1];
 						} else {
-							array[0].setAttribute("data-m", "1");
+							eListItem = array[0];
 						}
 					}
 				} else {
 					if (array[0].classList.contains("mkSelItemDeCima")) {
-						array[1].setAttribute("data-m", "1");
+						eListItem = array[1];
 					} else {
-						array[0].setAttribute("data-m", "1");
+						eListItem = array[0];
 					}
 				}
+				eListItem.setAttribute("data-m", "1");
+				eList.scrollTop =
+					eListItem.offsetTop -
+					eList.offsetTop -
+					(eList.offsetHeight - eList.clientHeight) / 2;
 			}
 		}
 		if (isNegado) {

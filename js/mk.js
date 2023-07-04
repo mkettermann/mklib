@@ -1794,13 +1794,20 @@ class mk {
         mk.mkSelUpdate(e.parentElement.previousElementSibling);
         e.value = "";
         let eList = e.parentElement.nextElementSibling;
+        let ePrimeiroSel = null;
         Array.from(eList.children).forEach((el) => {
             el.style.display = "";
             el.removeAttribute("data-m");
+            if (el.getAttribute("data-s") == 1 && ePrimeiroSel == null)
+                ePrimeiroSel = el;
         });
         let temOsDeCima = eList.firstElementChild?.classList.contains("mkSelItemDeCima");
         if (temOsDeCima && eList.scrollTop == 0)
             eList.firstElementChild.style.display = "none";
+        eList.scrollTop =
+            ePrimeiroSel.offsetTop -
+                eList.offsetTop -
+                (eList.offsetHeight - eList.clientHeight) / 2;
         mk.mkSelReposicionar(e.parentElement.nextElementSibling);
     };
     static getParentScrollTop = (e) => {
@@ -1846,6 +1853,7 @@ class mk {
         if (ev.key == "ArrowUp" || ev.key == "ArrowDown" || ev.key == "Enter") {
             isNegado = true;
             let eList = ev.srcElement.parentElement.nextElementSibling;
+            let eListItem;
             let array = Array.from(eList.children).filter((e) => {
                 return e.style.display != "none";
             });
@@ -1863,25 +1871,30 @@ class mk {
                     let indexProximo = array.indexOf(eM) - 1;
                     if (array[indexProximo] &&
                         !array[indexProximo].classList.contains("mkSelItemDeCima")) {
-                        array[indexProximo].setAttribute("data-m", "1");
+                        eListItem = array[indexProximo];
                     }
                     else {
                         if (ultimo.classList.contains("mkSelItemDeBaixo")) {
-                            peNultimo.setAttribute("data-m", "1");
+                            eListItem = peNultimo;
                         }
                         else {
-                            ultimo.setAttribute("data-m", "1");
+                            eListItem = ultimo;
                         }
                     }
                 }
                 else {
                     if (ultimo.classList.contains("mkSelItemDeBaixo")) {
-                        peNultimo.setAttribute("data-m", "1");
+                        eListItem = peNultimo;
                     }
                     else {
-                        ultimo.setAttribute("data-m", "1");
+                        eListItem = ultimo;
                     }
                 }
+                eListItem.setAttribute("data-m", "1");
+                eList.scrollTop =
+                    eListItem.offsetTop -
+                        eList.offsetTop -
+                        (eList.offsetHeight - eList.clientHeight) / 2;
             }
             if (ev.key == "ArrowDown") {
                 isNegado = true;
@@ -1889,25 +1902,30 @@ class mk {
                     let indexProximo = array.indexOf(eM) + 1;
                     if (array[indexProximo] &&
                         !array[indexProximo].classList.contains("mkSelItemDeBaixo")) {
-                        array[indexProximo].setAttribute("data-m", "1");
+                        eListItem = array[indexProximo];
                     }
                     else {
                         if (array[0].classList.contains("mkSelItemDeCima")) {
-                            array[1].setAttribute("data-m", "1");
+                            eListItem = array[1];
                         }
                         else {
-                            array[0].setAttribute("data-m", "1");
+                            eListItem = array[0];
                         }
                     }
                 }
                 else {
                     if (array[0].classList.contains("mkSelItemDeCima")) {
-                        array[1].setAttribute("data-m", "1");
+                        eListItem = array[1];
                     }
                     else {
-                        array[0].setAttribute("data-m", "1");
+                        eListItem = array[0];
                     }
                 }
+                eListItem.setAttribute("data-m", "1");
+                eList.scrollTop =
+                    eListItem.offsetTop -
+                        eList.offsetTop -
+                        (eList.offsetHeight - eList.clientHeight) / 2;
             }
         }
         if (isNegado) {
