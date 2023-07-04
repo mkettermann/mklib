@@ -355,23 +355,37 @@ class mk {
 		}
 	};
 
-	static mkSelDlRefill = async (eName: string, cod = null): Promise<void> => {
-		let e = mk.Q(eName);
-		let url = appPath + e.getAttribute("data-refill");
-		cod != null ? (url += cod) : null;
-		let retorno = await mk.http(url, mk.t.G, mk.t.J);
-		if (retorno != null) {
-			let kv = retorno;
-			if (typeof retorno == "object") {
-				kv = JSON.stringify(retorno);
+	static mkSelDelRefillProcesso = async (
+		eName: string | HTMLElement,
+		cod = null
+	) => {
+		return new Promise(async (r) => {
+			let e = mk.Q(eName);
+			let url = appPath + e.getAttribute("data-refill");
+			cod != null ? (url += cod) : null;
+			let retorno = await mk.http(url, mk.t.G, mk.t.J);
+			if (retorno != null) {
+				let kv = retorno;
+				if (typeof retorno == "object") {
+					kv = JSON.stringify(retorno);
+					r(e);
+				}
+				if (mk.isJson(kv)) {
+					e.setAttribute("data-selarray", kv);
+				} else {
+					console.error("Resultado não é um JSON. (mkSelDlRefill)");
+				}
 			}
-			if (mk.isJson(kv)) {
-				e.setAttribute("data-selarray", kv);
-				e.classList.add("atualizar");
-			} else {
-				console.error("Resultado não é um JSON. (mkSelDlRefill)");
-			}
-		}
+		});
+	};
+
+	static mkSelDlRefill = async (
+		eName: string | HTMLElement,
+		cod: any
+	): Promise<void> => {
+		mk.mkSelDelRefillProcesso(eName, cod).then((e: any) => {
+			e.classList.add("atualizar");
+		});
 	};
 
 	// Get Server On
@@ -2055,8 +2069,8 @@ class mk {
 	//___________________________________\\
 
 	/* CRIA O DROPDOWN por FOCUS */
-	static mkSelRenderizar = () => {
-		document.querySelectorAll("input.mkSel").forEach((e) => {
+	static mkSelRenderizar = async () => {
+		document.querySelectorAll("input.mkSel").forEach(async (e) => {
 			// Transforma elemento se ele ainda não foi transformado
 			if (!e.parentElement?.classList.contains("mkSelBloco")) {
 				// COLETA
@@ -2137,11 +2151,20 @@ class mk {
 				// Atualiza a lista com base na classe "atualizar"
 				if (e.classList.contains("atualizar")) {
 					e.classList.remove("atualizar");
+					e.classList.add("atualizando");
+					// Se não tem array, mas tem o refill e entrou para atualizar, faz o processo de refill genérico
+					if (
+						!e.getAttribute("data-selarray") &&
+						e.getAttribute("data-refill")
+					) {
+						await mk.mkSelDelRefillProcesso(e as HTMLElement);
+					}
 					mk.mkSelPopularLista(e);
 					mk.mkSelUpdate(e);
 					// Executa evento, em todos atualizar.
 					e.dispatchEvent(new Event("input"));
 					e.dispatchEvent(new Event("change"));
+					e.classList.remove("atualizando");
 				}
 				// Atualiza posição com a mesma frequencia que pesquisa os elementos.
 				mk.mkSelReposicionar(e.parentElement.children[2]);

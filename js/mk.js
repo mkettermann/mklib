@@ -277,24 +277,31 @@ class mk {
             console.error(e);
         }
     };
-    static mkSelDlRefill = async (eName, cod = null) => {
-        let e = mk.Q(eName);
-        let url = appPath + e.getAttribute("data-refill");
-        cod != null ? (url += cod) : null;
-        let retorno = await mk.http(url, mk.t.G, mk.t.J);
-        if (retorno != null) {
-            let kv = retorno;
-            if (typeof retorno == "object") {
-                kv = JSON.stringify(retorno);
+    static mkSelDelRefillProcesso = async (eName, cod = null) => {
+        return new Promise(async (r) => {
+            let e = mk.Q(eName);
+            let url = appPath + e.getAttribute("data-refill");
+            cod != null ? (url += cod) : null;
+            let retorno = await mk.http(url, mk.t.G, mk.t.J);
+            if (retorno != null) {
+                let kv = retorno;
+                if (typeof retorno == "object") {
+                    kv = JSON.stringify(retorno);
+                    r(e);
+                }
+                if (mk.isJson(kv)) {
+                    e.setAttribute("data-selarray", kv);
+                }
+                else {
+                    console.error("Resultado não é um JSON. (mkSelDlRefill)");
+                }
             }
-            if (mk.isJson(kv)) {
-                e.setAttribute("data-selarray", kv);
-                e.classList.add("atualizar");
-            }
-            else {
-                console.error("Resultado não é um JSON. (mkSelDlRefill)");
-            }
-        }
+        });
+    };
+    static mkSelDlRefill = async (eName, cod) => {
+        mk.mkSelDelRefillProcesso(eName, cod).then((e) => {
+            e.classList.add("atualizar");
+        });
     };
     static getServerOn = async (url) => {
         let retorno = await mk.http(url, mk.t.G, mk.t.J);
@@ -1579,8 +1586,8 @@ class mk {
             }
         });
     };
-    static mkSelRenderizar = () => {
-        document.querySelectorAll("input.mkSel").forEach((e) => {
+    static mkSelRenderizar = async () => {
+        document.querySelectorAll("input.mkSel").forEach(async (e) => {
             if (!e.parentElement?.classList.contains("mkSelBloco")) {
                 let ePai = e.parentElement;
                 let ePos = Array.from(ePai?.children).indexOf(e);
@@ -1631,10 +1638,16 @@ class mk {
             else {
                 if (e.classList.contains("atualizar")) {
                     e.classList.remove("atualizar");
+                    e.classList.add("atualizando");
+                    if (!e.getAttribute("data-selarray") &&
+                        e.getAttribute("data-refill")) {
+                        await mk.mkSelDelRefillProcesso(e);
+                    }
                     mk.mkSelPopularLista(e);
                     mk.mkSelUpdate(e);
                     e.dispatchEvent(new Event("input"));
                     e.dispatchEvent(new Event("change"));
+                    e.classList.remove("atualizando");
                 }
                 mk.mkSelReposicionar(e.parentElement.children[2]);
             }

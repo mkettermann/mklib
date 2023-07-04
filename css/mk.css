@@ -101,6 +101,7 @@ html {
 	--FundoSeletor: var(--FundoSeletorDesativado);
 }
 
+.mkSelBloco:has(.mkSel.atualizando) .mkSelPesquisa input,
 .mkSelBloco:has(.mkSel.atualizar) .mkSelPesquisa input {
 	animation: mkEfeitoBordaGira 0.3s infinite;
 	border-radius: 10px;
