@@ -736,8 +736,8 @@ class mk {
         console.groupEnd();
         const pacoteHttp = await fetch(url, pacote);
         if (!pacoteHttp.ok) {
-            console.groupCollapsed("HTTP RETURN: " + pacoteHttp.status + " " + pacoteHttp.statusText);
-            console.error("HTTP RETURN: Não retornou 200.");
+            console.groupCollapsed("HTTP RETURNO: " + pacoteHttp.status + " " + pacoteHttp.statusText);
+            console.error("HTTP RETURNO: Não retornou 200.");
             console.info(await pacoteHttp.text());
             console.groupEnd();
             if (carregador) {
@@ -755,7 +755,12 @@ class mk {
         if (carregador) {
             this.CarregarOFF();
         }
-        console.groupCollapsed("RET " + pacote.method + " " + tipo.toUpperCase().split("/")[1] + ":");
+        console.groupCollapsed("Retorno (" +
+            pacote.method +
+            " " +
+            tipo.toUpperCase().split("/")[1] +
+            "): " +
+            url);
         console.timeEnd(url);
         console.info(corpo);
         console.groupEnd();
