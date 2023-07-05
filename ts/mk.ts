@@ -2363,10 +2363,9 @@ class mk {
 		// 	eList.firstElementChild.style.display = "none";
 
 		// Faz movimento no scroll até o primeiro item selecionado
+		let primeiroOffSet = ePrimeiroSel?.offsetTop || 0;
 		eList.scrollTop =
-			ePrimeiroSel.offsetTop -
-			120 -
-			(eList.offsetHeight - eList.clientHeight) / 2;
+			primeiroOffSet - 120 - (eList.offsetHeight - eList.clientHeight) / 2;
 
 		// Atualizar posição da Lista.
 		mk.mkSelReposicionar(e.parentElement.nextElementSibling);

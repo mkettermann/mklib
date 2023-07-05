@@ -1801,10 +1801,9 @@ class mk {
             if (el.getAttribute("data-s") == 1 && ePrimeiroSel == null)
                 ePrimeiroSel = el;
         });
+        let primeiroOffSet = ePrimeiroSel?.offsetTop || 0;
         eList.scrollTop =
-            ePrimeiroSel.offsetTop -
-                120 -
-                (eList.offsetHeight - eList.clientHeight) / 2;
+            primeiroOffSet - 120 - (eList.offsetHeight - eList.clientHeight) / 2;
         mk.mkSelReposicionar(e.parentElement.nextElementSibling);
     };
     static getParentScrollTop = (e) => {
