@@ -1856,7 +1856,8 @@ class mk {
             let eM = array.find((e) => e.getAttribute("data-m") == "1");
             Array.from(eList.children).forEach((e) => e.removeAttribute("data-m"));
             if (ev.key == "Enter") {
-                mk.mkSelSelecionar(eM);
+                if (eM)
+                    mk.mkSelSelecionar(eM);
                 ev.srcElement.blur();
             }
             if (ev.key == "ArrowUp") {
@@ -1886,11 +1887,10 @@ class mk {
                         eListItem = ultimo;
                     }
                 }
-                eListItem.setAttribute("data-m", "1");
+                eListItem?.setAttribute("data-m", "1");
+                let alvoOffsetTop = eListItem?.offsetTop || 0;
                 eList.scrollTop =
-                    eListItem.offsetTop -
-                        120 -
-                        (eList.offsetHeight - eList.clientHeight) / 2;
+                    alvoOffsetTop - 120 - (eList.offsetHeight - eList.clientHeight) / 2;
             }
             if (ev.key == "ArrowDown") {
                 isNegado = true;
@@ -1910,18 +1910,17 @@ class mk {
                     }
                 }
                 else {
-                    if (array[0].classList.contains("mkSelItemDeCima")) {
+                    if (array[0]?.classList.contains("mkSelItemDeCima")) {
                         eListItem = array[1];
                     }
                     else {
                         eListItem = array[0];
                     }
                 }
-                eListItem.setAttribute("data-m", "1");
+                eListItem?.setAttribute("data-m", "1");
+                let alvoOffsetTop = eListItem?.offsetTop || 0;
                 eList.scrollTop =
-                    eListItem.offsetTop -
-                        120 -
-                        (eList.clientHeight - eList.offsetHeight) / 2;
+                    alvoOffsetTop - 120 - (eList.clientHeight - eList.offsetHeight) / 2;
             }
         }
         if (isNegado) {
