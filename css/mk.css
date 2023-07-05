@@ -1053,12 +1053,14 @@ button.CarregadorMkTopoDireito:hover {
 	background: #0005;
 	align-items: center;
 }
+
 .mkConfirmadorFora {
 	width: 100%;
 	height: 100%;
 	min-height: 100%;
 	min-width: 100%;
 }
+
 .mkConfirmadorArea {
 	position: fixed;
 	width: 400px;
@@ -1078,6 +1080,7 @@ button.CarregadorMkTopoDireito:hover {
 	animation: mkEfeitoSurgir 0.5s;
 	font-size: 1.2rem;
 }
+
 .mkConfirmadorTitulo {
 	display: flex;
 	align-items: center;
@@ -1087,12 +1090,15 @@ button.CarregadorMkTopoDireito:hover {
 	border-radius: 5px;
 	width: 100%;
 }
+
 .mkConfirmadorTitulo svg {
 	margin-left: 5px;
 }
+
 .mkConfirmadorTitulo span {
 	flex: 0 1 100%;
 }
+
 .mkConfirmadorArea button {
 	margin: 5px auto;
 }
@@ -1101,6 +1107,7 @@ button.CarregadorMkTopoDireito:hover {
 	from {
 		transform: scale(0) translate(200%, 200%);
 	}
+
 	to {
 		transform: scale(1) translate(0%, 0%);
 	}
@@ -1123,6 +1130,7 @@ button.CarregadorMkTopoDireito:hover {
 	transition: 0.3s;
 	letter-spacing: 3px;
 }
+
 .bBotao:hover {
 	transition: 0.3s;
 	border-style: inset;
@@ -1142,6 +1150,7 @@ button.CarregadorMkTopoDireito:hover {
 	--botaoCorHover: #fff;
 	--botaoCor: #000;
 }
+
 .bVermelho {
 	--botaoFundo: #900;
 	--botaoFundo2: linear-gradient(0deg, #900 0%, #900 10%, #fff 70%, #fff 100%);
@@ -1149,6 +1158,7 @@ button.CarregadorMkTopoDireito:hover {
 	--botaoCorHover: #fff;
 	--botaoCor: #000;
 }
+
 .bCinza {
 	--botaoFundo: #777;
 	--botaoFundo2: linear-gradient(0deg, #777 0%, #777 10%, #fff 70%, #fff 100%);
@@ -1156,9 +1166,11 @@ button.CarregadorMkTopoDireito:hover {
 	--botaoCorHover: #fff;
 	--botaoCor: #000;
 }
+
 .icoSim {
 	position: relative;
 }
+
 .icoSim::before {
 	content: "";
 	position: absolute;
@@ -1171,9 +1183,9 @@ button.CarregadorMkTopoDireito:hover {
 	border-bottom: 4px solid limegreen;
 	border-radius: 5px;
 	transform: rotate(45deg);
-
 	box-shadow: 2px 1px 1px 0px #0005;
 }
+
 .icoSim::after {
 	content: "";
 	position: absolute;
@@ -1189,6 +1201,7 @@ button.CarregadorMkTopoDireito:hover {
 .icoNao {
 	position: relative;
 }
+
 .icoNao::before {
 	content: "";
 	position: absolute;
@@ -1201,6 +1214,7 @@ button.CarregadorMkTopoDireito:hover {
 	border-radius: 2px;
 	transform: rotate(45deg);
 }
+
 .icoNao::after {
 	content: "";
 	position: absolute;
@@ -1219,6 +1233,7 @@ button.CarregadorMkTopoDireito:hover {
 	border-radius: 3px;
 	border-color: white;
 }
+
 .icoSim:hover::after {
 	border-width: 3px;
 }
@@ -1869,6 +1884,7 @@ html:has(.bodyCentro) {
 	border-radius: 10px;
 	margin: 3px;
 }
+
 .tableListagem {
 	width: 100%;
 	border-collapse: collapse;
@@ -1889,12 +1905,15 @@ html:has(.bodyCentro) {
 	flex-direction: row;
 	user-select: none;
 }
+
 .paginate_button {
 	cursor: pointer;
 }
+
 .paginate_button.disabled {
 	filter: grayscale(1);
 }
+
 .page-link {
 	padding: 0.5rem 0.8rem;
 	line-height: normal;
@@ -1905,6 +1924,7 @@ html:has(.bodyCentro) {
 	display: flex;
 	flex-direction: row;
 }
+
 .j {
 	flex: 1 0 0%;
 }
@@ -1914,6 +1934,7 @@ html:has(.bodyCentro) {
 	flex-wrap: wrap;
 	justify-content: space-between;
 }
+
 .tb {
 	display: flex;
 	flex-direction: column;
