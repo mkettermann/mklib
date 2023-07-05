@@ -1612,7 +1612,7 @@ class mk {
                 divMkSeletorBloco.appendChild(divMkSeletorList);
                 divMkSeletorPesquisa.appendChild(divMkSeletorInputExibe);
                 divMkSeletorPesquisa.appendChild(divMkSeletorInputExibeArrow);
-                if (e.getAttribute("data-selmoversel") == "true" &&
+                if (e.getAttribute("data-selmovesel") == "true" &&
                     e.getAttribute("data-selapenas") == "1") {
                     let divMkSelArrowSelLeft = document.createElement("div");
                     let divMkSelArrowSelRight = document.createElement("div");

@@ -2102,7 +2102,7 @@ class mk {
 				divMkSeletorPesquisa.appendChild(divMkSeletorInputExibeArrow);
 				// Flexas que movem o selecionado quando há apenas 1 possibilidade de selecao.
 				if (
-					e.getAttribute("data-selmoversel") == "true" &&
+					e.getAttribute("data-selmovesel") == "true" &&
 					e.getAttribute("data-selapenas") == "1"
 				) {
 					let divMkSelArrowSelLeft = document.createElement("div");
