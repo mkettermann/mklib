@@ -1801,9 +1801,6 @@ class mk {
             if (el.getAttribute("data-s") == 1 && ePrimeiroSel == null)
                 ePrimeiroSel = el;
         });
-        let temOsDeCima = eList.firstElementChild?.classList.contains("mkSelItemDeCima");
-        if (temOsDeCima && eList.scrollTop == 0)
-            eList.firstElementChild.style.display = "none";
         eList.scrollTop =
             ePrimeiroSel.offsetTop -
                 120 -
@@ -1959,18 +1956,8 @@ class mk {
     };
     static mkSelMoveu = (e) => {
         if (e.firstElementChild.classList.contains("mkSelItemDeCima")) {
-            if (e.scrollTop == 0) {
-                e.firstElementChild.style.display = "none";
-                e.lastElementChild.style.display = "";
-            }
-            else if (e.scrollTop + e.clientHeight >= e.scrollHeight) {
-                e.firstElementChild.style.display = "";
-                e.lastElementChild.style.display = "none";
-            }
-            else {
-                e.firstElementChild.style.display = "";
-                e.lastElementChild.style.display = "";
-            }
+            e.firstElementChild.style.display = "";
+            e.lastElementChild.style.display = "";
         }
     };
     static mkSelMoveCima = (e) => {

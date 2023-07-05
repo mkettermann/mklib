@@ -2357,10 +2357,10 @@ class mk {
 				ePrimeiroSel = el;
 		});
 		// Se iniciar no topo, sumir as setas pra cima.
-		let temOsDeCima =
-			eList.firstElementChild?.classList.contains("mkSelItemDeCima");
-		if (temOsDeCima && eList.scrollTop == 0)
-			eList.firstElementChild.style.display = "none";
+		// let temOsDeCima =
+		// 	eList.firstElementChild?.classList.contains("mkSelItemDeCima");
+		// if (temOsDeCima && eList.scrollTop == 0)
+		// 	eList.firstElementChild.style.display = "none";
 
 		// Faz movimento no scroll até o primeiro item selecionado
 		eList.scrollTop =
@@ -2548,16 +2548,16 @@ class mk {
 	// Receber e = div .mkSelList
 	static mkSelMoveu = (e: any) => {
 		if (e.firstElementChild.classList.contains("mkSelItemDeCima")) {
-			if (e.scrollTop == 0) {
-				e.firstElementChild.style.display = "none";
-				e.lastElementChild.style.display = "";
-			} else if (e.scrollTop + e.clientHeight >= e.scrollHeight) {
-				e.firstElementChild.style.display = "";
-				e.lastElementChild.style.display = "none";
-			} else {
-				e.firstElementChild.style.display = "";
-				e.lastElementChild.style.display = "";
-			}
+			// if (e.scrollTop == 0) {
+			// 	e.firstElementChild.style.display = "none";
+			// 	e.lastElementChild.style.display = "";
+			// } else if (e.scrollTop + e.clientHeight >= e.scrollHeight) {
+			// 	e.firstElementChild.style.display = "";
+			// 	e.lastElementChild.style.display = "none";
+			// } else {
+			e.firstElementChild.style.display = "";
+			e.lastElementChild.style.display = "";
+			// }
 		}
 	};
 
