@@ -2453,14 +2453,14 @@ class mk {
 					) {
 						eListItem = array[indexProximo];
 					} else {
-						if (ultimo.classList.contains("mkSelItemDeBaixo")) {
+						if (ultimo?.classList.contains("mkSelItemDeBaixo")) {
 							eListItem = peNultimo;
 						} else {
 							eListItem = ultimo;
 						}
 					}
 				} else {
-					if (ultimo.classList.contains("mkSelItemDeBaixo")) {
+					if (ultimo?.classList.contains("mkSelItemDeBaixo")) {
 						eListItem = peNultimo;
 					} else {
 						eListItem = ultimo;
@@ -2482,7 +2482,7 @@ class mk {
 					) {
 						eListItem = array[indexProximo];
 					} else {
-						if (array[0].classList.contains("mkSelItemDeCima")) {
+						if (array[0]?.classList.contains("mkSelItemDeCima")) {
 							eListItem = array[1];
 						} else {
 							eListItem = array[0];
