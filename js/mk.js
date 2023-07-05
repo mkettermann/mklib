@@ -1806,7 +1806,7 @@ class mk {
             eList.firstElementChild.style.display = "none";
         eList.scrollTop =
             ePrimeiroSel.offsetTop -
-                eList.offsetTop -
+                120 -
                 (eList.offsetHeight - eList.clientHeight) / 2;
         mk.mkSelReposicionar(e.parentElement.nextElementSibling);
     };
@@ -1893,7 +1893,7 @@ class mk {
                 eListItem.setAttribute("data-m", "1");
                 eList.scrollTop =
                     eListItem.offsetTop -
-                        eList.offsetTop -
+                        120 -
                         (eList.offsetHeight - eList.clientHeight) / 2;
             }
             if (ev.key == "ArrowDown") {
@@ -1924,8 +1924,8 @@ class mk {
                 eListItem.setAttribute("data-m", "1");
                 eList.scrollTop =
                     eListItem.offsetTop -
-                        eList.offsetTop -
-                        (eList.offsetHeight - eList.clientHeight) / 2;
+                        120 -
+                        (eList.clientHeight - eList.offsetHeight) / 2;
             }
         }
         if (isNegado) {

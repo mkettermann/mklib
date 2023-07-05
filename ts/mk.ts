@@ -2365,7 +2365,7 @@ class mk {
 		// Faz movimento no scroll até o primeiro item selecionado
 		eList.scrollTop =
 			ePrimeiroSel.offsetTop -
-			eList.offsetTop -
+			120 -
 			(eList.offsetHeight - eList.clientHeight) / 2;
 
 		// Atualizar posição da Lista.
@@ -2470,7 +2470,7 @@ class mk {
 				eListItem.setAttribute("data-m", "1");
 				eList.scrollTop =
 					eListItem.offsetTop -
-					eList.offsetTop -
+					120 -
 					(eList.offsetHeight - eList.clientHeight) / 2;
 			}
 			if (ev.key == "ArrowDown") {
@@ -2499,8 +2499,16 @@ class mk {
 				eListItem.setAttribute("data-m", "1");
 				eList.scrollTop =
 					eListItem.offsetTop -
-					eList.offsetTop -
-					(eList.offsetHeight - eList.clientHeight) / 2;
+					120 -
+					(eList.clientHeight - eList.offsetHeight) / 2;
+
+				// console.table({
+				// 	Resultado: eList.scrollTop,
+				// 	eListItem: eListItem.offsetTop,
+				// 	eListOffsetTop (120): eList.offsetTop,
+				// 	eListOffSetHeight: eList.offsetHeight,
+				// 	eListClientHeight: eList.clientHeight,
+				// });
 			}
 		}
 		if (isNegado) {
