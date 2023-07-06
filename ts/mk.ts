@@ -2223,13 +2223,11 @@ class mk {
 				ePrincipal.value = ePrincipal.defaultValue;
 			} else {
 				let string = JSON.stringify(arraySelecionado);
-				try {
-					ePrincipal.value = string;
-				} catch {
+				if (ePrincipal.type == "text") ePrincipal.value = string;
+				else
 					console.error(
 						"Erro durante o Set/Conversão do campo. É necessário que este campo seja tipo string."
 					);
-				}
 			}
 			// Gera o Evento
 			ePrincipal.dispatchEvent(new Event("input"));

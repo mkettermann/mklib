@@ -1967,12 +1967,10 @@ class mk {
             }
             else {
                 let string = JSON.stringify(arraySelecionado);
-                try {
+                if (ePrincipal.type == "text")
                     ePrincipal.value = string;
-                }
-                catch {
+                else
                     console.error("Erro durante o Set/Conversão do campo. É necessário que este campo seja tipo string.");
-                }
             }
             // Gera o Evento
             ePrincipal.dispatchEvent(new Event("input"));
