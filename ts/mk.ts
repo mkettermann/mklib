@@ -2102,7 +2102,7 @@ class mk {
 				divMkSeletorPesquisa.appendChild(divMkSeletorInputExibeArrow);
 				// Flexas que movem o selecionado quando há apenas 1 possibilidade de selecao.
 				if (
-					e.getAttribute("data-selmoversel") == "true" &&
+					e.getAttribute("data-selmovesel") == "true" &&
 					e.getAttribute("data-selapenas") == "1"
 				) {
 					let divMkSelArrowSelLeft = document.createElement("div");
@@ -2363,10 +2363,9 @@ class mk {
 		// 	eList.firstElementChild.style.display = "none";
 
 		// Faz movimento no scroll até o primeiro item selecionado
+		let primeiroOffSet = ePrimeiroSel?.offsetTop || 0;
 		eList.scrollTop =
-			ePrimeiroSel.offsetTop -
-			120 -
-			(eList.offsetHeight - eList.clientHeight) / 2;
+			primeiroOffSet - 120 - (eList.offsetHeight - eList.clientHeight) / 2;
 
 		// Atualizar posição da Lista.
 		mk.mkSelReposicionar(e.parentElement.nextElementSibling);
@@ -2438,7 +2437,7 @@ class mk {
 				e.removeAttribute("data-m")
 			);
 			if (ev.key == "Enter") {
-				mk.mkSelSelecionar(eM);
+				if (eM) mk.mkSelSelecionar(eM);
 				ev.srcElement.blur();
 			}
 			if (ev.key == "ArrowUp") {
@@ -2454,24 +2453,23 @@ class mk {
 					) {
 						eListItem = array[indexProximo];
 					} else {
-						if (ultimo.classList.contains("mkSelItemDeBaixo")) {
+						if (ultimo?.classList.contains("mkSelItemDeBaixo")) {
 							eListItem = peNultimo;
 						} else {
 							eListItem = ultimo;
 						}
 					}
 				} else {
-					if (ultimo.classList.contains("mkSelItemDeBaixo")) {
+					if (ultimo?.classList.contains("mkSelItemDeBaixo")) {
 						eListItem = peNultimo;
 					} else {
 						eListItem = ultimo;
 					}
 				}
-				eListItem.setAttribute("data-m", "1");
+				eListItem?.setAttribute("data-m", "1");
+				let alvoOffsetTop = eListItem?.offsetTop || 0;
 				eList.scrollTop =
-					eListItem.offsetTop -
-					120 -
-					(eList.offsetHeight - eList.clientHeight) / 2;
+					alvoOffsetTop - 120 - (eList.offsetHeight - eList.clientHeight) / 2;
 			}
 			if (ev.key == "ArrowDown") {
 				isNegado = true;
@@ -2483,24 +2481,23 @@ class mk {
 					) {
 						eListItem = array[indexProximo];
 					} else {
-						if (array[0].classList.contains("mkSelItemDeCima")) {
+						if (array[0]?.classList.contains("mkSelItemDeCima")) {
 							eListItem = array[1];
 						} else {
 							eListItem = array[0];
 						}
 					}
 				} else {
-					if (array[0].classList.contains("mkSelItemDeCima")) {
+					if (array[0]?.classList.contains("mkSelItemDeCima")) {
 						eListItem = array[1];
 					} else {
 						eListItem = array[0];
 					}
 				}
-				eListItem.setAttribute("data-m", "1");
+				eListItem?.setAttribute("data-m", "1");
+				let alvoOffsetTop = eListItem?.offsetTop || 0;
 				eList.scrollTop =
-					eListItem.offsetTop -
-					120 -
-					(eList.clientHeight - eList.offsetHeight) / 2;
+					alvoOffsetTop - 120 - (eList.clientHeight - eList.offsetHeight) / 2;
 
 				// console.table({
 				// 	Resultado: eList.scrollTop,
