@@ -1860,6 +1860,8 @@ class mk {
                 divMkSeletorBloco.appendChild(divMkSeletorList);
                 divMkSeletorPesquisa.appendChild(divMkSeletorInputExibe);
                 divMkSeletorPesquisa.appendChild(divMkSeletorInputExibeArrow);
+                // Transfere style
+                divMkSeletorBloco.setAttribute("style", e.getAttribute("style") ?? "");
                 // Flexas que movem o selecionado quando há apenas 1 possibilidade de selecao.
                 if (e.getAttribute("data-selmovesel") == "true" &&
                     e.getAttribute("data-selapenas") == "1") {
@@ -1873,10 +1875,9 @@ class mk {
                     divMkSeletorPesquisa.appendChild(divMkSelArrowSelRight);
                     divMkSelArrowSelLeft.setAttribute("onclick", "mk.mkSelLeftSel(this)");
                     divMkSelArrowSelRight.setAttribute("onclick", "mk.mkSelRightSel(this)");
+                    divMkSeletorBloco.style.setProperty("--mkSelArrowSize", "24px");
                 }
                 // Seta atributos e Getilhos
-                divMkSeletorBloco.setAttribute("style", e.getAttribute("style") ?? "");
-                divMkSeletorBloco.style.setProperty("--mkSelArrowSize", "24px");
                 e.removeAttribute("style");
                 e.setAttribute("readonly", "true");
                 divMkSeletorInputExibe.setAttribute("placeholder", "Filtro \u{1F50D}");
