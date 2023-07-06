@@ -1966,7 +1966,11 @@ class mk {
                 ePrincipal.value = ePrincipal.defaultValue;
             }
             else {
-                ePrincipal.value = JSON.stringify(arraySelecionado);
+                mkt = arraySelecionado;
+                let string = JSON.stringify(arraySelecionado);
+                mkt2 = string;
+                // ePrincipal.value = JSON.stringify(arraySelecionado);
+                ePrincipal.value = string;
             }
             // Gera o Evento
             ePrincipal.dispatchEvent(new Event("input"));
