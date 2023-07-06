@@ -59,6 +59,7 @@ class mkHistogram {
         return h;
     };
 }
+// Interromper fora break externo com condição no centro.
 const matrizApenasScrings = (matriz) => {
     let res = false;
     computar: if (matriz) {
@@ -76,17 +77,23 @@ const matrizApenasScrings = (matriz) => {
     }
     return res;
 };
+//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+//			Avaliacao de funcoes				\\
+//___________________________________\\
 let arrayFuncoes;
 const avaliarFuncoes = (alvo, stream = false) => {
     let fUnitario = new Set();
+    // Converter para Teste
     function tempoFuncao(o, f) {
         let _f = o[f];
         o[f] = function (...args) {
             let ini = new Date().getTime();
+            //console.log(this.name);
             if (stream)
                 console.time(f);
             let result = _f.apply(this, args);
             let int = new Date().getTime() - ini;
+            //console.log("Função '" + _f.name + "' processou em " + int + "ms");
             if (stream)
                 console.timeEnd(f);
             let index = arrayFuncoes.findIndex((o) => o.Funcao == _f.name);
@@ -99,6 +106,7 @@ const avaliarFuncoes = (alvo, stream = false) => {
             return result;
         };
     }
+    // Popular Set
     for (let p in alvo) {
         if (typeof alvo[p] == "function") {
             let o = {
@@ -109,8 +117,14 @@ const avaliarFuncoes = (alvo, stream = false) => {
             fUnitario.add(o);
         }
     }
+    // Executa Converter no alvo
     arrayFuncoes = Array.from(fUnitario);
     for (let k of arrayFuncoes) {
         tempoFuncao(alvo, k.Funcao);
     }
+    // setTimeout(() => {
+    // 	console.log("ALVO: " + alvo.name + " TIPO: " + typeof alvo);
+    // 	console.table(Array.from(this.arrayFuncoes));
+    // }, 1000);
 };
+//avaliarFuncoes(mk);

@@ -1,7 +1,18 @@
 "use strict";
-var mkt;
-var mkt2;
+// Transformar para uma unidade em TS:
+// - $ JQuery Framework JS
+// - $ Mask
+// - $ Print
+// - $ Unobtrutive Validate (Está vinculado ao Data Annotation do C#)
+// - Bootstrap Toast
+// - Bootstrap Dropdown (quase)
+// - Bootstrap Modal
+var mkt; // Variavel de Testes;
+var mkt2; // Variavel de Testes;
 class mk {
+    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+    //			ATRIBUTOS										\\
+    //___________________________________\\
     static fullDados = [];
     static exibeDados = [];
     static exibePaginado = [];
@@ -14,7 +25,7 @@ class mk {
     static mkFaseAtual = 1;
     static mkCountValidate = 0;
     static contaOrdena = 0;
-    static debug = 0;
+    static debug = 0; // 0 / 1
     static arrayFuncoes;
     static status = {
         totalFull: this.fullDados.length,
@@ -25,12 +36,15 @@ class mk {
         pagPorPagina: 5,
         totalPaginas: 0,
     };
+    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+    //			TITULOS CONSTANTES					\\
+    //___________________________________\\
     static t = {
         G: "GET",
         P: "POST",
         J: "application/json",
         H: "text/html",
-        F: "multipart/form-data",
+        F: "multipart/form-data", // ContentType FORM
     };
     static MESES = [
         "Janeiro",
@@ -65,15 +79,22 @@ class mk {
         MAGENTA: "#F09",
         OURO: "#FB1",
     };
+    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+    //			MK FUNCOES UTIL							\\
+    //___________________________________\\
+    // Atalho para QuerySelector que retorna apenas o primeiro elemento da query.
     static Q = (query = "body") => {
         if (query instanceof HTMLElement)
             return query;
         return document.querySelector(query);
     };
+    // Atalho para QuerySelectorAll. List []
     static QAll = (query = "body") => {
         return Array.from(document.querySelectorAll(query));
     };
+    // Atalho para AddEventListener
     static Ao = (tipoEvento = "click", query, executar) => {
+        // CONVERTER PARA QUERY SELECTALL pois, tem o Pesquisar que pega todos os .iConsultas
         mk.QAll(query).forEach((e) => {
             e.addEventListener(tipoEvento, () => {
                 executar(e);
@@ -89,6 +110,7 @@ class mk {
         }
         return true;
     };
+    // Verifica se ARRAY ou OBJETO e executa a função FUNC a cada objeto dentro de OA.
     static mkExecutaNoObj = (oa, func) => {
         if (Array.isArray(oa)) {
             for (let i = 0; i < oa.length; i++) {
@@ -100,7 +122,9 @@ class mk {
         }
         return oa;
     };
+    // Converter (OBJ / ARRAY) Limpar Nulos e Vazios
     static mkLimparOA = (oa) => {
+        // Trocar para arrow
         function mkLimparOA_Execute(o) {
             for (var propName in o) {
                 if (o[propName] === null ||
@@ -112,6 +136,7 @@ class mk {
         }
         return mk.mkExecutaNoObj(oa, mkLimparOA_Execute);
     };
+    // Gerar Objeto a partir de um Form Entries
     static mkGerarObjeto = (este) => {
         let form = este;
         if (typeof este != "object") {
@@ -132,6 +157,8 @@ class mk {
         }
         return mk.Q(query);
     };
+    // Seta todos os query com os valores das propriedades informadas nos campos.
+    // O nome da propriedade precisa ser compatível com o PROPNAME do query.
     static QSetAll = (query = "input[name='#PROP#']", o = null) => {
         let eAfetados = [];
         if (o != null) {
@@ -182,6 +209,12 @@ class mk {
     static QdataSet = (query = "body", atributoNome, atributoValor) => {
         return mk.Q(query).setAttribute("data-" + atributoNome, atributoValor);
     };
+    // static QaSet = (query = "body", atributoNome, atributoValor) => {
+    // 	return mk.Q(query).setAttribute(atributoNome, atributoValor);
+    // };
+    // static QaGet = (query = "body", atributoNome) => {
+    // 	return mk.Q(query).getAttribute(atributoNome);
+    // };
     static GetParam = (name = null) => {
         if (name != null) {
             return new URL(document.location.toString()).searchParams.get(name);
@@ -201,6 +234,9 @@ class mk {
         }
         return false;
     };
+    // Obter informações da situação atual do objeto.
+    // Os métodos get são executados no for.
+    // Se o objeto possuir algum gatilho no get, o objeto pode sofrer mudanças durante a consulta.
     static mkInfoObject = (o) => {
         try {
             function modeloInfo(prop, obj, iteradoEm) {
@@ -267,6 +303,7 @@ class mk {
             let stringfyObjPos = JSON.stringify(o);
             if (stringfyObj != stringfyObjPos) {
                 console.warn("O Objeto sofreu alteração durante a consulta: " + JSON.stringify(o));
+                // Setters são executados durante iterações.
             }
             else {
                 console.log(JSON.stringify(o));
@@ -303,8 +340,10 @@ class mk {
             e.classList.add("atualizar");
         });
     };
+    // Get Server On
     static getServerOn = async (url) => {
         let retorno = await mk.http(url, mk.t.G, mk.t.J);
+        // Vem nulo caso falhe
         if (retorno !== true) {
             mk.detectedServerOff();
         }
@@ -331,33 +370,48 @@ class mk {
     static detectedServerOff_display = () => {
         mk.Q("body .offlineBlock").classList.add("oculto");
     };
+    // Eventos HTML5
+    // Bloqueio de teclas especificas onKeyDown
     static mkOnlyFloatKeys = (ev) => {
+        // Input: UMA tecla QUALQUER
+        //=> Metodo filtrar: Bloquear apenas estes
+        //let proibido = "0123456789";
+        //let isNegado = false;
+        //for (var item in proibido) {
+        //    (item == ev.key) ? isNegado = true : null;
+        //}
+        //=> Metodo filtrar: Liberar apenas estes
         let permitido = "0123456789,-";
         let isNegado = true;
         for (var i = 0; i < permitido.length; i++) {
             if (permitido[i] == ev.key.toString()) {
+                //console.log(permitido[i] + " == " + ev.key.toString());
                 isNegado = false;
             }
         }
-        ev.key == "ArrowLeft" ? (isNegado = false) : null;
-        ev.key == "ArrowRight" ? (isNegado = false) : null;
-        ev.key == "Backspace" ? (isNegado = false) : null;
-        ev.key == "Delete" ? (isNegado = false) : null;
-        ev.key == "Tab" ? (isNegado = false) : null;
+        //=> Teclas especiais
+        ev.key == "ArrowLeft" ? (isNegado = false) : null; // Liberar Setinha pra Esquerda
+        ev.key == "ArrowRight" ? (isNegado = false) : null; // Liberar Setinha pra Direita
+        ev.key == "Backspace" ? (isNegado = false) : null; // Liberar Backspace
+        ev.key == "Delete" ? (isNegado = false) : null; // Liberar Deletar
+        ev.key == "Tab" ? (isNegado = false) : null; // Liberar Deletar
         if (isNegado) {
             ev.preventDefault();
             console.warn("Negado");
         }
     };
+    // Bloqueios de eventos especificos (varios, exemplo: onContextMenu)
     static mkEventBlock = (ev) => {
         console.warn("Negado");
         ev.preventDefault();
     };
+    // Imprimir e Exportar de ListaPrecos
     static mkTrocaPontoPorVirgula = (query) => {
         mk.QAll(query).forEach((e) => {
             e.innerHTML = e.innerHTML.replaceAll(".", ",");
         });
     };
+    // Seleciona texto do elemento
     static mkSelecionarInner = (e) => {
         if (window.getSelection) {
             const selection = window.getSelection();
@@ -368,6 +422,7 @@ class mk {
         }
     };
     static mkInputFormatarValor = (e) => {
+        // 123,45 (2 casas pos conversao float)
         e.value = mk.mkDuasCasas(mk.mkFloat(e.value));
     };
     static mkMedia = (menor, maior) => {
@@ -387,15 +442,17 @@ class mk {
         return ret;
     };
     static mkDuasCasas = (num) => {
-        return mk.mkFloat(num).toFixed(2).replaceAll(".", ",");
+        return mk.mkFloat(num).toFixed(2).replaceAll(".", ","); // 2000,00
+        //        .toLocaleString('pt-br', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); // 2.000,00
     };
     static mkEmReais = (num) => {
         return mk.mkFloat(num).toLocaleString("pt-br", {
             style: "currency",
             currency: "BRL",
-        });
+        }); // R$ 12.123,45
     };
     static mkBase64 = (arquivo, tagImg, tagHidden) => {
+        // Verificar se esta nulo
         let leitor = new FileReader();
         leitor.onload = () => {
             mk.Q(tagImg).src = leitor.result;
@@ -403,9 +460,10 @@ class mk {
         };
         leitor.readAsDataURL(arquivo);
     };
+    // Clona tanto uma array quanto um objeto ao ser enviado por parametro. (map não clonou)
     static mkClonarOA = (oa) => {
         if (Array.isArray(oa)) {
-            return Array.from(oa);
+            return Array.from(oa); // New Array sem referencia. ES6
         }
         else {
             let novoO = {};
@@ -427,6 +485,7 @@ class mk {
         }
         return o;
     };
+    // Sobe os elementos até encontrar o form pertencente a este elemento. (Se limita ao BODY)
     static getFormFrom = (e) => {
         let eForm = e;
         while (eForm.tagName != "FORM") {
@@ -438,6 +497,7 @@ class mk {
         }
         return eForm;
     };
+    // Retorna uma array utilizando um template do que deve ser preenchido.
     static encheArray = (arrTemplate, inicio = 1, total) => {
         let novaArray = [];
         if (Array.isArray(arrTemplate)) {
@@ -472,6 +532,7 @@ class mk {
         }
         return novaArray;
     };
+    // Retorna uma array dos últimos
     static encheArrayUltimos = (arrTemplate, fim = 1, total) => {
         let novaArray = [];
         if (Array.isArray(arrTemplate)) {
@@ -506,6 +567,7 @@ class mk {
         }
         return novaArray;
     };
+    // Retorna Milisegundos da data no formato Javascript
     static getMs = (dataYYYYMMDD = null) => {
         if (dataYYYYMMDD != null) {
             let dataCortada = dataYYYYMMDD.split("-");
@@ -517,16 +579,19 @@ class mk {
         else
             return new Date().getTime();
     };
+    // Retorna Data do cliente de Hoje em:  DD/MM/YYYY
     static hojeMkData = () => {
         return new Date(mk.getMs()).toLocaleDateString();
     };
     static hojeMkHora = () => {
         return new Date(Number(mk.getMs())).toLocaleTimeString();
     };
+    // Retorna a data de Hoje no formato: DD/MM/YYYY
     static hoje = () => {
         let mkFullData = mk.hojeMkData() + " " + mk.hojeMkHora();
         return mkFullData;
     };
+    // Retorna Data do cliente de Hoje em:  YYYY-MM-DD
     static getFullData = (ms = null) => {
         if (ms != null)
             return (new Date(ms).getFullYear() +
@@ -564,16 +629,25 @@ class mk {
             msNew = mk.getMs();
         return mk.transMsEmDias(msNew - msOld);
     };
+    // Para transformar uma diferenca de datas em Mes ou Ano,
+    // precisa de auxilio de um calendário,
+    // pois os dias não são sempre 24 horas.
+    // Ao comparar meses de diferenca,
+    // ocorrerá um erro na conta quando houver meses com 31 dias
+    // E anos bissexto geram erros nos meses de fevereiro sem um calendario
     static transMsEmSegundos = (ms) => {
-        return Math.trunc(ms / 1000);
+        return Math.trunc(ms / 1000); // 1000 ms == 1s
     };
     static transMsEmMinutos = (ms) => {
-        return Math.trunc(ms / 60000);
+        return Math.trunc(ms / 60000); // 1000 * 60
     };
     static transMsEmHoras = (ms) => {
-        return Math.trunc(ms / 3600000);
+        return Math.trunc(ms / 3600000); // 1000 * 3600
     };
     static transMsEmDias = (ms) => {
+        // 1000 * 3600 * 24 Considerando todo dia tiver 24 horas (~23h 56m 4.1s)
+        // (360º translacao / 86400000) = ~4.1
+        // Então o erro de 1 dia ocorre 1x ao ano (Dia represeta 1436min).
         return Math.trunc(ms / 86400000);
     };
     static transSegundosEmMs = (s) => {
@@ -588,20 +662,28 @@ class mk {
     static transDiasEmMs = (d) => {
         return d * 86400000;
     };
+    // Injeção de elementos via http
     static mkGeraElemento(node, nomeElemento = "script") {
+        // Cria Elemento
         let elemento = document.createElement(nomeElemento);
+        // Popular Elemento
         elemento.text = node.innerHTML;
+        // Set Atributos
         let i = -1, attrs = node.attributes, attr;
         while (++i < attrs.length) {
             elemento.setAttribute((attr = attrs[i]).name, attr.value);
         }
+        // Retorna Elemento
         return elemento;
     }
+    // Função Recursiva que substitui node de Script por elemento de Script
     static mkNodeToScript(node) {
+        // Apenas Scripts
         if (node.tagName === "SCRIPT") {
             node.parentNode.replaceChild(mk.mkGeraElemento(node, "script"), node);
         }
         else {
+            // Recursividade sobre filhos
             var i = -1, children = node.childNodes;
             while (++i < children.length) {
                 mk.mkNodeToScript(children[i]);
@@ -609,6 +691,8 @@ class mk {
         }
         return node;
     }
+    // Calculo de frequencia
+    // Conta o total do que tem dentro da array e retorna a frequencia destes;
     static frequencia = (array) => {
         let f = {};
         for (let e of array) {
@@ -616,10 +700,15 @@ class mk {
         }
         return f;
     };
+    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+    //			Conversores									\\
+    //___________________________________\\
+    // Converter de YYYY-MM-DD para DD/MM/YYYY
     static mkYYYYMMDDtoDDMMYYYY = (dataYYYYMMDD) => {
         let arrayData = dataYYYYMMDD.split("-");
         let stringRetorno = "";
         if (arrayData.length >= 3) {
+            // Tenta evitar bug de conversao
             stringRetorno = arrayData[2] + "/" + arrayData[1] + "/" + arrayData[0];
         }
         else {
@@ -627,9 +716,10 @@ class mk {
         }
         return stringRetorno;
     };
+    // Converter (OBJ / ARRAY) Formato Booleano em Sim/Não
     static mkFormatarDataOA = (oa) => {
         function mkFormatarDataOA_Execute(o) {
-            let busca = new RegExp("^[0-2][0-9]{3}[-][0-1][0-9][-][0-3][0-9]$");
+            let busca = new RegExp("^[0-2][0-9]{3}[-][0-1][0-9][-][0-3][0-9]$"); // Entre 0000-00-00 a 2999-19-39
             for (var propName in o) {
                 if (busca.test(o[propName])) {
                     o[propName] = mk.mkYYYYMMDDtoDDMMYYYY(o[propName]);
@@ -639,6 +729,7 @@ class mk {
         }
         return mk.mkExecutaNoObj(oa, mkFormatarDataOA_Execute);
     };
+    // Converter (OBJ / ARRAY) Formato Booleano em Sim/Não
     static mkBoolToSimNaoOA = (oa) => {
         function mkBoolToSimNaoOA_Execute(o) {
             for (var propName in o) {
@@ -655,9 +746,13 @@ class mk {
         }
         return mk.mkExecutaNoObj(oa, mkBoolToSimNaoOA_Execute);
     };
+    // Converter (OBJ / ARRAY) Formatar para normalizar com a exibicao ao usuario.
     static mkFormatarOA = (oa) => {
         return mk.mkBoolToSimNaoOA(mk.mkFormatarDataOA(mk.mkLimparOA(oa)));
     };
+    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+    //			Carregador									\\
+    //___________________________________\\
     static CarregarON = () => {
         if (mk.Q("body .CarregadorMkBlock") == null) {
             let divCarregadorMkBlock = document.createElement("div");
@@ -684,6 +779,10 @@ class mk {
         }
         mk.Q("body").classList.remove("CarregadorMkSemScrollY");
     };
+    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+    //			HTTP												\\
+    //___________________________________\\
+    // Método principal de chamada Http. tanto GET quanto POST
     static http = async (url, metodo = mk.t.G, tipo = mk.t.J, dados = null, carregador = false) => {
         const mkaft = document.getElementsByName("__RequestVerificationToken")[0];
         let body = null;
@@ -706,6 +805,7 @@ class mk {
         if (carregador) {
             this.CarregarON();
         }
+        // INFO DEV
         console.groupCollapsed(pacote.method + ": " + url);
         console.time(url);
         if (mk.debug == 1) {
@@ -734,11 +834,12 @@ class mk {
             console.groupEnd();
         }
         console.groupEnd();
+        // EXECUCAO
         const pacoteHttp = await fetch(url, pacote);
         if (!pacoteHttp.ok) {
             console.groupCollapsed("HTTP RETURNO: " + pacoteHttp.status + " " + pacoteHttp.statusText);
             console.error("HTTP RETURNO: Não retornou 200.");
-            console.info(await pacoteHttp.text());
+            console.info(await pacoteHttp.text()); // Exibir o erro no console;
             console.groupEnd();
             if (carregador) {
                 this.CarregarOFF();
@@ -764,8 +865,13 @@ class mk {
         console.timeEnd(url);
         console.info(corpo);
         console.groupEnd();
+        //if (sucesso != null) sucesso(corpo);
         return corpo;
     };
+    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+    //			LISTAGEM										\\
+    //___________________________________\\
+    // GET OBJ - Retorna O objeto de uma Lista
     static getObjetoFromId = (nomeKey, valorKey, listaDados) => {
         let temp = null;
         if (Array.isArray(listaDados)) {
@@ -777,6 +883,7 @@ class mk {
         }
         return temp;
     };
+    // GET OBJ - Retorna O objeto de uma Lista
     static setObjetoFromId = (nomeKey, valorKey, itemModificado, listaDados) => {
         if (Array.isArray(listaDados)) {
             listaDados.forEach((o) => {
@@ -787,6 +894,7 @@ class mk {
         }
         return listaDados;
     };
+    // DEL OBJ - Retorna a lista sem o objeto informado
     static delObjetoFromId = (nomeKey, valorKey, listaDados) => {
         let temp = [];
         if (Array.isArray(listaDados)) {
@@ -801,7 +909,9 @@ class mk {
         }
         return temp;
     };
+    // Metodo que eh executado ao completar a exibicao (PODE SOBREESCREVER NA VIEW)
     static aoCompletarExibicao = () => { };
+    // Metodo que eh executado antes de exibir (PODE SOBREESCREVER NA VIEW)
     static antesDePopularTabela = () => { };
     static atualizarStatusLista = () => {
         if (mk.Q("input[name='tablePorPagina']") == null) {
@@ -814,14 +924,16 @@ class mk {
         mk.status.totalFiltrado = this.exibeDados.length;
         mk.status.totalPorPagina = this.exibePaginado.length;
         mk.status.pagItensIni =
-            (this.paginationAtual - 1) * mk.status.pagPorPagina + 1;
+            (this.paginationAtual - 1) * mk.status.pagPorPagina + 1; // Calculo Pagination
         mk.status.pagItensFim =
-            mk.status.pagItensIni + (mk.status.pagPorPagina - 1);
+            mk.status.pagItensIni + (mk.status.pagPorPagina - 1); // Calculo genérico do último
         if (mk.status.pagItensFim > mk.status.totalFiltrado) {
-            mk.status.pagItensFim = mk.status.totalFiltrado;
+            mk.status.pagItensFim = mk.status.totalFiltrado; // Na última página não pode exibir o valor genérico.
         }
+        // Arredondar pra cima, pois a última página pode exibir conteúdo sem preencher o PorPagina
         mk.status.totalPaginas = Math.ceil(this.exibeDados.length / mk.status.pagPorPagina);
     };
+    // Torna ativo o botao que se refere ao paginationAtual
     static ativaPaginaAtual = () => {
         mk.QAll(".paginate_button").forEach((item) => {
             item.classList.remove("active");
@@ -831,12 +943,15 @@ class mk {
                 item.parentElement?.classList.add("active");
             }
         });
-    };
+    }; // Desativa e ativa botao correto
+    // Monta os botoes de numero de pagina
     static filtraPagination = () => {
+        // Status
         mk.Q(".tableResultado .tableIni").innerHTML =
             mk.status.pagItensIni.toString();
         mk.Q(".tableResultado .tableFim").innerHTML =
             mk.status.pagItensFim.toString();
+        // Links
         mk.Q(".tablePaginacao .paginate_Ultima a").innerHTML =
             mk.status.totalPaginas.toString();
         this.paginationAtual == 1
@@ -861,6 +976,7 @@ class mk {
             ? mk.QverOn(".tablePaginacao .pageCod6")
             : mk.QverOff(".tablePaginacao .pageCod6");
         if (this.paginationAtual < 5) {
+            // INI
             mk.Qon(".tablePaginacao .pageCod2");
             mk.Q(".tablePaginacao .pageCod2 a").innerHTML = "2";
             mk.Q(".tablePaginacao .pageCod3 a").innerHTML = "3";
@@ -870,6 +986,7 @@ class mk {
             mk.Qoff(".tablePaginacao .pageCod6");
         }
         else {
+            // END
             if (mk.status.totalPaginas - this.paginationAtual < 4) {
                 mk.Qoff(".tablePaginacao .pageCod2");
                 mk.Q(".tablePaginacao .pageCod2 a").innerHTML = "...";
@@ -880,6 +997,7 @@ class mk {
                 mk.Qon(".tablePaginacao .pageCod6");
             }
             else {
+                // MID
                 mk.Qoff(".tablePaginacao .pageCod2");
                 mk.Q(".tablePaginacao .pageCod2 a").innerHTML = "...";
                 mk.Q(".tablePaginacao .pageCod3 a").innerHTML = (this.paginationAtual - 1).toString();
@@ -892,35 +1010,60 @@ class mk {
         }
         mk.ativaPaginaAtual();
         this.exibePaginado = [];
+        // Clonagem de Paginado
         this.exibeDados.forEach((o, i) => {
             if (i + 1 >= mk.status.pagItensIni && i + 1 <= mk.status.pagItensFim) {
                 this.exibePaginado.push(mk.mkClonarOA(o));
             }
         });
     };
+    /**
+     * FullFiltroFull
+     * Busca as mesmas propriedades no filtro e nos itens de fullDados;
+     * Uma lista exibeDados eh formada por referencia de memoria a partir dos resultados encontrados apos filtro.
+     * //mk.fullDados.filter(o => {return o.codPessoa < 5}).map(o => {return o.codPessoa + " - " + o.nomPessoa}).join("<br>");
+     * //Não é possível utilizar o filter(), pois nesse caso estamos girando 2 filter ao mesmo tempo e comparando os parametros.
+     */
     static mkFiltragemDados = () => {
         if (Array.isArray(this.fullDados)) {
             let temp = [];
             this.fullDados.forEach((o) => {
-                let podeExibir = true;
+                let podeExibir = true; // Verificara cada prop, logica de remocao seletiva.
                 for (let propFiltro in mk.objFiltro) {
+                    // Cada Propriedade de Cada Item da Array
                     if (o[propFiltro] != null) {
-                        let m = o[propFiltro];
-                        let k = this.objFiltro[propFiltro];
+                        // Cruzar referencia com objFiltro e se so avancar se realmente for um objeto
+                        let m = o[propFiltro]; // m representa o dado do item
+                        let k = this.objFiltro[propFiltro]; // k representa a config do filtro para essa propriedade
+                        // console.log(
+                        // 	propFiltro +
+                        // 		"(" +
+                        // 		typeof mk.objFiltro[propFiltro] +
+                        // 		"): " +
+                        // 		m +
+                        // 		" >> " +
+                        // 		k.formato +
+                        // 		": " +
+                        // 		k.conteudo
+                        // );
                         if (k.formato === "string") {
+                            // Filtro por string (Tipo Like)
                             k.conteudo = k.conteudo.toString().toLowerCase();
                             if (!m.toString().toLowerCase().match(k.conteudo) &&
                                 k.conteudo !== "0") {
+                                // LIKE
                                 podeExibir = false;
                             }
                         }
                         else if (k.formato === "stringNumerosVirgula") {
+                            // Filtro por numero exado. Provavelmente sejam duas arrays (MultiSelect), O filtro precisa encontrar tudo no objeto.
                             let filtroInvertido = false;
                             if (this.isJson(k.conteudo)) {
-                                let arrayM = m.toString().split(",");
-                                let mayBeArrayK = JSON.parse(k.conteudo);
+                                let arrayM = m.toString().split(","); // String de Numeros em Array de Strings
+                                let mayBeArrayK = JSON.parse(k.conteudo); // << No objFiltro
                                 if (Array.isArray(mayBeArrayK)) {
                                     mayBeArrayK.forEach((numeroK) => {
+                                        // A cada numero encontrado pos split na string do item verificado
                                         filtroInvertido = arrayM.some((numeroM) => {
                                             return Number(numeroM) == Number(numeroK);
                                         });
@@ -939,35 +1082,43 @@ class mk {
                                 console.warn("Não é um JSON");
                         }
                         else if (k.formato === "number") {
+                            // Filtro por numero exado. Apenas exibe este exato numero.
+                            // Ignorar filtro com 0
                             if (Number(m) !== Number(k.conteudo) &&
                                 Number(k.conteudo) !== 0) {
                                 podeExibir = false;
                             }
                         }
                         else if (k.formato === "date") {
+                            // Filtro por Data (Gera milissegundos e faz comparacao)
                             let dateM = new Date(m).getTime();
                             let dateK = new Date(k.conteudo).getTime();
                             if (k.operador === ">=") {
+                                // MAIOR OU IGUAL
                                 if (!(dateM >= dateK)) {
                                     podeExibir = false;
                                 }
                             }
                             else if (k.operador === "<=") {
+                                // MENOR OU IGUAL
                                 if (!(dateM <= dateK)) {
                                     podeExibir = false;
                                 }
                             }
                             else if (k.operador === ">") {
+                                // MAIOR
                                 if (!(dateM > dateK)) {
                                     podeExibir = false;
                                 }
                             }
                             else if (k.operador === "<") {
+                                // MENOR
                                 if (!(dateM < dateK)) {
                                     podeExibir = false;
                                 }
                             }
                             else {
+                                // IGUAL ou nao informado
                                 if (!(dateM == dateK)) {
                                     podeExibir = false;
                                 }
@@ -981,14 +1132,18 @@ class mk {
                     }
                 }
                 if (podeExibir) {
+                    // Verificara todas prop, logica da adicao por caracteristica buscada
                     if (this.objFiltro["mkFullFiltro"]) {
+                        // Se houver pesquisa generica no filtro
                         let k = this.objFiltro["mkFullFiltro"]["conteudo"]
                             .toString()
-                            .toLowerCase();
-                        podeExibir = false;
+                            .toLowerCase(); // k = Dado que estamos procurando
+                        podeExibir = false; // Inverter para verificar se alguma prop do item possui a caracteristica
                         for (var propNameItem in o) {
                             let m = o[propNameItem];
+                            //console.log(m + " FILTRO: " + k);
                             if (m != null) {
+                                // <= Nao pode tentar filtrar em itens nulos
                                 m = m.toString().toLowerCase();
                                 if (m.match(k)) {
                                     podeExibir = true;
@@ -1007,11 +1162,18 @@ class mk {
             this.exibeDados = [];
         }
     };
+    /**
+     * ATUALIZA a listagem com os dados ja ordenados de fullDados;
+     * Executa a filtragem dos dados;
+     * POPULA a lista atravez de uma nova lista: exibePaginado;
+     */
     static atualizarLista = async () => {
         let tablePaginacao = mk.Q(".tablePaginacao");
+        // Apenas executa a atualização e filtro, se a tablePaginacao estiver presente na página.
         if (tablePaginacao) {
-            mk.mkFiltragemDados();
+            mk.mkFiltragemDados(); // Popular exibeDados
             mk.atualizarStatusLista();
+            // Atualizar os Status
             let labelTotal = mk.Q(".tableResultado .tableTotal");
             if (labelTotal != null) {
                 labelTotal.innerHTML = mk.status.totalFull.toString();
@@ -1051,7 +1213,9 @@ class mk {
             }
         }
     };
+    // Gatilho para trocar a pagina
     static mudaPagina = (e) => {
+        // vem o this do evento / 'next' / 'back'
         if (typeof e == "string") {
             if (e == "next") {
                 this.paginationAtual += 1;
@@ -1065,11 +1229,14 @@ class mk {
         }
         mk.atualizarLista();
     };
+    // Retorna a pagina 1 e atualiza
     static atualizarPorPagina = () => {
         this.paginationAtual = 1;
         mk.atualizarLista();
     };
+    // Gerar Filtro baseado nos atributos do MKF gerados no campo.
     static mkGerarFiltro = (e) => {
+        // Para ignorar filtro: data-mkfignore="true" (Ou nao colocar o atributo mkfformato no elemento)
         if (e.value != null && e.getAttribute("data-mkfignore") != "true") {
             mk.objFiltro[e.name] = {
                 formato: e.getAttribute("data-mkfformato"),
@@ -1077,6 +1244,7 @@ class mk {
                 conteudo: e.value,
             };
         }
+        // Limpar filtro caso o usuario limpe o campo
         if (this.objFiltro[e.name]["conteudo"] == "" ||
             this.objFiltro[e.name]["conteudo"] == "0" ||
             this.objFiltro[e.name]["conteudo"] == 0 ||
@@ -1085,6 +1253,7 @@ class mk {
         }
         mk.atualizarPorPagina();
     };
+    // Force Update Filtro ()
     static mkUpdateFiltro = () => {
         this.objFiltro = {};
         mk.QAll("input.iConsultas").forEach((e) => {
@@ -1095,9 +1264,11 @@ class mk {
         });
         mk.atualizarPorPagina();
     };
+    // Metodo que eh executado sempre que um dado for recebido. (PODE SOBREESCREVER NA VIEW)
     static aoReceberDados = (data) => {
         return data;
     };
+    // LER (cRud) Metodo que inicia a coleta.
     static iniciarGetList = async (url, resumoViaInclude = false) => {
         if (resumoViaInclude) {
             await mk.mkInclude();
@@ -1111,25 +1282,33 @@ class mk {
             mk.mkExecutaNoObj(retorno, mk.aoReceberDados);
             this.fullDados = this.exibeDados = retorno;
             mk.ordenarDados();
-            mk.mkUpdateFiltro();
+            mk.mkUpdateFiltro(); // Se remover aqui, verificar objFiltro em PlacasFixas
         }
     };
     static adicionarDados = (objDados) => {
         this.fullDados.push(mk.aoReceberDados(objDados));
+        // this.sortDir = "a";
         mk.ordenarDados();
         mk.atualizarLista();
     };
     static editarDados = (objDados, nomeKey, valorKey) => {
+        // Implementar setObjetoFromId
         this.fullDados = mk.delObjetoFromId(nomeKey, valorKey, this.fullDados);
         this.fullDados.push(mk.aoReceberDados(objDados));
+        // this.sortDir = "a";
         mk.ordenarDados();
         mk.atualizarLista();
     };
     static excluirDados = (nomeKey, valorKey) => {
         this.fullDados = mk.delObjetoFromId(nomeKey, valorKey, this.fullDados);
+        // this.sortDir = "a";
         mk.ordenarDados();
         mk.atualizarLista();
     };
+    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+    //			FILTRO											\\
+    //___________________________________\\
+    // Gatilho FILTRO
     static mkSetFiltroListener = () => {
         mk.QAll("input.iConsultas").forEach((e) => {
             e.addEventListener("input", () => {
@@ -1142,18 +1321,26 @@ class mk {
             });
         });
     };
+    // LIMPAR FILTRO  LimparFiltro("#consulta_form"); //Passar o form que contem os SELECT/INPUT de filtro (search).
     static LimparFiltro = (form = "#consulta_form") => {
         this.objFiltro = {};
+        // RESET Form (Limpar seria "0" / "") (Set e.defaultValue)
         let eForm = mk.Q(form);
         eForm.reset();
+        // Solicita Atualizacao de todos mkSel
         mk.QAll("#consulta_form .mkSel").forEach((mkSel) => {
             mkSel.classList.add("atualizar");
         });
     };
+    // LIMPAR FILTRO  LimparFiltro("#consulta_form"); //Passar o form que contem os SELECT/INPUT de filtro (search).
     static LimparFiltroUpdate = (form = "#consulta_form") => {
         mk.LimparFiltro(form);
         mk.atualizarLista();
     };
+    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+    //			ORDER LIST									\\
+    //___________________________________\\
+    // Funcão de ordenamento ao inverter a lista
     static ordenar = (array = this.fullDados, nomeProp = this.sortBy, reverse = false) => {
         array.sort((oA, oB) => {
             if (oA[nomeProp] !== oB[nomeProp]) {
@@ -1169,13 +1356,16 @@ class mk {
             array = array.reverse();
         }
         else if (reverse == 2) {
+            // toogle
             if (this.contaOrdena % 2 == 0) {
                 array = array.reverse();
             }
         }
         return array;
     };
+    // Funcao que ordena os dados
     static ordenarDados = () => {
+        // Array é ordenada
         this.fullDados.sort((oA, oB) => {
             if (oA[mk.sortBy] !== oB[mk.sortBy]) {
                 if (oA[mk.sortBy] > oB[mk.sortBy])
@@ -1188,6 +1378,7 @@ class mk {
         if (this.sortDir == "d") {
             this.fullDados = this.fullDados.reverse();
         }
+        // Limpa mkSorting
         let thsAll = mk.QAll("th");
         if (thsAll.length != 0) {
             thsAll.forEach((th) => {
@@ -1195,6 +1386,8 @@ class mk {
                 th.classList.remove("mkEfeitoSobe");
             });
         }
+        // Busca elemento que está sendo ordenado
+        //console.log("Ordenando: " + this.sortBy + " EM: " + this.sortDir);
         let thsSort = mk.QAll(".sort-" + this.sortBy);
         if (thsSort.length != 0) {
             thsSort.forEach((thSort) => {
@@ -1207,6 +1400,7 @@ class mk {
             });
         }
     };
+    // Funcao que inverte a direcao, reordena e atualiza
     static inverteDir = (ordenar = null) => {
         if (ordenar != null) {
             if (ordenar != this.sortBy) {
@@ -1224,6 +1418,7 @@ class mk {
         let eTrHeadPai = mk.Q(trHeadPai);
         Array.from(eTrHeadPai.children).forEach((th) => {
             th.classList.forEach((classe) => {
+                // Verifica se contém sort- no inicio da class
                 if (classe.indexOf("sort-") == 0) {
                     let campo = classe.replace("sort-", "");
                     if (campo != "") {
@@ -1235,6 +1430,10 @@ class mk {
             });
         });
     };
+    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+    //			VALIDADOR										\\
+    //___________________________________\\
+    // Efeito de terremoto em campos com erros no formulario informado
     static TerremotoErros = (form) => {
         mk.QAll(form + " input.input-validation-error").forEach((e) => {
             e.nextElementSibling?.classList.add("mkTerremoto");
@@ -1243,6 +1442,7 @@ class mk {
             }, 500);
         });
     };
+    // Funcao tipo isPendente para validacao para mkValida. Aqui valida Pendente apenas.
     static mkAindaPendente = (form) => {
         let temPendencia = false;
         mk.QAll(form + " input").forEach((e) => {
@@ -1256,7 +1456,9 @@ class mk {
         });
         return temPendencia;
     };
+    // $ Unobtrusive: form = atualForm
     static verificarCampos = (form) => {
+        // Ignorara os campos com classe ignore
         $.data($(form)[0], "validator").settings.ignore = ":hidden";
         $.validator.unobtrusive.parse(form);
         var resultado = $(form).data("unobtrusiveValidation").validate();
@@ -1264,6 +1466,11 @@ class mk {
         resultado ? null : mk.TerremotoErros(form);
         return resultado;
     };
+    // mkValidaFull(atualForm, trocaFaseLiberado, destinoFase)
+    // Funcao Recursiva: Executa mkAindaPendente ate a resposta do HTTP retornar.
+    // Parametro(formulario)        Formulario para validar
+    // Parametro(fUIValidou)        Funcao a ser executada apos a validacao ser aprovada e recebida
+    // Parametro(varRepassaA)       Variavel/Objeto que pode ser passada da solicitacao ate a resposta.
     static mkValidaFull = (form, fUIValidou, varRepassaA = null) => {
         mk.mkCountValidate++;
         if (mk.verificarCampos(form)) {
@@ -1292,13 +1499,19 @@ class mk {
         }
         else {
             if (mk.mkCountValidate < 2) {
+                //Auto reexecutar pois o parse do unobtrutive se perde de primeira
                 setTimeout(() => {
+                    // Validacaes assincronas exigem timer
                     mk.mkValidaFull(form, fUIValidou, varRepassaA);
                 }, 10);
             }
-            mk.CarregarOFF();
+            mk.CarregarOFF(); // Loop infinito
         }
     };
+    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+    //			AREA FASEADO								\\
+    //___________________________________\\
+    // FUNCAO PARA ATUALIZAR OS LINKS DE FASES
     static fUIFaseUpdateLinkFase = () => {
         mk.QAll("ul.mkUlFase li a").forEach((e) => {
             e.parentElement?.classList.remove("mkFaseBack");
@@ -1317,6 +1530,7 @@ class mk {
             }
         });
     };
+    // FUNCAO PARA ATUALIZAR A TELINHA
     static fUIFaseUpdateView = (obj) => {
         for (var i = 1; i <= Number(mk.Q(".mkUlFase").getAttribute("data-totalfases")); i++) {
             mk.Q(".modalFase" + i).classList.add("oculto");
@@ -1336,6 +1550,7 @@ class mk {
         }
         mk.fUIFaseUpdateLinkFase();
     };
+    // (OnClick BOTAO) FUNCAO VOLTAR A FASE
     static fUIFaseVoltar = (esteForm) => {
         let obj = {
             destinoFase: this.mkFaseAtual - 1,
@@ -1343,6 +1558,7 @@ class mk {
         };
         mk.fUIFaseUpdateView(obj);
     };
+    // (OnClick BOTAO) FUNCAO AVANCAR A FASE
     static fUIFaseAvancar = (esteForm) => {
         let obj = {
             destinoFase: this.mkFaseAtual + 1,
@@ -1350,6 +1566,7 @@ class mk {
         };
         mk.mkValidaFull(obj.form, mk.fUIFaseLiberarView, obj);
     };
+    // (OnClick BOTAO) FUNCAO LINK PARA FASE ESPECIFICA
     static fUIFaseEspecifica = (e) => {
         let obj = {
             destinoFase: Number(e.getAttribute("data-pag")),
@@ -1364,6 +1581,7 @@ class mk {
         this.sendObjFull = mk.mkGerarObjeto(obj["form"]);
         mk.fUIFaseUpdateView(obj);
     };
+    // Metodo de controle de grupos de abas.
     static mkClicarNaAba = (este) => {
         if (este != null) {
             let estaAba = Number(este.getAttribute("data-pag"));
@@ -1374,6 +1592,7 @@ class mk {
             este.classList.add("active");
             let totalAbas = Number(listaAbas?.getAttribute("data-mkabas"));
             for (let i = 1; i <= totalAbas; i++) {
+                // Giro do 1 ao Total
                 mk.QAll(".mkAba" + i).forEach((e) => {
                     if (i == estaAba) {
                         e.classList.remove("oculto");
@@ -1385,6 +1604,9 @@ class mk {
             }
         }
     };
+    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+    //			MODAL												\\
+    //___________________________________\\
     static aposModalFullAberto = async () => { };
     static mkAModal_Hide = () => {
         mk.Q("body .mkModalBloco").classList.add("oculto");
@@ -1393,7 +1615,8 @@ class mk {
     static mkAtualizarModalFull = async (url, modelo) => {
         let retorno = await mk.http(url, mk.t.G, mk.t.J);
         if (retorno != null) {
-            mk.objetoSelecionado = mk.mkFormatarOA(mk.aoReceberDados(retorno));
+            // objetoSelecionado fica disponivel durante a tela Detail
+            mk.objetoSelecionado = mk.mkFormatarOA(mk.aoReceberDados(retorno)); // <= Ao Receber Dados
             console.group("MODAL: Set Selecionado: ");
             console.info(mk.objetoSelecionado);
             console.groupEnd();
@@ -1447,6 +1670,7 @@ class mk {
             await mk.mkModalBuild();
         }
         mk.mkModalClear();
+        // POPULA MODAL com CONTEUDO
         if (conteudo != null) {
             if (modelo != null) {
                 await mk
@@ -1465,6 +1689,9 @@ class mk {
             console.error("CONTEUDO NULO");
         }
     };
+    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+    //			MK Molde (Template/Modelo)	\\
+    //___________________________________\\
     static mkToValue = (mk, o) => {
         let ret = "";
         if (mk.indexOf("${") >= 0) {
@@ -1479,6 +1706,7 @@ class mk {
                     ret += o[key];
                 }
                 else {
+                    //ret += key;
                 }
                 ret += ini[i].slice(end + 1);
             }
@@ -1507,20 +1735,26 @@ class mk {
                 listaNode += node;
             };
             mk.mkExecutaNoObj(dadosOA, mkMoldeOAA_Execute);
+            //Allow Tags
             listaNode = listaNode.replaceAll("&lt;", "<");
             listaNode = listaNode.replaceAll("&gt;", ">");
             eRepositorio.innerHTML = listaNode;
-            r(this);
+            r(this); // class mk
         });
     };
+    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+    //			MK Include									\\
+    //___________________________________\\
     static mkInclude = async () => {
         return new Promise((r) => {
             mk.QAll("body *").forEach(async (e) => {
                 let destino = e.getAttribute("mkInclude");
                 if (destino != null) {
+                    //console.log("Incluindo: " + destino);
                     let retorno = await mk.http(destino, mk.t.G, mk.t.H);
                     if (retorno != null) {
                         e.innerHTML = retorno;
+                        //mk.mkNodeToScript(mk.Q(".conteudo"));
                     }
                     else {
                         console.log("Falhou ao coletar dados");
@@ -1530,6 +1764,9 @@ class mk {
             });
         });
     };
+    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+    //			MK UI Confirmar							\\
+    //___________________________________\\
     static mkConfirma = async (texto = "Você tem certeza?") => {
         return new Promise((r) => {
             function verficiarResposta() {
@@ -1538,6 +1775,7 @@ class mk {
                     resposta = true;
                 if (mk.Q(".mkConfirmadorBloco .mkConfirmadorArea .bBotao.icoNao.true"))
                     resposta = false;
+                //console.log("Resposta: " + resposta);
                 if (resposta !== null) {
                     mk.Q(".mkConfirmadorBloco .icoSim").classList.remove("true");
                     mk.Q(".mkConfirmadorBloco .icoNao").classList.remove("true");
@@ -1585,44 +1823,58 @@ class mk {
                 mk.Q(".mkConfirmadorTexto").innerHTML = texto;
             }
             const checkResposta = setInterval(verficiarResposta, 100);
+            // Função de conclusão.
             function retornar(resultado = false) {
                 clearInterval(checkResposta);
                 return r(resultado);
             }
         });
     };
+    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+    //			MK Seletor									\\
+    //___________________________________\\
+    /* CRIA O DROPDOWN por FOCUS */
     static mkSelRenderizar = async () => {
         document.querySelectorAll("input.mkSel").forEach(async (e) => {
+            // Transforma elemento se ele ainda não foi transformado
             if (!e.parentElement?.classList.contains("mkSelBloco")) {
+                // COLETA
                 let ePai = e.parentElement;
                 let ePos = Array.from(ePai?.children).indexOf(e);
+                // ELEMENTO no BLOCO
                 let divMkSeletorBloco = document.createElement("div");
                 let divMkSeletorPesquisa = document.createElement("div");
                 let divMkSeletorInputExibe = document.createElement("input");
                 let divMkSeletorInputExibeArrow = document.createElement("div");
                 let divMkSeletorList = document.createElement("div");
+                // Nomeando Classes
                 divMkSeletorBloco.className = "mkSelBloco";
                 divMkSeletorPesquisa.className = "mkSelPesquisa";
                 divMkSeletorInputExibe.className = "mkSelInputExibe";
                 divMkSeletorInputExibeArrow.className = "mkSelInputExibeArrow";
                 divMkSeletorList.className = "mkSelList";
+                // ORDEM no DOM
                 ePai?.insertBefore(divMkSeletorBloco, ePai?.children[ePos]);
                 divMkSeletorBloco.appendChild(e);
                 divMkSeletorBloco.appendChild(divMkSeletorPesquisa);
                 divMkSeletorBloco.appendChild(divMkSeletorList);
                 divMkSeletorPesquisa.appendChild(divMkSeletorInputExibe);
                 divMkSeletorPesquisa.appendChild(divMkSeletorInputExibeArrow);
+                // Flexas que movem o selecionado quando há apenas 1 possibilidade de selecao.
                 if (e.getAttribute("data-selmoversel") == "true" &&
                     e.getAttribute("data-selapenas") == "1") {
                     let divMkSelArrowSelLeft = document.createElement("div");
                     let divMkSelArrowSelRight = document.createElement("div");
                     divMkSelArrowSelLeft.className = "mkSelArrowSelLeft microPos6";
                     divMkSelArrowSelRight.className = "mkSelArrowSelRight microPos4";
+                    //divMkSelArrowSelLeft.innerHTML = "\u{2B05}"; // 2B98, 2B9C, 2B88, 2B05, 2BA8 CSS (2BA8)
+                    //divMkSelArrowSelRight.innerHTML = "\u{2B95}"; // 2B9A, 2B9E, 2B8A, 2B95, 2BA9, CSS
                     divMkSeletorPesquisa.appendChild(divMkSelArrowSelLeft);
                     divMkSeletorPesquisa.appendChild(divMkSelArrowSelRight);
                     divMkSelArrowSelLeft.setAttribute("onclick", "mk.mkSelLeftSel(this)");
                     divMkSelArrowSelRight.setAttribute("onclick", "mk.mkSelRightSel(this)");
                 }
+                // Seta atributos e Getilhos
                 divMkSeletorBloco.setAttribute("style", e.getAttribute("style") ?? "");
                 e.removeAttribute("style");
                 e.setAttribute("readonly", "true");
@@ -1634,76 +1886,100 @@ class mk {
                 divMkSeletorList.addEventListener("scroll", (ev) => {
                     mk.mkSelMoveu(ev.target);
                 });
+                // Popular Lista
                 mk.mkSelPopularLista(e);
+                // Seleciona baseado no value do input
                 mk.mkSelUpdate(e);
+                // Deixar Elemento de forma visivel, mas inacessivel.
                 if (e.getAttribute("data-dev") != "true") {
                     e.classList.add("mkSecreto");
                 }
             }
             else {
+                // Atualiza a lista com base na classe "atualizar"
                 if (e.classList.contains("atualizar")) {
                     e.classList.remove("atualizar");
                     e.classList.add("atualizando");
+                    // Se não tem array, mas tem o refill e entrou para atualizar, faz o processo de refill genérico
                     if (!e.getAttribute("data-selarray") &&
                         e.getAttribute("data-refill")) {
                         await mk.mkSelDelRefillProcesso(e);
                     }
                     mk.mkSelPopularLista(e);
                     mk.mkSelUpdate(e);
+                    // Executa evento, em todos atualizar.
                     e.dispatchEvent(new Event("input"));
                     e.dispatchEvent(new Event("change"));
                     e.classList.remove("atualizando");
                 }
+                // Atualiza posição com a mesma frequencia que pesquisa os elementos.
                 mk.mkSelReposicionar(e.parentElement.children[2]);
             }
         });
     };
+    /* Ao Tentar Selecionar um novo item */
     static mkSelSelecionar = (eItem) => {
         let ePrincipal = eItem.parentElement?.parentElement?.firstElementChild;
         let KV = mk.mkSelGetKV(ePrincipal);
+        // Obtem limite de seleções
         let selLimit = Number(ePrincipal?.getAttribute("data-selapenas"));
+        // QUANDO O LIMITE é 1
         if (selLimit == 1) {
+            // Muda valor do input pelo clicado e Gera o evento
             ePrincipal.value = eItem.getAttribute("data-k");
             ePrincipal?.dispatchEvent(new Event("input"));
+            // Transfere valor para o Display (Exibe)
             (eItem?.parentElement?.previousElementSibling?.firstElementChild).value =
                 eItem.innerHTML;
         }
         else if (selLimit > 1 || selLimit < 0) {
             let itemK = eItem.getAttribute("data-k");
             let jaSelecionado = 0;
+            // Forma um array caso ainda não seja, pois pode seleconar mais de um.
             let arraySelecionado = [];
+            // Verifica se algum KV.k é o K clicado. (Para saber se vai adicionar ou remover)
             KV.forEach((ObjKV) => {
                 arraySelecionado.push(ObjKV.k.toString());
                 if (ObjKV.k == itemK)
                     jaSelecionado++;
             });
             if (jaSelecionado > 0) {
+                // Remove valor da lista selecionada
                 arraySelecionado.splice(arraySelecionado.indexOf(itemK), 1);
             }
             else {
+                // Verifica se é possivel selecionar mais (Se estiver negativo, pode selecionar infinito)
                 if (arraySelecionado.length < selLimit || selLimit < 0) {
+                    // Acrescenta valor
                     arraySelecionado.push(itemK);
                 }
             }
+            // Limpar seleções vazias
             arraySelecionado.forEach((item) => {
                 if (item == "") {
                     arraySelecionado.splice(arraySelecionado.indexOf(item), 1);
                 }
             });
+            // Quando estiver vazio, reseta o campo.
+            // Seta o valor no campo de input
             if (arraySelecionado.length == 0) {
                 ePrincipal.value = ePrincipal.defaultValue;
             }
             else {
                 ePrincipal.value = JSON.stringify(arraySelecionado);
             }
+            // Gera o Evento
             ePrincipal.dispatchEvent(new Event("input"));
+            // Mantem foco no Display, pois pode selecionar mais de um
             setTimeout(() => {
                 eItem.parentElement.previousElementSibling.firstElementChild.focus();
             }, 1);
         }
         mk.mkSelUpdate(ePrincipal);
+        // Evento change apos terminar a atualizacao
         ePrincipal.dispatchEvent(new Event("change"));
     };
+    // Selecionar o anterior ao atual
     static mkSelLeftSel = (e) => {
         let eAlvo = null;
         Array.from(e.parentElement?.nextElementSibling?.children).forEach((el) => {
@@ -1723,6 +1999,7 @@ class mk {
             mk.mkSelSelecionar(eAlvo);
         }
     };
+    // Selecionar o próximo ao atual
     static mkSelRightSel = (e) => {
         let eAlvo = null;
         Array.from(e.parentElement.nextElementSibling.children).forEach((el) => {
@@ -1743,6 +2020,7 @@ class mk {
         }
     };
     static mkSelPopularLista = (e) => {
+        // GERA CADA ITEM DA LISTA COM BASE NO JSON
         if (e.getAttribute("data-selarray") != "") {
             let eList = e.nextElementSibling.nextElementSibling;
             eList.innerHTML = "";
@@ -1750,6 +2028,7 @@ class mk {
                 let seletorArray = JSON.parse(e.getAttribute("data-selarray"));
                 if (seletorArray != null) {
                     let c = 0;
+                    /* ITENS */
                     seletorArray.forEach((o) => {
                         if (o.k != null) {
                             c++;
@@ -1790,9 +2069,13 @@ class mk {
             }
         }
     };
+    /* EVENTO de Pesquisa (FOCUS) */
     static mkSelPesquisaFocus = (e) => {
+        // Atualiza Itens Selecionados, caso houve mudança sem atualizar.
         mk.mkSelUpdate(e.parentElement.previousElementSibling);
+        // Limpa o Display
         e.value = "";
+        // Limpa o resultado do filtro anterior
         let eList = e.parentElement.nextElementSibling;
         let ePrimeiroSel = null;
         Array.from(eList.children).forEach((el) => {
@@ -1801,10 +2084,17 @@ class mk {
             if (el.getAttribute("data-s") == 1 && ePrimeiroSel == null)
                 ePrimeiroSel = el;
         });
+        // Se iniciar no topo, sumir as setas pra cima.
+        // let temOsDeCima =
+        // 	eList.firstElementChild?.classList.contains("mkSelItemDeCima");
+        // if (temOsDeCima && eList.scrollTop == 0)
+        // 	eList.firstElementChild.style.display = "none";
+        // Faz movimento no scroll até o primeiro item selecionado
         eList.scrollTop =
             ePrimeiroSel.offsetTop -
                 120 -
                 (eList.offsetHeight - eList.clientHeight) / 2;
+        // Atualizar posição da Lista.
         mk.mkSelReposicionar(e.parentElement.nextElementSibling);
     };
     static getParentScrollTop = (e) => {
@@ -1818,13 +2108,19 @@ class mk {
     };
     static mkSelReposicionar = (eList) => {
         let eRef = eList.previousElementSibling;
+        // Posiciona E Redimenciona a lista.
         eList.style.minWidth = eRef.offsetWidth + "px";
+        // Lado esquerdo baseado na posicao, mas em mobile fica full.
         let wLargura = window.innerWidth;
         if (wLargura < 768) {
             eList.style.top = 35 + "px";
             eList.style.left = 35 + "px";
         }
         else {
+            // var eList = mk.Q(".iNovo[name='staAtivo']").nextElementSibling.nextElementSibling
+            // var eRef = eList.previousElementSibling;
+            // eRef.offsetTop;
+            // Primeiramente seta a posição ref ao input fixo.
             eList.style.top =
                 eRef.offsetTop -
                     mk.getParentScrollTop(eRef) +
@@ -1832,6 +2128,7 @@ class mk {
                     2 +
                     "px";
             eList.style.left = eRef.offsetLeft + "px";
+            // Depois, verifica se saiu da tela
             let posXCantoOpostoRef = eRef.offsetLeft + eRef.offsetWidth;
             let posXCantoOpostoList = eList.offsetLeft + eList.offsetWidth;
             if (posXCantoOpostoList > mk.Q("body").offsetWidth) {
@@ -1839,11 +2136,14 @@ class mk {
             }
         }
     };
+    /* EVENTO de Pesquisa (BLUR) */
     static mkSelPesquisaBlur = (e) => {
         mk.mkSelUpdate(e.parentElement.previousElementSibling);
     };
+    /* EVENTO de Pesquisa (KEYDOWN) */
     static mkSelPesquisaKeyDown = (ev) => {
         let isNegado = false;
+        //console.log(ev);
         if (ev.key == "Escape") {
             ev.srcElement.blur();
         }
@@ -1923,12 +2223,20 @@ class mk {
                     eListItem.offsetTop -
                         120 -
                         (eList.clientHeight - eList.offsetHeight) / 2;
+                // console.table({
+                // 	Resultado: eList.scrollTop,
+                // 	eListItem: eListItem.offsetTop,
+                // 	eListOffsetTop (120): eList.offsetTop,
+                // 	eListOffSetHeight: eList.offsetHeight,
+                // 	eListClientHeight: eList.clientHeight,
+                // });
             }
         }
         if (isNegado) {
             ev.preventDefault();
         }
     };
+    /* EVENTO de Pesquisa (INPUT) */
     static mkSelPesquisaInput = (e) => {
         let cVisivel = 0;
         let eList = e.parentElement.nextElementSibling;
@@ -1954,41 +2262,58 @@ class mk {
             eList.lastElementChild.style.display = "";
         }
     };
+    // Receber e = div .mkSelList
     static mkSelMoveu = (e) => {
         if (e.firstElementChild.classList.contains("mkSelItemDeCima")) {
+            // if (e.scrollTop == 0) {
+            // 	e.firstElementChild.style.display = "none";
+            // 	e.lastElementChild.style.display = "";
+            // } else if (e.scrollTop + e.clientHeight >= e.scrollHeight) {
+            // 	e.firstElementChild.style.display = "";
+            // 	e.lastElementChild.style.display = "none";
+            // } else {
             e.firstElementChild.style.display = "";
             e.lastElementChild.style.display = "";
+            // }
         }
     };
+    // Receber e = div .mkSelItemDeCima
     static mkSelMoveCima = (e) => {
         let eList = e.parentElement;
         eList.scrollTop = eList.scrollTop - 5;
         mk.mkSelMoveu(eList);
     };
+    // Receber e = div .mkSelItemDeBaixo
     static mkSelMoveBaixo = (e) => {
         let eList = e.parentElement;
         eList.scrollTop = eList.scrollTop + 5;
         mk.mkSelMoveu(eList);
     };
+    /* ATUALIZA Display e Selecionados*/
     static mkSelUpdate = (e, KV = null) => {
         if (KV == null) {
             KV = mk.mkSelGetKV(e);
         }
+        // Desmarcar todos mkSelItem pra 0
         Array.from(e.nextElementSibling.nextElementSibling.children).forEach((el) => {
             el.setAttribute("data-s", "0");
         });
         KV.forEach((o) => {
+            /* Marcar mkSelItem pra 1 onde tem K selecionado */
             Array.from(e.nextElementSibling.nextElementSibling.children).forEach((item) => {
                 if (item.getAttribute("data-k") == o.k) {
                     item.setAttribute("data-s", "1");
                 }
             });
         });
+        // Seta Valor do display
         mk.mkSelSetDisplay(e, KV);
     };
+    // Retorna o Objeto em formato KV dos itens selecionados do elemento E
     static mkSelGetKV = (e) => {
         let kSels;
         let kOpcoes;
+        // Lista de Selecoes vira K do KV
         if (mk.isJson(e.value)) {
             kSels = JSON.parse(e.value);
             if (!Array.isArray(kSels)) {
@@ -2003,6 +2328,7 @@ class mk {
         }
         else
             kSels = [{ k: e.value }];
+        // Prepara lista de Opções para iterar
         if (mk.isJson(e.getAttribute("data-selarray"))) {
             kOpcoes = JSON.parse(e.getAttribute("data-selarray"));
             if (!Array.isArray(kOpcoes)) {
@@ -2012,6 +2338,7 @@ class mk {
         else
             kOpcoes = null;
         if (kOpcoes != null) {
+            // Acrescentar V ao KV
             kSels.forEach((objKv) => {
                 kOpcoes.forEach((opcao) => {
                     if (opcao.k == objKv.k) {
@@ -2041,9 +2368,38 @@ class mk {
             }
         }
     };
-}
-mk.mkClicarNaAba(mk.Q(".mkAbas a.active"));
+} // <<< FIM MK Class
+//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+//		AO INICIAR										\\
+//___________________________________\\
+mk.mkClicarNaAba(mk.Q(".mkAbas a.active")); // Inicia no ativo
+/* INICIALIZA e GERA TIMER de busca por novos elementos */
 mk.mkSelRenderizar();
 setInterval(() => {
     mk.mkSelRenderizar();
 }, 300);
+//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+//			OBJETOS CONSTANTES					\\
+//___________________________________\\
+// Object.defineProperty(mk, "http", {
+// 	writable: false,
+// });
+// Object.defineProperty(mk, "mkFiltragemDados", {
+// 	writable: false,
+// });
+// Object.defineProperty(mk, "mkValidaFull", {
+// 	writable: false,
+// });
+// Object.defineProperty(mk, "t", {
+// 	writable: false,
+// });
+//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+//			TEST												\\
+//___________________________________\\
+//mk.iniciarGetList("./Teste.json");
+// mk.http("./Teste.json", t.G, t.J, null, true);
+// mk.http("./index.html", t.G, t.H, null, true);
+// mk.http("./index.html?post=json", t.P, t.J, { a: "teste" }, true);
+// let fd = new FormData();
+// fd.append("bb", "testeb");
+// mk.http("./index.html?post=form", t.P, t.F, fd, true);

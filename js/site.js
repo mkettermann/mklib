@@ -16,6 +16,7 @@ const menuAbrir = async (e) => {
     }
 };
 menuAbrir(mk.Q(".MenuLink.inicio"));
+/**Confirmar */
 const aoIncrementar = async (e) => {
     function edit(alvo, novoValor) {
         alvo.value = novoValor.toString();
