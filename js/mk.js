@@ -1876,6 +1876,7 @@ class mk {
                 }
                 // Seta atributos e Getilhos
                 divMkSeletorBloco.setAttribute("style", e.getAttribute("style") ?? "");
+                divMkSeletorBloco.style.setProperty("--mkSelArrowSize", "24px");
                 e.removeAttribute("style");
                 e.setAttribute("readonly", "true");
                 divMkSeletorInputExibe.setAttribute("placeholder", "Filtro \u{1F50D}");

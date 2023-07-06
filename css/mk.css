@@ -50,6 +50,7 @@ html {
 =========================*/
 
 .mkSelBloco {
+	--mkSelArrowSize: 0px;
 	--Main1: var(--g5AzulEscuro);
 	--Main2: var(--g5VerdeLima);
 	--Main2_33: var(--g5VerdeLima33);
@@ -115,7 +116,7 @@ html {
 	align-items: center;
 	border-radius: 5px;
 	background-color: var(--FundoSeletor);
-	width: 100%;
+	width: calc(100% - (var(--mkSelArrowSize) * 2));
 	height: 100%;
 }
 
@@ -152,7 +153,7 @@ html {
 .mkSelArrowSelLeft {
 	position: absolute;
 	left: -25px;
-	width: 24px;
+	width: var(--mkSelArrowSize);
 	height: 100%;
 	border: 1px outset;
 	border-top-left-radius: 50%;
@@ -165,7 +166,7 @@ html {
 .mkSelArrowSelRight {
 	position: absolute;
 	right: -25px;
-	width: 24px;
+	width: var(--mkSelArrowSize);
 	height: 100%;
 	border: 1px outset;
 	border-top-right-radius: 50%;
