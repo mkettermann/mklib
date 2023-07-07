@@ -1649,10 +1649,16 @@ class mk {
 
 	// $ Unobtrusive: form = atualForm
 	static verificarCampos = (form: string) => {
+		// Buscando validador
+		let validador = $.data($(form)[0], "validator");
 		// Ignorara os campos com classe ignore
-		$.data($(form)[0], "validator").settings.ignore = ":hidden";
+		if (validador) validador.settings.ignore = ":hidden";
+		// Conversor de validadores
 		$.validator.unobtrusive.parse(form);
-		var resultado = $(form).data("unobtrusiveValidation").validate();
+		// Buscando Unobtrusive Validador da microsoft
+		let unobtrusiveValidation = $(form).data("unobtrusiveValidation");
+		// Executa validador se ele estiver presente
+		var resultado = unobtrusiveValidation?.validate();
 		console.info("ModelState é Valido? " + resultado);
 		resultado ? null : mk.TerremotoErros(form);
 		return resultado;
