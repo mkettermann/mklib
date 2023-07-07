@@ -431,7 +431,10 @@ class mk {
     static mkFloat = (num) => {
         let ret;
         if (typeof num != "number") {
-            ret = parseFloat(num.toString().replaceAll(".", "").replaceAll(",", "."));
+            if (num)
+                ret = parseFloat(num.toString().replaceAll(".", "").replaceAll(",", "."));
+            else
+                ret = 0;
         }
         else {
             ret = num;
