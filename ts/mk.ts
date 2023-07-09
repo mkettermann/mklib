@@ -2683,18 +2683,18 @@ setInterval(() => {
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //			OBJETOS CONSTANTES					\\
 //___________________________________\\
-// Object.defineProperty(mk, "http", {
-// 	writable: false,
-// });
-// Object.defineProperty(mk, "mkFiltragemDados", {
-// 	writable: false,
-// });
-// Object.defineProperty(mk, "mkValidaFull", {
-// 	writable: false,
-// });
-// Object.defineProperty(mk, "t", {
-// 	writable: false,
-// });
+Object.defineProperty(mk, "http", {
+	writable: false,
+});
+Object.defineProperty(mk, "mkFiltragemDados", {
+	writable: false,
+});
+Object.defineProperty(mk, "mkValidaFull", {
+	writable: false,
+});
+Object.defineProperty(mk, "t", {
+	writable: false,
+});
 
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //			TEST												\\
@@ -2707,3 +2707,4 @@ setInterval(() => {
 // let fd = new FormData();
 // fd.append("bb", "testeb");
 // mk.http("./index.html?post=form", t.P, t.F, fd, true);
+//
