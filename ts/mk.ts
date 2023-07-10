@@ -2718,8 +2718,14 @@ class Mk {
 	//			LISTAGEM										\\
 	//___________________________________\\
 	// LER (cRud) Metodo que inicia a coleta.
-	iniciarGetList = async (url: string, divTabela: string): Promise<void> => {
-		await mk.mkInclude();
+	iniciarGetList = async (
+		url: string,
+		divTabela: string,
+		urlResumo: string | null = null
+	): Promise<void> => {
+		if (urlResumo != null) {
+			await mk.mkInclude();
+		}
 		mk.Ao("input", "input[name='tablePorPagina']", async () => {
 			mk.atualizarPorPagina();
 		});
