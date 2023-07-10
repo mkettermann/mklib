@@ -2408,6 +2408,41 @@ setInterval(() => {
 // 	writable: false,
 // });
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+//			CLASSE Mk Instanciavel			\\
+//___________________________________\\
+class Mk {
+    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+    //			PROPRIEDADES								\\
+    //___________________________________\\
+    dadosFull = [];
+    dadosFiltrado = [];
+    dadosExibidos = [];
+    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+    //			CONSTRUTOR									\\
+    //___________________________________\\
+    constructor(urlOrigem, divTabela) {
+        this.iniciarGetList(urlOrigem, divTabela);
+    }
+    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+    //			LISTAGEM										\\
+    //___________________________________\\
+    // LER (cRud) Metodo que inicia a coleta.
+    iniciarGetList = async (url, divTabela) => {
+        await mk.mkInclude();
+        mk.Ao("input", "input[name='tablePorPagina']", async () => {
+            mk.atualizarPorPagina();
+        });
+        let retorno = await mk.http(url, mk.t.G, mk.t.J);
+        if (retorno != null) {
+            mk.mkLimparOA(retorno);
+            mk.mkExecutaNoObj(retorno, mk.aoReceberDados);
+            this.dadosFull = this.dadosFiltrado = retorno;
+            mk.ordenarDados();
+            mk.mkUpdateFiltro();
+        }
+    };
+}
+//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //			TEST												\\
 //___________________________________\\
 //mk.iniciarGetList("./Teste.json");

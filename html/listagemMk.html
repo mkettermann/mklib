@@ -1,0 +1,57 @@
+<style>
+	.listBody td:nth-child(1) {
+		width: auto;
+		text-align: left;
+	}
+	.listBody td:nth-child(2) {
+		width: 13%;
+	}
+	.listBody td:nth-child(3) {
+		width: 13%;
+	}
+	.listBody td:nth-child(4) {
+		width: 13%;
+		text-align: right;
+	}
+	.listBody td:nth-child(5) {
+		width: 8%;
+	}
+	.listBody td:nth-child(6) {
+		width: 8%;
+	}
+</style>
+
+<h1 class="microPos2 h1">Listagem Mk</h1>
+<div>Exemplo de Tabela de Usuários via instancia da lista:</div>
+<div class="divListagem">
+	<table class="tableListagem">
+		<thead>
+			<tr>
+				<th class="sort-mNome">Usuário</th>
+				<th class="sort-mDataCadastro">Data Cadastro</th>
+				<th class="sort-mDataUltimoAcesso">Último Acesso</th>
+				<th class="sort-mTotalAcessos">Tot. Acessos</th>
+				<th class="sort-mStatus">Status</th>
+				<th class="acao">Editar</th>
+			</tr>
+		</thead>
+		<tbody class="listBody"></tbody>
+	</table>
+</div>
+<div mkInclude="/html/_resumoLista.html"></div>
+
+<script type="text/html" id="modelo">
+	<tr id="${mId}">
+		<td class="sort-mNome">${mNome}</td>
+		<td class="sort-mDataCadastro">
+			<input type="date" value="${mDataCadastro}" />
+		</td>
+		<td class="sort-mDataUltimoAcesso">${mDataUltimoAcesso}</td>
+		<td class="sort-mTotalAcessos">${mTotalAcessos}</td>
+		<td class="sort-mStatus ${mStatus}"></td>
+		<td class="acao">
+			<a onclick="aoClicarEditar(this);">Editar</a>
+		</td>
+	</tr>
+</script>
+<script src="/js/listagemMk.js"></script>
