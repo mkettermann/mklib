@@ -1,6 +1,10 @@
 "use strict";
 
-var lista = new Mk("/data/usersExemplo.json", ".divListagem");
+var lista = new Mk(
+	"/data/usersExemplo.json",
+	".divListagem",
+	".tableListagemResumo"
+);
 
 // mk.iniciarGetList("/data/usersExemplo.json", true);
 // mk.GerarAoSort();

@@ -274,87 +274,6 @@ class mk {
 		return false;
 	};
 
-	// Obter informações da situação atual do objeto.
-	// Os métodos get são executados no for.
-	// Se o objeto possuir algum gatilho no get, o objeto pode sofrer mudanças durante a consulta.
-	static mkInfoObject = (o: any) => {
-		try {
-			function modeloInfo(prop: any, obj: any, iteradoEm: string) {
-				return {
-					TIPO: (typeof obj[prop]).toUpperCase(),
-					NOME: prop,
-					VALOR: obj[prop],
-					ENUMERABLE: obj.propertyIsEnumerable(prop),
-					OWN: obj.hasOwnProperty(prop),
-					Key: Object.keys(obj).some((e) => e == prop),
-					O_N: Object.getOwnPropertyNames(obj).some((e) => e == prop),
-					Ref: Reflect.ownKeys(obj).some((e) => e == prop),
-					Sym: Object.getOwnPropertySymbols(o).some((e) => e == prop),
-					"ITERADO EM": iteradoEm,
-				};
-			}
-			function hasInModelo(obj: any, array: any, iteradoEm: string) {
-				let resultado = false;
-				array.forEach((o: any) => {
-					if (o.NOME == obj.NOME) {
-						o["ITERADO EM"] += "|" + iteradoEm;
-						resultado = true;
-					}
-				});
-				return resultado;
-			}
-			function preparar(p: any, o: any, array: any, iteradoEm: string) {
-				let oNovo: any = modeloInfo(p, o, iteradoEm);
-				if (!hasInModelo(oNovo, tab, iteradoEm)) {
-					array.push(oNovo);
-				}
-			}
-			let tab: any = [];
-			let tab2: any = [];
-			console.group("MK Info Object: ");
-			console.info("TO STRING: " + o.toString());
-			let stringfyObj = JSON.stringify(o);
-			console.log(o);
-			preparar("toString", o, tab2, "TESTE");
-			preparar("toLocaleString", o, tab2, "TESTE");
-			preparar("toJSON", o, tab2, "TESTE");
-			for (let p in o) {
-				preparar(p, o, tab, "In");
-			}
-			let arrayKeys = Object.keys(o);
-			for (let i = 0; i < arrayKeys.length; i++) {
-				preparar(arrayKeys[i], o, tab, "Key");
-			}
-			let arrayOwnNames = Object.getOwnPropertyNames(o);
-			for (let i = 0; i < arrayOwnNames.length; i++) {
-				preparar(arrayOwnNames[i], o, tab, "O_N");
-			}
-			let arraySym = Object.getOwnPropertySymbols(o);
-			for (let i = 0; i < arraySym.length; i++) {
-				preparar(arraySym[i], o, tab, "O_S");
-			}
-			let arrayReflect = Reflect.ownKeys(o);
-			for (let i = 0; i < arrayReflect.length; i++) {
-				preparar(arrayReflect[i], o, tab, "Ref");
-			}
-			mk.ordenar(tab, "TIPO", true);
-			console.table(tab);
-			console.table(tab2);
-			let stringfyObjPos = JSON.stringify(o);
-			if (stringfyObj != stringfyObjPos) {
-				console.warn(
-					"O Objeto sofreu alteração durante a consulta: " + JSON.stringify(o)
-				);
-				// Setters são executados durante iterações.
-			} else {
-				console.log(JSON.stringify(o));
-			}
-			console.groupEnd();
-		} catch (e) {
-			console.error(e);
-		}
-	};
-
 	static mkSelDelRefillProcesso = async (
 		eName: string | HTMLElement,
 		cod = null
@@ -2695,50 +2614,6 @@ setInterval(() => {
 // Object.defineProperty(mk, "t", {
 // 	writable: false,
 // });
-
-//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-//			CLASSE Mk Instanciavel			\\
-//___________________________________\\
-class Mk {
-	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-	//			PROPRIEDADES								\\
-	//___________________________________\\
-	dadosFull = [];
-	dadosFiltrado = [];
-	dadosExibidos = [];
-
-	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-	//			CONSTRUTOR									\\
-	//___________________________________\\
-	constructor(urlOrigem: string, divTabela: string) {
-		this.iniciarGetList(urlOrigem, divTabela);
-	}
-
-	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-	//			LISTAGEM										\\
-	//___________________________________\\
-	// LER (cRud) Metodo que inicia a coleta.
-	iniciarGetList = async (
-		url: string,
-		divTabela: string,
-		urlResumo: string | null = null
-	): Promise<void> => {
-		if (urlResumo != null) {
-			await mk.mkInclude();
-		}
-		mk.Ao("input", "input[name='tablePorPagina']", async () => {
-			mk.atualizarPorPagina();
-		});
-		let retorno = await mk.http(url, mk.t.G, mk.t.J);
-		if (retorno != null) {
-			mk.mkLimparOA(retorno);
-			mk.mkExecutaNoObj(retorno, mk.aoReceberDados);
-			this.dadosFull = this.dadosFiltrado = retorno;
-			mk.ordenarDados();
-			mk.mkUpdateFiltro();
-		}
-	};
-}
 
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //			TEST												\\

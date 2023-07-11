@@ -1,6 +1,7 @@
 [
 	{
-		"mNome": "Fulano Sem Dados"
+		"mNome": "Fulano Sem Dados",
+		"mStatus": null
 	},
 	{
 		"mId": 1,
