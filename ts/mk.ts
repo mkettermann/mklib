@@ -2602,18 +2602,95 @@ setInterval(() => {
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //			OBJETOS CONSTANTES					\\
 //___________________________________\\
-// Object.defineProperty(mk, "http", {
-// 	writable: false,
-// });
-// Object.defineProperty(mk, "mkFiltragemDados", {
-// 	writable: false,
-// });
-// Object.defineProperty(mk, "mkValidaFull", {
-// 	writable: false,
-// });
-// Object.defineProperty(mk, "t", {
-// 	writable: false,
-// });
+Object.defineProperty(mk, "http", {
+	writable: false,
+});
+Object.defineProperty(mk, "mkFiltragemDados", {
+	writable: false,
+});
+Object.defineProperty(mk, "mkValidaFull", {
+	writable: false,
+});
+Object.defineProperty(mk, "t", {
+	writable: false,
+});
+
+//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+//			CLASSE Mk Instanciavel			\\
+//___________________________________\\
+
+class Mk {
+	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+	//			PROPRIEDADES								\\
+	//___________________________________\\
+	dadosFull = []; // Todos os dados sem filtro, mas ordenaveis.
+	dadosFiltrado = []; // Mesmos dadosFull, mas após filtro.
+	dadosExibidos = []; // Clonado de dadosFiltrado, mas apenas os desta pagina.
+	divTabela; // Class do container da tabela
+	urlOrigem; // URL de origem dos dados a serem populados
+	divResumo; // Class do container do resumo da tabela (paginacao)
+	paginaAtual = 1; // Representa a pagina
+
+	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+	//			CONSTRUTOR									\\
+	//___________________________________\\
+	constructor(urlOrigem, divTabela, divResumo = null) {
+		this.divTabela = divTabela;
+		this.urlOrigem = urlOrigem;
+		this.divResumo = divResumo;
+		this.iniciarGetList();
+	}
+
+	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+	//			LISTAGEM										\\
+	//___________________________________\\
+	// Metodo que prepara a listagem e inicia a coleta.
+	iniciarGetList = async () => {
+		if (this.divResumo != null) {
+			await this.importar();
+			mk.Ao("input", "input[name='tablePorPagina']", async () => {
+				this.atualizaNaPaginaUm();
+			});
+		}
+
+		let retorno = await mk.http(this.urlOrigem, mk.t.G, mk.t.J);
+		if (retorno != null) {
+			mk.mkLimparOA(retorno);
+			mk.mkExecutaNoObj(retorno, mk.aoReceberDados);
+			this.dadosFull = this.dadosFiltrado = retorno;
+			mk.ordenarDados();
+			mk.mkUpdateFiltro();
+		}
+	};
+
+	// Retorna a pagina 1 e atualiza
+	atualizaNaPaginaUm = async () => {
+		this.paginaAtual = 1;
+		mk.atualizarLista();
+	};
+
+	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+	//			Importar										\\
+	//___________________________________\\
+	importar = async () => {
+		return new Promise((r) => {
+			mk.QAll("body *").forEach(async (e) => {
+				let destino = e.getAttribute("mkImportar");
+				if (destino != null) {
+					//console.log("Incluindo: " + destino);
+					let retorno = await mk.http(destino, mk.t.G, mk.t.H);
+					if (retorno != null) {
+						e.innerHTML = retorno;
+						//mk.mkNodeToScript(mk.Q(".conteudo"));
+					} else {
+						console.log("Falhou ao coletar dados");
+					}
+					r(retorno);
+				}
+			});
+		});
+	};
+}
 
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //			TEST												\\
