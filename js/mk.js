@@ -2337,17 +2337,20 @@ class Mk {
     dadosFull = []; // Todos os dados sem filtro, mas ordenaveis.
     dadosFiltrado = []; // Mesmos dadosFull, mas após filtro.
     dadosExibidos = []; // Clonado de dadosFiltrado, mas apenas os desta pagina.
-    divTabela; // Class do container da tabela
-    urlOrigem; // URL de origem dos dados a serem populados
-    divResumo; // Class do container do resumo da tabela (paginacao)
-    paginaAtual = 1; // Representa a pagina
+    // Objeto de configuracoes necessarias da listagem
+    c = {
+        divTabela: "",
+        urlOrigem: "",
+        paginaAtual: 1,
+        tablePorPagina: "",
+    };
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //			CONSTRUTOR									\\
     //___________________________________\\
-    constructor(urlOrigem, divTabela, divResumo = null) {
-        this.divTabela = divTabela;
-        this.urlOrigem = urlOrigem;
-        this.divResumo = divResumo;
+    constructor(urlOrigem, todaListagem) {
+        this.c.divTabela = todaListagem;
+        this.c.urlOrigem = urlOrigem;
+        this.c.tablePorPagina = todaListagem + " input[name='tablePorPagina']";
         this.iniciarGetList();
     }
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
@@ -2355,13 +2358,13 @@ class Mk {
     //___________________________________\\
     // Metodo que prepara a listagem e inicia a coleta.
     iniciarGetList = async () => {
-        if (this.divResumo != null) {
-            await this.importar();
-            mk.Ao("input", "input[name='tablePorPagina']", async () => {
-                this.atualizaNaPaginaUm();
-            });
-        }
-        let retorno = await mk.http(this.urlOrigem, mk.t.G, mk.t.J);
+        // Verifica e importa resumo da tabela se necessario.
+        await this.importar();
+        // Seta Gatilho do indicador de quantidade por pagina.
+        mk.Ao("input", this.c.tablePorPagina, async () => {
+            this.atualizaNaPaginaUm();
+        });
+        let retorno = await mk.http(this.c.urlOrigem, mk.t.G, mk.t.J);
         if (retorno != null) {
             mk.mkLimparOA(retorno);
             mk.mkExecutaNoObj(retorno, mk.aoReceberDados);
@@ -2372,7 +2375,7 @@ class Mk {
     };
     // Retorna a pagina 1 e atualiza
     atualizaNaPaginaUm = async () => {
-        this.paginaAtual = 1;
+        this.c.paginaAtual = 1;
         mk.atualizarLista();
     };
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\

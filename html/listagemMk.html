@@ -23,22 +23,24 @@
 
 <h1 class="microPos2 h1">Listagem Mk</h1>
 <div>Exemplo de Tabela de Usuários via instancia da lista:</div>
-<div class="divListagem">
-	<table class="tableListagem">
-		<thead>
-			<tr>
-				<th class="sort-mNome">Usuário</th>
-				<th class="sort-mDataCadastro">Data Cadastro</th>
-				<th class="sort-mDataUltimoAcesso">Último Acesso</th>
-				<th class="sort-mTotalAcessos">Tot. Acessos</th>
-				<th class="sort-mStatus">Status</th>
-				<th class="acao">Editar</th>
-			</tr>
-		</thead>
-		<tbody class="listBody"></tbody>
-	</table>
+<div class="divListagemContainer tabela1">
+	<div class="divListagem">
+		<table class="tableListagem">
+			<thead>
+				<tr>
+					<th class="sort-mNome">Usuário</th>
+					<th class="sort-mDataCadastro">Data Cadastro</th>
+					<th class="sort-mDataUltimoAcesso">Último Acesso</th>
+					<th class="sort-mTotalAcessos">Tot. Acessos</th>
+					<th class="sort-mStatus">Status</th>
+					<th class="acao">Editar</th>
+				</tr>
+			</thead>
+			<tbody class="listBody"></tbody>
+		</table>
+	</div>
+	<div class="tableResumo" mkImportar="/html/_resumoLista.html"></div>
 </div>
-<div class="tableListagemResumo" mkImportar="/html/_resumoLista.html"></div>
 
 <script type="text/html" id="modelo">
 	<tr id="${mId}">
