@@ -237,21 +237,26 @@ class mk {
     static mkSelDelRefillProcesso = async (eName, cod = null) => {
         return new Promise(async (r) => {
             let e = mk.Q(eName);
-            let url = appPath + e.getAttribute("data-refill");
-            cod != null ? (url += cod) : null;
-            let retorno = await mk.http(url, mk.t.G, mk.t.J);
-            if (retorno != null) {
-                let kv = retorno;
-                if (typeof retorno == "object") {
-                    kv = JSON.stringify(retorno);
-                    r(e);
+            if (e) {
+                let url = appPath + e.getAttribute("data-refill");
+                cod != null ? (url += cod) : null;
+                let retorno = await mk.http(url, mk.t.G, mk.t.J);
+                if (retorno != null) {
+                    let kv = retorno;
+                    if (typeof retorno == "object") {
+                        kv = JSON.stringify(retorno);
+                        r(e);
+                    }
+                    if (mk.isJson(kv)) {
+                        e.setAttribute("data-selarray", kv);
+                    }
+                    else {
+                        console.error("Resultado não é um JSON. (mkSelDlRefill)");
+                    }
                 }
-                if (mk.isJson(kv)) {
-                    e.setAttribute("data-selarray", kv);
-                }
-                else {
-                    console.error("Resultado não é um JSON. (mkSelDlRefill)");
-                }
+            }
+            else {
+                console.warn("Função (mkSelDlRefill) solicitou Refill em um campo inexistente (JS)");
             }
         });
     };
@@ -2401,14 +2406,3 @@ class Mk {
         });
     };
 }
-//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-//			TEST												\\
-//___________________________________\\
-//mk.iniciarGetList("./Teste.json");
-// mk.http("./Teste.json", t.G, t.J, null, true);
-// mk.http("./index.html", t.G, t.H, null, true);
-// mk.http("./index.html?post=json", t.P, t.J, { a: "teste" }, true);
-// let fd = new FormData();
-// fd.append("bb", "testeb");
-// mk.http("./index.html?post=form", t.P, t.F, fd, true);
-//
