@@ -1215,7 +1215,6 @@ class mk {
     };
     static adicionarDados = (objDados) => {
         this.fullDados.push(mk.aoReceberDados(objDados));
-        // this.sortDir = "a";
         mk.ordenarDados();
         mk.atualizarLista();
     };
@@ -1223,13 +1222,11 @@ class mk {
         // Implementar setObjetoFromId
         this.fullDados = mk.delObjetoFromId(nomeKey, valorKey, this.fullDados);
         this.fullDados.push(mk.aoReceberDados(objDados));
-        // this.sortDir = "a";
         mk.ordenarDados();
         mk.atualizarLista();
     };
     static excluirDados = (nomeKey, valorKey) => {
         this.fullDados = mk.delObjetoFromId(nomeKey, valorKey, this.fullDados);
-        // this.sortDir = "a";
         mk.ordenarDados();
         mk.atualizarLista();
     };
@@ -2335,59 +2332,93 @@ Object.defineProperty(mk, "t", {
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //			CLASSE Mk Instanciavel			\\
 //___________________________________\\
+/**
+ * Características da classe:
+ * - Armazenável: Tripa camada de dados, mas usando a segundo por referência, que não consome muito do navegador.
+ * - Escalonavel: Possibilidade de instanciar uma ou mais dela.
+ * - Filtravel: Filtro individual e genérico por instância. Atribuido a cada propriedade.
+ * - Ordenavel: Definindo os 'sort-campo', o usuário pode ordenar a tabela por este campo.
+ * - Flexível: Capacidade de efetuar as operações basicas na tabela (CRUD)
+ */
 class Mk {
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //			PROPRIEDADES								\\
     //___________________________________\\
+    // Armazenadores
     dadosFull = []; // Todos os dados sem filtro, mas ordenaveis.
     dadosFiltrado = []; // Mesmos dadosFull, mas após filtro.
     dadosExibidos = []; // Clonado de dadosFiltrado, mas apenas os desta pagina.
-    // Objeto de configuracoes necessarias da listagem
+    // Configurações
     c = {
+        objFiltro: {},
         divTabela: "",
         urlOrigem: "",
         paginaAtual: 1,
         tablePorPagina: "",
-        sortDir: "a",
-        sortBy: "",
+        sortInvert: false,
+        sortBy: "", // Propriedade a ser ordenada. (Apenas 1)
     };
-    aoReceberDados = () => { };
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //			CONSTRUTOR									\\
     //___________________________________\\
     constructor(urlOrigem, todaListagem, aoReceberDados = mk.aoReceberDados) {
-        this.c.divTabela = todaListagem;
         this.c.urlOrigem = urlOrigem;
+        this.c.divTabela = todaListagem;
         this.c.tablePorPagina = todaListagem + " input[name='tablePorPagina']";
         this.aoReceberDados = aoReceberDados;
-        this.iniciarGetList();
+        this.getList();
     }
+    // Funcoes Individuais.
+    aoReceberDados = () => { };
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //			LISTAGEM										\\
     //___________________________________\\
     // Metodo que prepara a listagem e inicia a coleta.
-    iniciarGetList = async () => {
+    getList = async () => {
         // Verifica e importa resumo da tabela se necessario.
         await this.importar();
         // Seta Gatilho do indicador de quantidade por pagina.
         mk.Ao("input", this.c.tablePorPagina, async () => {
             this.atualizaNaPaginaUm();
         });
+        // Inicia o Coleta de dados
         let retorno = await mk.http(this.c.urlOrigem, mk.t.G, mk.t.J);
         if (retorno != null) {
+            // Limpar Dados nulos
             mk.mkLimparOA(retorno);
+            // Executa funcao personalizada por página
             mk.mkExecutaNoObj(retorno, this.aoReceberDados);
+            // Armazena em 1 array que está em 2 locais na memória
             this.dadosFull = this.dadosFiltrado = retorno;
-            for (let k in this.dadosFull[0])
-                this.c.sortBy = k;
-            mk.ordenar(this.dadosFull);
-            mk.mkUpdateFiltro(); // << PAREI
+            // Coleta Primeira propriedade do Primeiro item para ordenação
+            this.c.sortBy = Object.keys(this.dadosFull[0])[0];
+            // Ordena a lista geral com base na primeira propriedade.
+            mk.ordenar(this.dadosFull, this.c.sortBy, this.c.sortInvert);
+            // Executa um filtro inicial e na sequencia processa a exibição.
+            mk.mkUpdateFiltro();
         }
     };
     // Retorna a pagina 1 e atualiza
     atualizaNaPaginaUm = async () => {
         this.c.paginaAtual = 1;
         mk.atualizarLista();
+    };
+    // Gera Listeners na THEAD da tabela (Requer classe: "sort-campo")
+    ativarSort = () => {
+        let eTrHeadPai = mk.Q(this.c.divTabela + " thead tr");
+        Array.from(eTrHeadPai.children).forEach((th) => {
+            th.classList.forEach((classe) => {
+                // Verifica se contém sort- no inicio da class
+                if (classe.indexOf("sort-") == 0) {
+                    let campo = classe.replace("sort-", "");
+                    if (campo != "") {
+                        mk.Ao("click", "thead tr .sort-" + campo, () => {
+                            mk.inverteDir(campo);
+                        });
+                    }
+                }
+            });
+        });
     };
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //			Importar										\\
@@ -2410,41 +2441,5 @@ class Mk {
                 }
             });
         });
-    };
-    ordenarDados = (a = this.dadosFull) => {
-        // Array é ordenada
-        a.sort((oA, oB) => {
-            if (oA[mk.sortBy] !== oB[mk.sortBy]) {
-                if (oA[mk.sortBy] > oB[mk.sortBy])
-                    return 1;
-                if (oA[mk.sortBy] < oB[mk.sortBy])
-                    return -1;
-            }
-            return 0;
-        });
-        if (this.c.sortDir == "d") {
-            a = a.reverse();
-        }
-        // Limpa mkSorting
-        let thsAll = mk.QAll("th");
-        if (thsAll.length != 0) {
-            thsAll.forEach((th) => {
-                th.classList.remove("mkEfeitoDesce");
-                th.classList.remove("mkEfeitoSobe");
-            });
-        }
-        // Busca elemento que está sendo ordenado
-        //console.log("Ordenando: " + this.sortBy + " EM: " + this.sortDir);
-        let thsSort = mk.QAll(".sort-" + this.c.sortBy);
-        if (thsSort.length != 0) {
-            thsSort.forEach((thSort) => {
-                if (this.c.sortDir == "a") {
-                    thSort.classList.add("mkEfeitoDesce");
-                }
-                else {
-                    thSort.classList.add("mkEfeitoSobe");
-                }
-            });
-        }
     };
 }
