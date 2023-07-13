@@ -1292,9 +1292,9 @@ class mk {
         return array;
     };
     // Funcao que ordena os dados
-    static ordenarDados = () => {
+    static ordenarDados = (a = this.fullDados) => {
         // Array é ordenada
-        this.fullDados.sort((oA, oB) => {
+        a.sort((oA, oB) => {
             if (oA[mk.sortBy] !== oB[mk.sortBy]) {
                 if (oA[mk.sortBy] > oB[mk.sortBy])
                     return 1;
@@ -1304,7 +1304,7 @@ class mk {
             return 0;
         });
         if (this.sortDir == "d") {
-            this.fullDados = this.fullDados.reverse();
+            a = a.reverse();
         }
         // Limpa mkSorting
         let thsAll = mk.QAll("th");
@@ -2348,14 +2348,18 @@ class Mk {
         urlOrigem: "",
         paginaAtual: 1,
         tablePorPagina: "",
+        sortDir: "a",
+        sortBy: "",
     };
+    aoReceberDados = () => { };
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //			CONSTRUTOR									\\
     //___________________________________\\
-    constructor(urlOrigem, todaListagem) {
+    constructor(urlOrigem, todaListagem, aoReceberDados = mk.aoReceberDados) {
         this.c.divTabela = todaListagem;
         this.c.urlOrigem = urlOrigem;
         this.c.tablePorPagina = todaListagem + " input[name='tablePorPagina']";
+        this.aoReceberDados = aoReceberDados;
         this.iniciarGetList();
     }
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
@@ -2372,10 +2376,12 @@ class Mk {
         let retorno = await mk.http(this.c.urlOrigem, mk.t.G, mk.t.J);
         if (retorno != null) {
             mk.mkLimparOA(retorno);
-            mk.mkExecutaNoObj(retorno, mk.aoReceberDados);
+            mk.mkExecutaNoObj(retorno, this.aoReceberDados);
             this.dadosFull = this.dadosFiltrado = retorno;
-            mk.ordenarDados();
-            mk.mkUpdateFiltro();
+            for (let k in this.dadosFull[0])
+                this.c.sortBy = k;
+            mk.ordenar(this.dadosFull);
+            mk.mkUpdateFiltro(); // << PAREI
         }
     };
     // Retorna a pagina 1 e atualiza
@@ -2404,5 +2410,41 @@ class Mk {
                 }
             });
         });
+    };
+    ordenarDados = (a = this.dadosFull) => {
+        // Array é ordenada
+        a.sort((oA, oB) => {
+            if (oA[mk.sortBy] !== oB[mk.sortBy]) {
+                if (oA[mk.sortBy] > oB[mk.sortBy])
+                    return 1;
+                if (oA[mk.sortBy] < oB[mk.sortBy])
+                    return -1;
+            }
+            return 0;
+        });
+        if (this.c.sortDir == "d") {
+            a = a.reverse();
+        }
+        // Limpa mkSorting
+        let thsAll = mk.QAll("th");
+        if (thsAll.length != 0) {
+            thsAll.forEach((th) => {
+                th.classList.remove("mkEfeitoDesce");
+                th.classList.remove("mkEfeitoSobe");
+            });
+        }
+        // Busca elemento que está sendo ordenado
+        //console.log("Ordenando: " + this.sortBy + " EM: " + this.sortDir);
+        let thsSort = mk.QAll(".sort-" + this.c.sortBy);
+        if (thsSort.length != 0) {
+            thsSort.forEach((thSort) => {
+                if (this.c.sortDir == "a") {
+                    thSort.classList.add("mkEfeitoDesce");
+                }
+                else {
+                    thSort.classList.add("mkEfeitoSobe");
+                }
+            });
+        }
     };
 }
