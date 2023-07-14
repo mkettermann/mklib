@@ -1,5 +1,5 @@
 "use strict";
-mk.iniciarGetList("/data/usersExemplo.json", true);
+mk.iniciarGetList("/GetList", true);
 mk.GerarAoSort();
 mk.antesDePopularTabela = () => {
 	mk.exibePaginado.forEach((o) => {
