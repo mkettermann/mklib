@@ -23,3 +23,26 @@ var uiGetEDIT = async (tr) => {
 	let objeto = lista.dadosFull.find((o) => o[k] == v);
 	await mk.mkMoldeOA(lista.getKV(objeto), "#modeloOperacao", ".operacaoCampos");
 };
+
+var uiGetDEL = async (tr) => {
+	let k = tr.getAttribute("k");
+	let v = tr.getAttribute("id");
+	mk.mkConfirma("Você está prestes a deletar esta linha. Confirma?").then(
+		(r) => {
+			if (r) uiSetDEL(k, v);
+		}
+	);
+};
+
+var uiSetADD = async () => {
+	let obj = mk.mkGerarObjeto(".operacaoCampos");
+	lista.add(obj);
+};
+
+var uiSetEDIT = async () => {
+	let obj = mk.mkGerarObjeto(".operacaoCampos");
+	lista.edit(obj, k, v);
+};
+var uiSetDEL = async (k, v) => {
+	lista.del(k, v);
+};

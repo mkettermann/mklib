@@ -20,6 +20,10 @@
 		width: 8%;
 		cursor: pointer;
 	}
+	.listBody td:nth-child(7) {
+		width: 8%;
+		cursor: pointer;
+	}
 </style>
 
 <h1 class="microPos2 h1">Listagem Mk</h1>
@@ -35,6 +39,7 @@
 					<th class="sort-mTotalAcessos">Tot. Acessos</th>
 					<th class="sort-mStatus">Status</th>
 					<th class="acao">Editar</th>
+					<th class="acao">Deletar</th>
 				</tr>
 			</thead>
 			<tbody class="listBody"></tbody>
@@ -78,7 +83,7 @@
 			<div class="j microPos2">
 				<div class="operacaoContainer">
 					<div class="operacaoTitulo">ADD</div>
-					<div class="operacaoCampos"></div>
+					<form class="operacaoCampos"></form>
 					<div class="iComGap">
 						<div class="j microPos8">
 							<button class="operacaoAcao">ADD</button>
@@ -100,7 +105,10 @@
 		<td class="sort-mTotalAcessos">${mTotalAcessos}</td>
 		<td class="sort-mStatus ${mStatus}"></td>
 		<td class="acao">
-			<a onclick="uiGetEDIT(mk.getTr(this));">Editar</a>
+			<a onclick="uiGetEDIT(mk.getTr(this));">EDIT</a>
+		</td>
+		<td class="acao">
+			<a onclick="uiGetDEL(mk.getTr(this));">DEL</a>
 		</td>
 	</tr>
 </script>

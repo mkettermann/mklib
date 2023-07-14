@@ -2834,7 +2834,9 @@ class Mk {
 	}
 
 	// Funcoes Individuais.
-	aoReceberDados = () => {};
+	aoReceberDados = (objeto: object) => {
+		return objeto;
+	};
 	antesDePopularTabela = () => {};
 	aoCompletarExibicao = () => {};
 
@@ -3221,6 +3223,27 @@ class Mk {
 			if (o[this.c.pk] > maior) maior = o[this.c.pk];
 		});
 		return maior + 1;
+	};
+
+	// USER INTERFACE - UI - INDIVIDUAL
+	add = (objDados: object) => {
+		this.dadosFull.push(this.aoReceberDados(objDados));
+		mk.ordenar(this.dadosFull, this.c.sortBy, this.c.sortInvert);
+		this.atualizarListagem();
+	};
+
+	edit = (objDados: object, k: any, v: any) => {
+		// Implementar setObjetoFromId
+		this.dadosFull = mk.delObjetoFromId(k, v, this.dadosFull);
+		this.dadosFull.push(mk.aoReceberDados(objDados));
+		mk.ordenar(this.dadosFull, this.c.sortBy, this.c.sortInvert);
+		this.atualizarListagem();
+	};
+
+	del = (k: any, v: any) => {
+		this.dadosFull = mk.delObjetoFromId(k, v, this.dadosFull);
+		mk.ordenar(this.dadosFull, this.c.sortBy, this.c.sortInvert);
+		this.atualizarListagem();
 	};
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
