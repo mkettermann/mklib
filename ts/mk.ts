@@ -2783,7 +2783,7 @@ class Mk {
 		objFiltro: {}, // Itens Filtrados
 		divTabela: "", // Class do container da tabela
 		urlOrigem: "", // URL de origem dos dados a serem populados
-		paginaAtual: 1, // Representa a pagina
+		pagAtual: 1, // Representa a pagina
 		tablePorPagina: null, // TAG: Total de linhas exibidas por página.
 		tableTotal: null, // TAG: Total de registros.
 		sortInvert: false, // Inverter Direcao dos itens ordenados? true / false
@@ -2794,7 +2794,7 @@ class Mk {
 		pagPorPagina: 5, // VAR: Total de linhas exibidas por página.
 		pagItensIni: 0,
 		pagItensFim: 0,
-		totalPaginas: 0,
+		totPags: 0,
 	};
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
@@ -2802,13 +2802,24 @@ class Mk {
 	//___________________________________\\
 	constructor(
 		urlOrigem: any = "/GetList",
-		todaListagem: any = ".divListagemContainer",
-		idModelo: any = "#modelo",
+		todaListagem: any,
+		idModelo: any,
 		aoReceberDados: any = mk.aoReceberDados,
 		antesDePopularTabela: any = mk.antesDePopularTabela,
 		aoCompletarExibicao: any = mk.aoCompletarExibicao
 	) {
 		this.c.urlOrigem = urlOrigem;
+		this.listagemConfigurar(todaListagem, idModelo);
+		this.aoReceberDados = aoReceberDados;
+		this.antesDePopularTabela = antesDePopularTabela;
+		this.aoCompletarExibicao = aoCompletarExibicao;
+		this.getList();
+	}
+
+	listagemConfigurar = (
+		todaListagem: any = ".divListagemContainer",
+		idModelo: any = "#modelo"
+	) => {
 		this.c.divTabela = todaListagem;
 		this.c.idModelo = idModelo;
 		this.c.tbody = todaListagem + " tbody";
@@ -2816,20 +2827,107 @@ class Mk {
 		this.c.tablePaginacao = todaListagem + " .tablePaginacao";
 		this.c.tablePorPagina = todaListagem + " input[name='tablePorPagina']";
 		this.c.tableExibePorPagina = todaListagem + " .tableExibePorPagina";
-		this.c.tableTotal = this.c.divTabela + " .tableResultado .tableTotal";
-		this.c.tableFiltrado = this.c.divTabela + " .tableResultado .tableFiltrado";
-		this.c.tableIni = this.c.divTabela + " .tableResultado .tableIni";
-		this.c.tableFim = this.c.divTabela + " .tableResultado .tableFim";
-		this.c.tableInicioFim =
-			this.c.divTabela + " .tableResultado .tableInicioFim";
-		this.c.paginate_button =
-			this.c.divTabela + " .tablePaginacao .paginate_button";
+		this.c.tableTotal = this.c.divTabela + " .tableTotal";
+		this.c.tableFiltrado = this.c.divTabela + " .tableFiltrado";
+		this.c.tableIni = this.c.divTabela + " .tableIni";
+		this.c.tableFim = this.c.divTabela + " .tableFim";
+		this.c.tableInicioFim = this.c.divTabela + " .tableInicioFim";
+		this.c.tablePaginateUltimaA = this.c.tablePaginacao + " .paginate_Ultima a";
+		this.c.pagBack = this.c.tablePaginacao + " .pagBack";
+		this.c.pagNext = this.c.tablePaginacao + " .pagNext";
+		this.c.pageCod2 = this.c.tablePaginacao + " .pageCod2";
+		this.c.pageCod3 = this.c.tablePaginacao + " .pageCod3";
+		this.c.pageCod4 = this.c.tablePaginacao + " .pageCod4";
+		this.c.pageCod5 = this.c.tablePaginacao + " .pageCod5";
+		this.c.pageCod6 = this.c.tablePaginacao + " .pageCod6";
+		this.c.pageCod2a = this.c.pageCod2 + " a";
+		this.c.pageCod3a = this.c.pageCod3 + " a";
+		this.c.pageCod4a = this.c.pageCod4 + " a";
+		this.c.pageCod5a = this.c.pageCod5 + " a";
+		this.c.pageCod6a = this.c.pageCod6 + " a";
+		this.c.pagbutton = this.c.tablePaginacao + " .paginate_button";
+		this.c.pagLink = this.c.pagbutton + " .page-link";
+	};
 
-		this.aoReceberDados = aoReceberDados;
-		this.antesDePopularTabela = antesDePopularTabela;
-		this.aoCompletarExibicao = aoCompletarExibicao;
-		this.getList();
-	}
+	// Monta os botoes de numero de pagina
+	processoPaginar = () => {
+		// Links
+		mk.Q(this.c.tablePaginateUltimaA).innerHTML = this.c.totPags.toString();
+
+		this.c.pagAtual == 1 ? mk.Qoff(this.c.pagBack) : mk.Qon(this.c.pagBack);
+
+		this.c.pagAtual >= this.c.totPags
+			? mk.Qoff(this.c.pagNext)
+			: mk.Qon(this.c.pagNext);
+
+		this.c.totPags > 2
+			? mk.QverOn(this.c.pageCod2)
+			: mk.QverOff(this.c.pageCod2);
+
+		this.c.totPags > 3
+			? mk.QverOn(this.c.pageCod3)
+			: mk.QverOff(this.c.pageCod3);
+
+		this.c.totPags > 4
+			? mk.QverOn(this.c.pageCod4)
+			: mk.QverOff(this.c.pageCod4);
+
+		this.c.totPags > 5
+			? mk.QverOn(this.c.pageCod5)
+			: mk.QverOff(this.c.pageCod5);
+
+		this.c.totPags > 6
+			? mk.QverOn(this.c.pageCod6)
+			: mk.QverOff(this.c.pageCod6);
+
+		if (this.c.pagAtual < 5) {
+			// INI
+			mk.Qon(this.c.pageCod2);
+			mk.Q(this.c.pageCod2a).innerHTML = "2";
+			mk.Q(this.c.pageCod3a).innerHTML = "3";
+			mk.Q(this.c.pageCod4a).innerHTML = "4";
+			mk.Q(this.c.pageCod5a).innerHTML = "5";
+			mk.Q(this.c.pageCod6a).innerHTML = "...";
+			mk.Qoff(this.c.pageCod6);
+		} else {
+			// END
+			if (this.c.totPags - this.c.pagAtual < 4) {
+				mk.Qoff(this.c.pageCod2);
+				mk.Q(this.c.pageCod2a).innerHTML = "...";
+				mk.Q(this.c.pageCod3a).innerHTML = (this.c.totPags - 4).toString();
+				mk.Q(this.c.pageCod4a).innerHTML = (this.c.totPags - 3).toString();
+				mk.Q(this.c.pageCod5a).innerHTML = (this.c.totPags - 2).toString();
+				mk.Q(this.c.pageCod6a).innerHTML = (this.c.totPags - 1).toString();
+				mk.Qon(this.c.pageCod6);
+			} else {
+				// MID
+				mk.Qoff(this.c.pageCod2);
+				mk.Q(this.c.pageCod2a).innerHTML = "...";
+				mk.Q(this.c.pageCod3a).innerHTML = (this.c.pagAtual - 1).toString();
+				mk.Q(this.c.pageCod4a).innerHTML = this.c.pagAtual.toString();
+				mk.Q(this.c.pageCod5a).innerHTML = (this.c.pagAtual + 1).toString();
+				mk.Q(this.c.pageCod6a).innerHTML = "...";
+				mk.Qoff(this.c.pageCod6);
+			}
+		}
+		// Ativar Pagina
+		mk.QAll(this.c.pagbutton).forEach((item) => {
+			item.classList.remove("active");
+		});
+		mk.QAll(this.c.pagLink).forEach((item) => {
+			if (this.c.pagAtual == Number(item.innerHTML)) {
+				item.parentElement?.classList.add("active");
+			}
+		});
+		// Limpar Exibidos
+		this.dadosExibidos = [];
+		// Clonar Exibidos de Filtrados
+		this.dadosFiltrado.forEach((o: any, i: any) => {
+			if (i + 1 >= this.c.pagItensIni && i + 1 <= this.c.pagItensFim) {
+				this.dadosExibidos.push(mk.mkClonarOA(o));
+			}
+		});
+	};
 
 	// Funcoes Individuais.
 	aoReceberDados = () => {};
@@ -2920,15 +3018,13 @@ class Mk {
 		this.c.totalFull = this.dadosFull.length;
 		this.c.totalFiltrado = this.dadosFiltrado.length;
 		this.c.totalExibidos = this.dadosExibidos.length;
-		this.c.pagItensIni = (this.c.paginaAtual - 1) * this.c.pagPorPagina + 1; // Calculo Pagination
+		this.c.pagItensIni = (this.c.pagAtual - 1) * this.c.pagPorPagina + 1; // Calculo Pagination
 		this.c.pagItensFim = this.c.pagItensIni + (this.c.pagPorPagina - 1); // Calculo genérico do último
 		if (this.c.pagItensFim > this.c.totalFiltrado)
 			this.c.pagItensFim = this.c.totalFiltrado; // Na última página não pode exibir o valor genérico.
 
 		// Arredondar pra cima, pois a última página pode exibir conteúdo sem preencher o PorPagina
-		this.c.totalPaginas = Math.ceil(
-			this.dadosFiltrado.length / this.c.pagPorPagina
-		);
+		this.c.totPags = Math.ceil(this.dadosFiltrado.length / this.c.pagPorPagina);
 		// Atualizar o Status processado no resumo da tabela
 		if (this.c.tableTotal != null)
 			mk.Q(this.c.tableTotal).innerHTML = this.c.totalFull.toString();
@@ -2940,105 +3036,9 @@ class Mk {
 			mk.Q(this.c.tableFim).innerHTML = this.c.pagItensFim.toString();
 	};
 
-	// Monta os botoes de numero de pagina
-	processoPaginar = () => {
-		// Links
-		mk.Q(this.c.tablePaginacao + " .paginate_Ultima a").innerHTML =
-			this.c.totalPaginas.toString();
-
-		this.c.paginaAtual == 1
-			? mk.Qoff(this.c.tablePaginacao + " .pagBack")
-			: mk.Qon(this.c.tablePaginacao + " .pagBack");
-
-		this.c.paginaAtual >= this.c.totalPaginas
-			? mk.Qoff(this.c.tablePaginacao + " .pagNext")
-			: mk.Qon(this.c.tablePaginacao + " .pagNext");
-
-		this.c.totalPaginas > 2
-			? mk.QverOn(this.c.tablePaginacao + " .pageCod2")
-			: mk.QverOff(this.c.tablePaginacao + " .pageCod2");
-
-		this.c.totalPaginas > 3
-			? mk.QverOn(this.c.tablePaginacao + " .pageCod3")
-			: mk.QverOff(this.c.tablePaginacao + " .pageCod3");
-
-		this.c.totalPaginas > 4
-			? mk.QverOn(this.c.tablePaginacao + " .pageCod4")
-			: mk.QverOff(this.c.tablePaginacao + " .pageCod4");
-
-		this.c.totalPaginas > 5
-			? mk.QverOn(this.c.tablePaginacao + " .pageCod5")
-			: mk.QverOff(this.c.tablePaginacao + " .pageCod5");
-
-		this.c.totalPaginas > 6
-			? mk.QverOn(this.c.tablePaginacao + " .pageCod6")
-			: mk.QverOff(this.c.tablePaginacao + " .pageCod6");
-
-		if (this.c.paginaAtual < 5) {
-			// INI
-			mk.Qon(this.c.tablePaginacao + " .pageCod2");
-			mk.Q(this.c.tablePaginacao + " .pageCod2 a").innerHTML = "2";
-			mk.Q(this.c.tablePaginacao + " .pageCod3 a").innerHTML = "3";
-			mk.Q(this.c.tablePaginacao + " .pageCod4 a").innerHTML = "4";
-			mk.Q(this.c.tablePaginacao + " .pageCod5 a").innerHTML = "5";
-			mk.Q(this.c.tablePaginacao + " .pageCod6 a").innerHTML = "...";
-			mk.Qoff(this.c.tablePaginacao + " .pageCod6");
-		} else {
-			// END
-			if (this.c.totalPaginas - this.c.paginaAtual < 4) {
-				mk.Qoff(this.c.tablePaginacao + " .pageCod2");
-				mk.Q(this.c.tablePaginacao + " .pageCod2 a").innerHTML = "...";
-				mk.Q(this.c.tablePaginacao + " .pageCod3 a").innerHTML = (
-					this.c.totalPaginas - 4
-				).toString();
-				mk.Q(this.c.tablePaginacao + " .pageCod4 a").innerHTML = (
-					this.c.totalPaginas - 3
-				).toString();
-				mk.Q(this.c.tablePaginacao + " .pageCod5 a").innerHTML = (
-					this.c.totalPaginas - 2
-				).toString();
-				mk.Q(this.c.tablePaginacao + " .pageCod6 a").innerHTML = (
-					this.c.totalPaginas - 1
-				).toString();
-				mk.Qon(this.c.tablePaginacao + " .pageCod6");
-			} else {
-				// MID
-				mk.Qoff(this.c.tablePaginacao + " .pageCod2");
-				mk.Q(this.c.tablePaginacao + " .pageCod2 a").innerHTML = "...";
-				mk.Q(this.c.tablePaginacao + " .pageCod3 a").innerHTML = (
-					this.c.paginaAtual - 1
-				).toString();
-				mk.Q(this.c.tablePaginacao + " .pageCod4 a").innerHTML =
-					this.c.paginaAtual.toString();
-				mk.Q(this.c.tablePaginacao + " .pageCod5 a").innerHTML = (
-					this.c.paginaAtual + 1
-				).toString();
-				mk.Q(this.c.tablePaginacao + " .pageCod6 a").innerHTML = "...";
-				mk.Qoff(this.c.tablePaginacao + " .pageCod6");
-			}
-		}
-		// Ativar Pagina
-		mk.QAll(this.c.paginate_button).forEach((item) => {
-			item.classList.remove("active");
-		});
-		mk.QAll(this.c.paginate_button + " .page-link").forEach((item) => {
-			if (this.c.paginaAtual == Number(item.innerHTML)) {
-				item.parentElement?.classList.add("active");
-			}
-		});
-		// Limpar Exibidos
-		this.dadosExibidos = [];
-		// Clonar Exibidos de Filtrados
-		this.dadosFiltrado.forEach((o: any, i: any) => {
-			if (i + 1 >= this.c.pagItensIni && i + 1 <= this.c.pagItensFim) {
-				this.dadosExibidos.push(mk.mkClonarOA(o));
-			}
-		});
-	};
-
 	// Retorna a pagina 1 e atualiza
 	atualizaNaPaginaUm = async () => {
-		this.c.paginaAtual = 1;
+		this.c.pagAtual = 1;
 		this.atualizarListagem();
 	};
 
