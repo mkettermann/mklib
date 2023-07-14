@@ -2746,15 +2746,6 @@ setInterval(() => {
 Object.defineProperty(mk, "http", {
 	writable: false,
 });
-Object.defineProperty(mk, "mkFiltragemDados", {
-	writable: false,
-});
-Object.defineProperty(mk, "mkValidaFull", {
-	writable: false,
-});
-Object.defineProperty(mk, "t", {
-	writable: false,
-});
 
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //			CLASSE Mk Instanciavel			\\
