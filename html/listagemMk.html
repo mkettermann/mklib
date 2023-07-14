@@ -18,6 +18,7 @@
 	}
 	.listBody td:nth-child(6) {
 		width: 8%;
+		cursor: pointer;
 	}
 </style>
 
@@ -46,7 +47,7 @@
 <div class="iComGap">
 	<div class="col30">
 		<div class="i microPos5">
-			<button href="#Adicionar" onclick="uiAdicionar()">Adicionar</button>
+			<button href="#Adicionar" onclick="uiGetAdicionar()">Adicionar</button>
 		</div>
 		<div class="i">
 			<div class="col60">Filtro por Usuário:</div>
@@ -77,9 +78,11 @@
 			<div class="j microPos2">
 				<div class="operacaoContainer">
 					<div class="operacaoTitulo">ADD</div>
+					<div class="operacaoCampos"></div>
 					<div class="iComGap">
-						<div class="j">a</div>
-						<div class="j">b</div>
+						<div class="j microPos8">
+							<button class="operacaoAcao">ADD</button>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -88,7 +91,7 @@
 </div>
 
 <script type="text/html" id="modelo">
-	<tr id="${mId}">
+	<tr id="${mId}" k="mId">
 		<td class="sort-mNome">${mNome}</td>
 		<td class="sort-mDataCadastro">
 			<input type="date" value="${mDataCadastro}" />
@@ -97,11 +100,16 @@
 		<td class="sort-mTotalAcessos">${mTotalAcessos}</td>
 		<td class="sort-mStatus ${mStatus}"></td>
 		<td class="acao">
-			<a onclick="aoClicarEditar(this);">Editar</a>
+			<a onclick="uiGetEditar(mk.getTr(this));">Editar</a>
 		</td>
 	</tr>
 </script>
 
-<script type="text/html" id="modeloOperacao"></script>
+<script type="text/html" id="modeloOperacao">
+	<div class="iComGap">
+		<div class="j">${k}</div>
+		<div class="j"><input name="${k}" class="" value="${v}" /></div>
+	</div>
+</script>
 
 <script src="/js/listagemMk.js"></script>

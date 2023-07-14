@@ -492,6 +492,20 @@ class mk {
 		return eForm;
 	};
 
+	static getTr = (e: any) => {
+		let eTr = e;
+		while (eTr.tagName != "TR") {
+			eTr = eTr.parentElement;
+			if (eTr.tagName == "BODY") {
+				console.error(
+					"Não foi possível encontrar o elemento FORM na busca getFormFrom()"
+				);
+				break;
+			}
+		}
+		return eTr;
+	};
+
 	// Retorna uma array utilizando um template do que deve ser preenchido.
 	static encheArray = (
 		arrTemplate: any[],
@@ -3169,6 +3183,33 @@ class Mk {
 				}
 			});
 		}
+	};
+
+	getKeys = () => {
+		let chaves = new Set();
+		this.dadosFull.forEach((o) => {
+			Object.keys(o).forEach((p) => {
+				chaves.add(p);
+			});
+		});
+		let kv: any = [];
+		chaves.forEach((k) => kv.push({ k: k }));
+		return kv;
+	};
+
+	getKV = (obj: any) => {
+		let chaves = new Set();
+		this.dadosFull.forEach((o) => {
+			Object.keys(o).forEach((p) => {
+				chaves.add(p);
+			});
+		});
+		let kv: any = [];
+		chaves.forEach((k) => {
+			let v = obj?.[k] || "";
+			kv.push({ k: k, v: v });
+		});
+		return kv;
 	};
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
