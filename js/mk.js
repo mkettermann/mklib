@@ -2521,12 +2521,14 @@ class Mk {
         pagItensIni: 0,
         pagItensFim: 0,
         totPags: 0,
+        pk: "", // Possivel setar o nome do campo que é primary key já na construcao
     };
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //			CONSTRUTOR									\\
     //___________________________________\\
-    constructor(urlOrigem = "/GetList", todaListagem, idModelo, aoReceberDados = mk.aoReceberDados, antesDePopularTabela = mk.antesDePopularTabela, aoCompletarExibicao = mk.aoCompletarExibicao) {
+    constructor(urlOrigem = "/GetList", todaListagem, idModelo, pk = "pk", aoReceberDados = mk.aoReceberDados, antesDePopularTabela = mk.antesDePopularTabela, aoCompletarExibicao = mk.aoCompletarExibicao) {
         this.c.urlOrigem = urlOrigem;
+        this.c.pk = pk;
         this.listagemConfigurar(todaListagem, idModelo);
         this.aoReceberDados = aoReceberDados;
         this.antesDePopularTabela = antesDePopularTabela;
@@ -2882,6 +2884,14 @@ class Mk {
             kv.push({ k: k, v: v });
         });
         return kv;
+    };
+    getNewPK = () => {
+        let maior = 0;
+        this.dadosFull.forEach((o) => {
+            if (o[this.c.pk] > maior)
+                maior = o[this.c.pk];
+        });
+        return maior + 1;
     };
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //			Importar										\\
