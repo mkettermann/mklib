@@ -314,7 +314,7 @@ input {
 	border-bottom-right-radius: 20px;
 	border-top-right-radius: 0px;
 }
-.pagBotoes .pagBotao.active,
+.pagBotoes .pagBotao.ativo,
 .pagBotoes .pagBotao:hover {
 	background-color: var(--fundoHead);
 }

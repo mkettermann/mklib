@@ -2781,7 +2781,7 @@ class Mk {
 	// Configurações
 	c: any = {
 		objFiltro: {}, // Itens Filtrados
-		divTabela: "", // Class do container da tabela
+		divTabela: ".divListagemContainer", // Class do container da tabela
 		urlOrigem: "", // URL de origem dos dados a serem populados
 		pagAtual: 1, // Representa a pagina
 		tablePorPagina: null, // TAG: Total de linhas exibidas por página.
@@ -2816,6 +2816,15 @@ class Mk {
 		this.getList();
 	}
 
+	// Funcoes Individuais.
+	aoReceberDados = () => {};
+	antesDePopularTabela = () => {};
+	aoCompletarExibicao = () => {};
+
+	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+	//			LISTAGEM										\\
+	//___________________________________\\
+	// Seta as variaveis de uso interno.
 	listagemConfigurar = (
 		todaListagem: any = ".divListagemContainer",
 		idModelo: any = "#modelo"
@@ -2824,7 +2833,7 @@ class Mk {
 		this.c.idModelo = idModelo;
 		this.c.tbody = todaListagem + " tbody";
 		this.c.ths = todaListagem + " th";
-		this.c.tablePaginacao = todaListagem + " .pagBotoes";
+		this.c.pagBotoes = todaListagem + " .pagBotoes";
 		this.c.tablePorPagina = todaListagem + " input[name='tablePorPagina']";
 		this.c.tableExibePorPagina = todaListagem + " .tableExibePorPagina";
 		this.c.tableTotal = this.c.divTabela + " .tableTotal";
@@ -2832,8 +2841,143 @@ class Mk {
 		this.c.tableIni = this.c.divTabela + " .tableIni";
 		this.c.tableFim = this.c.divTabela + " .tableFim";
 		this.c.tableInicioFim = this.c.divTabela + " .tableInicioFim";
-		this.c.pag = this.c.tablePaginacao + " .pag";
-		this.c.pagBotao = this.c.tablePaginacao + " .pagBotao";
+		this.c.pag = this.c.pagBotoes + " .pag";
+		this.c.pagBotao = this.c.pagBotoes + " .pagBotao";
+	};
+
+	// Criar eventos para UI permitindo o usuario interagir com a tabela.
+	configurarUI = () => {
+		if (mk.Q(this.c.divTabela)) {
+			// Seta Gatilho dos botoes de paginacao.
+			mk.QAll(this.c.pagBotao).forEach((li) => {
+				li.addEventListener("click", (ev) => {
+					this.mudaPag(ev.target);
+				});
+			});
+			// Seta Gatilho do indicador de quantidade por pagina.
+			if (mk.Q(this.c.tablePorPagina)) {
+				mk.Ao("input", this.c.tablePorPagina, async () => {
+					this.atualizaNaPaginaUm();
+				});
+			}
+		}
+	};
+
+	// Metodo que prepara a listagem e inicia a coleta.
+	getList = async () => {
+		// Verifica e importa resumo da tabela se necessario.
+		await this.importar();
+		this.configurarUI();
+
+		// Inicia o Coleta de dados
+		let retorno = await mk.http(this.c.urlOrigem, mk.t.G, mk.t.J);
+		if (retorno != null) {
+			// Limpar Dados nulos
+			mk.mkLimparOA(retorno);
+			// Executa funcao personalizada por página
+			mk.mkExecutaNoObj(retorno, this.aoReceberDados);
+			// Armazena em 1 array que está em 2 locais na memória
+			this.dadosFull = this.dadosFiltrado = retorno;
+			// Coleta Primeira propriedade do Primeiro item para ordenação
+			this.c.sortBy = Object.keys(this.dadosFull[0])[0];
+			// Ordena a lista geral com base na primeira propriedade.
+			mk.ordenar(this.dadosFull, this.c.sortBy, this.c.sortInvert);
+
+			//Adiciona eventos aos botões do filtro
+			this.setFiltroListener();
+			// Executa um filtro inicial e na sequencia processa a exibição.
+			this.updateFiltro();
+
+			this.efeitoSort();
+		}
+	};
+
+	/**
+	 * ATUALIZA a listagem com os dados ja ordenados.
+	 * Executa a filtragem dos dados;
+	 */
+	atualizarListagem = async () => {
+		let pagBotoes = mk.Q(this.c.pagBotoes);
+		// Apenas executa a atualização e filtro, se a pagBotoes estiver presente na página.
+		if (pagBotoes) {
+			// Processo de filtro que usa o objFiltro nos dadosFull e retorna dadosFiltrado já filtrado.
+			this.dadosFiltrado = mk.processoFiltragem(
+				this.dadosFull,
+				this.c.objFiltro
+			);
+			// Processar calculos de paginacao
+			this.atualizarStatusListagem();
+			if (this.c.totalFiltrado > this.c.pagPorPagina)
+				pagBotoes.removeAttribute("hidden");
+			else pagBotoes.setAttribute("hidden", "");
+
+			if (this.c.totalFiltrado == 0) {
+				mk.Q(this.c.tableInicioFim).setAttribute("hidden", "");
+				mk.Q(this.c.tableExibePorPagina).setAttribute("hidden", "");
+				mk.Q(this.c.tbody).setAttribute("hidden", "");
+				this.dadosExibidos = [];
+			} else {
+				mk.Q(this.c.tableInicioFim).removeAttribute("hidden");
+				mk.Q(this.c.tableExibePorPagina).removeAttribute("hidden");
+				mk.Q(this.c.tbody).removeAttribute("hidden");
+
+				this.processoPaginar();
+				this.antesDePopularTabela();
+
+				await mk.mkMoldeOA(this.dadosExibidos, this.c.idModelo, this.c.tbody);
+				this.aoCompletarExibicao();
+			}
+		}
+	};
+
+	// Atualiza o objeto que contem os dados desta instancia.
+	atualizarStatusListagem = () => {
+		if (mk.Q(this.c.tablePorPagina) == null) {
+			this.c.pagPorPagina = 5;
+		} else {
+			this.c.pagPorPagina = Number(
+				(mk.Q(this.c.tablePorPagina) as HTMLInputElement).value
+			);
+		}
+		this.c.totalFull = this.dadosFull.length;
+		this.c.totalFiltrado = this.dadosFiltrado.length;
+		this.c.totalExibidos = this.dadosExibidos.length;
+		this.c.pagItensIni = (this.c.pagAtual - 1) * this.c.pagPorPagina + 1; // Calculo Pagination
+		this.c.pagItensFim = this.c.pagItensIni + (this.c.pagPorPagina - 1); // Calculo genérico do último
+		if (this.c.pagItensFim > this.c.totalFiltrado)
+			this.c.pagItensFim = this.c.totalFiltrado; // Na última página não pode exibir o valor genérico.
+
+		// Arredondar pra cima, pois a última página pode exibir conteúdo sem preencher o PorPagina
+		this.c.totPags = Math.ceil(this.dadosFiltrado.length / this.c.pagPorPagina);
+		// Atualizar o Status processado no resumo da tabela
+		if (this.c.tableTotal != null)
+			mk.Q(this.c.tableTotal).innerHTML = this.c.totalFull.toString();
+		if (this.c.tableFiltrado != null)
+			mk.Q(this.c.tableFiltrado).innerHTML = this.c.totalFiltrado.toString();
+		if (this.c.tableIni != null)
+			mk.Q(this.c.tableIni).innerHTML = this.c.pagItensIni.toString();
+		if (this.c.tableFim != null)
+			mk.Q(this.c.tableFim).innerHTML = this.c.pagItensFim.toString();
+	};
+
+	// Retorna a pagina 1 e atualiza
+	atualizaNaPaginaUm = async () => {
+		this.c.pagAtual = 1;
+		this.atualizarListagem();
+	};
+
+	// Gatilho para trocar a pagina
+	mudaPag = (e: any) => {
+		if (e.classList.contains("pag0")) {
+			// Anterior
+			if (this.c.pagAtual >= 2) this.c.pagAtual -= 1;
+		} else if (e.classList.contains("pag8")) {
+			// Proximo
+			this.c.pagAtual += 1;
+		} else {
+			this.c.pagAtual = Number(e.innerHTML);
+		}
+		this.atualizarListagem();
 	};
 
 	// Monta os botoes de numero de pagina
@@ -2921,119 +3065,6 @@ class Mk {
 				this.dadosExibidos.push(mk.mkClonarOA(o));
 			}
 		});
-	};
-
-	// Funcoes Individuais.
-	aoReceberDados = () => {};
-	antesDePopularTabela = () => {};
-	aoCompletarExibicao = () => {};
-
-	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-	//			LISTAGEM										\\
-	//___________________________________\\
-	// Metodo que prepara a listagem e inicia a coleta.
-	getList = async () => {
-		// Verifica e importa resumo da tabela se necessario.
-		await this.importar();
-		// Seta Gatilho do indicador de quantidade por pagina.
-		mk.Ao("input", this.c.tablePorPagina, async () => {
-			this.atualizaNaPaginaUm();
-		});
-		// Inicia o Coleta de dados
-		let retorno = await mk.http(this.c.urlOrigem, mk.t.G, mk.t.J);
-		if (retorno != null) {
-			// Limpar Dados nulos
-			mk.mkLimparOA(retorno);
-			// Executa funcao personalizada por página
-			mk.mkExecutaNoObj(retorno, this.aoReceberDados);
-			// Armazena em 1 array que está em 2 locais na memória
-			this.dadosFull = this.dadosFiltrado = retorno;
-			// Coleta Primeira propriedade do Primeiro item para ordenação
-			this.c.sortBy = Object.keys(this.dadosFull[0])[0];
-			// Ordena a lista geral com base na primeira propriedade.
-			mk.ordenar(this.dadosFull, this.c.sortBy, this.c.sortInvert);
-
-			//Adiciona eventos aos botões do filtro
-			this.setFiltroListener();
-			// Executa um filtro inicial e na sequencia processa a exibição.
-			this.updateFiltro();
-
-			this.efeitoSort();
-		}
-	};
-
-	/**
-	 * ATUALIZA a listagem com os dados ja ordenados.
-	 * Executa a filtragem dos dados;
-	 */
-	atualizarListagem = async () => {
-		let tablePaginacao = mk.Q(this.c.tablePaginacao);
-		// Apenas executa a atualização e filtro, se a tablePaginacao estiver presente na página.
-		if (tablePaginacao) {
-			// Processo de filtro que usa o objFiltro nos dadosFull e retorna dadosFiltrado já filtrado.
-			this.dadosFiltrado = mk.processoFiltragem(
-				this.dadosFull,
-				this.c.objFiltro
-			);
-			// Processar calculos de paginacao
-			this.atualizarStatusListagem();
-			if (this.c.totalFiltrado > this.c.pagPorPagina)
-				tablePaginacao.removeAttribute("hidden");
-			else tablePaginacao.setAttribute("hidden", "");
-
-			if (this.c.totalFiltrado == 0) {
-				mk.Q(this.c.tableInicioFim).setAttribute("hidden", "");
-				mk.Q(this.c.tableExibePorPagina).setAttribute("hidden", "");
-				mk.Q(this.c.tbody).setAttribute("hidden", "");
-				this.dadosExibidos = [];
-			} else {
-				mk.Q(this.c.tableInicioFim).removeAttribute("hidden");
-				mk.Q(this.c.tableExibePorPagina).removeAttribute("hidden");
-				mk.Q(this.c.tbody).removeAttribute("hidden");
-
-				this.processoPaginar();
-				this.antesDePopularTabela();
-
-				await mk.mkMoldeOA(this.dadosExibidos, this.c.idModelo, this.c.tbody);
-				this.aoCompletarExibicao();
-			}
-		}
-	};
-
-	// Atualiza o objeto que contem os dados desta instancia.
-	atualizarStatusListagem = () => {
-		if (mk.Q(this.c.tablePorPagina) == null) {
-			this.c.pagPorPagina = 5;
-		} else {
-			this.c.pagPorPagina = Number(
-				(mk.Q(this.c.tablePorPagina) as HTMLInputElement).value
-			);
-		}
-		this.c.totalFull = this.dadosFull.length;
-		this.c.totalFiltrado = this.dadosFiltrado.length;
-		this.c.totalExibidos = this.dadosExibidos.length;
-		this.c.pagItensIni = (this.c.pagAtual - 1) * this.c.pagPorPagina + 1; // Calculo Pagination
-		this.c.pagItensFim = this.c.pagItensIni + (this.c.pagPorPagina - 1); // Calculo genérico do último
-		if (this.c.pagItensFim > this.c.totalFiltrado)
-			this.c.pagItensFim = this.c.totalFiltrado; // Na última página não pode exibir o valor genérico.
-
-		// Arredondar pra cima, pois a última página pode exibir conteúdo sem preencher o PorPagina
-		this.c.totPags = Math.ceil(this.dadosFiltrado.length / this.c.pagPorPagina);
-		// Atualizar o Status processado no resumo da tabela
-		if (this.c.tableTotal != null)
-			mk.Q(this.c.tableTotal).innerHTML = this.c.totalFull.toString();
-		if (this.c.tableFiltrado != null)
-			mk.Q(this.c.tableFiltrado).innerHTML = this.c.totalFiltrado.toString();
-		if (this.c.tableIni != null)
-			mk.Q(this.c.tableIni).innerHTML = this.c.pagItensIni.toString();
-		if (this.c.tableFim != null)
-			mk.Q(this.c.tableFim).innerHTML = this.c.pagItensFim.toString();
-	};
-
-	// Retorna a pagina 1 e atualiza
-	atualizaNaPaginaUm = async () => {
-		this.c.pagAtual = 1;
-		this.atualizarListagem();
 	};
 
 	// Limpa e Gera Filtro baseado na class "iConsultas" apenas em input.
