@@ -2792,26 +2792,6 @@ class Mk {
 	dadosFiltrado: any = []; // Mesmos dadosFull, mas após filtro.
 	dadosExibidos: any = []; // Clonado de dadosFiltrado, mas apenas os desta pagina.
 
-	// Configurações
-	c: any = {
-		objFiltro: {}, // Itens Filtrados
-		divTabela: ".divListagemContainer", // Class do container da tabela
-		urlOrigem: "", // URL de origem dos dados a serem populados
-		pagAtual: 1, // Representa a pagina
-		tablePorPagina: null, // TAG: Total de linhas exibidas por página.
-		tableTotal: null, // TAG: Total de registros.
-		sortInvert: false, // Inverter Direcao dos itens ordenados? true / false
-		sortBy: "", // Propriedade a ser ordenada. (Apenas 1)
-		totalFull: this.dadosFull.length,
-		totalFiltrado: this.dadosFiltrado.length,
-		totalExibidos: this.dadosExibidos.length,
-		pagPorPagina: 5, // VAR: Total de linhas exibidas por página.
-		pagItensIni: 0,
-		pagItensFim: 0,
-		totPags: 0,
-		pk: "", // Possivel setar o nome do campo que é primary key já na construcao
-	};
-
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 	//			CONSTRUTOR									\\
 	//___________________________________\\
@@ -2839,6 +2819,28 @@ class Mk {
 	};
 	antesDePopularTabela = () => {};
 	aoCompletarExibicao = () => {};
+
+	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+	//			CONFIGURACOES								\\
+	//___________________________________\\
+	c: any = {
+		objFiltro: {}, // Itens Filtrados
+		divTabela: ".divListagemContainer", // Class do container da tabela
+		urlOrigem: "", // URL de origem dos dados a serem populados
+		pagAtual: 1, // Representa a pagina
+		tablePorPagina: null, // TAG: Total de linhas exibidas por página.
+		tableTotal: null, // TAG: Total de registros.
+		sortInvert: false, // Inverter Direcao dos itens ordenados? true / false
+		sortBy: "", // Propriedade a ser ordenada. (Apenas 1)
+		totalFull: this.dadosFull.length,
+		totalFiltrado: this.dadosFiltrado.length,
+		totalExibidos: this.dadosExibidos.length,
+		pagPorPagina: 5, // VAR: Total de linhas exibidas por página.
+		pagItensIni: 0,
+		pagItensFim: 0,
+		totPags: 0,
+		pk: "", // Possivel setar o nome do campo que é primary key já na construcao
+	};
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 	//			LISTAGEM										\\

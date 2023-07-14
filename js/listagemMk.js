@@ -3,7 +3,8 @@
 // mk.aoReceberDados = (data) => {
 // 	console.log("oi");
 // };
-var lista = new Mk(undefined, undefined, undefined, "mId");
+var lista = new Mk(undefined, ".tabela1", undefined, "mId");
+var lista2 = new Mk("/GetList", ".tabela2", undefined, "mId");
 //var lista = new Mk("/data/usersExemplo.json", ".tabela1", "#modelo");
 
 var uiGetADD = async () => {

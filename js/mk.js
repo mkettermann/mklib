@@ -2504,25 +2504,6 @@ class Mk {
     dadosFull = []; // Todos os dados sem filtro, mas ordenaveis.
     dadosFiltrado = []; // Mesmos dadosFull, mas após filtro.
     dadosExibidos = []; // Clonado de dadosFiltrado, mas apenas os desta pagina.
-    // Configurações
-    c = {
-        objFiltro: {},
-        divTabela: ".divListagemContainer",
-        urlOrigem: "",
-        pagAtual: 1,
-        tablePorPagina: null,
-        tableTotal: null,
-        sortInvert: false,
-        sortBy: "",
-        totalFull: this.dadosFull.length,
-        totalFiltrado: this.dadosFiltrado.length,
-        totalExibidos: this.dadosExibidos.length,
-        pagPorPagina: 5,
-        pagItensIni: 0,
-        pagItensFim: 0,
-        totPags: 0,
-        pk: "", // Possivel setar o nome do campo que é primary key já na construcao
-    };
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //			CONSTRUTOR									\\
     //___________________________________\\
@@ -2541,6 +2522,27 @@ class Mk {
     };
     antesDePopularTabela = () => { };
     aoCompletarExibicao = () => { };
+    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+    //			CONFIGURACOES								\\
+    //___________________________________\\
+    c = {
+        objFiltro: {},
+        divTabela: ".divListagemContainer",
+        urlOrigem: "",
+        pagAtual: 1,
+        tablePorPagina: null,
+        tableTotal: null,
+        sortInvert: false,
+        sortBy: "",
+        totalFull: this.dadosFull.length,
+        totalFiltrado: this.dadosFiltrado.length,
+        totalExibidos: this.dadosExibidos.length,
+        pagPorPagina: 5,
+        pagItensIni: 0,
+        pagItensFim: 0,
+        totPags: 0,
+        pk: "", // Possivel setar o nome do campo que é primary key já na construcao
+    };
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //			LISTAGEM										\\
     //___________________________________\\
