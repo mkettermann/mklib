@@ -1250,7 +1250,8 @@ class mk {
 	 * //mk.fullDados.filter(o => {return o.codPessoa < 5}).map(o => {return o.codPessoa + " - " + o.nomPessoa}).join("<br>");
 	 * //Não é possível utilizar o filter(), pois nesse caso estamos girando 2 filter ao mesmo tempo e comparando os parametros.
 	 */
-	static processoFiltragem = (aTotal: any, aFiltrada: any, objFiltro) => {
+	static processoFiltragem = (aTotal: any, objFiltro: any) => {
+		let aFiltrada = [];
 		if (Array.isArray(aTotal)) {
 			let temp: any[] = [];
 			aTotal.forEach((o) => {
@@ -1379,6 +1380,7 @@ class mk {
 		} else {
 			aFiltrada = [];
 		}
+		return aFiltrada;
 	};
 
 	/**
@@ -2772,9 +2774,9 @@ class Mk {
 	//___________________________________\\
 
 	// Armazenadores
-	dadosFull = []; // Todos os dados sem filtro, mas ordenaveis.
-	dadosFiltrado = []; // Mesmos dadosFull, mas após filtro.
-	dadosExibidos = []; // Clonado de dadosFiltrado, mas apenas os desta pagina.
+	dadosFull: any = []; // Todos os dados sem filtro, mas ordenaveis.
+	dadosFiltrado: any = []; // Mesmos dadosFull, mas após filtro.
+	dadosExibidos: any = []; // Clonado de dadosFiltrado, mas apenas os desta pagina.
 
 	// Configurações
 	c: any = {
@@ -2810,6 +2812,7 @@ class Mk {
 		this.c.divTabela = todaListagem;
 		this.c.idModelo = idModelo;
 		this.c.tbody = todaListagem + " tbody";
+		this.c.ths = todaListagem + " th";
 		this.c.tablePaginacao = todaListagem + " .tablePaginacao";
 		this.c.tablePorPagina = todaListagem + " input[name='tablePorPagina']";
 		this.c.tableExibePorPagina = todaListagem + " .tableExibePorPagina";
@@ -2862,6 +2865,8 @@ class Mk {
 			this.setFiltroListener();
 			// Executa um filtro inicial e na sequencia processa a exibição.
 			this.updateFiltro();
+
+			this.efeitoSort();
 		}
 	};
 
@@ -2874,9 +2879,8 @@ class Mk {
 		// Apenas executa a atualização e filtro, se a tablePaginacao estiver presente na página.
 		if (tablePaginacao) {
 			// Processo de filtro que usa o objFiltro nos dadosFull e retorna dadosFiltrado já filtrado.
-			mk.processoFiltragem(
+			this.dadosFiltrado = mk.processoFiltragem(
 				this.dadosFull,
-				this.dadosFiltrado,
 				this.c.objFiltro
 			);
 			// Processar calculos de paginacao
@@ -3025,7 +3029,7 @@ class Mk {
 		// Limpar Exibidos
 		this.dadosExibidos = [];
 		// Clonar Exibidos de Filtrados
-		this.dadosFiltrado.forEach((o, i) => {
+		this.dadosFiltrado.forEach((o: any, i: any) => {
 			if (i + 1 >= this.c.pagItensIni && i + 1 <= this.c.pagItensFim) {
 				this.dadosExibidos.push(mk.mkClonarOA(o));
 			}
@@ -3075,6 +3079,7 @@ class Mk {
 		mk.QAll("input.iConsultas").forEach((e) => {
 			e.addEventListener("input", () => {
 				this.gerarFiltro(e);
+				this.atualizaNaPaginaUm();
 			});
 		});
 	};
@@ -3111,7 +3116,31 @@ class Mk {
 		}
 		// Ordena a lista geral com base na primeira propriedade.
 		mk.ordenar(this.dadosFull, this.c.sortBy, this.c.sortInvert);
+		this.efeitoSort();
 		this.atualizarListagem();
+	};
+
+	efeitoSort = () => {
+		// Limpa efeito
+		let thsAll = mk.QAll(this.c.ths);
+		if (thsAll.length != 0) {
+			thsAll.forEach((th) => {
+				th.classList.remove("mkEfeitoDesce");
+				th.classList.remove("mkEfeitoSobe");
+			});
+		}
+		// Busca elemento que está sendo ordenado
+		//console.log("Ordenando: " + this.sortBy + " EM: " + this.sortDir);
+		let thsSort = mk.QAll(this.c.ths + ".sort-" + this.c.sortBy);
+		if (thsSort.length != 0) {
+			thsSort.forEach((thSort) => {
+				if (this.c.sortInvert) {
+					thSort.classList.add("mkEfeitoDesce");
+				} else {
+					thSort.classList.add("mkEfeitoSobe");
+				}
+			});
+		}
 	};
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
