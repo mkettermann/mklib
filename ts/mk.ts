@@ -1244,6 +1244,144 @@ class mk {
 	};
 
 	/**
+	 * FullFiltroFull - processoFiltragem
+	 * Busca as mesmas propriedades no filtro e nos itens de fullDados;
+	 * Uma lista exibeDados eh formada por referencia de memoria a partir dos resultados encontrados apos filtro.
+	 * //mk.fullDados.filter(o => {return o.codPessoa < 5}).map(o => {return o.codPessoa + " - " + o.nomPessoa}).join("<br>");
+	 * //Não é possível utilizar o filter(), pois nesse caso estamos girando 2 filter ao mesmo tempo e comparando os parametros.
+	 */
+	static processoFiltragem = (aTotal: any, aFiltrada: any, objFiltro) => {
+		if (Array.isArray(aTotal)) {
+			let temp: any[] = [];
+			aTotal.forEach((o) => {
+				let podeExibir = true; // Verificara cada prop, logica de remocao seletiva.
+				for (let propFiltro in objFiltro) {
+					// Cada Propriedade de Cada Item da Array
+					if (o[propFiltro as keyof typeof o] != null) {
+						// Cruzar referencia com objFiltro e se so avancar se realmente for um objeto
+						let m: any = o[propFiltro as keyof typeof o]; // m representa o dado do item
+						let k: any = objFiltro[propFiltro]; // k representa a config do filtro para essa propriedade
+						// console.log(
+						// 	propFiltro +
+						// 		"(" +
+						// 		typeof mk.objFiltro[propFiltro] +
+						// 		"): " +
+						// 		m +
+						// 		" >> " +
+						// 		k.formato +
+						// 		": " +
+						// 		k.conteudo
+						// );
+						if (k.formato === "string") {
+							// Filtro por string (Tipo Like)
+							k.conteudo = k.conteudo.toString().toLowerCase();
+							if (
+								!m.toString().toLowerCase().match(k.conteudo) &&
+								k.conteudo !== "0"
+							) {
+								// LIKE
+								podeExibir = false;
+							}
+						} else if (k.formato === "stringNumerosVirgula") {
+							// Filtro por numero exado. Provavelmente sejam duas arrays (MultiSelect), O filtro precisa encontrar tudo no objeto.
+							let filtroInvertido = false;
+							if (this.isJson(k.conteudo)) {
+								let arrayM = m.toString().split(","); // String de Numeros em Array de Strings
+								let mayBeArrayK = JSON.parse(k.conteudo); // << No objFiltro
+								if (Array.isArray(mayBeArrayK)) {
+									mayBeArrayK.forEach((numeroK: any) => {
+										// A cada numero encontrado pos split na string do item verificado
+										filtroInvertido = arrayM.some((numeroM: any) => {
+											return Number(numeroM) == Number(numeroK);
+										});
+									});
+								} else {
+									filtroInvertido = arrayM.some((numeroM: any) => {
+										return Number(numeroM) == Number(mayBeArrayK);
+									});
+								}
+								if (!filtroInvertido) {
+									podeExibir = false;
+								}
+							} else console.warn("Não é um JSON");
+						} else if (k.formato === "number") {
+							// Filtro por numero exado. Apenas exibe este exato numero.
+							// Ignorar filtro com 0
+							if (
+								Number(m) !== Number(k.conteudo) &&
+								Number(k.conteudo) !== 0
+							) {
+								podeExibir = false;
+							}
+						} else if (k.formato === "date") {
+							// Filtro por Data (Gera milissegundos e faz comparacao)
+							let dateM = new Date(m).getTime();
+							let dateK = new Date(k.conteudo).getTime();
+							if (k.operador === ">=") {
+								// MAIOR OU IGUAL
+								if (!(dateM >= dateK)) {
+									podeExibir = false;
+								}
+							} else if (k.operador === "<=") {
+								// MENOR OU IGUAL
+								if (!(dateM <= dateK)) {
+									podeExibir = false;
+								}
+							} else if (k.operador === ">") {
+								// MAIOR
+								if (!(dateM > dateK)) {
+									podeExibir = false;
+								}
+							} else if (k.operador === "<") {
+								// MENOR
+								if (!(dateM < dateK)) {
+									podeExibir = false;
+								}
+							} else {
+								// IGUAL ou nao informado
+								if (!(dateM == dateK)) {
+									podeExibir = false;
+								}
+							}
+						}
+					} else {
+						if (propFiltro != "mkFullFiltro") {
+							podeExibir = false;
+						}
+					}
+				}
+				if (podeExibir) {
+					// Verificara todas prop, logica da adicao por caracteristica buscada
+					if (objFiltro["mkFullFiltro"]) {
+						// Se houver pesquisa generica no filtro
+						let k = objFiltro["mkFullFiltro"]["conteudo"]
+							.toString()
+							.toLowerCase(); // k = Dado que estamos procurando
+						podeExibir = false; // Inverter para verificar se alguma prop do item possui a caracteristica
+						for (var propNameItem in o) {
+							let m: any = o[propNameItem as keyof typeof o];
+							//console.log(m + " FILTRO: " + k);
+							if (m != null) {
+								// <= Nao pode tentar filtrar em itens nulos
+								m = m.toString().toLowerCase();
+								if (m.match(k)) {
+									podeExibir = true;
+								}
+							}
+						}
+					}
+				}
+				if (podeExibir) {
+					temp.push(o);
+				}
+			});
+			aFiltrada = temp;
+		} else {
+			aFiltrada = [];
+		}
+	};
+
+	/**
 	 * ATUALIZA a listagem com os dados ja ordenados de fullDados;
 	 * Executa a filtragem dos dados;
 	 * POPULA a lista atravez de uma nova lista: exibePaginado;
@@ -1326,7 +1464,7 @@ class mk {
 	static mkGerarFiltro = (e: HTMLInputElement | HTMLSelectElement) => {
 		// Para ignorar filtro: data-mkfignore="true" (Ou nao colocar o atributo mkfformato no elemento)
 		if (e.value != null && e.getAttribute("data-mkfignore") != "true") {
-			mk.objFiltro[e.name] = {
+			this.objFiltro[e.name] = {
 				formato: e.getAttribute("data-mkfformato"),
 				operador: e.getAttribute("data-mkfoperador"),
 				conteudo: e.value,
@@ -2630,6 +2768,13 @@ Object.defineProperty(mk, "t", {
  * - Ordenavel: Definindo os 'sort-campo', o usuário pode ordenar a tabela por este campo.
  * - Flexível: Capacidade de efetuar as operações basicas na tabela (CRUD)
  */
+/**
+ * Possíveis updates encontrados:
+ * - Tornar o filtro ser conectado / instancia. Algo similar ao exemplo...
+ * - - Um filtro input com classe ".iConsultas" precisará da classe da tabela relacionada.
+ * - - Ficando "input.divTabela.iConsultas" e o container "div.divTabela".
+ * - - Atualmente é 1 filtro pra todas as instâncias.
+ */
 class Mk {
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 	//			PROPRIEDADES								\\
@@ -2646,9 +2791,17 @@ class Mk {
 		divTabela: "", // Class do container da tabela
 		urlOrigem: "", // URL de origem dos dados a serem populados
 		paginaAtual: 1, // Representa a pagina
-		tablePorPagina: "", // Total de linhas exibidas por página
+		tablePorPagina: null, // TAG: Total de linhas exibidas por página.
+		tableTotal: null, // TAG: Total de registros.
 		sortInvert: false, // Inverter Direcao dos itens ordenados? true / false
 		sortBy: "", // Propriedade a ser ordenada. (Apenas 1)
+		totalFull: this.dadosFull.length,
+		totalFiltrado: this.dadosFiltrado.length,
+		totalExibidos: this.dadosExibidos.length,
+		pagPorPagina: 5, // VAR: Total de linhas exibidas por página.
+		pagItensIni: 0,
+		pagItensFim: 0,
+		totalPaginas: 0,
 	};
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
@@ -2657,17 +2810,37 @@ class Mk {
 	constructor(
 		urlOrigem,
 		todaListagem,
-		aoReceberDados: any = mk.aoReceberDados
+		idModelo: any = "#modelo",
+		aoReceberDados: any = mk.aoReceberDados,
+		antesDePopularTabela: any = mk.antesDePopularTabela,
+		aoCompletarExibicao: any = mk.aoCompletarExibicao
 	) {
 		this.c.urlOrigem = urlOrigem;
 		this.c.divTabela = todaListagem;
+		this.c.idModelo = idModelo;
+		this.c.tbody = todaListagem + " tbody";
+		this.c.tablePaginacao = todaListagem + " .tablePaginacao";
 		this.c.tablePorPagina = todaListagem + " input[name='tablePorPagina']";
+		this.c.tableExibePorPagina = todaListagem + " .tableExibePorPagina";
+		this.c.tableTotal = this.c.divTabela + " .tableResultado .tableTotal";
+		this.c.tableFiltrado = this.c.divTabela + " .tableResultado .tableFiltrado";
+		this.c.tableIni = this.c.divTabela + " .tableResultado .tableIni";
+		this.c.tableFim = this.c.divTabela + " .tableResultado .tableFim";
+		this.c.tableInicioFim =
+			this.c.divTabela + " .tableResultado .tableInicioFim";
+		this.c.paginate_button =
+			this.c.divTabela + " .tablePaginacao .paginate_button";
+
 		this.aoReceberDados = aoReceberDados;
+		this.antesDePopularTabela = antesDePopularTabela;
+		this.aoCompletarExibicao = aoCompletarExibicao;
 		this.getList();
 	}
 
 	// Funcoes Individuais.
 	aoReceberDados = () => {};
+	antesDePopularTabela = () => {};
+	aoCompletarExibicao = () => {};
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 	//			LISTAGEM										\\
@@ -2693,15 +2866,226 @@ class Mk {
 			this.c.sortBy = Object.keys(this.dadosFull[0])[0];
 			// Ordena a lista geral com base na primeira propriedade.
 			mk.ordenar(this.dadosFull, this.c.sortBy, this.c.sortInvert);
+
+			//Adiciona eventos aos botões do filtro
+			this.setFiltroListener();
 			// Executa um filtro inicial e na sequencia processa a exibição.
-			mk.mkUpdateFiltro();
+			this.updateFiltro();
 		}
+	};
+
+	/**
+	 * ATUALIZA a listagem com os dados ja ordenados.
+	 * Executa a filtragem dos dados;
+	 */
+	atualizarListagem = async () => {
+		let tablePaginacao = mk.Q(this.c.tablePaginacao);
+		// Apenas executa a atualização e filtro, se a tablePaginacao estiver presente na página.
+		if (tablePaginacao) {
+			// Processo de filtro que usa o objFiltro nos dadosFull e retorna dadosFiltrado já filtrado.
+			mk.processoFiltragem(
+				this.dadosFull,
+				this.dadosFiltrado,
+				this.c.objFiltro
+			);
+			// Processar calculos de paginacao
+			this.atualizarStatusListagem();
+			if (this.c.totalFiltrado > this.c.pagPorPagina)
+				tablePaginacao.removeAttribute("hidden");
+			else tablePaginacao.setAttribute("hidden", "");
+
+			if (this.c.totalFiltrado == 0) {
+				mk.Q(this.c.tableInicioFim).setAttribute("hidden", "");
+				mk.Q(this.c.tableExibePorPagina).setAttribute("hidden", "");
+				mk.Q(this.c.tbody).setAttribute("hidden", "");
+				this.dadosExibidos = [];
+			} else {
+				mk.Q(this.c.tableInicioFim).removeAttribute("hidden");
+				mk.Q(this.c.tableExibePorPagina).removeAttribute("hidden");
+				mk.Q(this.c.tbody).removeAttribute("hidden");
+
+				this.processoPaginar();
+				this.antesDePopularTabela();
+
+				await mk.mkMoldeOA(this.dadosExibidos, this.c.idModelo, this.c.tbody);
+				this.aoCompletarExibicao();
+			}
+		}
+	};
+
+	// Atualiza o objeto que contem os dados desta instancia.
+	atualizarStatusListagem = () => {
+		if (mk.Q(this.c.tablePorPagina) == null) {
+			this.c.pagPorPagina = 5;
+		} else {
+			this.c.pagPorPagina = Number(
+				(mk.Q(this.c.tablePorPagina) as HTMLInputElement).value
+			);
+		}
+		this.c.totalFull = this.dadosFull.length;
+		this.c.totalFiltrado = this.dadosFiltrado.length;
+		this.c.totalExibidos = this.dadosExibidos.length;
+		this.c.pagItensIni = (this.c.paginaAtual - 1) * this.c.pagPorPagina + 1; // Calculo Pagination
+		this.c.pagItensFim = this.c.pagItensIni + (this.c.pagPorPagina - 1); // Calculo genérico do último
+		if (this.c.pagItensFim > this.c.totalFiltrado)
+			this.c.pagItensFim = this.c.totalFiltrado; // Na última página não pode exibir o valor genérico.
+
+		// Arredondar pra cima, pois a última página pode exibir conteúdo sem preencher o PorPagina
+		this.c.totalPaginas = Math.ceil(
+			this.dadosFiltrado.length / this.c.pagPorPagina
+		);
+		// Atualizar o Status processado no resumo da tabela
+		if (this.c.tableTotal != null)
+			mk.Q(this.c.tableTotal).innerHTML = this.c.totalFull.toString();
+		if (this.c.tableFiltrado != null)
+			mk.Q(this.c.tableFiltrado).innerHTML = this.c.totalFiltrado.toString();
+		if (this.c.tableIni != null)
+			mk.Q(this.c.tableIni).innerHTML = this.c.pagItensIni.toString();
+		if (this.c.tableFim != null)
+			mk.Q(this.c.tableFim).innerHTML = this.c.pagItensFim.toString();
+	};
+
+	// Monta os botoes de numero de pagina
+	processoPaginar = () => {
+		// Links
+		mk.Q(this.c.tablePaginacao + " .paginate_Ultima a").innerHTML =
+			this.c.totalPaginas.toString();
+
+		this.c.paginaAtual == 1
+			? mk.Qoff(this.c.tablePaginacao + " .pagBack")
+			: mk.Qon(this.c.tablePaginacao + " .pagBack");
+
+		this.c.paginaAtual >= this.c.totalPaginas
+			? mk.Qoff(this.c.tablePaginacao + " .pagNext")
+			: mk.Qon(this.c.tablePaginacao + " .pagNext");
+
+		this.c.totalPaginas > 2
+			? mk.QverOn(this.c.tablePaginacao + " .pageCod2")
+			: mk.QverOff(this.c.tablePaginacao + " .pageCod2");
+
+		this.c.totalPaginas > 3
+			? mk.QverOn(this.c.tablePaginacao + " .pageCod3")
+			: mk.QverOff(this.c.tablePaginacao + " .pageCod3");
+
+		this.c.totalPaginas > 4
+			? mk.QverOn(this.c.tablePaginacao + " .pageCod4")
+			: mk.QverOff(this.c.tablePaginacao + " .pageCod4");
+
+		this.c.totalPaginas > 5
+			? mk.QverOn(this.c.tablePaginacao + " .pageCod5")
+			: mk.QverOff(this.c.tablePaginacao + " .pageCod5");
+
+		this.c.totalPaginas > 6
+			? mk.QverOn(this.c.tablePaginacao + " .pageCod6")
+			: mk.QverOff(this.c.tablePaginacao + " .pageCod6");
+
+		if (this.c.paginaAtual < 5) {
+			// INI
+			mk.Qon(this.c.tablePaginacao + " .pageCod2");
+			mk.Q(this.c.tablePaginacao + " .pageCod2 a").innerHTML = "2";
+			mk.Q(this.c.tablePaginacao + " .pageCod3 a").innerHTML = "3";
+			mk.Q(this.c.tablePaginacao + " .pageCod4 a").innerHTML = "4";
+			mk.Q(this.c.tablePaginacao + " .pageCod5 a").innerHTML = "5";
+			mk.Q(this.c.tablePaginacao + " .pageCod6 a").innerHTML = "...";
+			mk.Qoff(this.c.tablePaginacao + " .pageCod6");
+		} else {
+			// END
+			if (this.c.totalPaginas - this.c.paginaAtual < 4) {
+				mk.Qoff(this.c.tablePaginacao + " .pageCod2");
+				mk.Q(this.c.tablePaginacao + " .pageCod2 a").innerHTML = "...";
+				mk.Q(this.c.tablePaginacao + " .pageCod3 a").innerHTML = (
+					this.c.totalPaginas - 4
+				).toString();
+				mk.Q(this.c.tablePaginacao + " .pageCod4 a").innerHTML = (
+					this.c.totalPaginas - 3
+				).toString();
+				mk.Q(this.c.tablePaginacao + " .pageCod5 a").innerHTML = (
+					this.c.totalPaginas - 2
+				).toString();
+				mk.Q(this.c.tablePaginacao + " .pageCod6 a").innerHTML = (
+					this.c.totalPaginas - 1
+				).toString();
+				mk.Qon(this.c.tablePaginacao + " .pageCod6");
+			} else {
+				// MID
+				mk.Qoff(this.c.tablePaginacao + " .pageCod2");
+				mk.Q(this.c.tablePaginacao + " .pageCod2 a").innerHTML = "...";
+				mk.Q(this.c.tablePaginacao + " .pageCod3 a").innerHTML = (
+					this.c.paginaAtual - 1
+				).toString();
+				mk.Q(this.c.tablePaginacao + " .pageCod4 a").innerHTML =
+					this.c.paginaAtual.toString();
+				mk.Q(this.c.tablePaginacao + " .pageCod5 a").innerHTML = (
+					this.c.paginaAtual + 1
+				).toString();
+				mk.Q(this.c.tablePaginacao + " .pageCod6 a").innerHTML = "...";
+				mk.Qoff(this.c.tablePaginacao + " .pageCod6");
+			}
+		}
+		// Ativar Pagina
+		mk.QAll(this.c.paginate_button).forEach((item) => {
+			item.classList.remove("active");
+		});
+		mk.QAll(this.c.paginate_button + " .page-link").forEach((item) => {
+			if (this.c.paginaAtual == Number(item.innerHTML)) {
+				item.parentElement?.classList.add("active");
+			}
+		});
+		// Limpar Exibidos
+		this.dadosExibidos = [];
+		// Clonar Exibidos de Filtrados
+		this.dadosFiltrado.forEach((o, i) => {
+			if (i + 1 >= this.c.pagItensIni && i + 1 <= this.c.pagItensFim) {
+				this.dadosExibidos.push(mk.mkClonarOA(o));
+			}
+		});
 	};
 
 	// Retorna a pagina 1 e atualiza
 	atualizaNaPaginaUm = async () => {
 		this.c.paginaAtual = 1;
-		mk.atualizarLista();
+		this.atualizarListagem();
+	};
+
+	// Limpa e Gera Filtro baseado na class "iConsultas" apenas em input.
+	updateFiltro = () => {
+		// Limpa filtro atual
+		this.c.objFiltro = {};
+		// Gera filtro os nos campos
+		mk.QAll("input.iConsultas").forEach((e) => {
+			this.gerarFiltro(e);
+		});
+		this.atualizaNaPaginaUm();
+	};
+
+	// Gerar Filtro baseado nos atributos do MKF gerados no campo.
+	gerarFiltro = (e: any) => {
+		// Para ignorar filtro: data-mkfignore="true" (Ou nao colocar o atributo mkfformato no elemento)
+		if (e.value != null && e.getAttribute("data-mkfignore") != "true") {
+			this.c.objFiltro[e.name] = {
+				formato: e.getAttribute("data-mkfformato"),
+				operador: e.getAttribute("data-mkfoperador"),
+				conteudo: e.value,
+			};
+		}
+		// Limpar filtro caso o usuario limpe o campo
+		if (
+			this.c.objFiltro[e.name]["conteudo"] == "" ||
+			this.c.objFiltro[e.name]["conteudo"] == "0" ||
+			this.c.objFiltro[e.name]["conteudo"] == 0 ||
+			this.c.objFiltro[e.name]["conteudo"] === null
+		) {
+			delete this.c.objFiltro[e.name];
+		}
+	};
+
+	// Gerar Gatilhos de FILTRO
+	setFiltroListener = () => {
+		mk.QAll("input.iConsultas").forEach((e) => {
+			e.addEventListener("input", () => {
+				this.gerarFiltro(e);
+			});
+		});
 	};
 
 	// Gera Listeners na THEAD da tabela (Requer classe: "sort-campo")
@@ -2714,12 +3098,29 @@ class Mk {
 					let campo = classe.replace("sort-", "");
 					if (campo != "") {
 						mk.Ao("click", "thead tr .sort-" + campo, () => {
-							mk.inverteDir(campo);
+							this.aoClicarSort(campo);
 						});
 					}
 				}
 			});
 		});
+	};
+
+	// Funcao que inverte a direcao, reordena e atualiza
+	aoClicarSort = (ordenar: string | null = null) => {
+		if (ordenar != null) {
+			if (ordenar != this.c.sortBy) {
+				this.c.sortInvert = false;
+			} else {
+				!this.c.sortInvert
+					? (this.c.sortInvert = true)
+					: (this.c.sortInvert = false);
+			}
+			this.c.sortBy = ordenar;
+		}
+		// Ordena a lista geral com base na primeira propriedade.
+		mk.ordenar(this.dadosFull, this.c.sortBy, this.c.sortInvert);
+		this.atualizarListagem();
 	};
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
