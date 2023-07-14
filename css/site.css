@@ -222,7 +222,7 @@ nav .Menu:hover {
 .h1 {
 	z-index: 2;
 	position: sticky;
-	top: 32px;
+	top: 45px;
 	font-size: 1.5rem;
 	text-decoration: underline wavy;
 	text-decoration-color: var(--fundoTitulo);
