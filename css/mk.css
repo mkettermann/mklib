@@ -1908,6 +1908,7 @@ html:has(.bodyCentro) {
 	display: flex;
 	flex-direction: row;
 	user-select: none;
+	justify-content: center;
 }
 .pagBotoes li {
 	padding: 0.2rem 0.8rem;

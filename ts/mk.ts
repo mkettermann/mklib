@@ -2986,19 +2986,21 @@ class Mk {
 		mk.Q(this.c.pag + "7").innerHTML = this.c.totPags.toString();
 		this.c.pagAtual == 1 ? mk.Qoff(this.c.pag + "0") : mk.Qon(this.c.pag + "0");
 
+		if (this.c.totPags > 1) {
+			mk.QverOn(this.c.pag + "0");
+			mk.QverOn(this.c.pag + "8");
+			mk.QverOn(this.c.pag + "7");
+		} else {
+			mk.QverOff(this.c.pag + "0");
+			mk.QverOff(this.c.pag + "8");
+			mk.QverOff(this.c.pag + "7");
+		}
+
 		this.c.pagAtual >= this.c.totPags
 			? mk.Qoff(this.c.pag + "8")
 			: mk.Qon(this.c.pag + "8");
 
 		mk.QverOn(this.c.pag + "1");
-
-		if (this.c.totPags > 1) {
-			mk.QverOn(this.c.pag + "0");
-			mk.QverOn(this.c.pag + "8");
-		} else {
-			mk.QverOff(this.c.pag + "0");
-			mk.QverOff(this.c.pag + "8");
-		}
 
 		this.c.totPags > 2
 			? mk.QverOn(this.c.pag + "2")
