@@ -3137,17 +3137,21 @@ class Mk {
 	ativarSort = () => {
 		let eTrHeadPai = mk.Q(this.c.divTabela + " thead tr");
 		Array.from(eTrHeadPai.children).forEach((th) => {
+			let ordenar: any = false;
 			th.classList.forEach((classe) => {
 				// Verifica se contém sort- no inicio da class
 				if (classe.indexOf("sort-") == 0) {
-					let campo = classe.replace("sort-", "");
-					if (campo != "") {
-						mk.Ao("click", "thead tr .sort-" + campo, () => {
-							this.aoClicarSort(campo);
-						});
-					}
+					ordenar = classe;
 				}
 			});
+			if (ordenar != false) {
+				let campo = ordenar.replace("sort-", "");
+				if (campo != "") {
+					mk.Ao("click", this.c.divTabela + " thead .sort-" + campo, () => {
+						this.aoClicarSort(campo);
+					});
+				}
+			}
 		});
 	};
 
@@ -3268,7 +3272,7 @@ class Mk {
 	//___________________________________\\
 	importar = async () => {
 		return new Promise((r) => {
-			mk.QAll("body *").forEach(async (e) => {
+			mk.QAll(this.c.divTabela + " *").forEach(async (e) => {
 				let destino = e.getAttribute("mkImportar");
 				if (destino != null) {
 					//console.log("Incluindo: " + destino);
