@@ -2887,6 +2887,20 @@ class Mk {
         });
         return kv;
     };
+    getModelo = () => {
+        let chaves = new Set();
+        this.dadosFull.forEach((o) => {
+            Object.keys(o).forEach((p) => {
+                chaves.add(p);
+            });
+        });
+        let kv = [];
+        chaves.forEach((k) => {
+            let v = obj?.[k] || "";
+            kv.push({ k: k, v: v });
+        });
+        return kv;
+    };
     getNewPK = () => {
         let maior = 0;
         this.dadosFull.forEach((o) => {
