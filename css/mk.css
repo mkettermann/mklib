@@ -1900,6 +1900,31 @@ html:has(.bodyCentro) {
 .tableListagem th {
 	text-align: center;
 }
+
+/* =======================
+	Paginação Padrao
+=========================*/
+.pagBotoes {
+	display: flex;
+	flex-direction: row;
+	user-select: none;
+}
+.pagBotoes li {
+	padding: 0.2rem 0.8rem;
+	border: 1px solid black;
+}
+.pagBotoes li.ativo {
+	background-color: gray;
+}
+.pagBotao {
+	cursor: pointer;
+}
+.pagBotao.disabled {
+	filter: grayscale(1);
+	opacity: 0.3;
+	pointer-events: none;
+}
+
 /* Listagem: Paginacao */
 .pagination {
 	display: flex;

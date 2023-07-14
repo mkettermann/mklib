@@ -2824,7 +2824,7 @@ class Mk {
 		this.c.idModelo = idModelo;
 		this.c.tbody = todaListagem + " tbody";
 		this.c.ths = todaListagem + " th";
-		this.c.tablePaginacao = todaListagem + " .tablePaginacao";
+		this.c.tablePaginacao = todaListagem + " .pagBotoes";
 		this.c.tablePorPagina = todaListagem + " input[name='tablePorPagina']";
 		this.c.tableExibePorPagina = todaListagem + " .tableExibePorPagina";
 		this.c.tableTotal = this.c.divTabela + " .tableTotal";
@@ -2832,91 +2832,85 @@ class Mk {
 		this.c.tableIni = this.c.divTabela + " .tableIni";
 		this.c.tableFim = this.c.divTabela + " .tableFim";
 		this.c.tableInicioFim = this.c.divTabela + " .tableInicioFim";
-		this.c.tablePaginateUltimaA = this.c.tablePaginacao + " .paginate_Ultima a";
-		this.c.pagBack = this.c.tablePaginacao + " .pagBack";
-		this.c.pagNext = this.c.tablePaginacao + " .pagNext";
-		this.c.pageCod2 = this.c.tablePaginacao + " .pageCod2";
-		this.c.pageCod3 = this.c.tablePaginacao + " .pageCod3";
-		this.c.pageCod4 = this.c.tablePaginacao + " .pageCod4";
-		this.c.pageCod5 = this.c.tablePaginacao + " .pageCod5";
-		this.c.pageCod6 = this.c.tablePaginacao + " .pageCod6";
-		this.c.pageCod2a = this.c.pageCod2 + " a";
-		this.c.pageCod3a = this.c.pageCod3 + " a";
-		this.c.pageCod4a = this.c.pageCod4 + " a";
-		this.c.pageCod5a = this.c.pageCod5 + " a";
-		this.c.pageCod6a = this.c.pageCod6 + " a";
-		this.c.pagbutton = this.c.tablePaginacao + " .paginate_button";
-		this.c.pagLink = this.c.pagbutton + " .page-link";
+		this.c.pag = this.c.tablePaginacao + " .pag";
+		this.c.pagBotao = this.c.tablePaginacao + " .pagBotao";
 	};
 
 	// Monta os botoes de numero de pagina
 	processoPaginar = () => {
 		// Links
-		mk.Q(this.c.tablePaginateUltimaA).innerHTML = this.c.totPags.toString();
-
-		this.c.pagAtual == 1 ? mk.Qoff(this.c.pagBack) : mk.Qon(this.c.pagBack);
+		mk.Q(this.c.pag + "7").innerHTML = this.c.totPags.toString();
+		this.c.pagAtual == 1 ? mk.Qoff(this.c.pag + "0") : mk.Qon(this.c.pag + "0");
 
 		this.c.pagAtual >= this.c.totPags
-			? mk.Qoff(this.c.pagNext)
-			: mk.Qon(this.c.pagNext);
+			? mk.Qoff(this.c.pag + "8")
+			: mk.Qon(this.c.pag + "8");
+
+		mk.QverOn(this.c.pag + "1");
+
+		if (this.c.totPags > 1) {
+			mk.QverOn(this.c.pag + "0");
+			mk.QverOn(this.c.pag + "8");
+		} else {
+			mk.QverOff(this.c.pag + "0");
+			mk.QverOff(this.c.pag + "8");
+		}
 
 		this.c.totPags > 2
-			? mk.QverOn(this.c.pageCod2)
-			: mk.QverOff(this.c.pageCod2);
+			? mk.QverOn(this.c.pag + "2")
+			: mk.QverOff(this.c.pag + "2");
 
 		this.c.totPags > 3
-			? mk.QverOn(this.c.pageCod3)
-			: mk.QverOff(this.c.pageCod3);
+			? mk.QverOn(this.c.pag + "3")
+			: mk.QverOff(this.c.pag + "3");
 
 		this.c.totPags > 4
-			? mk.QverOn(this.c.pageCod4)
-			: mk.QverOff(this.c.pageCod4);
+			? mk.QverOn(this.c.pag + "4")
+			: mk.QverOff(this.c.pag + "4");
 
 		this.c.totPags > 5
-			? mk.QverOn(this.c.pageCod5)
-			: mk.QverOff(this.c.pageCod5);
+			? mk.QverOn(this.c.pag + "5")
+			: mk.QverOff(this.c.pag + "5");
 
 		this.c.totPags > 6
-			? mk.QverOn(this.c.pageCod6)
-			: mk.QverOff(this.c.pageCod6);
+			? mk.QverOn(this.c.pag + "6")
+			: mk.QverOff(this.c.pag + "6");
 
 		if (this.c.pagAtual < 5) {
 			// INI
-			mk.Qon(this.c.pageCod2);
-			mk.Q(this.c.pageCod2a).innerHTML = "2";
-			mk.Q(this.c.pageCod3a).innerHTML = "3";
-			mk.Q(this.c.pageCod4a).innerHTML = "4";
-			mk.Q(this.c.pageCod5a).innerHTML = "5";
-			mk.Q(this.c.pageCod6a).innerHTML = "...";
-			mk.Qoff(this.c.pageCod6);
+			mk.Qon(this.c.pag + "2");
+			mk.Q(this.c.pag + "2").innerHTML = "2";
+			mk.Q(this.c.pag + "3").innerHTML = "3";
+			mk.Q(this.c.pag + "4").innerHTML = "4";
+			mk.Q(this.c.pag + "5").innerHTML = "5";
+			mk.Q(this.c.pag + "6").innerHTML = "...";
+			mk.Qoff(this.c.pag + "6");
 		} else {
 			// END
 			if (this.c.totPags - this.c.pagAtual < 4) {
-				mk.Qoff(this.c.pageCod2);
-				mk.Q(this.c.pageCod2a).innerHTML = "...";
-				mk.Q(this.c.pageCod3a).innerHTML = (this.c.totPags - 4).toString();
-				mk.Q(this.c.pageCod4a).innerHTML = (this.c.totPags - 3).toString();
-				mk.Q(this.c.pageCod5a).innerHTML = (this.c.totPags - 2).toString();
-				mk.Q(this.c.pageCod6a).innerHTML = (this.c.totPags - 1).toString();
-				mk.Qon(this.c.pageCod6);
+				mk.Qoff(this.c.pag + "2");
+				mk.Q(this.c.pag + "2").innerHTML = "...";
+				mk.Q(this.c.pag + "3").innerHTML = (this.c.totPags - 4).toString();
+				mk.Q(this.c.pag + "4").innerHTML = (this.c.totPags - 3).toString();
+				mk.Q(this.c.pag + "5").innerHTML = (this.c.totPags - 2).toString();
+				mk.Q(this.c.pag + "6").innerHTML = (this.c.totPags - 1).toString();
+				mk.Qon(this.c.pag + "6");
 			} else {
 				// MID
-				mk.Qoff(this.c.pageCod2);
-				mk.Q(this.c.pageCod2a).innerHTML = "...";
-				mk.Q(this.c.pageCod3a).innerHTML = (this.c.pagAtual - 1).toString();
-				mk.Q(this.c.pageCod4a).innerHTML = this.c.pagAtual.toString();
-				mk.Q(this.c.pageCod5a).innerHTML = (this.c.pagAtual + 1).toString();
-				mk.Q(this.c.pageCod6a).innerHTML = "...";
-				mk.Qoff(this.c.pageCod6);
+				mk.Qoff(this.c.pag + "2");
+				mk.Q(this.c.pag + "2").innerHTML = "...";
+				mk.Q(this.c.pag + "3").innerHTML = (this.c.pagAtual - 1).toString();
+				mk.Q(this.c.pag + "4").innerHTML = this.c.pagAtual.toString();
+				mk.Q(this.c.pag + "5").innerHTML = (this.c.pagAtual + 1).toString();
+				mk.Q(this.c.pag + "6").innerHTML = "...";
+				mk.Qoff(this.c.pag + "6");
 			}
 		}
 		// Ativar Pagina
-		mk.QAll(this.c.pagbutton).forEach((item) => {
-			item.classList.remove("active");
-		});
-		mk.QAll(this.c.pagLink).forEach((item) => {
-			if (this.c.pagAtual == Number(item.innerHTML)) {
-				item.parentElement?.classList.add("active");
+		mk.QAll(this.c.pagBotao).forEach((li) => {
+			li.classList.remove("ativo");
+			if (this.c.pagAtual == Number(li.innerHTML)) {
+				li.classList.add("ativo");
 			}
 		});
 		// Limpar Exibidos

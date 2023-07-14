@@ -1,0 +1,40 @@
+<div class="i">
+	<div class="j">
+		Listando <span class="tableFiltrado">??</span>/<span class="tableTotal"
+			>??</span
+		><span class="tableInicioFim">
+			registros.
+			<br />
+			Exibindo: <span class="tableIni">??</span> ao
+			<span class="tableFim">??</span>.
+		</span>
+	</div>
+	<div class="j">
+		<ul class="pagBotoes">
+			<li class="pagBotao pag0 oculto" onclick="mk.mudaPag(this)">Anterior</li>
+			<li class="pagBotao pag1 oculto active" onclick="mk.mudaPag(this)">1</li>
+			<li class="pagBotao pag2 oculto" onclick="mk.mudaPag(this)">??</li>
+			<li class="pagBotao pag3 oculto" onclick="mk.mudaPag(this)">??</li>
+			<li class="pagBotao pag4 oculto" onclick="mk.mudaPag(this)">??</li>
+			<li class="pagBotao pag5 oculto" onclick="mk.mudaPag(this)">??</li>
+			<li class="pagBotao pag6 oculto disabled" onclick="mk.mudaPag(this)">
+				??
+			</li>
+			<li class="pagBotao pag7" onclick="mk.mudaPag(this)">Carregando...</li>
+			<li class="pagBotao pag8 oculto" onclick="mk.mudaPag(this)">Próxima</li>
+		</ul>
+	</div>
+	<div class="j">
+		<span class="tableExibePorPagina microPos6">
+			<input
+				oninput="mk.atualizarPorPagina()"
+				name="tablePorPagina"
+				value="1"
+				style="width: 50px"
+				class="mkSel"
+				data-selapenas="1"
+				data-selarray='[{"k":1,"v":"1"},{"k":10,"v":"10"},{"k":25,"v":"25"},{"k":50,"v":"50"},{"k":100,"v":"100"}]'
+			/><span>/ p&aacute;gina.</span>
+		</span>
+	</div>
+</div>
