@@ -2561,6 +2561,7 @@ class Mk {
                     this.atualizaNaPaginaUm();
                 });
             }
+            this.ativarSort();
         }
     };
     // Metodo que prepara a listagem e inicia a coleta.
@@ -2858,7 +2859,7 @@ class Mk {
                     let retorno = await mk.http(destino, mk.t.G, mk.t.H);
                     if (retorno != null) {
                         e.innerHTML = retorno;
-                        //mk.mkNodeToScript(mk.Q(".conteudo"));
+                        //mk.mkNodeToScript(e);
                     }
                     else {
                         console.log("Falhou ao coletar dados");

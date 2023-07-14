@@ -43,23 +43,47 @@
 </div>
 
 <br />
-<div class="i">
-	<div class="j">
-		Filtro por Usuário (mNome) <br /><input
-			name="mNome"
-			class="iConsultas"
-			data-mkfformato="string"
-			placeholder="Nome do Usuario"
-			value=""
-		/>
+<div class="iComGap">
+	<div class="col30">
+		<div class="i microPos5">
+			<button href="#Adicionar" onclick="uiAdicionar()">Adicionar</button>
+		</div>
+		<div class="i">
+			<div class="col60">Filtro por Usuário:</div>
+			<div class="col40">
+				<input
+					name="mNome"
+					class="iConsultas"
+					data-mkfformato="string"
+					placeholder="Nome do Usuario"
+					value=""
+				/>
+			</div>
+		</div>
+		<div class="i">
+			<div class="col60">Filtro Geral:</div>
+			<div class="col40">
+				<input
+					type="search"
+					name="mkFullFiltro"
+					class="iConsultas"
+					placeholder="Pesquisa Geral"
+				/>
+			</div>
+		</div>
 	</div>
-	<div class="j">
-		Filtro Geral<br /><input
-			type="search"
-			name="mkFullFiltro"
-			class="iConsultas"
-			placeholder="Pesquisa Geral"
-		/>
+	<div class="col60">
+		<div class="i">
+			<div class="j microPos2">
+				<div class="operacaoContainer">
+					<div class="operacaoTitulo">ADD</div>
+					<div class="iComGap">
+						<div class="j">a</div>
+						<div class="j">b</div>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 </div>
 
@@ -77,4 +101,7 @@
 		</td>
 	</tr>
 </script>
+
+<script type="text/html" id="modeloOperacao"></script>
+
 <script src="/js/listagemMk.js"></script>

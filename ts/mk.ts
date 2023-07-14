@@ -2860,6 +2860,7 @@ class Mk {
 					this.atualizaNaPaginaUm();
 				});
 			}
+			this.ativarSort();
 		}
 	};
 
@@ -3182,7 +3183,7 @@ class Mk {
 					let retorno = await mk.http(destino, mk.t.G, mk.t.H);
 					if (retorno != null) {
 						e.innerHTML = retorno;
-						//mk.mkNodeToScript(mk.Q(".conteudo"));
+						//mk.mkNodeToScript(e);
 					} else {
 						console.log("Falhou ao coletar dados");
 					}

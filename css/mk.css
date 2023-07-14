@@ -1956,6 +1956,23 @@ html:has(.bodyCentro) {
 	flex: 1 0 0%;
 }
 
+.iSemGap {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	width: 100%;
+	margin: 0px 0px 0px 0px;
+}
+
+.iComGap {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	width: 100%;
+	margin: 0px 0px 0px 0px;
+	gap: 10px;
+}
+
 .fsb {
 	display: flex;
 	flex-wrap: wrap;
