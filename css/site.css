@@ -286,6 +286,7 @@ input {
 	background-position: 50% 50%;
 	background-size: auto 1.8em;
 }
+
 .paginate_button {
 	border: 1px solid var(--bordaMaster);
 }
@@ -299,6 +300,22 @@ input {
 }
 .paginate_button.active,
 .paginate_button:hover {
+	background-color: var(--fundoHead);
+}
+/* Novo Estilo da Paginacao */
+.pagBotoes li.pagBotao {
+	border: 1px solid var(--bordaMaster);
+}
+.pagBotao.pag0 {
+	border-bottom-left-radius: 20px;
+	border-top-left-radius: 0px;
+}
+.pagBotao.pag8 {
+	border-bottom-right-radius: 20px;
+	border-top-right-radius: 0px;
+}
+.pagBotoes .pagBotao.active,
+.pagBotoes .pagBotao:hover {
 	background-color: var(--fundoHead);
 }
 
