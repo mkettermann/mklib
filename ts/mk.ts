@@ -2799,8 +2799,8 @@ class Mk {
 	//			CONSTRUTOR									\\
 	//___________________________________\\
 	constructor(
-		urlOrigem,
-		todaListagem,
+		urlOrigem: any = "/GetList",
+		todaListagem: any = ".divListagemContainer",
 		idModelo: any = "#modelo",
 		aoReceberDados: any = mk.aoReceberDados,
 		antesDePopularTabela: any = mk.antesDePopularTabela,

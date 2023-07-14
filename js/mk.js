@@ -2512,7 +2512,7 @@ class Mk {
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //			CONSTRUTOR									\\
     //___________________________________\\
-    constructor(urlOrigem, todaListagem, idModelo = "#modelo", aoReceberDados = mk.aoReceberDados, antesDePopularTabela = mk.antesDePopularTabela, aoCompletarExibicao = mk.aoCompletarExibicao) {
+    constructor(urlOrigem = "/GetList", todaListagem = ".divListagemContainer", idModelo = "#modelo", aoReceberDados = mk.aoReceberDados, antesDePopularTabela = mk.antesDePopularTabela, aoCompletarExibicao = mk.aoCompletarExibicao) {
         this.c.urlOrigem = urlOrigem;
         this.c.divTabela = todaListagem;
         this.c.idModelo = idModelo;
