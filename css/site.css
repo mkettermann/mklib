@@ -6,6 +6,10 @@ body {
 	background-color: var(--fundoPrincipal);
 	color: var(--corPrincipal);
 }
+textarea {
+	font-family: monospace;
+	resize: none;
+}
 
 ::-webkit-scrollbar {
 	width: var(--scrollSize);
@@ -362,4 +366,51 @@ ul.tabela li:nth-child(1) div {
 .operacaoAcao {
 	width: 70%;
 	border-radius: 8px;
+}
+
+.regua {
+	width: 30px;
+	padding: 0px 5px;
+	overflow: hidden;
+	text-align: right;
+	border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
+	border-right: 3px dotted var(--tTexto);
+	border-left: 1px solid var(--tFundoHigh);
+	color: var(--corHeadEfeito);
+	background-color: var(--fundoMenu);
+}
+.codigo {
+	padding-left: 10px;
+	text-align: left;
+	border-top-right-radius: 5px;
+	border-bottom-right-radius: 5px;
+	width: 100%;
+}
+textarea {
+	color: var(--fundoMenu);
+	background-color: var(--corPrincipal);
+	outline: 0px;
+	border: 0px;
+}
+.codigoContainer {
+	margin: auto;
+	border: 1px solid transparent;
+	border-radius: 5px;
+	border-top-color: var(--tFundoHigh);
+	width: fit-content;
+	position: relative;
+}
+.titulo {
+	position: absolute;
+	top: -23px;
+	right: 20px;
+	color: var(--corHeadEfeito);
+	background-color: var(--corPrincipal);
+	padding: 3px 15px;
+	border: 1px solid transparent;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	border-top-color: var(--tFundoHigh);
+	border-left-color: var(--tFundoHigh);
 }

@@ -4,5 +4,37 @@
 	<input type="text" value="0" />
 	<button onclick="aoIncrementar(this)">Incrementar + 1</button>
 </div>
+<br />
 
+<div class="fullCodigoContainer microPos5">
+	<div class="i codigoContainer">
+		<div class="titulo">Modo de uso:</div>
+		<textarea class="regua" rows="8" cols="1" readonly>
+1
+2
+3
+4
+5
+6
+7
+8
+9</textarea
+		>
+		<textarea
+			class="codigo"
+			rows="8"
+			cols="100"
+			onfocus="mk.mkSelecionarInner(this)"
+			readonly
+		>
+mk.mkConfirma("Tem Certeza?").then((r) => {
+ if(r){
+  console.log("Confirmou");
+ }else{
+  console.log("Você não confirmou");
+ }
+});</textarea
+		>
+	</div>
+</div>
 <!-- O script está em Site, pois se eu colocar aqui, dará eval toda vez -->
