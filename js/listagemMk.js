@@ -3,8 +3,8 @@
 // mk.aoReceberDados = (data) => {
 // 	console.log("oi");
 // };
-var lista = new Mk("/GetList", "#tabela1", undefined, undefined, "mId");
-var lista2 = new Mk("/GetList2", "#tabela2", undefined, ".fTabela2", "mId");
+var lista = new mk("/GetList", "#tabela1", undefined, undefined, "mId");
+var lista2 = new mk("/GetList2", "#tabela2", undefined, ".fTabela2", "mId");
 var listas = {
 	listagem1: lista,
 	listagem2: lista2,
