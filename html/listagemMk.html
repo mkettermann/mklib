@@ -33,67 +33,140 @@
 	individual.
 </div>
 <br />
-<hr />
-<div>LISTAGEM 1: (instancia: lista)</div>
-<div class="divListagemContainer" id="tabela1">
-	<div class="divListagem">
-		<table class="tableListagem">
-			<thead>
-				<tr>
-					<th class="sort-mNome">Usuário</th>
-					<th class="sort-mDataCadastro">Data Cadastro</th>
-					<th class="sort-mDataUltimoAcesso">Último Acesso</th>
-					<th class="sort-mTotalAcessos">Tot. Acessos</th>
-					<th class="sort-mStatus">Status</th>
-					<th class="acao">Editar</th>
-					<th class="acao">Deletar</th>
-				</tr>
-			</thead>
-			<tbody class="listBody"></tbody>
-		</table>
+<div class="bordaDupla pad5">
+	<div>LISTAGEM 1: (instancia: lista)</div>
+	<div class="divListagemContainer" id="tabela1">
+		<div class="divListagem">
+			<table class="tableListagem">
+				<thead>
+					<tr>
+						<th class="sort-mNome">Usuário</th>
+						<th class="sort-mDataCadastro">Data Cadastro</th>
+						<th class="sort-mDataUltimoAcesso">Último Acesso</th>
+						<th class="sort-mTotalAcessos">Tot. Acessos</th>
+						<th class="sort-mStatus">Status</th>
+						<th class="acao">Editar</th>
+						<th class="acao">Deletar</th>
+					</tr>
+				</thead>
+				<tbody class="listBody"></tbody>
+			</table>
+		</div>
+		<div class="tableResumo" mkImportar="/html/_resumoListaNovo.html"></div>
 	</div>
-	<div class="tableResumo" mkImportar="/html/_resumoListaNovo.html"></div>
-</div>
 
-<br />
-<div class="iComGap">
-	<div class="col30">
-		<div class="i microPos5">
-			<button href="#Adicionar" onclick="uiGetADD()">Adicionar</button>
-		</div>
-		<div class="i">
-			<div class="col60">Filtro por Usuário:</div>
-			<div class="col40">
-				<input
-					name="mNome"
-					class="iConsultas"
-					data-mkfformato="string"
-					placeholder="Nome do Usuario"
-					value="al"
-				/>
+	<br />
+	<div class="iComGap">
+		<div class="col30">
+			<div class="i microPos5">
+				<button href="#Adicionar" onclick="uiGetADD()">Adicionar</button>
+			</div>
+			<div class="i">
+				<div class="col60">Filtro por Usuário:</div>
+				<div class="col40">
+					<input
+						name="mNome"
+						class="iConsultas"
+						data-mkfformato="string"
+						placeholder="Nome do Usuario"
+						value=""
+					/>
+				</div>
+			</div>
+			<div class="i">
+				<div class="col60">Filtro Geral:</div>
+				<div class="col40">
+					<input
+						type="search"
+						name="mkFullFiltro"
+						class="iConsultas"
+						placeholder="Pesquisa Geral"
+					/>
+				</div>
 			</div>
 		</div>
-		<div class="i">
-			<div class="col60">Filtro Geral:</div>
-			<div class="col40">
-				<input
-					type="search"
-					name="mkFullFiltro"
-					class="iConsultas"
-					placeholder="Pesquisa Geral"
-				/>
+		<div class="col60">
+			<div class="i">
+				<div class="j microPos2">
+					<div class="operacaoContainer oculto">
+						<div class="operacaoTitulo">ADD</div>
+						<form class="operacaoCampos"></form>
+						<div class="iComGap">
+							<div class="j microPos8">
+								<button class="operacaoAcao">ADD</button>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
-	<div class="col60">
-		<div class="i">
-			<div class="j microPos2">
-				<div class="operacaoContainer oculto">
-					<div class="operacaoTitulo">ADD</div>
-					<form class="operacaoCampos"></form>
-					<div class="iComGap">
-						<div class="j microPos8">
-							<button class="operacaoAcao">ADD</button>
+
+	<br />
+</div>
+<br />
+<div class="bordaDupla pad5">
+	<div>LISTAGEM 2: (instancia: lista2)</div>
+	<div class="divListagemContainer" id="tabela2">
+		<div class="divListagem">
+			<table class="tableListagem">
+				<thead>
+					<tr>
+						<th class="sort-mNome">Usuário</th>
+						<th class="sort-mDataCadastro">Data Cadastro</th>
+						<th class="sort-mDataUltimoAcesso">Último Acesso</th>
+						<th class="sort-mTotalAcessos">Tot. Acessos</th>
+						<th class="sort-mStatus">Status</th>
+						<th class="acao">Editar</th>
+						<th class="acao">Deletar</th>
+					</tr>
+				</thead>
+				<tbody class="listBody"></tbody>
+			</table>
+		</div>
+		<div class="tableResumo" mkImportar="/html/_resumoListaNovo.html"></div>
+	</div>
+
+	<br />
+	<div class="iComGap">
+		<div class="col30">
+			<div class="i microPos5">
+				<button href="#Adicionar" onclick="uiGetADD2()">Adicionar</button>
+			</div>
+			<div class="i">
+				<div class="col60">Filtro por Usuário:</div>
+				<div class="col40">
+					<input
+						name="mNome"
+						class="fTabela2"
+						data-mkfformato="string"
+						placeholder="Nome do Usuario"
+						value="do"
+					/>
+				</div>
+			</div>
+			<div class="i">
+				<div class="col60">Filtro Geral:</div>
+				<div class="col40">
+					<input
+						type="search"
+						name="mkFullFiltro"
+						class="fTabela2"
+						placeholder="Pesquisa Geral"
+					/>
+				</div>
+			</div>
+		</div>
+		<div class="col60">
+			<div class="i">
+				<div class="j microPos2">
+					<div class="operacaoContainer oculto">
+						<div class="operacaoTitulo">ADD</div>
+						<form class="operacaoCampos"></form>
+						<div class="iComGap">
+							<div class="j microPos8">
+								<button class="operacaoAcao">ADD</button>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -101,77 +174,6 @@
 		</div>
 	</div>
 </div>
-
-<br />
-<hr />
-<div>LISTAGEM 2: (instancia: lista2)</div>
-<div class="divListagemContainer" id="tabela2">
-	<div class="divListagem">
-		<table class="tableListagem">
-			<thead>
-				<tr>
-					<th class="sort-mNome">Usuário</th>
-					<th class="sort-mDataCadastro">Data Cadastro</th>
-					<th class="sort-mDataUltimoAcesso">Último Acesso</th>
-					<th class="sort-mTotalAcessos">Tot. Acessos</th>
-					<th class="sort-mStatus">Status</th>
-					<th class="acao">Editar</th>
-					<th class="acao">Deletar</th>
-				</tr>
-			</thead>
-			<tbody class="listBody"></tbody>
-		</table>
-	</div>
-	<div class="tableResumo" mkImportar="/html/_resumoListaNovo.html"></div>
-</div>
-
-<br />
-<div class="iComGap">
-	<div class="col30">
-		<div class="i microPos5">
-			<button href="#Adicionar" onclick="uiGetADD2()">Adicionar</button>
-		</div>
-		<div class="i">
-			<div class="col60">Filtro por Usuário:</div>
-			<div class="col40">
-				<input
-					name="mNome"
-					class="fTabela2"
-					data-mkfformato="string"
-					placeholder="Nome do Usuario"
-					value="d"
-				/>
-			</div>
-		</div>
-		<div class="i">
-			<div class="col60">Filtro Geral:</div>
-			<div class="col40">
-				<input
-					type="search"
-					name="mkFullFiltro"
-					class="fTabela2"
-					placeholder="Pesquisa Geral"
-				/>
-			</div>
-		</div>
-	</div>
-	<div class="col60">
-		<div class="i">
-			<div class="j microPos2">
-				<div class="operacaoContainer oculto">
-					<div class="operacaoTitulo">ADD</div>
-					<form class="operacaoCampos"></form>
-					<div class="iComGap">
-						<div class="j microPos8">
-							<button class="operacaoAcao">ADD</button>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
-
 <script type="text/html" id="modelo">
 	<tr id="${mId}" k="mId">
 		<td class="sort-mNome">${mNome}</td>

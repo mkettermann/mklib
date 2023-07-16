@@ -1987,3 +1987,12 @@ html:has(.bodyCentro) {
 .disabled {
 	pointer-events: none;
 }
+
+.bordaDupla {
+	border: 3px double var(--bordaMaster);
+	border-radius: 5px;
+}
+
+.pad5 {
+	padding: 5px;
+}

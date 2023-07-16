@@ -2462,6 +2462,26 @@ class mk {
             }
         }
     };
+    // IMPORTAR - Classe - Coleta o html externo
+    static importar = async (tagBuscar = ".divListagemContainer") => {
+        return new Promise((r) => {
+            mk.QAll(tagBuscar + " *").forEach(async (e) => {
+                let destino = e.getAttribute("mkImportar");
+                if (destino != null) {
+                    //console.log("Incluindo: " + destino);
+                    let retorno = await mk.http(destino, mk.t.G, mk.t.H);
+                    if (retorno != null) {
+                        e.innerHTML = retorno;
+                        //mk.mkNodeToScript(e);
+                    }
+                    else {
+                        console.log("Falhou ao coletar dados");
+                    }
+                    r(retorno);
+                }
+            });
+        });
+    };
 } // <<< FIM MK Class
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //		AO INICIAR										\\
@@ -2585,7 +2605,7 @@ class Mk {
     // Metodo que prepara a listagem e inicia a coleta.
     getList = async () => {
         // Verifica e importa resumo da tabela se necessario.
-        await this.importar();
+        await mk.importar(this.c.divTabela);
         this.configurarUI();
         // Inicia o Coleta de dados
         let retorno = await mk.http(this.c.urlOrigem, mk.t.G, mk.t.J);
@@ -2894,19 +2914,23 @@ class Mk {
         });
         return kv;
     };
-    getModelo = () => {
+    getModelo = (array = this.dadosFull) => {
         let chaves = new Set();
-        this.dadosFull.forEach((o) => {
+        array.forEach((o) => {
             Object.keys(o).forEach((p) => {
                 chaves.add(p);
             });
         });
-        let kv = [];
+        let modelo = {};
         chaves.forEach((k) => {
-            let v = obj?.[k] || "";
-            kv.push({ k: k, v: v });
+            modelo[k] = [];
+            array.forEach((o) => {
+                let tipo = typeof o[k];
+                if (modelo[k].indexOf(tipo) < 0)
+                    modelo[k].push(tipo);
+            });
         });
-        return kv;
+        return modelo;
     };
     getNewPK = () => {
         let maior = 0;
@@ -2933,27 +2957,5 @@ class Mk {
         this.dadosFull = mk.delObjetoFromId(k, v, this.dadosFull);
         mk.ordenar(this.dadosFull, this.c.sortBy, this.c.sortInvert);
         this.atualizarListagem();
-    };
-    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-    //			Importar										\\
-    //___________________________________\\
-    importar = async () => {
-        return new Promise((r) => {
-            mk.QAll(this.c.divTabela + " *").forEach(async (e) => {
-                let destino = e.getAttribute("mkImportar");
-                if (destino != null) {
-                    //console.log("Incluindo: " + destino);
-                    let retorno = await mk.http(destino, mk.t.G, mk.t.H);
-                    if (retorno != null) {
-                        e.innerHTML = retorno;
-                        //mk.mkNodeToScript(e);
-                    }
-                    else {
-                        console.log("Falhou ao coletar dados");
-                    }
-                    r(retorno);
-                }
-            });
-        });
     };
 }
