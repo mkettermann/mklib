@@ -58,15 +58,18 @@ var uiGetDEL = async (tr, listId) => {
 	);
 };
 
+// ACOES
 var uiSetADD = async (listId) => {
 	let obj = mk.mkGerarObjeto(".operacaoCampos");
 	listas[listId].add(obj);
 };
-
 var uiSetEDIT = async (k, v, listId) => {
 	let obj = mk.mkGerarObjeto(".operacaoCampos");
 	listas[listId].edit(obj, k, v);
 };
 var uiSetDEL = async (k, v, listId) => {
+	listas[listId].del(k, v);
+};
+var uiClearFiltro = async (listId) => {
 	listas[listId].del(k, v);
 };

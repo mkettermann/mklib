@@ -452,7 +452,7 @@ class mk {
         this.atualizarListagem();
     };
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-    //			ATRIBUTOS										\\
+    //			ATRIBUTOS	ESTATICOS					\\
     //___________________________________\\
     static fullDados = [];
     static exibeDados = [];

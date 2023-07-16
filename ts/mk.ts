@@ -510,7 +510,7 @@ class mk {
 	};
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-	//			ATRIBUTOS										\\
+	//			ATRIBUTOS	ESTATICOS					\\
 	//___________________________________\\
 	static fullDados: object[] = [];
 	static exibeDados: object[] = [];
