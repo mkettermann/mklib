@@ -117,7 +117,7 @@
 		</div>
 		<div class="col20">
 			<div class="i microPos6">
-				<button onclick="uiGetADD(0)">Adicionar</button>
+				<button onclick="uiGetADD(0,'Listagem 1')">Adicionar</button>
 			</div>
 		</div>
 		<div class="col20">
@@ -177,7 +177,7 @@
 		</div>
 		<div class="col20">
 			<div class="i microPos6">
-				<button onclick="uiGetADD(1)">Adicionar</button>
+				<button onclick="uiGetADD(1,'Listagem 2')">Adicionar</button>
 			</div>
 		</div>
 		<div class="col20">
@@ -212,6 +212,103 @@
 	</div>
 </div>
 
+<br /><br />
+<div class="fullCodigoContainer microPos5">
+	<div class="i codigoContainer">
+		<div class="titulo">Modo de uso:</div>
+		<textarea class="regua" rows="40" cols="1" readonly>
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40</textarea
+		>
+		<textarea
+			class="codigo"
+			rows="40"
+			cols="100"
+			onfocus="mk.mkSelecionarInner(this)"
+			readonly
+		>
+//urlOrigem,todaListagem,idModelo,filtro,pk,aoReceberDados,antesDePopularTabela,aoCompletarExibicao
+var lista2 = new mk("/GetList2", "#tabela2", "#modelo2", ".fTabela2", "mId");
+// lista2        = Nome da variável que receberá a lista. Por ela se executará os métodos.
+// new mk        = Inicia a contrução da classe, onde você deve passar os parametros.
+// *urlOrigem    = URL dos dados. Padrão: ("/GetList")
+// *todaListagem = Id/Classe da Tag que contém a tabela e o resumo (".divListagemContainer")
+// *idModelo     = Id/Classe da Tag que contém o template ("#modelo")
+// filtro        = Classe de tags que filtram esta listagem. Apenas Inputs. (".iConsultas")
+// pk            = Primary Key. Necessário identificador único para efetuar CRUD na listagem.
+// aoReceberDados = Função que se executa sempre que esta listagem coletar dados externos.
+// antesDePopularTabela = Função que se executa momentos antes de exibir algo.
+// aoCompletarExibicao = Função que se executa somente após concluir a exibição.
+var listas = [lista, lista2];
+// Você pode colocar as instâncias em um container, como na linha acima.
+// Desta forma você pode chamar a instância correta na função correta.
+
+// CRUD: (Usa-se: instancia.Acao() )
+// UI para Adicionar (ex.: lista.add(objeto))
+var uiSetADD = async (listId) => {
+  let obj = mk.mkGerarObjeto(".operacaoCampos");
+  listas[listId].add(obj);
+  mk.QverOff(".operacaoContainer");
+};
+// UI para Editar (ex.: lista.edit(objeto, PropriedadeABuscar, ValorDaPropriedade))
+var uiSetEDIT = async (k, v, listId) => {
+  let obj = mk.mkGerarObjeto(".operacaoCampos");
+  listas[listId].edit(obj, k, v);
+  mk.QverOff(".operacaoContainer");
+};
+// UI para Deletar (ex.: lista.del(PropriedadeABuscar, ValorDaPropriedade))
+var uiSetDEL = async (k, v, listId) => {
+  listas[listId].del(k, v);
+  mk.QverOff(".operacaoContainer");
+};
+// UI para Limpar Filtros (ex.: lista.clearFiltro())
+var uiClearFiltro = async (listId) => {
+  listas[listId].clearFiltro();
+  mk.QverOff(".operacaoContainer");
+};
+</textarea
+		>
+	</div>
+</div>
+<br /><br />
 <!-- TEMPLATE LISTAGEM 1 -->
 <script type="text/html" id="modelo">
 	<tr id="${mId}" k="mId">

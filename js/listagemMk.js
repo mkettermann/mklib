@@ -14,11 +14,11 @@ var lista2 = new mk("/GetList2", "#tabela2", "#modelo2", ".fTabela2", "mId");
 var listas = [lista, lista2];
 
 // CRUD LISTAGEM 1
-var uiGetADD = async (listId) => {
+var uiGetADD = async (listId, strListagem) => {
 	mk.QverOn(".operacaoContainer");
 	mk.QScrollTo("#Acao");
-	mk.Q(".operacaoTitulo").innerHTML = "Adicionar";
-	mk.Q(".operacaoAcao").innerHTML = "Adicionar";
+	mk.Q(".operacaoTitulo").innerHTML = "Adicionar na " + strListagem;
+	mk.Q(".operacaoAcao").innerHTML = "Adicionar na " + strListagem;
 	mk.Q(".operacaoAcao").setAttribute("onclick", "uiSetADD(" + listId + ")");
 	await mk.mkMoldeOA(
 		listas[listId].getKeys(),
