@@ -2507,10 +2507,8 @@ class Mk {
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //			CONSTRUTOR									\\
     //___________________________________\\
-    constructor(urlOrigem = "/GetList", todaListagem, idModelo, pk = "pk", aoReceberDados = mk.aoReceberDados, antesDePopularTabela = mk.antesDePopularTabela, aoCompletarExibicao = mk.aoCompletarExibicao) {
-        this.c.urlOrigem = urlOrigem;
-        this.c.pk = pk;
-        this.listagemConfigurar(todaListagem, idModelo);
+    constructor(urlOrigem = "/GetList", todaListagem = ".divListagemContainer", idModelo = "#modelo", filtro = ".iConsultas", pk = "pk", aoReceberDados = mk.aoReceberDados, antesDePopularTabela = mk.antesDePopularTabela, aoCompletarExibicao = mk.aoCompletarExibicao) {
+        this.listagemConfigurar(urlOrigem, todaListagem, idModelo, filtro, pk);
         this.aoReceberDados = aoReceberDados;
         this.antesDePopularTabela = antesDePopularTabela;
         this.aoCompletarExibicao = aoCompletarExibicao;
@@ -2547,7 +2545,10 @@ class Mk {
     //			LISTAGEM										\\
     //___________________________________\\
     // Seta as variaveis de uso interno.
-    listagemConfigurar = (todaListagem = ".divListagemContainer", idModelo = "#modelo") => {
+    listagemConfigurar = (urlOrigem, todaListagem, idModelo, filtro, pk) => {
+        this.c.urlOrigem = urlOrigem;
+        this.c.pk = pk;
+        this.c.filtro = filtro;
         this.c.divTabela = todaListagem;
         this.c.idModelo = idModelo;
         this.c.tbody = todaListagem + " tbody";
@@ -2769,12 +2770,12 @@ class Mk {
             }
         });
     };
-    // Limpa e Gera Filtro baseado na class "iConsultas" apenas em input.
+    // Limpa e Gera Filtro. Padrao class ".iConsultas".
     updateFiltro = () => {
         // Limpa filtro atual
         this.c.objFiltro = {};
         // Gera filtro os nos campos
-        mk.QAll("input.iConsultas").forEach((e) => {
+        mk.QAll(this.c.filtro).forEach((e) => {
             this.gerarFiltro(e);
         });
         this.atualizaNaPaginaUm();
@@ -2799,7 +2800,7 @@ class Mk {
     };
     // Gerar Gatilhos de FILTRO
     setFiltroListener = () => {
-        mk.QAll("input.iConsultas").forEach((e) => {
+        mk.QAll(this.c.filtro).forEach((e) => {
             e.addEventListener("input", () => {
                 this.gerarFiltro(e);
                 this.atualizaNaPaginaUm();
