@@ -76,6 +76,6 @@ var uiSetDEL = async (k, v, listId) => {
 	mk.QverOff(".operacaoContainer");
 };
 var uiClearFiltro = async (listId) => {
-	listas[listId].del(k, v);
+	listas[listId].clearFiltro();
 	mk.QverOff(".operacaoContainer");
 };

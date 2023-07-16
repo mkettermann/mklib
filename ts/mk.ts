@@ -101,12 +101,12 @@ class mk {
 		urlOrigem: any,
 		todaListagem: any,
 		idModelo: any,
-		filtro: any,
+		fTag: any,
 		pk: string
 	) => {
 		this.c.urlOrigem = urlOrigem;
 		this.c.pk = pk;
-		this.c.filtro = filtro;
+		this.c.filtro = fTag;
 		this.c.divTabela = todaListagem;
 		this.c.idModelo = idModelo;
 		this.c.tbody = todaListagem + " tbody";
@@ -451,6 +451,26 @@ class mk {
 				}
 			});
 		}
+	};
+
+	// LIMPAR FILTRO  LimparFiltro("#consulta_form"); //Passar o form que contem os SELECT/INPUT de filtro (search).
+	clearFiltro = () => {
+		this.c.objFiltro = {};
+		// RESET Form (Limpar seria "0" / "") (Set e.defaultValue)
+		mk.QAll(this.c.filtro).forEach((e) => {
+			e.value = "";
+		});
+
+		// Solicita Atualizacao de todos mkSel
+		mk.QAll(this.c.filtro + ".mkSel").forEach((mkSel) => {
+			mkSel.classList.add("atualizar");
+		});
+	};
+
+	// LIMPAR FILTRO  LimparFiltro("#consulta_form"); //Passar o form que contem os SELECT/INPUT de filtro (search).
+	clearFiltroUpdate = () => {
+		this.clearFiltro();
+		this.atualizarListagem();
 	};
 
 	getKeys = () => {
