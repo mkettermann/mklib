@@ -644,6 +644,15 @@ class mk {
         temp.classList.add("oculto");
         return temp;
     };
+    static QScrollTo = (query = "body") => {
+        let temp = mk.Q(query);
+        let distTopo = temp.offsetTop;
+        window.scrollTo({
+            top: distTopo,
+            behavior: "smooth",
+        });
+        return temp;
+    };
     static QdataGet = (query = "body", atributoNome) => {
         return mk.Q(query).getAttribute("data-" + atributoNome);
     };

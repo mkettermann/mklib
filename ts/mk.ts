@@ -722,6 +722,16 @@ class mk {
 		return temp;
 	};
 
+	static QScrollTo = (query: HTMLElement | string = "body") => {
+		let temp = mk.Q(query) as HTMLElement;
+		let distTopo = temp.offsetTop;
+		window.scrollTo({
+			top: distTopo,
+			behavior: "smooth",
+		});
+		return temp;
+	};
+
 	static QdataGet = (
 		query: HTMLElement | string = "body",
 		atributoNome: string
