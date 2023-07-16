@@ -1,28 +1,71 @@
 <style>
-	.listBody td:nth-child(1) {
-		width: auto;
+	#tabela1 td:nth-child(1) {
 		text-align: left;
+		width: auto;
+		max-width: 100px;
 	}
-	.listBody td:nth-child(2) {
-		width: 13%;
+	#tabela1 td:nth-child(2) {
+		--w: 13%;
+		width: var(--w);
+		min-width: var(--w);
+		max-width: var(--w);
 	}
-	.listBody td:nth-child(3) {
-		width: 13%;
+	#tabela1 td:nth-child(3) {
+		--w: 13%;
+		width: var(--w);
+		min-width: var(--w);
+		max-width: var(--w);
 	}
-	.listBody td:nth-child(4) {
-		width: 13%;
+	#tabela1 td:nth-child(4) {
+		--w: 13%;
+		width: var(--w);
+		min-width: var(--w);
+		max-width: var(--w);
 		text-align: right;
 	}
-	.listBody td:nth-child(5) {
-		width: 8%;
+	#tabela1 td:nth-child(5) {
+		--w: 8%;
+		width: var(--w);
+		min-width: var(--w);
+		max-width: var(--w);
 	}
-	.listBody td:nth-child(6) {
-		width: 8%;
+	#tabela1 td:nth-child(6) {
+		--w: 8%;
+		width: var(--w);
+		min-width: var(--w);
+		max-width: var(--w);
 		cursor: pointer;
 	}
-	.listBody td:nth-child(7) {
-		width: 8%;
+	#tabela1 td:nth-child(7) {
+		--w: 8%;
+		width: var(--w);
+		min-width: var(--w);
+		max-width: var(--w);
 		cursor: pointer;
+	}
+
+	#tabela2 td:nth-child(1) {
+		text-align: left;
+		width: auto;
+		max-width: 100px;
+	}
+	#tabela2 td:nth-child(2) {
+		--w: 6%;
+		width: var(--w);
+		min-width: var(--w);
+		max-width: var(--w);
+	}
+	#tabela2 td:nth-child(3) {
+		--w: 8%;
+		width: var(--w);
+		min-width: var(--w);
+		max-width: var(--w);
+	}
+	#tabela2 td:nth-child(4) {
+		--w: 8%;
+		width: var(--w);
+		min-width: var(--w);
+		max-width: var(--w);
 	}
 </style>
 
@@ -33,8 +76,11 @@
 	individual.
 </div>
 <br />
+
+<!-- LISTAGEM 1 -->
 <div class="bordaDupla pad5">
-	<div>LISTAGEM 1: (instancia: lista)</div>
+	<h2>LISTAGEM 1:</h2>
+	<div>Instancia: lista. Container: listas[0].</div>
 	<div class="divListagemContainer" id="tabela1">
 		<div class="divListagem">
 			<table class="tableListagem">
@@ -54,13 +100,9 @@
 		</div>
 		<div class="tableResumo" mkImportar="/html/_resumoListaNovo.html"></div>
 	</div>
-
 	<br />
 	<div class="iComGap">
 		<div class="col30">
-			<div class="i microPos5">
-				<button href="#Adicionar" onclick="uiGetADD()">Adicionar</button>
-			</div>
 			<div class="i">
 				<div class="col60">Filtro por Usuário:</div>
 				<div class="col40">
@@ -73,6 +115,13 @@
 					/>
 				</div>
 			</div>
+		</div>
+		<div class="col30">
+			<div class="i microPos5">
+				<button onclick="uiGetADD(0)">Adicionar</button>
+			</div>
+		</div>
+		<div class="col30">
 			<div class="i">
 				<div class="col60">Filtro Geral:</div>
 				<div class="col40">
@@ -85,37 +134,20 @@
 				</div>
 			</div>
 		</div>
-		<div class="col60">
-			<div class="i">
-				<div class="j microPos2">
-					<div class="operacaoContainer oculto">
-						<div class="operacaoTitulo">ADD</div>
-						<form class="operacaoCampos"></form>
-						<div class="iComGap">
-							<div class="j microPos8">
-								<button class="operacaoAcao">ADD</button>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
 	</div>
-
-	<br />
 </div>
 <br />
+
+<!-- LISTAGEM 2 -->
 <div class="bordaDupla pad5">
-	<div>LISTAGEM 2: (instancia: lista2)</div>
+	<h2>LISTAGEM 2:</h2>
+	<div>Instancia: lista2. Container: listas[1].</div>
 	<div class="divListagemContainer" id="tabela2">
 		<div class="divListagem">
 			<table class="tableListagem">
 				<thead>
 					<tr>
 						<th class="sort-mNome">Usuário</th>
-						<th class="sort-mDataCadastro">Data Cadastro</th>
-						<th class="sort-mDataUltimoAcesso">Último Acesso</th>
-						<th class="sort-mTotalAcessos">Tot. Acessos</th>
 						<th class="sort-mStatus">Status</th>
 						<th class="acao">Editar</th>
 						<th class="acao">Deletar</th>
@@ -126,13 +158,9 @@
 		</div>
 		<div class="tableResumo" mkImportar="/html/_resumoListaNovo.html"></div>
 	</div>
-
 	<br />
 	<div class="iComGap">
 		<div class="col30">
-			<div class="i microPos5">
-				<button href="#Adicionar" onclick="uiGetADD2()">Adicionar</button>
-			</div>
 			<div class="i">
 				<div class="col60">Filtro por Usuário:</div>
 				<div class="col40">
@@ -141,10 +169,17 @@
 						class="fTabela2"
 						data-mkfformato="string"
 						placeholder="Nome do Usuario"
-						value="do"
+						value="a"
 					/>
 				</div>
 			</div>
+		</div>
+		<div class="col30">
+			<div class="i microPos5">
+				<button onclick="uiGetADD(1)">Adicionar</button>
+			</div>
+		</div>
+		<div class="col30">
 			<div class="i">
 				<div class="col60">Filtro Geral:</div>
 				<div class="col40">
@@ -157,23 +192,26 @@
 				</div>
 			</div>
 		</div>
-		<div class="col60">
-			<div class="i">
-				<div class="j microPos2">
-					<div class="operacaoContainer oculto">
-						<div class="operacaoTitulo">ADD</div>
-						<form class="operacaoCampos"></form>
-						<div class="iComGap">
-							<div class="j microPos8">
-								<button class="operacaoAcao">ADD</button>
-							</div>
-						</div>
-					</div>
+	</div>
+</div>
+
+<!-- AREA DE ADICIONAR E EDITAR -->
+<br />
+<div class="i">
+	<div class="j microPos2">
+		<div id="Acao" class="operacaoContainer oculto">
+			<div class="operacaoTitulo">ADD</div>
+			<form class="operacaoCampos"></form>
+			<div class="iComGap">
+				<div class="j microPos8">
+					<button class="operacaoAcao">ADD</button>
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
+
+<!-- TEMPLATE LISTAGEM 1 -->
 <script type="text/html" id="modelo">
 	<tr id="${mId}" k="mId">
 		<td class="sort-mNome">${mNome}</td>
@@ -184,17 +222,32 @@
 		<td class="sort-mTotalAcessos">${mTotalAcessos}</td>
 		<td class="sort-mStatus ${mStatus}"></td>
 		<td class="acao">
-			<a onclick="uiGetEDIT(mk.getTr(this));">EDIT</a>
+			<a onclick="uiGetEDIT(mk.getTr(this),0);">EDIT</a>
 		</td>
 		<td class="acao">
-			<a onclick="uiGetDEL(mk.getTr(this));">DEL</a>
+			<a onclick="uiGetDEL(mk.getTr(this),0);">DEL</a>
 		</td>
 	</tr>
 </script>
 
+<!-- TEMPLATE LISTAGEM 2 -->
+<script type="text/html" id="modelo2">
+	<tr id="${mId}" k="mId">
+		<td class="sort-mNome">${mNome}</td>
+		<td class="sort-mStatus ${mStatus}"></td>
+		<td class="acao">
+			<a onclick="uiGetEDIT(mk.getTr(this),1);">EDIT</a>
+		</td>
+		<td class="acao">
+			<a onclick="uiGetDEL(mk.getTr(this),1);">DEL</a>
+		</td>
+	</tr>
+</script>
+
+<!-- TEMPLATE DE ADICIONAR E EDITAR -->
 <script type="text/html" id="modeloOperacao">
 	<div class="iComGap">
-		<div class="j">${k}</div>
+		<div class="j" style="text-align: right;">${k}</div>
 		<div class="j"><input name="${k}" class="" value="${v}" /></div>
 	</div>
 </script>

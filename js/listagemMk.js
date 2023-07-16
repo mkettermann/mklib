@@ -4,24 +4,33 @@
 // 	console.log("oi");
 // };
 var lista = new mk("/GetList", "#tabela1", undefined, undefined, "mId");
-var lista2 = new mk("/GetList2", "#tabela2", undefined, ".fTabela2", "mId");
-var listas = {
-	listagem1: lista,
-	listagem2: lista2,
-};
+var lista2 = new mk("/GetList2", "#tabela2", "#modelo2", ".fTabela2", "mId");
 //var lista = new Mk("/data/usersExemplo.json", ".tabela1", "#modelo");
 
+/* Aqui foi utilizado um container manual das listas instanciadas.
+ Basta a funcão enviar o id correto para o Set ser na lista correta.
+ Fazendo isso, os metodos não precisam ser individuais por lista,
+  mas no template precisa saber a lista.*/
+var listas = [lista, lista2];
+
 // CRUD LISTAGEM 1
-var uiGetADD = async () => {
+var uiGetADD = async (listId) => {
 	mk.QverOn(".operacaoContainer");
 	mk.Q(".operacaoTitulo").innerHTML = "Adicionar";
 	mk.Q(".operacaoAcao").innerHTML = "Adicionar";
-	mk.Q(".operacaoAcao").setAttribute("onclick", "uiSetADD(this)");
-	await mk.mkMoldeOA(lista.getKeys(), "#modeloOperacao", ".operacaoCampos");
-	mk.QSet(".operacaoCampos input[name='" + lista.c.pk + "']", lista.getNewPK());
+	mk.Q(".operacaoAcao").setAttribute("onclick", "uiSetADD(" + listId + ")");
+	await mk.mkMoldeOA(
+		listas[listId].getKeys(),
+		"#modeloOperacao",
+		".operacaoCampos"
+	);
+	mk.QSet(
+		".operacaoCampos input[name='" + listas[listId].c.pk + "']",
+		listas[listId].getNewPK()
+	);
 };
 
-var uiGetEDIT = async (tr) => {
+var uiGetEDIT = async (tr, listId) => {
 	let k = tr.getAttribute("k");
 	let v = tr.getAttribute("id");
 	mk.QverOn(".operacaoContainer");
@@ -29,78 +38,35 @@ var uiGetEDIT = async (tr) => {
 	mk.Q(".operacaoAcao").innerHTML = "Editar";
 	mk.Q(".operacaoAcao").setAttribute(
 		"onclick",
-		"uiSetEDIT('" + k + "','" + v + "')"
+		"uiSetEDIT('" + k + "','" + v + "', 0)"
 	);
-	let objeto = lista.dadosFull.find((o) => o[k] == v);
-	await mk.mkMoldeOA(lista.getKV(objeto), "#modeloOperacao", ".operacaoCampos");
+	let objeto = listas[listId].dadosFull.find((o) => o[k] == v);
+	await mk.mkMoldeOA(
+		listas[listId].getKV(objeto),
+		"#modeloOperacao",
+		".operacaoCampos"
+	);
 };
 
-var uiGetDEL = async (tr) => {
+var uiGetDEL = async (tr, listId) => {
 	let k = tr.getAttribute("k");
 	let v = tr.getAttribute("id");
 	mk.mkConfirma("Você está prestes a deletar esta linha. Confirma?").then(
 		(r) => {
-			if (r) uiSetDEL(k, v);
+			if (r) uiSetDEL(k, v, listId);
 		}
 	);
 };
 
-var uiSetADD = async () => {
+var uiSetADD = async (listId) => {
 	let obj = mk.mkGerarObjeto(".operacaoCampos");
-	lista.add(obj);
+	listas[listId].add(obj);
 };
 
-var uiSetEDIT = async (k, v) => {
+var uiSetEDIT = async (k, v, listId) => {
 	let obj = mk.mkGerarObjeto(".operacaoCampos");
-	lista.edit(obj, k, v);
+	listas[listId].edit(obj, k, v);
 };
-var uiSetDEL = async (k, v) => {
-	lista.del(k, v);
-};
-
-// CRUD LISTAGEM 2
-var uiGetADD = async () => {
-	mk.QverOn(".operacaoContainer");
-	mk.Q(".operacaoTitulo").innerHTML = "Adicionar";
-	mk.Q(".operacaoAcao").innerHTML = "Adicionar";
-	mk.Q(".operacaoAcao").setAttribute("onclick", "uiSetADD(this)");
-	await mk.mkMoldeOA(lista.getKeys(), "#modeloOperacao", ".operacaoCampos");
-	mk.QSet(".operacaoCampos input[name='" + lista.c.pk + "']", lista.getNewPK());
-};
-
-var uiGetEDIT = async (tr) => {
-	let k = tr.getAttribute("k");
-	let v = tr.getAttribute("id");
-	mk.QverOn(".operacaoContainer");
-	mk.Q(".operacaoTitulo").innerHTML = "Editar";
-	mk.Q(".operacaoAcao").innerHTML = "Editar";
-	mk.Q(".operacaoAcao").setAttribute(
-		"onclick",
-		"uiSetEDIT('" + k + "','" + v + "')"
-	);
-	let objeto = lista.dadosFull.find((o) => o[k] == v);
-	await mk.mkMoldeOA(lista.getKV(objeto), "#modeloOperacao", ".operacaoCampos");
-};
-
-var uiGetDEL = async (tr) => {
-	let k = tr.getAttribute("k");
-	let v = tr.getAttribute("id");
-	mk.mkConfirma("Você está prestes a deletar esta linha. Confirma?").then(
-		(r) => {
-			if (r) uiSetDEL(k, v);
-		}
-	);
-};
-
-var uiSetADD = async () => {
-	let obj = mk.mkGerarObjeto(".operacaoCampos");
-	lista.add(obj);
-};
-
-var uiSetEDIT = async (k, v) => {
-	let obj = mk.mkGerarObjeto(".operacaoCampos");
-	lista.edit(obj, k, v);
-};
-var uiSetDEL = async (k, v) => {
-	lista.del(k, v);
+var uiSetDEL = async (k, v, listId) => {
+	listas[listId].del(k, v);
 };
