@@ -501,6 +501,7 @@ class mk {
         G: "GET",
         P: "POST",
         J: "application/json",
+        B: "*/*",
         H: "text/html",
         F: "multipart/form-data", // ContentType FORM
     };
@@ -1274,8 +1275,12 @@ class mk {
         if (tipo == mk.t.J) {
             corpo = await pacoteHttp.json();
         }
-        else {
+        else if (tipo == mk.t.H) {
             corpo = await pacoteHttp.text();
+        }
+        else if (tipo == mk.t.B) {
+            corpo = await pacoteHttp.blob();
+            console.log("BLOB");
         }
         if (carregador) {
             this.CarregarOFF();

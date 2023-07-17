@@ -563,6 +563,7 @@ class mk {
 		G: "GET", // Api Method GET
 		P: "POST", // Api Method POST
 		J: "application/json", // ContentType JSON
+		B: "*/*", // ContentType Blob
 		H: "text/html", // ContentType HTML
 		F: "multipart/form-data", // ContentType FORM
 	};
@@ -1448,8 +1449,11 @@ class mk {
 		let corpo: any = null;
 		if (tipo == mk.t.J) {
 			corpo = await pacoteHttp.json();
-		} else {
+		} else if (tipo == mk.t.H) {
 			corpo = await pacoteHttp.text();
+		} else if (tipo == mk.t.B) {
+			corpo = await pacoteHttp.blob();
+			console.log("BLOB");
 		}
 		if (carregador) {
 			this.CarregarOFF();
