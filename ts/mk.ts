@@ -16,7 +16,7 @@ declare const appPath: any;
 
 class mk {
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-	//			CLASSE nk Instanciavel			\\
+	//			CLASSE MK Instanciavel			\\
 	//___________________________________\\
 
 	/**
@@ -26,13 +26,6 @@ class mk {
 	 * - Filtravel: Filtro individual e genérico por instância. Atribuido a cada propriedade.
 	 * - Ordenavel: Definindo os 'sort-campo', o usuário pode ordenar a tabela por este campo.
 	 * - Flexível: Capacidade de efetuar as operações basicas na tabela (CRUD)
-	 */
-	/**
-	 * Possíveis updates encontrados:
-	 * - Tornar o filtro ser conectado / instancia. Algo similar ao exemplo...
-	 * - - Um filtro input com classe ".iConsultas" precisará da classe da tabela relacionada.
-	 * - - Ficando "input.divTabela.iConsultas" e o container "div.divTabela".
-	 * - - Atualmente é 1 filtro pra todas as instâncias.
 	 */
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
@@ -503,9 +496,9 @@ class mk {
 	getNewPK = () => {
 		let maior = 0;
 		this.dadosFull.forEach((o) => {
-			if (o[this.c.pk] > maior) maior = o[this.c.pk];
+			if (o[this.c.pk] > maior) maior = Number(o[this.c.pk]);
 		});
-		return maior + 1;
+		return Number(maior) + 1;
 	};
 
 	// USER INTERFACE - UI - INDIVIDUAL
