@@ -347,17 +347,17 @@ ul.tabela li {
 	display: flex;
 	flex-direction: row;
 }
-ul.tabela li div {
+ul.tabela li div.quebra {
 	padding: 5px;
 	border-bottom: 1px solid var(--tTextoHigh);
 }
-ul.tabela li div:nth-child(1) {
+ul.tabela li div.quebra:nth-child(1) {
 	flex: 0 0 70%;
 }
-ul.tabela li div:nth-child(2) {
+ul.tabela li div.quebra:nth-child(2) {
 	flex: 0 0 30%;
 }
-ul.tabela li:nth-child(1) div {
+ul.tabela li:nth-child(1) div.quebra {
 	font-weight: bold;
 	border: 1px solid var(--bordaMaster);
 	background-color: darkgreen;

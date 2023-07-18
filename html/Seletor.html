@@ -46,18 +46,23 @@
 <br />
 <ul class="tabela">
 	<li>
-		<div>Funcionalidade do Seletor</div>
-		<div>Modo de uso</div>
+		<div class="quebra">Funcionalidade do Seletor</div>
+		<div class="quebra">Modo de uso</div>
 	</li>
 	<li>
 		<u><br />1. Sobre o básico/padrão:</u>
 	</li>
 	<li>
-		<div>
+		<div class="quebra">
 			&nbsp; Esta é uma ferramenta que utiliza um campo INPUT como no exemplo ao
 			lado. Esse input inicial / principal se transforma em uma ferramenta de
 			seleção assim que a biblioteca for carregada e encontrar esse input no
 			DOM.
+			<br />
+			&nbsp; Pré-Requisitos:
+			<br />
+			&raquo; Precisa-se de um INPUT com a classe "mkSel".
+			<br />&raquo; A biblioteca precisa estar iniciada.
 			<br />
 			&nbsp; Quando encontrar esse input principal for encontrado, cria-se um
 			container e transfere o style do input principal para este container.
@@ -73,23 +78,30 @@
 			atualizar sozinho a lista de opções ao menos que o input inicial receba
 			uma classe "atualizar".
 			<br />
-			&nbsp; O filtro
+			&nbsp; O filtro é um input simples que fica visível para o usuário. Quando
+			o usuário preenche conteúdo neste campo, o seletor oculta todas as opções
+			que não contém este dado preenchido. Quando não está focado, exibe a
+			quantidade de itens selecionados quando foi liberado selecionar mais de um
+			item ou exibe o item selecionado caso só seja possível selecionar um.
 			<br />
+			&nbsp; A lista de opção visível é baseada neste V do array KV. Mudar o V
+			não interfere no item selecionado, pois o V age como a representação
+			visual de K.<br />
 		</div>
-		<div>&lt;input class='mkSel'/&gt;</div>
+		<div class="quebra">&lt;input class='mkSel'/&gt;</div>
 	</li>
 	<li>
 		<u><br />2. Limitador de seleção:</u>
 	</li>
 	<li>
-		<div>
+		<div class="quebra">
 			<ol>
 				<li>(1) Permite apenas um clique e se fecha (normal).</li>
 				<li>(-1) Libera até 4 bilhões de itens selecionados.</li>
 				<li>(2 ou +) Seleciona e permanece aberto (multiselect).</li>
 			</ol>
 		</div>
-		<div>
+		<div class="quebra">
 			<ol>
 				<li>&raquo; selapenas="(limite)"</li>
 				<li>&raquo; selapenas="1"</li>
@@ -102,18 +114,18 @@
 		<u><br />3. Flexas de Subir e Descer:</u>
 	</li>
 	<li>
-		<div>
+		<div class="quebra">
 			&nbsp; Quando o seletor possui muitas opções. Automaticamente surgem
 			flexas para subir ou descer. Caso não deseja renderizar elas junto,
 			utilize essa propriedade juntamente com o input.
 		</div>
-		<div>data-selmove="false"</div>
+		<div class="quebra">data-selmove="false"</div>
 	</li>
 	<li>
 		<u><br />4. Array KV (Chave-valor):</u>
 	</li>
 	<li>
-		<div>
+		<div class="quebra">
 			&nbsp; A array de opções Chave-Valor representa uma string em formato JSON
 			que o seletor converte para objeto quando necessário. Para popular o
 			seletor com opções para seleção, basta informar o parametro data-selarray
@@ -135,38 +147,65 @@
 			principal a classe: "atualizar", igual ao exemplo acima e o "atualizar"
 			sumirá sozinho se for detectado.
 		</div>
-		<div>data-selarray=""</div>
+		<div class="quebra">data-selarray=""</div>
+	</li>
+	<li>
+		<u><br />5. Personalizar CSS:</u>
+	</li>
+	<li>
+		<div class="quebra">
+			<br />
+			&nbsp; Para personalizar o seletor, você pode mudar as variáveis CSS do
+			container. Veja como este código abaixo foi renderizado ao lado:
+			<br />
+			&lt;input class="mkSel" style=" --FundoItensHover: #00ff0055;
+			--FundoItensMarK: #ff000055; --FundoItensSel: #0000ff55; width: 150px; "
+			data-selarray='[{"k":"","v":"Todos"},{"k":"1","v":"Sim"},{"k":"2","v":"Não"}]'
+			/&gt;
+		</div>
+		<div class="quebra">
+			<input
+				class="mkSel"
+				style="
+					--FundoItensHover: #00ff0055;
+					--FundoItensMarK: #ff000055;
+					--FundoItensSel: #0000ff55;
+					width: 150px;
+				"
+				data-selarray='[{"k":"","v":"Todos"},{"k":"1","v":"Sim"},{"k":"2","v":"Não"}]'
+			/>
+		</div>
 	</li>
 	<li>
 		<u><br />5. Modo Desenvolvimento:</u>
 	</li>
 	<li>
-		<div>
+		<div class="quebra">
 			&nbsp; É uma propriedade que deixa o seletor em um formato aberto para
 			edição e visualização em tempo integral. É possível visualizar um campo
 			contendo os valores chave selecionados, um campo de display e filtro e por
 			fim a lista de opções permanece aberta mesmo sem foco no filtro.
 		</div>
-		<div>data-dev="true"</div>
+		<div class="quebra">data-dev="true"</div>
 	</li>
 	<li>
 		<u><br />6. Setas Laterais:</u>
 	</li>
 	<li>
-		<div>
+		<div class="quebra">
 			&nbsp; Permite ao usuário mover o atual item selecionado para cima ou para
 			baixo clicando nas setas. Apenas funciona quando for apenas um
 			selecionavel (selapenas="1"). Para ativar, utiliza-se o
 			data-selmovesel="true" e as flexas em svg surgirão ao lado do campo de
 			filtro e reduzirão o tamanho do filtro.
 		</div>
-		<div>data-selmovesel="true"</div>
+		<div class="quebra">data-selmovesel="true"</div>
 	</li>
 	<li>
 		<u><br />7. Uso por teclado:</u>
 	</li>
 	<li>
-		<div>
+		<div class="quebra">
 			&nbsp; Os seletores possuem, por padrão, a funcionalidade de utilizar as
 			teclas: enter, esc, tab, setas para cima e seta para baixo. Com isso é
 			possível navegar entre os seletores, navegar entre as opções dos
@@ -179,7 +218,7 @@
 			do selecionado quando o seletor receber foco e quando utiliza as teclas
 			para cima e para baixo.
 		</div>
-		<div>
+		<div class="quebra">
 			<ol>
 				<li>&raquo; Esc</li>
 				<li>&raquo; Enter</li>
