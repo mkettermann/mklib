@@ -966,6 +966,11 @@ class mk {
 		//        .toLocaleString('pt-br', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); // 2.000,00
 	};
 
+	// Funcao para formatar número para exibição
+	static mkNCasas = (num: number, nCasas: number = 2): string => {
+		return mk.mkFloat(num).toFixed(nCasas).replaceAll(".", ","); // 2000,?
+	};
+
 	static mkEmReais = (num: number): string => {
 		return mk.mkFloat(num).toLocaleString("pt-br", {
 			style: "currency",
@@ -2278,6 +2283,7 @@ class mk {
 
 	// $ Unobtrusive: form = atualForm
 	static verificarCampos = (form: string) => {
+		if (mk.Q(form) == null) console.warn("Formulário não encontrado:", form);
 		// Buscando validador
 		let validador = $.data($(form)[0], "validator");
 		// Ignorara os campos com classe ignore
