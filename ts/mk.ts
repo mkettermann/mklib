@@ -1465,7 +1465,8 @@ class mk {
 			corpo = await pacoteHttp.text();
 		} else if (tipo == mk.t.B) {
 			corpo = await pacoteHttp.blob();
-			console.log("BLOB");
+		} else if (tipo == mk.t.F) {
+			corpo = await pacoteHttp.json();
 		}
 		if (carregador) {
 			this.CarregarOFF();
@@ -2715,7 +2716,7 @@ class mk {
 	};
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-	//			MK Seletor									\\
+	//			MK Seletor (mkSel)					\\
 	//___________________________________\\
 
 	/* CRIA O DROPDOWN por FOCUS */
@@ -2756,8 +2757,6 @@ class mk {
 					let divMkSelArrowSelRight = document.createElement("div");
 					divMkSelArrowSelLeft.className = "mkSelArrowSelLeft microPos6";
 					divMkSelArrowSelRight.className = "mkSelArrowSelRight microPos4";
-					//divMkSelArrowSelLeft.innerHTML = "\u{2B05}"; // 2B98, 2B9C, 2B88, 2B05, 2BA8 CSS (2BA8)
-					//divMkSelArrowSelRight.innerHTML = "\u{2B95}"; // 2B9A, 2B9E, 2B8A, 2B95, 2BA9, CSS
 					divMkSeletorPesquisa.appendChild(divMkSelArrowSelLeft);
 					divMkSeletorPesquisa.appendChild(divMkSelArrowSelRight);
 					divMkSelArrowSelLeft.setAttribute("onclick", "mk.mkSelLeftSel(this)");

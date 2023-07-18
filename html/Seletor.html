@@ -42,16 +42,52 @@
 		/>
 	</div>
 </div>
+
+<br />
 <ul class="tabela">
 	<li>
 		<div>Funcionalidade do Seletor</div>
 		<div>Modo de uso</div>
 	</li>
 	<li>
+		<u><br />1. Sobre o básico/padrão:</u>
+	</li>
+	<li>
 		<div>
-			LIMITADOR DE SELEÇÃO. <br />(1) Permite apenas um clique e se fecha
-			(normal). <br />(-1) Libera até 4 bilhões de itens selecionados. <br />(2
-			ou +) Seleciona e permanece aberto (multiselect).
+			&nbsp; Esta é uma ferramenta que utiliza um campo INPUT como no exemplo ao
+			lado. Esse input inicial / principal se transforma em uma ferramenta de
+			seleção assim que a biblioteca for carregada e encontrar esse input no
+			DOM.
+			<br />
+			&nbsp; Quando encontrar esse input principal for encontrado, cria-se um
+			container e transfere o style do input principal para este container.
+			Dentro do container se forma o seletor que o usuário interage.
+			<br />
+			&nbsp; O seletor todo (container) é composto pelo input inicial, um input
+			de pesquisa onde o usuário mantem o foco para visualizar as opções, e uma
+			lista de opções que se baseia em um atributo do input principal: (Array
+			KV).
+			<br />
+			&nbsp; Quando o seletor se forma, a lista de opções é construida baseada
+			Array KV. Caso essa lista for alterada dinamicamente, o seletor não irá
+			atualizar sozinho a lista de opções ao menos que o input inicial receba
+			uma classe "atualizar".
+			<br />
+			&nbsp; O filtro
+			<br />
+		</div>
+		<div>&lt;input class='mkSel'/&gt;</div>
+	</li>
+	<li>
+		<u><br />2. Limitador de seleção:</u>
+	</li>
+	<li>
+		<div>
+			<ol>
+				<li>(1) Permite apenas um clique e se fecha (normal).</li>
+				<li>(-1) Libera até 4 bilhões de itens selecionados.</li>
+				<li>(2 ou +) Seleciona e permanece aberto (multiselect).</li>
+			</ol>
 		</div>
 		<div>
 			<ol>
@@ -63,43 +99,50 @@
 		</div>
 	</li>
 	<li>
-		<div>O Seletor vem juntamente com a biblioteca MK</div>
-		<div>Padrão</div>
+		<u><br />3. Flexas de Subir e Descer:</u>
 	</li>
 	<li>
 		<div>
-			FLEXAS SOBE E DESCE. Quando o seletor possui muitas opções.
-			Automaticamente surgem flexas para subir ou descer. Caso não deseja
-			renderizar elas junto, utilize essa propriedade juntamente com o input.
+			&nbsp; Quando o seletor possui muitas opções. Automaticamente surgem
+			flexas para subir ou descer. Caso não deseja renderizar elas junto,
+			utilize essa propriedade juntamente com o input.
 		</div>
 		<div>data-selmove="false"</div>
 	</li>
 	<li>
-		<div>
-			FILTRO. O Seletor possui filtro sob listagem de opções com reação direta
-			por tecla pressionada.
-		</div>
-		<div>Padrão</div>
+		<u><br />4. Array KV (Chave-valor):</u>
 	</li>
 	<li>
 		<div>
-			ARRAY DE OPÇÕES Chave-Valor. Para popular o seletor com opções para
-			seleção, basta informar o parametro data-selarray e dentro, uma array de
-			objetos com propriedade 'k' e 'v' que, respectivamente, são chave e valor.
-			Neste exemplo:
+			&nbsp; A array de opções Chave-Valor representa uma string em formato JSON
+			que o seletor converte para objeto quando necessário. Para popular o
+			seletor com opções para seleção, basta informar o parametro data-selarray
+			e dentro, uma array de objetos com propriedade 'k' e 'v' que,
+			respectivamente, são chave e valor. Como neste exemplo:<br />
 			<small
 				style="font-size: small; font-style: italic; background-color: #444"
 			>
-				[{"k":"","v":"Todos"},{"k":"1","v":"Sim"},{"k":"2","v":"Não"}]
+				&lt;input class='mkSel atualizar'
+				data-selarray='[{"k":"","v":"Todos"},{"k":"1","v":"Sim"},{"k":"2","v":"Não"}]'
+				/&gt;
 			</small>
-			Todos representa vazio, 1 para Sim e 2 para não. Você pode utilizar JSON
-			para converter ou desconverter nessa propriedade.
+			<br />
+			&nbsp; Todos representa vazio, 1 para Sim e 2 para Não. Você pode utilizar
+			JSON para converter ou desconverter nessa propriedade.
+			<br />
+			&nbsp; Você pode alterar o conteúdo desta array em formato string. Mas
+			para o seletor atualizar os valores, você precisará adicionar ao input
+			principal a classe: "atualizar", igual ao exemplo acima e o "atualizar"
+			sumirá sozinho se for detectado.
 		</div>
 		<div>data-selarray=""</div>
 	</li>
 	<li>
+		<u><br />5. Modo Desenvolvimento:</u>
+	</li>
+	<li>
 		<div>
-			MODO DEV é uma propriedade que deixa o seletor em um formato aberto para
+			&nbsp; É uma propriedade que deixa o seletor em um formato aberto para
 			edição e visualização em tempo integral. É possível visualizar um campo
 			contendo os valores chave selecionados, um campo de display e filtro e por
 			fim a lista de opções permanece aberta mesmo sem foco no filtro.
@@ -107,24 +150,34 @@
 		<div>data-dev="true"</div>
 	</li>
 	<li>
+		<u><br />6. Setas Laterais:</u>
+	</li>
+	<li>
 		<div>
-			SETAS LATERAIS. Move o item selecionado (1 apenas) para cima ou para baixo
-			clicando nas setas.
+			&nbsp; Permite ao usuário mover o atual item selecionado para cima ou para
+			baixo clicando nas setas. Apenas funciona quando for apenas um
+			selecionavel (selapenas="1"). Para ativar, utiliza-se o
+			data-selmovesel="true" e as flexas em svg surgirão ao lado do campo de
+			filtro e reduzirão o tamanho do filtro.
 		</div>
 		<div>data-selmovesel="true"</div>
 	</li>
 	<li>
+		<u><br />7. Uso por teclado:</u>
+	</li>
+	<li>
 		<div>
-			USO POR TECLADO. Os seletores possuem a funcionalidade de utilizar as
+			&nbsp; Os seletores possuem, por padrão, a funcionalidade de utilizar as
 			teclas: enter, esc, tab, setas para cima e seta para baixo. Com isso é
 			possível navegar entre os seletores, navegar entre as opções dos
 			seletores, selecionar uma opção ou cancelar apenas utilizando um teclado.
-			O Seletor utiliza o atributo data-m nos itens para saber em qual linha
-			está o ponteiro. E para os itens selecionados, utiliza o data-s.
 			<br />
-			Por Padrão, o seletor tenta mover o scroll do seletor até a posição do
-			selecionado quando o seletor receber foco e quando utiliza as teclas para
-			cima e para baixo.
+			&nbsp; O Seletor utiliza o atributo "data-m" nos itens para saber em qual
+			linha está o ponteiro. E para os itens selecionados, utiliza o "data-s".
+			<br />
+			&nbsp; Por Padrão, o seletor tenta mover o scroll do seletor até a posição
+			do selecionado quando o seletor receber foco e quando utiliza as teclas
+			para cima e para baixo.
 		</div>
 		<div>
 			<ol>
