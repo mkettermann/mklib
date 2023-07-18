@@ -792,6 +792,20 @@ class mk {
 		return false;
 	};
 
+	// Funcção que recebe os dados de um arquivo e executa um Download deste dados.
+	static gerarDownload = (
+		conteudo: any,
+		nomeArquivo: string = "Arquivo.zip"
+	) => {
+		const fileUrl = URL.createObjectURL(conteudo);
+		const link = document.createElement("a");
+		link.href = fileUrl;
+		link.download = nomeArquivo;
+		link.click();
+		URL.revokeObjectURL(fileUrl);
+		return nomeArquivo;
+	};
+
 	static mkSelDelRefillProcesso = async (
 		eName: string | HTMLElement,
 		cod = null
