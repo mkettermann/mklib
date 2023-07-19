@@ -5,15 +5,34 @@
 	--tClaroFundo: #fff;
 	--tClaroFundoForte: #f7f7f7;
 	--tClaroFundoHigh: #ddd;
-}
-
-/* Variaveis Atual */
-html {
+	--efeitoSobe: #00d1c3;
+	--MkFaseCorFundo: var(--g5BrancoElevado);
+	--MkFaseCorEfeitoPassivo: var(--g5VerdeLima);
+	--MkFaseCorFundoIco: var(--g5BrancoElevado);
+	--MkFaseCorFundoIcoBack: var(--g5AzulEscuro66);
+	--MkFaseCorFundoIcoAtivo: var(--g5VerdeLimaCC);
+	--MkFaseCorTexto: var(--g5AzulEscuro);
+	--MkFaseCorTextoBack: var(--g5AzulEscuro);
+	--MkFaseCorTextoAtivo: var(--g5AzulClaro);
+	--MkFaseCorTextoDisabled: var(--g5CinzaEscuro66);
+	--MkFaseCorTextoIcoBack: var(--g5BrancoElevado);
+	--MkFaseCorTextoIcoAtivo: var(--g5AzulEscuro);
+	--MkFaseCorEfeitoTexto: var(--g5AzulClaro33);
 	--tTexto: var(--tClaroTexto);
 	--tTextoHigh: var(--tClaroTextoHigh);
 	--tFundo: var(--tClaroFundo);
 	--tFundoForte: var(--tClaroFundoForte);
 	--tFundoHigh: var(--tClaroFundoHigh);
+	--mkEscurecer: #0005;
+	--corIconeSim: #3c3;
+	--corIconeNao: #777;
+	--corIconeNaoHover: #fff;
+	--sobraForte: #000;
+	--tonalidadeVerde: #090;
+	--tonalidadeVermelho: #900;
+	--tonalidadeCinza: #999;
+	/* ELEVACOES */
+	--mkConfirmadorIndex: 1600;
 }
 
 /* BLOQUEIA SCROLL, Colocar no Body ou onde tiver scroll */
@@ -1033,7 +1052,6 @@ button.CarregadorMkTopoDireito:hover {
 	AREA CONFIRMADOR
 =========================*/
 .mkConfirmadorBloco {
-	--mkConfirmadorIndex: 1600;
 	position: fixed;
 	display: flex;
 	flex-wrap: wrap;
@@ -1051,7 +1069,7 @@ button.CarregadorMkTopoDireito:hover {
 	z-index: var(--mkConfirmadorIndex);
 	overflow-x: hidden;
 	overflow-y: hidden;
-	background: #0005;
+	background: var(--mkEscurecer);
 	align-items: center;
 }
 
@@ -1067,7 +1085,8 @@ button.CarregadorMkTopoDireito:hover {
 	width: 400px;
 	height: 150px;
 	border: 1px outset var(--tFundoHigh);
-	box-shadow: -1px -1px 0px 0px var(--tFundo);
+	box-shadow: 6px 6px 10px 1px var(--sobraForte);
+
 	border-radius: 5px;
 	background: var(--tFundoHigh);
 	color: var(--tTextoHigh);
@@ -1145,25 +1164,61 @@ button.CarregadorMkTopoDireito:hover {
 }
 
 .bVerde {
-	--botaoFundo: #090;
-	--botaoFundo2: linear-gradient(0deg, #090 0%, #090 10%, #fff 70%, #fff 100%);
-	--botaoFHover: linear-gradient(0deg, #090 0%, #090 10%, #fff 70%, #fff 100%);
+	--botaoFundo: var(--tonalidadeVerde);
+	--botaoFundo2: linear-gradient(
+		0deg,
+		var(--tonalidadeVerde) 0%,
+		var(--tonalidadeVerde) 10%,
+		#fff 70%,
+		#fff 100%
+	);
+	--botaoFHover: linear-gradient(
+		0deg,
+		var(--tonalidadeVerde) 0%,
+		var(--tonalidadeVerde) 10%,
+		#fff 70%,
+		#fff 100%
+	);
 	--botaoCorHover: #fff;
 	--botaoCor: #000;
 }
 
 .bVermelho {
-	--botaoFundo: #900;
-	--botaoFundo2: linear-gradient(0deg, #900 0%, #900 10%, #fff 70%, #fff 100%);
-	--botaoFHover: linear-gradient(0deg, #900 0%, #900 10%, #fff 70%, #fff 100%);
+	--botaoFundo: var(--tonalidadeVermelho);
+	--botaoFundo2: linear-gradient(
+		0deg,
+		var(--tonalidadeVermelho) 0%,
+		var(--tonalidadeVermelho) 10%,
+		#fff 70%,
+		#fff 100%
+	);
+	--botaoFHover: linear-gradient(
+		0deg,
+		var(--tonalidadeVermelho) 0%,
+		var(--tonalidadeVermelho) 10%,
+		#fff 70%,
+		#fff 100%
+	);
 	--botaoCorHover: #fff;
 	--botaoCor: #000;
 }
 
 .bCinza {
-	--botaoFundo: #777;
-	--botaoFundo2: linear-gradient(0deg, #777 0%, #777 10%, #fff 70%, #fff 100%);
-	--botaoFHover: linear-gradient(0deg, #777 0%, #777 10%, #fff 70%, #fff 100%);
+	--botaoFundo: var(--tonalidadeCinza);
+	--botaoFundo2: linear-gradient(
+		0deg,
+		var(--tonalidadeCinza) 0%,
+		var(--tonalidadeCinza) 10%,
+		#fff 70%,
+		#fff 100%
+	);
+	--botaoFHover: linear-gradient(
+		0deg,
+		var(--tonalidadeCinza) 0%,
+		var(--tonalidadeCinza) 10%,
+		#fff 70%,
+		#fff 100%
+	);
 	--botaoCorHover: #fff;
 	--botaoCor: #000;
 }
@@ -1180,11 +1235,11 @@ button.CarregadorMkTopoDireito:hover {
 	top: -8px;
 	left: -8px;
 	border: 0px solid transparent;
-	border-right: 4px solid limegreen;
-	border-bottom: 4px solid limegreen;
+	border-right: 4px solid var(--corIconeSim);
+	border-bottom: 4px solid var(--corIconeSim);
 	border-radius: 5px;
 	transform: rotate(45deg);
-	box-shadow: 2px 1px 1px 0px #0005;
+	box-shadow: 2px 1px 1px 0px var(--mkEscurecer);
 }
 
 .icoSim::after {
@@ -1194,9 +1249,9 @@ button.CarregadorMkTopoDireito:hover {
 	height: 25px;
 	top: -11px;
 	left: -15px;
-	border: 2px solid limegreen;
+	border: 2px solid var(--corIconeSim);
 	border-radius: 50%;
-	box-shadow: 1px 1px 0px 0px #0005;
+	box-shadow: 1px 1px 0px 0px var(--mkEscurecer);
 }
 
 .icoNao {
@@ -1211,7 +1266,7 @@ button.CarregadorMkTopoDireito:hover {
 	top: -10px;
 	left: -6px;
 	border: 0px solid transparent;
-	border-right: 3px solid darkgray;
+	border-right: 3px solid var(--corIconeNao);
 	border-radius: 2px;
 	transform: rotate(45deg);
 }
@@ -1224,7 +1279,7 @@ button.CarregadorMkTopoDireito:hover {
 	top: -10px;
 	left: -1px;
 	border: 0px solid transparent;
-	border-left: 3px solid darkgray;
+	border-left: 3px solid var(--corIconeNao);
 	border-radius: 2px;
 	transform: rotate(-45deg);
 }
@@ -1232,7 +1287,7 @@ button.CarregadorMkTopoDireito:hover {
 .icoNao:hover::before,
 .icoNao:hover::after {
 	border-radius: 3px;
-	border-color: white;
+	border-color: var(--corIconeNaoHover);
 }
 
 .icoSim:hover::after {
@@ -1257,7 +1312,7 @@ button.CarregadorMkTopoDireito:hover {
 	z-index: 1060;
 	overflow-x: hidden;
 	overflow-y: auto;
-	background: #0005;
+	background: var(--modalEscurecer);
 }
 
 .mkModalConteudo {
@@ -1287,18 +1342,6 @@ button.CarregadorMkTopoDireito:hover {
 	Barra de FASES
 =========================*/
 ul.mkUlFase {
-	--MkFaseCorFundo: var(--g5BrancoElevado);
-	--MkFaseCorEfeitoPassivo: var(--g5VerdeLima);
-	--MkFaseCorFundoIco: var(--g5BrancoElevado);
-	--MkFaseCorFundoIcoBack: var(--g5AzulEscuro66);
-	--MkFaseCorFundoIcoAtivo: var(--g5VerdeLimaCC);
-	--MkFaseCorTexto: var(--g5AzulEscuro);
-	--MkFaseCorTextoBack: var(--g5AzulEscuro);
-	--MkFaseCorTextoAtivo: var(--g5AzulClaro);
-	--MkFaseCorTextoDisabled: var(--g5CinzaEscuro66);
-	--MkFaseCorTextoIcoBack: var(--g5BrancoElevado);
-	--MkFaseCorTextoIcoAtivo: var(--g5AzulEscuro);
-	--MkFaseCorEfeitoTexto: var(--g5AzulClaro33);
 	display: flex;
 	flex-direction: row;
 	width: 100%;
@@ -1762,7 +1805,7 @@ ul.mkUlFase li.disabled a {
 		transparent,
 		transparent,
 		transparent,
-		#00d1c3,
+		var(--efeitoSobe),
 		transparent,
 		transparent,
 		transparent,
@@ -1852,26 +1895,6 @@ ul.mkUlFase li.disabled a {
 	100% {
 		background-position-y: 0%;
 	}
-}
-
-/* AREA de TESTE*/
-html:has(.bodyCentro) {
-	height: 100%;
-}
-
-.bodyCentro {
-	display: grid;
-	height: 100%;
-	width: 100%;
-	border: 1px solid green;
-	margin: 0px;
-	padding: 0px;
-	box-sizing: border-box;
-	background-color: transparent;
-}
-
-.bodyCentro * {
-	box-sizing: border-box;
 }
 
 /* EFEITO CLIP */
