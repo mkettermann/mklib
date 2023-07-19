@@ -1910,20 +1910,35 @@ html:has(.bodyCentro) {
 	user-select: none;
 	justify-content: center;
 }
-.pagBotoes li {
-	padding: 0.2rem 0.8rem;
-	border: 1px solid black;
-}
-.pagBotoes li.ativo {
-	background-color: gray;
-}
 .pagBotao {
 	cursor: pointer;
 }
 .pagBotao.disabled {
 	filter: grayscale(1);
-	opacity: 0.3;
+	opacity: 0.5;
 	pointer-events: none;
+}
+.pagBotoes .pagBotao {
+	padding: 0.2rem 0.8rem;
+	border: 1px solid var(--bordaMaster);
+	background-color: var(--fundoLink);
+	color: var(--corLink);
+}
+.pagBotoes .ativo {
+	background-color: var(--fundoHead);
+	color: var(--corHead);
+}
+.pagBotoes .pagBotao:hover {
+	background-color: var(--fundoHead);
+	color: var(--corHead);
+}
+.pagBotao.pag0 {
+	border-bottom-left-radius: 20px;
+	border-top-left-radius: 0px;
+}
+.pagBotao.pag8 {
+	border-bottom-right-radius: 20px;
+	border-top-right-radius: 0px;
 }
 
 /* Listagem: Paginacao */
