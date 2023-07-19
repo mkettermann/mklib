@@ -760,9 +760,10 @@ class mk {
             let buttonOfflineBlock = document.createElement("button");
             buttonOfflineBlock.setAttribute("type", "button");
             buttonOfflineBlock.setAttribute("onClick", "mk.detectedServerOff_display()");
-            let iOfflineBlock = document.createElement("i");
-            iOfflineBlock.className = "bi bi-x-lg";
-            buttonOfflineBlock.appendChild(iOfflineBlock);
+            // let iOfflineBlock = document.createElement("i");
+            // iOfflineBlock.className = "bi bi-x-lg";
+            buttonOfflineBlock.innerHTML =
+                "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path d='M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z'/></svg>";
             divOfflineBlock.appendChild(divOfflineBlockInterna);
             divOfflineBlock.appendChild(buttonOfflineBlock);
             document.body.appendChild(divOfflineBlock);
@@ -1201,9 +1202,8 @@ class mk {
             buttonCarregadorMkTopoDireito.className = "CarregadorMkTopoDireito";
             buttonCarregadorMkTopoDireito.setAttribute("type", "button");
             buttonCarregadorMkTopoDireito.setAttribute("onClick", "mk.CarregarOFF()");
-            let iCarregadorMk = document.createElement("i");
-            iCarregadorMk.className = "bi bi-x-lg";
-            buttonCarregadorMkTopoDireito.appendChild(iCarregadorMk);
+            buttonCarregadorMkTopoDireito.innerHTML =
+                "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path d='M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z'/></svg>";
             divCarregadorMkBlock.appendChild(divCarregadorMk);
             divCarregadorMkBlock.appendChild(buttonCarregadorMkTopoDireito);
             document.body.appendChild(divCarregadorMkBlock);
@@ -2258,9 +2258,8 @@ class mk {
         buttonmkBtnInv.className = "mkBtnInv absolutoTopoDireito mkEfeitoDodge";
         buttonmkBtnInv.setAttribute("type", "button");
         buttonmkBtnInv.setAttribute("onClick", "mk.mkAModal_Hide()");
-        let iModalMk = document.createElement("i");
-        iModalMk.className = "bi bi-x-lg";
-        buttonmkBtnInv.appendChild(iModalMk);
+        buttonmkBtnInv.innerHTML =
+            "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path d='M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z'/></svg>";
         divmkModalConteudo.appendChild(divmkModalCarregando);
         divmkModalBloco.appendChild(divmkModalConteudo);
         divmkModalBloco.appendChild(buttonmkBtnInv);
