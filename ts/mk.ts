@@ -2827,7 +2827,8 @@ class mk {
 		let ePrincipal = eItem.parentElement?.parentElement?.firstElementChild;
 		let KV = mk.mkSelGetKV(ePrincipal);
 		// Obtem limite de seleções
-		let selLimit = Number(ePrincipal?.getAttribute("data-selapenas"));
+		let selapenas = ePrincipal?.getAttribute("data-selapenas") || 1;
+		let selLimit = Number(selapenas);
 		// QUANDO O LIMITE é 1
 		if (selLimit == 1) {
 			// Muda valor do input pelo clicado e Gera o evento
