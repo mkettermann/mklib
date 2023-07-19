@@ -3,8 +3,15 @@
 // mk.aoReceberDados = (data) => {
 // 	console.log("oi");
 // };
-var lista = new mk("/GetList", "#tabela1", undefined, undefined, "mId");
-var lista2 = new mk("/GetList2", "#tabela2", "#modelo2", ".fTabela2", "mId");
+var lista = new mk("/GetList", "#tabela1", undefined, undefined, "mId", true);
+var lista2 = new mk(
+	"/GetList2",
+	"#tabela2",
+	"#modelo2",
+	".fTabela2",
+	"mId",
+	true
+);
 //var lista = new Mk("/data/usersExemplo.json", ".tabela1", "#modelo");
 
 /* Aqui foi utilizado um container manual das listas instanciadas.

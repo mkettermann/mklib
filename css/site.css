@@ -402,6 +402,7 @@ ul.tabela li:nth-child(1) div.quebra {
 	border-top-right-radius: 5px;
 	border-bottom-right-radius: 5px;
 	width: 100%;
+	overflow: hidden;
 }
 textarea {
 	color: var(--fundoMenu);

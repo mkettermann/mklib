@@ -216,7 +216,7 @@
 <div class="fullCodigoContainer microPos5">
 	<div class="i codigoContainer">
 		<div class="titulo">Modo de uso:</div>
-		<textarea class="regua" rows="40" cols="1" readonly>
+		<textarea class="regua" rows="43" cols="1" readonly>
 1
 2
 3
@@ -256,17 +256,21 @@
 37
 38
 39
-40</textarea
+40
+41
+42
+43</textarea
 		>
 		<textarea
 			class="codigo"
-			rows="40"
-			cols="100"
+			rows="43"
+			cols="120"
 			onfocus="mk.mkSelecionarInner(this)"
 			readonly
 		>
-//urlOrigem,todaListagem,idModelo,filtro,pk,aoReceberDados,antesDePopularTabela,aoCompletarExibicao
-var lista2 = new mk("/GetList2", "#tabela2", "#modelo2", ".fTabela2", "mId");
+//urlOrigem,todaListagem,idModelo,filtro,pk,importar,aoReceberDados,antesDePopularTabela,aoCompletarExibicao
+var lista2 = new mk("/GetList2","#tabela2","#modelo2",".fTabela2","mId",true);
+
 // lista2        = Nome da variável que receberá a lista. Por ela se executará os métodos.
 // new mk        = Inicia a contrução da classe, onde você deve passar os parametros.
 // *urlOrigem    = URL dos dados. Padrão: ("/GetList")
@@ -274,9 +278,11 @@ var lista2 = new mk("/GetList2", "#tabela2", "#modelo2", ".fTabela2", "mId");
 // *idModelo     = Id/Classe da Tag que contém o template ("#modelo")
 // filtro        = Classe de tags que filtram esta listagem. Apenas Inputs. (".iConsultas")
 // pk            = Primary Key. Necessário identificador único para efetuar CRUD na listagem.
+// importar      = Executa script de importar resumo antes importar os dados.
 // aoReceberDados = Função que se executa sempre que esta listagem coletar dados externos.
 // antesDePopularTabela = Função que se executa momentos antes de exibir algo.
 // aoCompletarExibicao = Função que se executa somente após concluir a exibição.
+
 var listas = [lista, lista2];
 // Você pode colocar as instâncias em um container, como na linha acima.
 // Desta forma você pode chamar a instância correta na função correta.
