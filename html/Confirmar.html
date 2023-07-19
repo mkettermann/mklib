@@ -5,10 +5,10 @@
 	<button onclick="aoIncrementar(this)">Incrementar + 1</button>
 </div>
 <br />
-
+<br />
 <div class="fullCodigoContainer microPos5">
 	<div class="i codigoContainer">
-		<div class="titulo">Modo de uso:</div>
+		<div class="titulo">Modo de uso - JS</div>
 		<textarea class="regua" rows="8" cols="1" readonly>
 1
 2
@@ -38,3 +38,39 @@ mk.mkConfirma("Tem Certeza?").then((r) => {
 	</div>
 </div>
 <!-- O script está em Site, pois se eu colocar aqui, dará eval toda vez -->
+
+<br />
+<ul class="tabela">
+	<li>
+		<div class="quebra">Funcionalidade do Confirmar</div>
+		<div class="quebra">Modo de uso</div>
+	</li>
+	<li>
+		<u><br />1. Sobre o básico/padrão:</u>
+	</li>
+	<li>
+		<div class="quebra">
+			&nbsp; Trata-se de uma função que gera um diálogo de confirmação com o
+			usuário, solicitando uma decisão do tipo Sim ou Não apenas.
+			<br /><br />
+			&nbsp; A função mkConfirma() Usa-se em javascript, dentro da função que
+			precisa de confirmação. O parâmetro de mkConfirma é uma string contendo a
+			pergunta do corpo do diálogo. Por se tratar de uma função assíncrona, o
+			sistema aguardará o usuário clicar no botão.
+			<br /><br />
+			&nbsp; Quando o usuário decidir sim/não, o sistema irá retornar a função
+			dentro do .then() contendo true para sim ou false para não. Também é
+			possível usar o async/await e colocar a resposta em uma variável. Como no
+			exemplo acima. Foi feito uma condicional para saber se o usuário respondeu
+			true (Sim) ou false (Não).
+		</div>
+		<div class="quebra">
+			Em função Javascript
+			<br /><br />
+			&nbsp; <u>Pré-Requisitos:</u>
+			<br />
+			&raquo; Não requer html/css individual.
+			<br />&raquo; A biblioteca precisa estar iniciada.
+		</div>
+	</li>
+</ul>

@@ -19,7 +19,7 @@
 			style="width: 150px"
 			data-selapenas="1"
 			data-selmove="false"
-			data-selarray='[{"k":"","v":"Todos"},{"k":"1","v":"Marcos"},{"k":"2","v":"Kettermann"}]'
+			data-selarray='[{"k":"","v":"Selecione"},{"k":"1","v":"Marcos"},{"k":"2","v":"Kettermann"}]'
 			type="text"
 			value=""
 		/>
@@ -43,6 +43,29 @@
 	</div>
 </div>
 
+<br /><br />
+<div class="fullCodigoContainer microPos5">
+	<div class="i codigoContainer">
+		<div class="titulo">Modo de uso - HTML</div>
+		<textarea class="regua" rows="3" cols="1" readonly>
+1
+2
+3</textarea
+		>
+		<textarea
+			class="codigo"
+			rows="3"
+			cols="100"
+			onfocus="mk.mkSelecionarInner(this)"
+			readonly
+		>
+<input
+  class='mkSel'
+  data-selarray='[{"k":"","v":"Todos"},{"k":"1","v":"Sim"},{"k":"2","v":"Não"}]' /></textarea
+		>
+	</div>
+</div>
+
 <br />
 <ul class="tabela">
 	<li>
@@ -59,10 +82,6 @@
 			seleção assim que a biblioteca for carregada e encontrar esse input no
 			DOM.
 			<br />
-			&nbsp; Pré-Requisitos:
-			<br />
-			&raquo; Precisa-se de um INPUT com a classe "mkSel".
-			<br />&raquo; A biblioteca precisa estar iniciada.
 			<br />
 			&nbsp; Quando encontrar esse input principal for encontrado, cria-se um
 			container e transfere o style do input principal para este container.
@@ -90,7 +109,15 @@
 			atributo refill="url" e se este também não existir, o seletor ficará vazio
 			de opções.<br />
 		</div>
-		<div class="quebra">&lt;input class='mkSel'/&gt;</div>
+		<div class="quebra">
+			&lt;input class='mkSel'/&gt;
+			<br />
+			<br />
+			&nbsp; <u>Pré-Requisitos:</u>
+			<br />
+			&raquo; Precisa-se de um INPUT com a classe "mkSel".
+			<br />&raquo; A biblioteca precisa estar iniciada.
+		</div>
 	</li>
 	<li>
 		<u><br />2. Limitador de seleção: (Padrão: 1)</u>
