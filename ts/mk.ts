@@ -41,20 +41,22 @@ class mk {
 	//			CONSTRUTOR									\\
 	//___________________________________\\
 	constructor(
-		urlOrigem: any = "/GetList",
+		urlOrigem: any = window.location.href + "/GetList",
 		todaListagem: any = ".divListagemContainer",
 		idModelo: any = "#modelo",
 		filtro: any = ".iConsultas",
 		pk: string = "pk",
+		importar: boolean = false,
 		aoReceberDados: any = mk.aoReceberDados,
 		antesDePopularTabela: any = mk.antesDePopularTabela,
 		aoCompletarExibicao: any = mk.aoCompletarExibicao
 	) {
+		urlOrigem = urlOrigem.replaceAll("//GetList", "/GetList");
 		this.listagemConfigurar(urlOrigem, todaListagem, idModelo, filtro, pk);
 		this.aoReceberDados = aoReceberDados;
 		this.antesDePopularTabela = antesDePopularTabela;
 		this.aoCompletarExibicao = aoCompletarExibicao;
-		this.getList();
+		this.getList(importar);
 	}
 
 	// Funcoes Individuais.
@@ -136,9 +138,9 @@ class mk {
 	};
 
 	// Metodo que prepara a listagem e inicia a coleta.
-	getList = async () => {
+	getList = async (importar) => {
 		// Verifica e importa resumo da tabela se necessario.
-		await mk.importar(this.c.divTabela);
+		if (importar) await mk.importar(this.c.divTabela);
 		this.configurarUI();
 
 		// Inicia o Coleta de dados
@@ -222,14 +224,14 @@ class mk {
 		// Arredondar pra cima, pois a última página pode exibir conteúdo sem preencher o PorPagina
 		this.c.totPags = Math.ceil(this.dadosFiltrado.length / this.c.pagPorPagina);
 		// Atualizar o Status processado no resumo da tabela
-		if (this.c.tableTotal != null)
-			mk.Q(this.c.tableTotal).innerHTML = this.c.totalFull.toString();
-		if (this.c.tableFiltrado != null)
-			mk.Q(this.c.tableFiltrado).innerHTML = this.c.totalFiltrado.toString();
-		if (this.c.tableIni != null)
-			mk.Q(this.c.tableIni).innerHTML = this.c.pagItensIni.toString();
-		if (this.c.tableFim != null)
-			mk.Q(this.c.tableFim).innerHTML = this.c.pagItensFim.toString();
+		let tableTotal = mk.Q(this.c.tableTotal);
+		let tableFiltro = mk.Q(this.c.tableFiltrado);
+		let tableIni = mk.Q(this.c.tableIni);
+		let tableFim = mk.Q(this.c.tableFim);
+		if (tableTotal) tableTotal.innerHTML = this.c.totalFull.toString();
+		if (tableFiltro) tableFiltro.innerHTML = this.c.totalFiltrado.toString();
+		if (tableIni) tableIni.innerHTML = this.c.pagItensIni.toString();
+		if (tableFim) tableFim.innerHTML = this.c.pagItensFim.toString();
 	};
 
 	// Retorna a pagina 1 e atualiza
@@ -867,9 +869,10 @@ class mk {
 				"onClick",
 				"mk.detectedServerOff_display()"
 			);
-			let iOfflineBlock = document.createElement("i");
-			iOfflineBlock.className = "bi bi-x-lg";
-			buttonOfflineBlock.appendChild(iOfflineBlock);
+			// let iOfflineBlock = document.createElement("i");
+			// iOfflineBlock.className = "bi bi-x-lg";
+			buttonOfflineBlock.innerHTML =
+				"<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path d='M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z'/></svg>";
 			divOfflineBlock.appendChild(divOfflineBlockInterna);
 			divOfflineBlock.appendChild(buttonOfflineBlock);
 			document.body.appendChild(divOfflineBlock);
@@ -1360,9 +1363,8 @@ class mk {
 			buttonCarregadorMkTopoDireito.className = "CarregadorMkTopoDireito";
 			buttonCarregadorMkTopoDireito.setAttribute("type", "button");
 			buttonCarregadorMkTopoDireito.setAttribute("onClick", "mk.CarregarOFF()");
-			let iCarregadorMk = document.createElement("i");
-			iCarregadorMk.className = "bi bi-x-lg";
-			buttonCarregadorMkTopoDireito.appendChild(iCarregadorMk);
+			buttonCarregadorMkTopoDireito.innerHTML =
+				"<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path d='M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z'/></svg>";
 			divCarregadorMkBlock.appendChild(divCarregadorMk);
 			divCarregadorMkBlock.appendChild(buttonCarregadorMkTopoDireito);
 			document.body.appendChild(divCarregadorMkBlock);
@@ -2285,14 +2287,24 @@ class mk {
 	// $ Unobtrusive: form = atualForm
 	static verificarCampos = (form: string) => {
 		if (mk.Q(form) == null) console.warn("Formulário não encontrado:", form);
+		mkt = form;
 		// Buscando validador
 		let validador = $.data($(form)[0], "validator");
+		if (!validador) {
+			console.warn(
+				"Validador NULO. Provavelmente nenhum campo estava como requerido.",
+				validador
+			);
+			return true;
+		}
 		// Ignorara os campos com classe ignore
 		if (validador) validador.settings.ignore = ":hidden";
 		// Conversor de validadores
 		$.validator.unobtrusive.parse(form);
 		// Buscando Unobtrusive Validador da microsoft
 		let unobtrusiveValidation = $(form).data("unobtrusiveValidation");
+		if (!unobtrusiveValidation)
+			console.warn("Unobtrusive nulo", unobtrusiveValidation);
 		// Executa validador se ele estiver presente
 		var resultado = unobtrusiveValidation?.validate();
 		console.info("ModelState é Valido? " + resultado);
@@ -2517,9 +2529,8 @@ class mk {
 		buttonmkBtnInv.className = "mkBtnInv absolutoTopoDireito mkEfeitoDodge";
 		buttonmkBtnInv.setAttribute("type", "button");
 		buttonmkBtnInv.setAttribute("onClick", "mk.mkAModal_Hide()");
-		let iModalMk = document.createElement("i");
-		iModalMk.className = "bi bi-x-lg";
-		buttonmkBtnInv.appendChild(iModalMk);
+		buttonmkBtnInv.innerHTML =
+			"<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path d='M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z'/></svg>";
 		divmkModalConteudo.appendChild(divmkModalCarregando);
 		divmkModalBloco.appendChild(divmkModalConteudo);
 		divmkModalBloco.appendChild(buttonmkBtnInv);

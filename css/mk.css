@@ -5,15 +5,84 @@
 	--tClaroFundo: #fff;
 	--tClaroFundoForte: #f7f7f7;
 	--tClaroFundoHigh: #ddd;
-}
+	--MkFaseCorFundo: var(--g5BrancoElevado);
+	--MkFaseCorEfeitoPassivo: var(--g5VerdeLima);
+	--MkFaseCorFundoIco: var(--g5BrancoElevado);
+	--MkFaseCorFundoIcoBack: var(--g5AzulEscuro66);
+	--MkFaseCorFundoIcoAtivo: var(--g5VerdeLimaCC);
+	--MkFaseCorTexto: var(--g5AzulEscuro);
+	--MkFaseCorTextoBack: var(--g5AzulEscuro);
+	--MkFaseCorTextoAtivo: var(--g5AzulClaro);
+	--MkFaseCorTextoDisabled: var(--g5CinzaEscuro66);
+	--MkFaseCorTextoIcoBack: var(--g5BrancoElevado);
+	--MkFaseCorTextoIcoAtivo: var(--g5AzulEscuro);
+	--MkFaseCorEfeitoTexto: var(--g5AzulClaro33);
+	--timerRestante: var(--g5VerdeLima);
+	--timerConsumido: var(--g5BrancoSujo);
 
-/* Variaveis Atual */
-html {
+	--carregadorInterno1: var(--g5BrancoSujoCC);
+	--carregadorInterno2: var(--g5AzulClaroCC);
+	--carregadorExterno1: var(--g5VerdeLimaCC);
+	--carregadorExterno2: var(--g5AzulEscuroCC);
+	--carregadorCentro: var(--g5VerdeLima);
+
+	/* Seletor mkSel*/
+	--mkSelArrowSize: 0px;
+	--Main1: var(--g5AzulEscuro);
+	--Main2: var(--g5VerdeLima);
+	--FundoSeletor: transparent;
+	--FundoSeletorOpaco: var(--g5AzulClaro99);
+	--FundoSeletorDesativado: #777;
+	--BordaItens: #000;
+	--FundoItens: #fff;
+	--FundoItensHover: linear-gradient(0.25turn, var(--g5AzulClaro), transparent);
+	--FundoItensMarK: linear-gradient(
+		0.25turn,
+		var(--g5AzulEscuro99),
+		transparent
+	);
+	--FundoItensSel: linear-gradient(0.25turn, transparent, var(--g5VerdeLima));
+	--FundoItensSelArrow: linear-gradient(
+		0.25turn,
+		transparent,
+		var(--g5VerdeLima)
+	);
+	--FlexinhaCor: var(--g5AzulClaro66);
+	--CorItensHover: #000;
+	--CorSeletor: var(--CorItensHover);
+	--CorItens: var(--BordaItens);
+
+	/* PADROES DA BIBLIOTECA */
 	--tTexto: var(--tClaroTexto);
 	--tTextoHigh: var(--tClaroTextoHigh);
 	--tFundo: var(--tClaroFundo);
 	--tFundoForte: var(--tClaroFundoForte);
 	--tFundoHigh: var(--tClaroFundoHigh);
+	--mkEscurecer: #0005;
+	--mkEscurecerForte: #000b;
+	--corIconeSim: #3c3;
+	--corIconeNao: #777;
+	--corIconeNaoHover: #fff;
+	--sombraForte: #000;
+	--ouro: #daa520;
+	--timerEncerrando: #ff8888;
+	--offline100: #ff4646ff;
+	--offline50: #330000cc;
+	--serverOffText: #fff;
+	/* EFEITOS */
+	--efeitoSobe: #00d1c3;
+	--efeitoDodge: #fff9;
+	--efeitoDifference: #fff9;
+	--efeitoVidro: #cfc3;
+	--efeitoPulsar: #ff000099;
+	--pulsarInput: #ff660099;
+	/* TONALIDADES */
+	--tonalidadeVerde: #090;
+	--tonalidadeVermelho: #900;
+	--tonalidadeCinza: #999;
+	/* ELEVACOES */
+	--mkConfirmadorIndex: 1600;
+	--mkSelIndex: 2000;
 }
 
 /* BLOQUEIA SCROLL, Colocar no Body ou onde tiver scroll */
@@ -50,32 +119,6 @@ html {
 =========================*/
 
 .mkSelBloco {
-	--mkSelArrowSize: 0px;
-	--Main1: var(--g5AzulEscuro);
-	--Main2: var(--g5VerdeLima);
-	--Main2_33: var(--g5VerdeLima33);
-	--FundoSeletor: transparent;
-	--FundoSeletorOpaco: var(--g5AzulClaro99);
-	--FundoSeletorDesativado: #777;
-	--BordaItens: #000;
-	--FundoItens: #fff;
-	--FundoItensHover: linear-gradient(0.25turn, var(--g5AzulClaro), transparent);
-	--FundoItensMarK: linear-gradient(
-		0.25turn,
-		var(--g5AzulEscuro99),
-		transparent
-	);
-	--FundoItensSel: linear-gradient(0.25turn, transparent, var(--g5VerdeLima));
-	--FundoItensSelArrow: linear-gradient(
-		0.25turn,
-		transparent,
-		var(--g5VerdeLima)
-	);
-	--FlexinhaCor: var(--g5AzulClaro66);
-	--CorItensHover: #000;
-	--CorSeletor: var(--CorItensHover);
-	--CorItens: var(--BordaItens);
-	--mkSelIndex: 2000;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -106,6 +149,44 @@ html {
 .mkSelBloco:has(.mkSel.atualizar) .mkSelPesquisa input {
 	animation: mkEfeitoBordaGira 0.3s infinite;
 	border-radius: 10px;
+}
+
+/* KEYFRAMES*/
+@keyframes mkEfeitoBordaGira {
+	0% {
+		border-top: 1px solid var(--Main1);
+		border-right: 1px dashed var(--Main2);
+		border-bottom: 1px dashed var(--Main2);
+		border-left: 1px dashed var(--Main2);
+	}
+
+	25% {
+		border-top: 1px dashed var(--Main2);
+		border-right: 1px solid var(--Main1);
+		border-bottom: 1px dashed var(--Main2);
+		border-left: 1px dashed var(--Main2);
+	}
+
+	50% {
+		border-top: 1px dashed var(--Main2);
+		border-right: 1px dashed var(--Main2);
+		border-bottom: 1px solid var(--Main1);
+		border-left: 1px dashed var(--Main2);
+	}
+
+	75% {
+		border-top: 1px dashed var(--Main2);
+		border-right: 1px dashed var(--Main2);
+		border-bottom: 1px dashed var(--Main2);
+		border-left: 1px solid var(--Main1);
+	}
+
+	100% {
+		border-top: 1px solid var(--Main1);
+		border-right: 1px dashed var(--Main2);
+		border-bottom: 1px dashed var(--Main2);
+		border-left: 1px dashed var(--Main2);
+	}
 }
 
 .mkSelPesquisa {
@@ -362,44 +443,6 @@ html {
 	cursor: default;
 }
 
-/* KEYFRAMES*/
-@keyframes mkEfeitoBordaGira {
-	0% {
-		border-top: 1px solid var(--Main1);
-		border-right: 1px dashed var(--Main2);
-		border-bottom: 1px dashed var(--Main2);
-		border-left: 1px dashed var(--Main2);
-	}
-
-	25% {
-		border-top: 1px dashed var(--Main2);
-		border-right: 1px solid var(--Main1);
-		border-bottom: 1px dashed var(--Main2);
-		border-left: 1px dashed var(--Main2);
-	}
-
-	50% {
-		border-top: 1px dashed var(--Main2);
-		border-right: 1px dashed var(--Main2);
-		border-bottom: 1px solid var(--Main1);
-		border-left: 1px dashed var(--Main2);
-	}
-
-	75% {
-		border-top: 1px dashed var(--Main2);
-		border-right: 1px dashed var(--Main2);
-		border-bottom: 1px dashed var(--Main2);
-		border-left: 1px solid var(--Main1);
-	}
-
-	100% {
-		border-top: 1px solid var(--Main1);
-		border-right: 1px dashed var(--Main2);
-		border-bottom: 1px dashed var(--Main2);
-		border-left: 1px dashed var(--Main2);
-	}
-}
-
 /* =======================
 	CSS PERSONALIZADO
 =========================*/
@@ -422,28 +465,28 @@ button.mkBtn:hover {
 }
 
 button.mkBtnInv {
-	background: transparent;
-	color: var(--tFundo);
+	background: var(--tFundo);
+	color: var(--tTexto);
 	border-width: 1px;
 	border-style: outset;
 	border-color: var(--tFundo);
 	border-radius: 5px;
 	padding: 0.2rem 0.6rem;
+	width: 35px;
+	min-width: 35px;
+	max-width: 35px;
+	height: 35px;
+	min-height: 35px;
+	max-height: 35px;
+	line-height: 0;
 }
 
 button.mkBtnInv:hover {
 	border-style: inset;
 	border-color: var(--tFundo);
 	color: var(--tFundo);
+	background: var(--tTexto);
 	text-shadow: 1px 1px var(--tTexto);
-}
-
-/* Específicos */
-.mkCssFull {
-	width: 100% !important;
-	height: 100% !important;
-	background: #0009 !important;
-	border: 0px !important;
 }
 
 /* LI e Barra Navegacao */
@@ -509,83 +552,6 @@ div[class*="mkAba"].oculto {
 	overflow: auto;
 }
 
-/* Status de Icone */
-.mkIco {
-	position: relative;
-	width: min-content;
-	align-self: center;
-}
-
-.mkIco::before {
-	content: "\A0";
-	font-size: 9pt;
-	position: absolute;
-	background: red;
-	bottom: 0px;
-	right: -12px;
-	width: 18px;
-	height: 17px;
-	border-radius: 50%;
-}
-
-.mkIco i {
-	border-radius: 50%;
-	padding: 4px 6px;
-	font-style: normal;
-}
-
-.mkIco .mkSverde {
-	border: 1px solid #0a0f;
-	background: #0a03;
-}
-
-.mkIco:has(.mkSverde)::before {
-	content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='black' class='bi bi-check' viewBox='0 0 16 16'> <path d='M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z'/%3E%3C/svg%3E");
-	background: #0a03;
-}
-
-.mkIco .mkSvermelho {
-	border: 1px solid #f00a;
-	background: #f003;
-	animation: mkBgVermelhoAni 1s ease-in-out alternate infinite;
-}
-
-.mkIco:has(.mkSvermelho)::before {
-	content: "X";
-	background: #f003;
-}
-
-.mkIco .mkSlaranja {
-	border: 1px solid #f90a;
-	background: #f903;
-}
-
-.mkIco:has(.mkSlaranja)::before {
-	content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='black' class='bi bi-dash' viewBox='0 0 16 16'><path d='M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z'/%3E%3C/svg%3E");
-	background: #f903;
-	animation: CarregadorMkAni 5s linear infinite;
-}
-
-.mkIco .mkScinza {
-	border: 1px solid #ccc;
-	background: #ccc3;
-}
-
-.mkIco:has(.mkScinza)::before {
-	content: "";
-	background: #ccc3;
-}
-
-@keyframes mkBgVermelhoAni {
-	from {
-		background: #f002;
-	}
-
-	to {
-		background: #f006;
-	}
-}
-
 /* =======================
 	LOADING
 =========================*/
@@ -607,7 +573,7 @@ div[class*="mkAba"].oculto {
 	left: 0px;
 	top: 0px;
 	z-index: 5001;
-	background-color: #000000bb;
+	background-color: var(--mkEscurecerForte);
 	min-height: 100%;
 	min-width: 100%;
 	width: 100%;
@@ -618,14 +584,19 @@ div[class*="mkAba"].oculto {
 	position: absolute;
 	right: 3px;
 	top: 3px;
+	width: 45px;
+	min-width: 45px;
+	max-width: 45px;
+	height: 45px;
+	min-height: 45px;
+	max-height: 45px;
 	z-index: 5012;
 	background-color: transparent;
 	border: 1px solid transparent;
-	color: #ffffff;
-	border-color: #ffffff;
+	color: var(--tFundo);
+	border-color: var(--tFundo);
 	display: inline-block;
-	font-weight: 400;
-	line-height: 1.5;
+	line-height: 1;
 	text-align: center;
 	text-decoration: none;
 	vertical-align: middle;
@@ -633,16 +604,19 @@ div[class*="mkAba"].oculto {
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	user-select: none;
-	font-size: 2rem;
 	padding: 0.375rem 0.75rem;
 	border-radius: 0.25rem;
 	transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out,
 		border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
+.CarregadorMkTopoDireito svg {
+	width: 100%;
+	height: 100%;
+}
 
 button.CarregadorMkTopoDireito:hover {
-	background-color: white;
-	color: #005500;
+	background-color: var(--tFundo);
+	color: var(--tTexto);
 }
 
 .CarregadorMk {
@@ -652,12 +626,12 @@ button.CarregadorMkTopoDireito:hover {
 	color: transparent;
 	background: transparent;
 	border: transparent double 10px;
-	border-left-color: var(--g5AzulEscuroCC);
+	border-left-color: var(--carregadorExterno2);
 	border-left-style: solid;
-	border-right-color: var(--g5AzulEscuroCC);
+	border-right-color: var(--carregadorExterno2);
 	border-right-style: solid;
-	border-top-color: var(--g5VerdeLima99);
-	border-bottom-color: var(--g5VerdeLima99);
+	border-top-color: var(--carregadorExterno1);
+	border-bottom-color: var(--carregadorExterno1);
 	border-radius: 100%;
 	position: absolute;
 	left: 50%;
@@ -666,11 +640,10 @@ button.CarregadorMkTopoDireito:hover {
 	animation: CarregadorMkAni 4000ms linear infinite;
 	overflow: hidden;
 }
-
 .CarregadorMk::before {
 	border: transparent solid 10px;
-	border-left-color: var(--g5BrancoSujo99);
-	border-right-color: var(--g5AzulClaro99);
+	border-left-color: var(--carregadorInterno1);
+	border-right-color: var(--carregadorInterno2);
 	content: "";
 	top: -10px;
 	left: -10px;
@@ -682,7 +655,7 @@ button.CarregadorMkTopoDireito:hover {
 }
 
 .CarregadorMk::after {
-	border: var(--g5VerdeLima33) inset 3px;
+	border: var(--carregadorCentro) inset 3px;
 	position: absolute;
 	content: "";
 	top: 25px;
@@ -722,8 +695,6 @@ button.CarregadorMkTopoDireito:hover {
 .divInputInput:has(.pending:not(.iConsultas)) {
 	position: relative;
 	box-sizing: border-box;
-	color: #000;
-	background: #fff;
 	background-clip: padding-box;
 	border: 5px solid transparent;
 	border-radius: 10px;
@@ -741,21 +712,20 @@ button.CarregadorMkTopoDireito:hover {
 	z-index: -1;
 	margin: -5px;
 	border-radius: inherit;
-	background: #daa520;
+	background: var(--ouro);
 	animation: pulsarMk 1.5s ease-in-out alternate infinite;
 }
 
 @keyframes pulsarMk {
 	0%,
 	100% {
-		background: #ff660099;
+		background: var(--pulsarInput);
 	}
 
 	50% {
 		background: transparent;
 	}
 }
-
 /* =======================
 	MK Effect: Offline
 =========================*/
@@ -773,8 +743,8 @@ button.CarregadorMkTopoDireito:hover {
 	min-width: 100%;
 	font-size: 2rem;
 	z-index: 4010;
-	color: white;
-	background: #daa520;
+	color: var(--serverOffText);
+	background: var(--offline100);
 	animation: pulsarMk2 1.5s ease-in-out alternate infinite;
 	box-shadow: 3px 3px 2px 2px #000;
 }
@@ -786,8 +756,8 @@ button.CarregadorMkTopoDireito:hover {
 	z-index: 4012;
 	background-color: transparent;
 	border: 1px solid transparent;
-	color: #ffffff;
-	border-color: #ffffff;
+	color: var(--serverOffText);
+	border-color: var(--serverOffText);
 	display: inline-block;
 	font-weight: 400;
 	line-height: 1.5;
@@ -808,11 +778,11 @@ button.CarregadorMkTopoDireito:hover {
 @keyframes pulsarMk2 {
 	0%,
 	100% {
-		background: #ff4646ff;
+		background: var(--offline100);
 	}
 
 	50% {
-		background: #330000cc;
+		background: var(--offline50);
 	}
 }
 
@@ -826,14 +796,13 @@ button.CarregadorMkTopoDireito:hover {
 @keyframes pulsarFundo {
 	0%,
 	100% {
-		background: #ff000099;
+		background: var(--efeitoPulsar);
 	}
 
 	50% {
 		background: transparent;
 	}
 }
-
 /* =======================
 	MK Effect: Vidro
 =========================*/
@@ -861,7 +830,7 @@ button.CarregadorMkTopoDireito:hover {
 	border-radius: 10px;
 	border: 1px inset var(--g5BrancoSujo99);
 	text-decoration: none;
-	box-shadow: 1px 1px 2px black;
+	box-shadow: 1px 1px 2px var(--sombraForte);
 	backdrop-filter: blur(1.2px);
 	transition: 1s;
 	overflow: hidden;
@@ -878,11 +847,10 @@ button.CarregadorMkTopoDireito:hover {
 	left: 0;
 	width: 20px;
 	height: 100%;
-	background: rgba(200, 255, 200, 0.2);
+	background: var(--efeitoVidro);
 	transform: skewX(45deg) translateX(100px);
 	transition: 0.5s;
 }
-
 .iconeVidro li a:hover::before {
 	transform: skewX(45deg) translateX(-150px);
 }
@@ -908,7 +876,7 @@ button.CarregadorMkTopoDireito:hover {
 	background: linear-gradient(
 		to left,
 		transparent,
-		#fff7 50%,
+		var(--efeitoDodge) 50%,
 		transparent 100%
 	);
 	animation: mkEsquerdaParaDireita 10s infinite linear;
@@ -947,13 +915,12 @@ button.CarregadorMkTopoDireito:hover {
 		to left,
 		transparent,
 		transparent 50%,
-		#fff9 75%,
+		var(--efeitoDifference) 75%,
 		transparent 100%
 	);
 	animation: mkEsquerdaParaDireita 5s infinite linear;
 	mix-blend-mode: difference;
 }
-
 /* =======================
 	MK Effect: TIMER
 =========================*/
@@ -965,13 +932,13 @@ button.CarregadorMkTopoDireito:hover {
 	border: 0px;
 	border-radius: 50%;
 	background: conic-gradient(
-		var(--g5VerdeLima),
+		var(--timerRestante),
 		calc(var(--m) - 0.01turn),
-		var(--g5VerdeLima),
+		var(--timerRestante),
 		calc(var(--m)),
-		var(--g5BrancoSujo),
+		var(--timerConsumido),
 		calc(var(--m) + 0.01turn),
-		var(--g5BrancoSujo)
+		var(--timerConsumido)
 	);
 	margin: auto;
 	align-items: center;
@@ -983,7 +950,7 @@ button.CarregadorMkTopoDireito:hover {
 }
 
 .timerOut.red {
-	--g5VerdeLima: #ff8888;
+	--timerRestante: var(--timerEncerrando);
 }
 
 /* =======================
@@ -1033,7 +1000,6 @@ button.CarregadorMkTopoDireito:hover {
 	AREA CONFIRMADOR
 =========================*/
 .mkConfirmadorBloco {
-	--mkConfirmadorIndex: 1600;
 	position: fixed;
 	display: flex;
 	flex-wrap: wrap;
@@ -1051,7 +1017,7 @@ button.CarregadorMkTopoDireito:hover {
 	z-index: var(--mkConfirmadorIndex);
 	overflow-x: hidden;
 	overflow-y: hidden;
-	background: #0005;
+	background: var(--mkEscurecer);
 	align-items: center;
 }
 
@@ -1067,7 +1033,8 @@ button.CarregadorMkTopoDireito:hover {
 	width: 400px;
 	height: 150px;
 	border: 1px outset var(--tFundoHigh);
-	box-shadow: -1px -1px 0px 0px var(--tFundo);
+	box-shadow: 6px 6px 10px 1px var(--sombraForte);
+
 	border-radius: 5px;
 	background: var(--tFundoHigh);
 	color: var(--tTextoHigh);
@@ -1145,25 +1112,61 @@ button.CarregadorMkTopoDireito:hover {
 }
 
 .bVerde {
-	--botaoFundo: #090;
-	--botaoFundo2: linear-gradient(0deg, #090 0%, #090 10%, #fff 70%, #fff 100%);
-	--botaoFHover: linear-gradient(0deg, #090 0%, #090 10%, #fff 70%, #fff 100%);
+	--botaoFundo: var(--tonalidadeVerde);
+	--botaoFundo2: linear-gradient(
+		0deg,
+		var(--tonalidadeVerde) 0%,
+		var(--tonalidadeVerde) 10%,
+		#fff 70%,
+		#fff 100%
+	);
+	--botaoFHover: linear-gradient(
+		0deg,
+		var(--tonalidadeVerde) 0%,
+		var(--tonalidadeVerde) 10%,
+		#fff 70%,
+		#fff 100%
+	);
 	--botaoCorHover: #fff;
 	--botaoCor: #000;
 }
 
 .bVermelho {
-	--botaoFundo: #900;
-	--botaoFundo2: linear-gradient(0deg, #900 0%, #900 10%, #fff 70%, #fff 100%);
-	--botaoFHover: linear-gradient(0deg, #900 0%, #900 10%, #fff 70%, #fff 100%);
+	--botaoFundo: var(--tonalidadeVermelho);
+	--botaoFundo2: linear-gradient(
+		0deg,
+		var(--tonalidadeVermelho) 0%,
+		var(--tonalidadeVermelho) 10%,
+		#fff 70%,
+		#fff 100%
+	);
+	--botaoFHover: linear-gradient(
+		0deg,
+		var(--tonalidadeVermelho) 0%,
+		var(--tonalidadeVermelho) 10%,
+		#fff 70%,
+		#fff 100%
+	);
 	--botaoCorHover: #fff;
 	--botaoCor: #000;
 }
 
 .bCinza {
-	--botaoFundo: #777;
-	--botaoFundo2: linear-gradient(0deg, #777 0%, #777 10%, #fff 70%, #fff 100%);
-	--botaoFHover: linear-gradient(0deg, #777 0%, #777 10%, #fff 70%, #fff 100%);
+	--botaoFundo: var(--tonalidadeCinza);
+	--botaoFundo2: linear-gradient(
+		0deg,
+		var(--tonalidadeCinza) 0%,
+		var(--tonalidadeCinza) 10%,
+		#fff 70%,
+		#fff 100%
+	);
+	--botaoFHover: linear-gradient(
+		0deg,
+		var(--tonalidadeCinza) 0%,
+		var(--tonalidadeCinza) 10%,
+		#fff 70%,
+		#fff 100%
+	);
 	--botaoCorHover: #fff;
 	--botaoCor: #000;
 }
@@ -1180,11 +1183,11 @@ button.CarregadorMkTopoDireito:hover {
 	top: -8px;
 	left: -8px;
 	border: 0px solid transparent;
-	border-right: 4px solid limegreen;
-	border-bottom: 4px solid limegreen;
+	border-right: 4px solid var(--corIconeSim);
+	border-bottom: 4px solid var(--corIconeSim);
 	border-radius: 5px;
 	transform: rotate(45deg);
-	box-shadow: 2px 1px 1px 0px #0005;
+	box-shadow: 2px 1px 1px 0px var(--mkEscurecer);
 }
 
 .icoSim::after {
@@ -1194,9 +1197,9 @@ button.CarregadorMkTopoDireito:hover {
 	height: 25px;
 	top: -11px;
 	left: -15px;
-	border: 2px solid limegreen;
+	border: 2px solid var(--corIconeSim);
 	border-radius: 50%;
-	box-shadow: 1px 1px 0px 0px #0005;
+	box-shadow: 1px 1px 0px 0px var(--mkEscurecer);
 }
 
 .icoNao {
@@ -1211,7 +1214,7 @@ button.CarregadorMkTopoDireito:hover {
 	top: -10px;
 	left: -6px;
 	border: 0px solid transparent;
-	border-right: 3px solid darkgray;
+	border-right: 3px solid var(--corIconeNao);
 	border-radius: 2px;
 	transform: rotate(45deg);
 }
@@ -1224,7 +1227,7 @@ button.CarregadorMkTopoDireito:hover {
 	top: -10px;
 	left: -1px;
 	border: 0px solid transparent;
-	border-left: 3px solid darkgray;
+	border-left: 3px solid var(--corIconeNao);
 	border-radius: 2px;
 	transform: rotate(-45deg);
 }
@@ -1232,7 +1235,7 @@ button.CarregadorMkTopoDireito:hover {
 .icoNao:hover::before,
 .icoNao:hover::after {
 	border-radius: 3px;
-	border-color: white;
+	border-color: var(--corIconeNaoHover);
 }
 
 .icoSim:hover::after {
@@ -1257,7 +1260,7 @@ button.CarregadorMkTopoDireito:hover {
 	z-index: 1060;
 	overflow-x: hidden;
 	overflow-y: auto;
-	background: #0005;
+	background: var(--modalEscurecer);
 }
 
 .mkModalConteudo {
@@ -1287,18 +1290,6 @@ button.CarregadorMkTopoDireito:hover {
 	Barra de FASES
 =========================*/
 ul.mkUlFase {
-	--MkFaseCorFundo: var(--g5BrancoElevado);
-	--MkFaseCorEfeitoPassivo: var(--g5VerdeLima);
-	--MkFaseCorFundoIco: var(--g5BrancoElevado);
-	--MkFaseCorFundoIcoBack: var(--g5AzulEscuro66);
-	--MkFaseCorFundoIcoAtivo: var(--g5VerdeLimaCC);
-	--MkFaseCorTexto: var(--g5AzulEscuro);
-	--MkFaseCorTextoBack: var(--g5AzulEscuro);
-	--MkFaseCorTextoAtivo: var(--g5AzulClaro);
-	--MkFaseCorTextoDisabled: var(--g5CinzaEscuro66);
-	--MkFaseCorTextoIcoBack: var(--g5BrancoElevado);
-	--MkFaseCorTextoIcoAtivo: var(--g5AzulEscuro);
-	--MkFaseCorEfeitoTexto: var(--g5AzulClaro33);
 	display: flex;
 	flex-direction: row;
 	width: 100%;
@@ -1762,7 +1753,7 @@ ul.mkUlFase li.disabled a {
 		transparent,
 		transparent,
 		transparent,
-		#00d1c3,
+		var(--efeitoSobe),
 		transparent,
 		transparent,
 		transparent,
@@ -1854,26 +1845,6 @@ ul.mkUlFase li.disabled a {
 	}
 }
 
-/* AREA de TESTE*/
-html:has(.bodyCentro) {
-	height: 100%;
-}
-
-.bodyCentro {
-	display: grid;
-	height: 100%;
-	width: 100%;
-	border: 1px solid green;
-	margin: 0px;
-	padding: 0px;
-	box-sizing: border-box;
-	background-color: transparent;
-}
-
-.bodyCentro * {
-	box-sizing: border-box;
-}
-
 /* EFEITO CLIP */
 .mkEfeitoClip {
 	clip-path: url(#mkClip);
@@ -1910,20 +1881,35 @@ html:has(.bodyCentro) {
 	user-select: none;
 	justify-content: center;
 }
-.pagBotoes li {
-	padding: 0.2rem 0.8rem;
-	border: 1px solid black;
-}
-.pagBotoes li.ativo {
-	background-color: gray;
-}
 .pagBotao {
 	cursor: pointer;
 }
 .pagBotao.disabled {
 	filter: grayscale(1);
-	opacity: 0.3;
+	opacity: 0.5;
 	pointer-events: none;
+}
+.pagBotoes .pagBotao {
+	padding: 0.2rem 0.8rem;
+	border: 1px solid var(--bordaMaster);
+	background-color: var(--fundoLink);
+	color: var(--corLink);
+}
+.pagBotoes .ativo {
+	background-color: var(--fundoHead);
+	color: var(--corHead);
+}
+.pagBotoes .pagBotao:hover {
+	background-color: var(--fundoHead);
+	color: var(--corHead);
+}
+.pagBotao.pag0 {
+	border-bottom-left-radius: 20px;
+	border-top-left-radius: 0px;
+}
+.pagBotao.pag8 {
+	border-bottom-right-radius: 20px;
+	border-top-right-radius: 0px;
 }
 
 /* Listagem: Paginacao */
