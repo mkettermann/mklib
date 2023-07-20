@@ -1,1 +1,0 @@
-Este é um teste bem simples para ver a frequencia que os caracteres aparecem neste arquivo.
