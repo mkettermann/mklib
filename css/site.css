@@ -430,3 +430,9 @@ textarea {
 	border-top-color: var(--tFundoHigh);
 	border-left-color: var(--tFundoHigh);
 }
+
+.inlineScript {
+	font-size: small;
+	font-style: italic;
+	background-color: #444;
+}

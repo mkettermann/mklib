@@ -71,8 +71,8 @@
 
 <h1 class="microPos2 h1">Listagem Instanciável</h1>
 <div>
-	Listagem de dados em tabela. A classe pode instanciar mais de uma tabela.
-	Ordenamento, resumo e páginas individuais. O Filtro pode ou não ser
+	&nbsp; Listagem de dados em tabela. A classe pode instanciar mais de uma
+	tabela. Ordenamento, resumo e páginas individuais. O Filtro pode ou não ser
 	individual.
 </div>
 <br />
@@ -277,6 +277,7 @@ var lista2 = new mk("/GetList2", "#tabela2", "#modelo2", ".fTabela2", "mId");
 // aoReceberDados = Função que se executa sempre que esta listagem coletar dados externos.
 // antesDePopularTabela = Função que se executa momentos antes de exibir algo.
 // aoCompletarExibicao = Função que se executa somente após concluir a exibição.
+
 var listas = [lista, lista2];
 // Você pode colocar as instâncias em um container, como na linha acima.
 // Desta forma você pode chamar a instância correta na função correta.
@@ -286,28 +287,64 @@ var listas = [lista, lista2];
 var uiSetADD = async (listId) => {
   let obj = mk.mkGerarObjeto(".operacaoCampos");
   listas[listId].add(obj);
-  mk.QverOff(".operacaoContainer");
 };
 // UI para Editar (ex.: lista.edit(objeto, PropriedadeABuscar, ValorDaPropriedade))
 var uiSetEDIT = async (k, v, listId) => {
   let obj = mk.mkGerarObjeto(".operacaoCampos");
   listas[listId].edit(obj, k, v);
-  mk.QverOff(".operacaoContainer");
 };
 // UI para Deletar (ex.: lista.del(PropriedadeABuscar, ValorDaPropriedade))
 var uiSetDEL = async (k, v, listId) => {
   listas[listId].del(k, v);
-  mk.QverOff(".operacaoContainer");
 };
 // UI para Limpar Filtros (ex.: lista.clearFiltro())
 var uiClearFiltro = async (listId) => {
   listas[listId].clearFiltro();
-  mk.QverOff(".operacaoContainer");
 };
 </textarea
 		>
 	</div>
 </div>
+
+<br />
+<br />
+<ul class="tabela">
+	<li>
+		<div class="quebra">Funcionalidades</div>
+		<div class="quebra">Modo de uso</div>
+	</li>
+	<li>
+		<u><br />1. Sobre o básico/padrão:</u>
+	</li>
+	<li>
+		<div class="quebra">
+			&nbsp; A Listagem é uma grande ferramenta que contém várias funções
+			interligadas para exibir conteúdos de forma organizada, permitindo ao
+			usuário diversas possibilidades de iteração. Entre elas, as principais
+			adicionar, editar, deletar, filtrar e ordenar são possíveis quando as
+			funções de interface ao usuário (UI) do site ficam bem conectadas as
+			funções de ações da(s) listagem(ns).
+			<br />
+			&nbsp; Na listagem instanciável, primeiro precisa instanciar a classe e
+			coloca-la em uma variável. A sua UI deverá chamar os métodos / ações /
+			propriedades a partir desta variável.
+			<br />
+			&nbsp; Abaixo será descrita de forma individual as funcionalidades.
+		</div>
+		<div class="quebra">
+			&nbsp; <u>Pré-Requisitos:</u>
+			<br />
+			&raquo; A biblioteca precisa estar iniciada.
+			<br />
+			&raquo; Uma URL de API para trazer dados em formato JSON.
+			<br />
+			&raquo; Uma tabela com um container que cerca o resumo.
+			<br />
+			&raquo; Um modelo de linha da tabela (template).
+		</div>
+	</li>
+</ul>
+
 <br /><br />
 <!-- TEMPLATE LISTAGEM 1 -->
 <script type="text/html" id="modelo">

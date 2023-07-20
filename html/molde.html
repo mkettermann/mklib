@@ -1,5 +1,5 @@
 <h1 class="microPos2 h1">Molde</h1>
-<div>Popula um template html.</div>
+<div>&nbsp; Popula um template html.</div>
 <table class="tableListagem">
 	<thead>
 		<tr>
@@ -24,23 +24,69 @@
 					type="text"
 					name="nome"
 					value="Fulano"
-					oninput="paraObjeto(this)"
+					oninput="aoModificarInput(this)"
 				/>
 			</td>
 			<td style="vertical-align: top"><div class="resultado"></div></td>
 		</tr>
 	</tbody>
 </table>
+
+<br />
+<br />
+<ul class="tabela">
+	<li>
+		<div class="quebra">Funcionalidades</div>
+		<div class="quebra">Modo de uso</div>
+	</li>
+	<li>
+		<u><br />1. Sobre o básico/padrão:</u>
+	</li>
+	<li>
+		<div class="quebra">
+			&nbsp; Molde se trata de uma ferramenta de clonagem de estrutura.
+			<br />&nbsp; Primeiramente, precisa definir um template / modelo que
+			representa a estrutura que os dados serão colocados. No exemplo acima, foi
+			definido o modelo do lado esquerdo da tabela e setado um id para esta tag
+			html com nome "modelo". É possível utilizar id/class, informando da mesma
+			forma que se referencia ele no CSS ('#' para id, '.' para classe).
+			<br />&nbsp; Dentro do modelo você utiliza os caracteres '${' e '}' para
+			iniciar e finalizar o acesso a propriedade do objeto. Não pode haver
+			espaços ou outros caracteres além dos caracteres exatos e na mesma ordem
+			da propriedade do objeto. <br />&nbsp; No exemplo acima, o modelo a
+			esquerda contem ${nome}, então será procura no objeto a propriedade
+			"nome". Na coluna do centro há um input que contem um atributo
+			name='nome', assim esse input receberá um valor para a propriedade "nome".
+			Há também uma função 'aoModificarInput' na página que executa esse input
+			quando iniciar a página ou modificar o campo. <br />&nbsp; A função que
+			executa o Molde também é, neste caso, a mesma função que seta o nome da
+			propriedade no objeto. Veja a função:
+			<small class="inlineScript">
+				<pre>
+	function aoModificarInput(e) {
+		objeto[e.name] = e.value;
+		mk.mkMoldeOA(objeto, "#modelo", ".resultado");
+	}
+</pre
+				>
+			</small>
+		</div>
+		<div class="quebra">
+			&nbsp; <u>Pré-Requisitos:</u>
+			<br />
+			&raquo; A biblioteca precisa estar iniciada.
+		</div>
+	</li>
+</ul>
+
 <script defer>
 	var objeto = {};
-	function paraObjeto(e) {
+
+	function aoModificarInput(e) {
 		objeto[e.name] = e.value;
 		mk.mkMoldeOA(objeto, "#modelo", ".resultado");
 	}
 
 	// Inicia executando
-	paraObjeto(mk.Q("#inputTeste"));
-	// mk.Ao("input", "#modelo", (e) => {
-	// 	e.innerHTML = e.value;
-	// });
+	aoModificarInput(mk.Q("#inputTeste"));
 </script>
