@@ -1,5 +1,5 @@
 const menuAbrir = async (e: Element) => {
-	let destino = mk.QdataGet(e, "go");
+	let destino = mk.QdataGet(e as any, "go");
 	if (destino != null) {
 		let retorno = await mk.http("/html/" + destino, mk.t.G, mk.t.H);
 		if (retorno != null) {
@@ -16,7 +16,7 @@ menuAbrir(mk.Q(".MenuLink.inicio"));
 
 /**Confirmar */
 const aoIncrementar = async (e) => {
-	function edit(alvo, novoValor) {
+	function edit(alvo: any, novoValor: any) {
 		alvo.value = novoValor.toString();
 		return novoValor;
 	}
