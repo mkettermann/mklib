@@ -1,5 +1,6 @@
-# MK Library
-> Biblioteca MK de UI, funções, controladores, gerenciadores...
+# MasterKey
+> MasterKey é uma biblioteca JS com ferramentas de suporte ao desenvolvimento front end.
+> Com UI, funções, controladores, gerenciadores...
 
 <br>
 
