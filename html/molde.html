@@ -11,11 +11,10 @@
 	<tbody class="listBody">
 		<tr>
 			<td>
-				<div id="modelo" type="text" contenteditable="true">
-					Olá ${nome}!<br /><br />
-					Segue 'aqui' um "exemplo" de /template/ através de \objeto\.
-					<br /><br />
-					Show? \t\n\' né, ${nome}?.
+				<div id="modelo" contenteditable="true">
+					Olá ${nome}!<br />
+					Este: ${naoEstouNoObjeto}, nem exibe.<br />
+					<br />hey ${nome}! <br />hey ${nome }!
 				</div>
 			</td>
 			<td style="vertical-align: top">
@@ -31,6 +30,64 @@
 		</tr>
 	</tbody>
 </table>
+
+<br /><br />
+<div class="fullCodigoContainer microPos5">
+	<div class="i codigoContainer">
+		<div class="titulo">Modo de uso - HTML</div>
+		<textarea class="regua" rows="4" cols="1" readonly>
+1
+2
+3
+4</textarea
+		>
+		<textarea
+			class="codigo"
+			rows="4"
+			cols="100"
+			onfocus="mk.mkSelecionarInner(this)"
+			readonly
+		>
+<div id="exibir"></div>
+<script type="text/html" id="modelo">
+	Olá ${nome} ${sobrenome}!
+</script></textarea
+		>
+	</div>
+</div>
+<br /><br />
+<div class="fullCodigoContainer microPos5">
+	<div class="i codigoContainer">
+		<div class="titulo">Modo de uso - JS</div>
+		<textarea class="regua" rows="4" cols="1" readonly>
+1
+2
+3
+4</textarea
+		>
+		<textarea
+			class="codigo"
+			rows="4"
+			cols="100"
+			onfocus="mk.mkSelecionarInner(this)"
+			readonly
+		>
+var dados = [{ nome: "Marcos", sobrenome: "Kettermann" }, { nome: "Zé" }];
+dados.push({nome:"Fulano",sobrenome:"dos Santos Silva"});
+mk.mkMoldeOA(dados, "#modelo", "#exibir");</textarea
+		>
+	</div>
+</div>
+<div>Resultado do script acima:</div>
+<div id="exibir"></div>
+<script type="text/html" id="modelo333">
+	Olá ${nome} ${sobrenome}!
+</script>
+<script>
+	var dados = [{ nome: "Marcos", sobrenome: "Kettermann" }, { nome: "Zé" }];
+	dados.push({ nome: "Fulano", sobrenome: "dos Santos Silva" });
+	mk.mkMoldeOA(dados, "#modelo333", "#exibir");
+</script>
 
 <br />
 <br />
@@ -53,9 +110,10 @@
 			<br />&nbsp; Dentro do modelo você utiliza os caracteres '${' e '}' para
 			iniciar e finalizar o acesso a propriedade do objeto. Não pode haver
 			espaços ou outros caracteres além dos caracteres exatos e na mesma ordem
-			da propriedade do objeto. No exemplo do topo, foi utilizado id="modelo" em
-			uma div, e desta forma ficou visível ao usuário. Veja como utilizar e
-			ocultar um modelo similar ao utilizado no exemplo acima:
+			da propriedade do objeto. Se não encontrar o nome da propriedade no
+			objeto, este bloco não será exibido. No exemplo do topo, foi utilizado
+			id="modelo" em uma div, e desta forma ficou visível ao usuário. Veja como
+			utilizar e ocultar um modelo similar ao utilizado no exemplo acima:
 			<pre class="inlineScript">
 &lt;script type="text/html" id="modelo"&gt;
 	Olá ${nome}!
@@ -68,12 +126,12 @@
 			name='nome', assim esse input poderrá receber um valor para a propriedade
 			"nome", este atributo foi coletado dentro de uma função. Então, há também
 			uma função 'aoModificarInput' na página que executa esse input quando
-			iniciar a página ou modificar o campo. <br />&nbsp; A função que executa o
-			Molde também é, neste caso, a mesma função que seta o nome da propriedade
-			no objeto.<br />
+			iniciar a página ou modificar o campo. <br /><br />&nbsp; A função que
+			executa o Molde também é, neste caso, a mesma função que seta o nome da
+			propriedade no objeto.<br />
 			&nbsp; Veja a função:
 			<pre class="inlineScript">
-var objeto = {};
+var objeto = { nome: "Seu Zé"};
 function aoModificarInput(e) {
 	objeto[e.name] = e.value;
 	mk.mkMoldeOA(objeto, "#modelo", ".resultado");
@@ -82,7 +140,15 @@ function aoModificarInput(e) {
 			>
 			<br />&nbsp; Um objeto chamado "objeto" é criado no navegador do cliente e
 			este ganha uma propriedade chamada "nome", coletada do atributo "name" do
-			elemento input, recebido por parametro.
+			elemento input, recebido por parametro. Então, em resumo:<br />
+			. Você escreve no campo<br />
+			. Chamamos a função por evento.<br />
+			. Mudamos a propriedade que está escrita no atributo name.<br />
+			. Chamamos a função de molde mk.mkMoldeOA() passando o objeto com a
+			propriedade já alterada.<br /><br />
+			&nbsp; A função mkMoldeOA recebe os parametros:
+			<br />1º Array de objetos / Objeto<br />2º String de identificação do
+			campo do modelo<br />3º String de identificação do campo de resultado.
 		</div>
 		<div class="quebra">
 			&nbsp; <u>Pré-Requisitos:</u>
@@ -93,7 +159,9 @@ function aoModificarInput(e) {
 </ul>
 
 <script defer>
-	var objeto = {};
+	var objeto = {
+		nome: "Seu Zé",
+	};
 
 	function aoModificarInput(e) {
 		objeto[e.name] = e.value;
