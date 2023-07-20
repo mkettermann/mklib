@@ -53,23 +53,36 @@
 			<br />&nbsp; Dentro do modelo você utiliza os caracteres '${' e '}' para
 			iniciar e finalizar o acesso a propriedade do objeto. Não pode haver
 			espaços ou outros caracteres além dos caracteres exatos e na mesma ordem
-			da propriedade do objeto. <br />&nbsp; No exemplo acima, o modelo a
-			esquerda contem ${nome}, então será procura no objeto a propriedade
-			"nome". Na coluna do centro há um input que contem um atributo
-			name='nome', assim esse input receberá um valor para a propriedade "nome".
-			Há também uma função 'aoModificarInput' na página que executa esse input
-			quando iniciar a página ou modificar o campo. <br />&nbsp; A função que
-			executa o Molde também é, neste caso, a mesma função que seta o nome da
-			propriedade no objeto. Veja a função:
-			<small class="inlineScript">
-				<pre>
-	function aoModificarInput(e) {
-		objeto[e.name] = e.value;
-		mk.mkMoldeOA(objeto, "#modelo", ".resultado");
-	}
+			da propriedade do objeto. No exemplo do topo, foi utilizado id="modelo" em
+			uma div, e desta forma ficou visível ao usuário. Veja como utilizar e
+			ocultar um modelo similar ao utilizado no exemplo acima:
+			<pre class="inlineScript">
+&lt;script type="text/html" id="modelo"&gt;
+	Olá ${nome}!
+&lt;/script&gt;</pre
+			>
+			<br />&nbsp; Agora que você entendeu como criar a estrutura (o modelo),
+			vamos aos dados que irão preencher este modelo. O modelo contém ${nome},
+			então será procurado no objeto a propriedade "nome". <br />&nbsp; Na
+			coluna do centro do exemplo do topo há um input que contem um atributo
+			name='nome', assim esse input poderrá receber um valor para a propriedade
+			"nome", este atributo foi coletado dentro de uma função. Então, há também
+			uma função 'aoModificarInput' na página que executa esse input quando
+			iniciar a página ou modificar o campo. <br />&nbsp; A função que executa o
+			Molde também é, neste caso, a mesma função que seta o nome da propriedade
+			no objeto.<br />
+			&nbsp; Veja a função:
+			<pre class="inlineScript">
+var objeto = {};
+function aoModificarInput(e) {
+	objeto[e.name] = e.value;
+	mk.mkMoldeOA(objeto, "#modelo", ".resultado");
+}
 </pre
-				>
-			</small>
+			>
+			<br />&nbsp; Um objeto chamado "objeto" é criado no navegador do cliente e
+			este ganha uma propriedade chamada "nome", coletada do atributo "name" do
+			elemento input, recebido por parametro.
 		</div>
 		<div class="quebra">
 			&nbsp; <u>Pré-Requisitos:</u>

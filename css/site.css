@@ -391,7 +391,7 @@ ul.tabela li:nth-child(1) div.quebra {
 }
 textarea {
 	color: var(--corMenu);
-	background-color: var(--fundoMenu);
+	background-color: var(--corSecundaria);
 	outline: 0px;
 	border: 0px;
 }
@@ -408,7 +408,7 @@ textarea {
 	top: -23px;
 	right: 20px;
 	color: var(--corHeadEfeito);
-	background-color: var(--corPrincipal);
+	background-color: var(--corSecundaria);
 	padding: 3px 15px;
 	border: 1px solid transparent;
 	border-top-left-radius: 5px;
@@ -417,8 +417,10 @@ textarea {
 	border-left-color: var(--tFundoHigh);
 }
 
-.inlineScript {
-	font-size: small;
-	font-style: italic;
-	background-color: #444;
+pre {
+	font-family: "Courier New", monospace;
+	font-size: 0.8rem;
+	background-color: var(--fundoSecundaria);
+	color: var(--corSecundaria);
+	border-radius: 5px;
 }
