@@ -8,5 +8,5 @@
  Principais Colaboradores</h2>
 
 <table><tbody><tr>
-  <td align="center" width="150"><a href="https://github.com/mkettermann"><img src="https://avatars.githubusercontent.com/u/109902736?s=70&v=4"><br><sub>Marcos Kettermann</sub></a></td>
+  <td align="center" width="150"><a href="https://github.com/mkettermann"><img src="https://avatars.githubusercontent.com/u/109902736?s=70&v=4"><br><sub>Marcos Kettermann</sub></a> (Criador)</td>
 </tr></tbody></table>
