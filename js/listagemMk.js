@@ -46,7 +46,7 @@ var uiGetADD = async (listId, strListagem) => {
 };
 
 var uiGetEDIT = async (tr, listId) => {
-	let k = tr.getAttribute("k");
+	let k = listas[listId].c.pk;
 	let v = tr.getAttribute("id");
 	mk.QverOn(".operacaoContainer");
 	mk.QScrollTo("#Acao");
@@ -57,6 +57,7 @@ var uiGetEDIT = async (tr, listId) => {
 		"uiSetEDIT('" + k + "','" + v + "', " + listId + ")"
 	);
 	let objeto = listas[listId].dadosFull.find((o) => o[k] == v);
+	//console.log("Editando: [k:" + k + ",v:" + v + "]", objeto);
 	await mk.mkMoldeOA(
 		listas[listId].getKV(objeto),
 		"#modeloOperacao",
@@ -65,7 +66,7 @@ var uiGetEDIT = async (tr, listId) => {
 };
 
 var uiGetDEL = async (tr, listId) => {
-	let k = tr.getAttribute("k");
+	let k = listas[listId].c.pk;
 	let v = tr.getAttribute("id");
 	mk.mkConfirma("Você está prestes a deletar esta linha. Confirma?").then(
 		(r) => {
