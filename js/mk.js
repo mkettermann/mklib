@@ -31,7 +31,7 @@ class mk {
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //			CONSTRUTOR									\\
     //___________________________________\\
-    constructor(urlOrigem = window.location.href + "/GetList", todaListagem = ".divListagemContainer", idModelo = "#modelo", filtro = ".iConsultas", pk = "pk", importar = false, aoReceberDados = mk.aoReceberDados, antesDePopularTabela = mk.antesDePopularTabela, aoCompletarExibicao = mk.aoCompletarExibicao) {
+    constructor(urlOrigem = window.location.href + "/GetList", todaListagem = ".divListagemContainer", idModelo = "#modelo", filtro = ".iConsultas", pk = "", importar = false, aoReceberDados = mk.aoReceberDados, antesDePopularTabela = mk.antesDePopularTabela, aoCompletarExibicao = mk.aoCompletarExibicao) {
         urlOrigem = urlOrigem.replaceAll("//GetList", "/GetList");
         this.listagemConfigurar(urlOrigem, todaListagem, idModelo, filtro, pk);
         this.aoReceberDados = aoReceberDados;
@@ -64,7 +64,7 @@ class mk {
         pagItensIni: 0,
         pagItensFim: 0,
         totPags: 0,
-        pk: "", // Possivel setar o nome do campo que é primary key já na construcao
+        pk: null, // Possivel setar o nome do campo que é primary key já na construcao
     };
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //			LISTAGEM										\\
@@ -72,7 +72,6 @@ class mk {
     // Seta as variaveis de uso interno.
     listagemConfigurar = (urlOrigem, todaListagem, idModelo, fTag, pk) => {
         this.c.urlOrigem = urlOrigem;
-        this.c.pk = pk;
         this.c.filtro = fTag;
         this.c.divTabela = todaListagem;
         this.c.idModelo = idModelo;
@@ -88,6 +87,17 @@ class mk {
         this.c.tableInicioFim = this.c.divTabela + " .tableInicioFim";
         this.c.pag = this.c.pagBotoes + " .pag";
         this.c.pagBotao = this.c.pagBotoes + " .pagBotao";
+        if (!pk) {
+            // PrimaryKey do Parametro tem preferência sobre Modelo.
+            // Quando PrimaryKey não informada no parametro, tentar usar a do modelo.
+            this.c.pk = mk.Q(idModelo)?.getAttribute("pk");
+            // Quando Não está nem no parametro e nem no modelo, padrão "pk";
+            if (!this.c.pk)
+                this.c.pk = "pk";
+        }
+        else {
+            this.c.pk = pk;
+        }
     };
     // Criar eventos para UI permitindo o usuario interagir com a tabela.
     configurarUI = () => {

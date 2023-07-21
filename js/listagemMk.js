@@ -3,7 +3,14 @@
 // mk.aoReceberDados = (data) => {
 // 	console.log("oi");
 // };
-var lista = new mk("/GetList", "#tabela1", undefined, undefined, "mId", true);
+var lista = new mk(
+	"/GetList",
+	"#tabela1",
+	undefined,
+	undefined,
+	undefined,
+	true
+);
 var lista2 = new mk(
 	"/GetList2",
 	"#tabela2",

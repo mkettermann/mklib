@@ -332,28 +332,29 @@ var uiClearFiltro = async (listId) => {
 			<br />
 			&nbsp; Na listagem instanciável, primeiro precisa instanciar a classe e
 			coloca-la em uma variável. A sua UI deverá chamar os métodos / ações /
-			propriedades a partir desta variável.
+			propriedades a partir desta variável. Para facilitar sua UI, você pode
+			colocar ela dentro de uma array com todas as instâncias.
 			<br />
 			&nbsp; Abaixo será descrita de forma individual as funcionalidades.
 		</div>
 		<div class="quebra">
-			&nbsp; <u>Pré-Requisitos:</u>
-			<br />
-			&raquo; A biblioteca precisa estar iniciada.
-			<br />
+			&nbsp; <u>Pré-Requisitos:</u> <br /><br />
+			&raquo; Biblioteca iniciada.
+			<br /><br />
 			&raquo; Uma URL de API para trazer dados em formato JSON.
-			<br />
-			&raquo; Uma tabela com um container que cerca o resumo.
-			<br />
-			&raquo; Um modelo de linha da tabela (template).
+			<br /><br />
+			&raquo; Uma tabela (com thead e tbody) com um container que cerca o resumo
+			e a tabela.
+			<br /><br />
+			&raquo; Um modelo de linha da tabela (veja ferramenta Molde).
 		</div>
 	</li>
 </ul>
 
 <br /><br />
 <!-- TEMPLATE LISTAGEM 1 -->
-<script type="text/html" id="modelo">
-	<tr id="${mId}" k="mId">
+<script type="text/html" id="modelo" pk="mId">
+	<tr id="${mId}">
 		<td class="sort-mNome">${mNome}</td>
 		<td class="sort-mDataCadastro">
 			<input type="date" value="${mDataCadastro}" />
@@ -371,8 +372,8 @@ var uiClearFiltro = async (listId) => {
 </script>
 
 <!-- TEMPLATE LISTAGEM 2 -->
-<script type="text/html" id="modelo2">
-	<tr id="${mId}" k="mId">
+<script type="text/html" id="modelo2" pk="mId">
+	<tr id="${mId}">
 		<td class="sort-mNome">${mNome}</td>
 		<td class="sort-mStatus ${mStatus}"></td>
 		<td class="acao">
