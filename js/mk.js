@@ -362,7 +362,7 @@ class mk {
                 let campo = ordenar.replace("sort-", "");
                 if (campo != "") {
                     mk.Ao("click", this.c.divTabela + " thead .sort-" + campo, () => {
-                        this.aoClicarSort(campo);
+                        this.orderBy(campo);
                     });
                 }
             }
@@ -387,23 +387,15 @@ class mk {
             this.c.sortBy = propriedade;
         }
     };
-    // Funcao que inverte a direcao, reordena e atualiza
-    aoClicarSort = (propriedade = null) => {
-        this.setDirSort(propriedade);
-        // Ordena a lista geral com base na primeira propriedade.
-        mk.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
-        this.efeitoSort();
-        this.atualizarListagem();
-    };
     // Ordena a lista e atualiza (Direcao: 0,1,2(toogle))
-    orderBy = (propriedade, direcao) => {
+    orderBy = (propriedade, direcao = 2) => {
         // Atualiza atual Sort
         this.setDirSort(propriedade, direcao);
         // Executa Ordenador da lista principal
         this.dadosFull = mk.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
         // Atualiza classes indicadoras de ordenamento
         this.efeitoSort();
-        this.atualizaNaPaginaUm();
+        this.atualizarListagem();
     };
     efeitoSort = () => {
         // Limpa efeito
