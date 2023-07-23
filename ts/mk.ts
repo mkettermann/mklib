@@ -76,8 +76,8 @@ class mk {
 		pagAtual: 1, // Representa a pagina
 		tablePorPagina: null, // TAG: Total de linhas exibidas por página.
 		tableTotal: null, // TAG: Total de registros.
-		sortInvert: false, // Inverter Direcao dos itens ordenados? true / false
 		sortBy: "", // Propriedade a ser ordenada. (Apenas 1)
+		sortDir: false, // Direcao dos itens ordenados? true / false
 		totalFull: this.dadosFull.length,
 		totalFiltrado: this.dadosFiltrado.length,
 		totalExibidos: this.dadosExibidos.length,
@@ -163,7 +163,7 @@ class mk {
 			// Coleta Primeira propriedade do Primeiro item para ordenação
 			this.c.sortBy = Object.keys(this.dadosFull[0])[0];
 			// Ordena a lista geral com base na primeira propriedade.
-			mk.ordenar(this.dadosFull, this.c.sortBy, this.c.sortInvert);
+			mk.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
 
 			//Adiciona eventos aos botões do filtro
 			this.setFiltroListener();
@@ -415,22 +415,41 @@ class mk {
 		});
 	};
 
-	// Funcao que inverte a direcao, reordena e atualiza
-	aoClicarSort = (ordenar: string | null = null) => {
-		if (ordenar != null) {
-			if (ordenar != this.c.sortBy) {
-				this.c.sortInvert = false;
+	setDirSort = (propriedade: string | null, direcao: number = 2) => {
+		if (propriedade != null) {
+			if (direcao == 2) {
+				if (propriedade != this.c.sortBy) {
+					this.c.sortDir = false;
+				} else {
+					!this.c.sortDir ? (this.c.sortDir = true) : (this.c.sortDir = false);
+				}
+			} else if (direcao == 1) {
+				this.c.sortDir = 1;
 			} else {
-				!this.c.sortInvert
-					? (this.c.sortInvert = true)
-					: (this.c.sortInvert = false);
+				this.c.sortDir = 0;
 			}
-			this.c.sortBy = ordenar;
+			this.c.sortBy = propriedade;
 		}
+	};
+
+	// Funcao que inverte a direcao, reordena e atualiza
+	aoClicarSort = (propriedade: string | null = null) => {
+		this.setDirSort(propriedade);
 		// Ordena a lista geral com base na primeira propriedade.
-		mk.ordenar(this.dadosFull, this.c.sortBy, this.c.sortInvert);
+		mk.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
 		this.efeitoSort();
 		this.atualizarListagem();
+	};
+
+	// Ordena a lista e atualiza (Direcao: 0,1,2(toogle))
+	orderBy = (propriedade: string | null, direcao: number) => {
+		// Atualiza atual Sort
+		this.setDirSort(propriedade, direcao);
+		// Executa Ordenador da lista principal
+		this.dadosFull = mk.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
+		// Atualiza classes indicadoras de ordenamento
+		this.efeitoSort();
+		this.atualizaNaPaginaUm();
 	};
 
 	efeitoSort = () => {
@@ -447,7 +466,7 @@ class mk {
 		let thsSort = mk.QAll(this.c.ths + ".sort-" + this.c.sortBy);
 		if (thsSort.length != 0) {
 			thsSort.forEach((thSort) => {
-				if (this.c.sortInvert) {
+				if (this.c.sortDir == 1) {
 					thSort.classList.add("mkEfeitoDesce");
 				} else {
 					thSort.classList.add("mkEfeitoSobe");
@@ -514,7 +533,7 @@ class mk {
 	// USER INTERFACE - UI - INDIVIDUAL
 	add = (objDados: object) => {
 		this.dadosFull.push(this.aoReceberDados(objDados));
-		mk.ordenar(this.dadosFull, this.c.sortBy, this.c.sortInvert);
+		mk.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
 		this.atualizarListagem();
 	};
 
@@ -522,13 +541,13 @@ class mk {
 		// Implementar setObjetoFromId
 		this.dadosFull = mk.delObjetoFromId(k, v, this.dadosFull);
 		this.dadosFull.push(mk.aoReceberDados(objDados));
-		mk.ordenar(this.dadosFull, this.c.sortBy, this.c.sortInvert);
+		mk.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
 		this.atualizarListagem();
 	};
 
 	del = (k: any, v: any) => {
 		this.dadosFull = mk.delObjetoFromId(k, v, this.dadosFull);
-		mk.ordenar(this.dadosFull, this.c.sortBy, this.c.sortInvert);
+		mk.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
 		this.atualizarListagem();
 	};
 
@@ -2170,7 +2189,7 @@ class mk {
 	static ordenar = (
 		array: object[] = this.fullDados,
 		nomeProp: string = this.sortBy,
-		reverse: boolean | number = false
+		reverse: any = false
 	) => {
 		array.sort((oA, oB) => {
 			if (oA[nomeProp as keyof typeof oA] !== oB[nomeProp as keyof typeof oB]) {
@@ -2179,7 +2198,7 @@ class mk {
 				if (oA[nomeProp as keyof typeof oA] < oB[nomeProp as keyof typeof oB])
 					return -1;
 			}
-			return 0;
+			return -1;
 		});
 		this.contaOrdena++;
 		if (reverse == true) {

@@ -22,9 +22,7 @@ var lista2 = new mk(
 //var lista = new Mk("/data/usersExemplo.json", ".tabela1", "#modelo");
 
 /* Aqui foi utilizado um container manual das listas instanciadas.
- Basta a funcão enviar o id correto para o Set ser na lista correta.
- Fazendo isso, os metodos não precisam ser individuais por lista,
-  mas no template precisa saber a lista.*/
+ Basta a funcão enviar o id correto para o Set ser na lista correta.*/
 var listas = [lista, lista2];
 
 // CRUD LISTAGEM 1
@@ -78,19 +76,23 @@ var uiGetDEL = async (tr, listId) => {
 // ACOES
 var uiSetADD = async (listId) => {
 	let obj = mk.mkGerarObjeto(".operacaoCampos");
+	// Método de ADICIONAR da biblioteca:
 	listas[listId].add(obj);
 	mk.QverOff(".operacaoContainer");
 };
 var uiSetEDIT = async (k, v, listId) => {
 	let obj = mk.mkGerarObjeto(".operacaoCampos");
+	// Método de EDITAR da biblioteca:
 	listas[listId].edit(obj, k, v);
 	mk.QverOff(".operacaoContainer");
 };
 var uiSetDEL = async (k, v, listId) => {
+	// Método de DELETAR da biblioteca:
 	listas[listId].del(k, v);
 	mk.QverOff(".operacaoContainer");
 };
 var uiClearFiltro = async (listId) => {
+	// Método de LIMPAR FILTRO da biblioteca:
 	listas[listId].clearFiltro();
 	mk.QverOff(".operacaoContainer");
 };

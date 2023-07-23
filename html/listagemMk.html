@@ -216,7 +216,7 @@
 <div class="fullCodigoContainer microPos5">
 	<div class="i codigoContainer">
 		<div class="titulo">Modo de uso:</div>
-		<textarea class="regua" rows="43" cols="1" readonly>
+		<textarea class="regua" rows="30" cols="1" readonly>
 1
 2
 3
@@ -246,66 +246,45 @@
 27
 28
 29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41
-42
-43</textarea
+30</textarea
 		>
 		<textarea
 			class="codigo"
-			rows="43"
+			rows="30"
 			cols="120"
 			onfocus="mk.mkSelecionarInner(this)"
 			readonly
 		>
-//urlOrigem,todaListagem,idModelo,filtro,pk,importar,aoReceberDados,antesDePopularTabela,aoCompletarExibicao
+// PARAMETROS PARA INSTANCIAR: 
+// STRING, STRING, STRING, STRING, STRING, BOOL, FUNCTION, FUNCTION, FUNCTION
+
+// Instanciando a lista2
 var lista2 = new mk("/GetList2","#tabela2","#modelo2",".fTabela2","mId",true);
 
-// lista2        = Nome da variável que receberá a lista. Por ela se executará os métodos.
-// new mk        = Inicia a contrução da classe, onde você deve passar os parametros.
-// *urlOrigem    = URL dos dados. Padrão: ("/GetList")
-// *todaListagem = Id/Classe da Tag que contém a tabela e o resumo (".divListagemContainer")
-// *idModelo     = Id/Classe da Tag que contém o template ("#modelo")
-// filtro        = Classe de tags que filtram esta listagem. Apenas Inputs. (".iConsultas")
-// pk            = Primary Key. Necessário identificador único para efetuar CRUD na listagem.
-// importar      = Executa script de importar resumo antes importar os dados.
-// aoReceberDados = Função que se executa sempre que esta listagem coletar dados externos.
-// antesDePopularTabela = Função que se executa momentos antes de exibir algo.
-// aoCompletarExibicao = Função que se executa somente após concluir a exibição.
+// Container de listas:
+var listas = [lista2];
 
-var listas = [lista, lista2];
-// Você pode colocar as instâncias em um container, como na linha acima.
-// Desta forma você pode chamar a instância correta na função correta.
+// Visualizar a instancia por Container:
+console.log(listas[0]);
 
-// CRUD: (Usa-se: instancia.Acao() )
-// UI para Adicionar (ex.: lista.add(objeto))
-var uiSetADD = async (listId) => {
-  let obj = mk.mkGerarObjeto(".operacaoCampos");
-  listas[listId].add(obj);
-};
-// UI para Editar (ex.: lista.edit(objeto, PropriedadeABuscar, ValorDaPropriedade))
-var uiSetEDIT = async (k, v, listId) => {
-  let obj = mk.mkGerarObjeto(".operacaoCampos");
-  listas[listId].edit(obj, k, v);
-};
-// UI para Deletar (ex.: lista.del(PropriedadeABuscar, ValorDaPropriedade))
-var uiSetDEL = async (k, v, listId) => {
-  listas[listId].del(k, v);
-};
-// UI para Limpar Filtros (ex.: lista.clearFiltro())
-var uiClearFiltro = async (listId) => {
-  listas[listId].clearFiltro();
-};
+// ADICIONAR direto da instancia:
+lista2.add(objeto);
+
+// ADICIONAR por Container (Objeto será adicionado ao final da lista):
+listas[0].add(objeto);
+
+// EDITAR por Container (Requer o K e V para encontrar o alvo):
+listas[0].edit(obj, k, v);
+
+// DELETAR por Container (Requer o K e V para encontrar o alvo):
+listas[0].del(k, v);
+
+// LIMPAR FILTRO por Container
+listas[0].clearFiltro();
+
+// ORDENAR por Container (Requer K e Sentido (0 / 1 / 2)))
+listas[0].orderBy("mTotalAcessos", 2); // 2 == toogle;
+
 </textarea
 		>
 	</div>

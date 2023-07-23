@@ -55,8 +55,8 @@ class mk {
         pagAtual: 1,
         tablePorPagina: null,
         tableTotal: null,
-        sortInvert: false,
         sortBy: "",
+        sortDir: false,
         totalFull: this.dadosFull.length,
         totalFiltrado: this.dadosFiltrado.length,
         totalExibidos: this.dadosExibidos.length,
@@ -135,7 +135,7 @@ class mk {
             // Coleta Primeira propriedade do Primeiro item para ordenação
             this.c.sortBy = Object.keys(this.dadosFull[0])[0];
             // Ordena a lista geral com base na primeira propriedade.
-            mk.ordenar(this.dadosFull, this.c.sortBy, this.c.sortInvert);
+            mk.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
             //Adiciona eventos aos botões do filtro
             this.setFiltroListener();
             // Executa um filtro inicial e na sequencia processa a exibição.
@@ -368,23 +368,42 @@ class mk {
             }
         });
     };
-    // Funcao que inverte a direcao, reordena e atualiza
-    aoClicarSort = (ordenar = null) => {
-        if (ordenar != null) {
-            if (ordenar != this.c.sortBy) {
-                this.c.sortInvert = false;
+    setDirSort = (propriedade, direcao = 2) => {
+        if (propriedade != null) {
+            if (direcao == 2) {
+                if (propriedade != this.c.sortBy) {
+                    this.c.sortDir = false;
+                }
+                else {
+                    !this.c.sortDir ? (this.c.sortDir = true) : (this.c.sortDir = false);
+                }
+            }
+            else if (direcao == 1) {
+                this.c.sortDir = 1;
             }
             else {
-                !this.c.sortInvert
-                    ? (this.c.sortInvert = true)
-                    : (this.c.sortInvert = false);
+                this.c.sortDir = 0;
             }
-            this.c.sortBy = ordenar;
+            this.c.sortBy = propriedade;
         }
+    };
+    // Funcao que inverte a direcao, reordena e atualiza
+    aoClicarSort = (propriedade = null) => {
+        this.setDirSort(propriedade);
         // Ordena a lista geral com base na primeira propriedade.
-        mk.ordenar(this.dadosFull, this.c.sortBy, this.c.sortInvert);
+        mk.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
         this.efeitoSort();
         this.atualizarListagem();
+    };
+    // Ordena a lista e atualiza (Direcao: 0,1,2(toogle))
+    orderBy = (propriedade, direcao) => {
+        // Atualiza atual Sort
+        this.setDirSort(propriedade, direcao);
+        // Executa Ordenador da lista principal
+        this.dadosFull = mk.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
+        // Atualiza classes indicadoras de ordenamento
+        this.efeitoSort();
+        this.atualizaNaPaginaUm();
     };
     efeitoSort = () => {
         // Limpa efeito
@@ -400,7 +419,7 @@ class mk {
         let thsSort = mk.QAll(this.c.ths + ".sort-" + this.c.sortBy);
         if (thsSort.length != 0) {
             thsSort.forEach((thSort) => {
-                if (this.c.sortInvert) {
+                if (this.c.sortDir == 1) {
                     thSort.classList.add("mkEfeitoDesce");
                 }
                 else {
@@ -462,19 +481,19 @@ class mk {
     // USER INTERFACE - UI - INDIVIDUAL
     add = (objDados) => {
         this.dadosFull.push(this.aoReceberDados(objDados));
-        mk.ordenar(this.dadosFull, this.c.sortBy, this.c.sortInvert);
+        mk.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
         this.atualizarListagem();
     };
     edit = (objDados, k, v) => {
         // Implementar setObjetoFromId
         this.dadosFull = mk.delObjetoFromId(k, v, this.dadosFull);
         this.dadosFull.push(mk.aoReceberDados(objDados));
-        mk.ordenar(this.dadosFull, this.c.sortBy, this.c.sortInvert);
+        mk.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
         this.atualizarListagem();
     };
     del = (k, v) => {
         this.dadosFull = mk.delObjetoFromId(k, v, this.dadosFull);
-        mk.ordenar(this.dadosFull, this.c.sortBy, this.c.sortInvert);
+        mk.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
         this.atualizarListagem();
     };
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
@@ -1947,7 +1966,7 @@ class mk {
                 if (oA[nomeProp] < oB[nomeProp])
                     return -1;
             }
-            return 0;
+            return -1;
         });
         this.contaOrdena++;
         if (reverse == true) {
