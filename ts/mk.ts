@@ -180,35 +180,33 @@ class mk {
 	 */
 	atualizarListagem = async () => {
 		let pagBotoes = mk.Q(this.c.pagBotoes);
-		// Apenas executa a atualização e filtro, se a pagBotoes estiver presente na página.
-		if (pagBotoes) {
-			// Processo de filtro que usa o objFiltro nos dadosFull e retorna dadosFiltrado já filtrado.
-			this.dadosFiltrado = mk.processoFiltragem(
-				this.dadosFull,
-				this.c.objFiltro
-			);
-			// Processar calculos de paginacao
-			this.atualizarStatusListagem();
-			if (this.c.totalFiltrado > this.c.pagPorPagina)
-				pagBotoes.removeAttribute("hidden");
-			else pagBotoes.setAttribute("hidden", "");
+		// Processo de filtro que usa o objFiltro nos dadosFull e retorna dadosFiltrado já filtrado.
+		this.dadosFiltrado = mk.processoFiltragem(this.dadosFull, this.c.objFiltro);
+		// Processar calculos de paginacao
+		this.atualizarStatusListagem();
 
-			if (this.c.totalFiltrado == 0) {
-				mk.Q(this.c.tableInicioFim).setAttribute("hidden", "");
-				mk.Q(this.c.tableExibePorPagina).setAttribute("hidden", "");
-				mk.Q(this.c.tbody).setAttribute("hidden", "");
-				this.dadosExibidos = [];
-			} else {
-				mk.Q(this.c.tableInicioFim).removeAttribute("hidden");
-				mk.Q(this.c.tableExibePorPagina).removeAttribute("hidden");
-				mk.Q(this.c.tbody).removeAttribute("hidden");
-
+		// Apenas executa a atualização do resumo, se a pagBotoes estiver presente na página.
+		if (this.c.totalFiltrado > this.c.pagPorPagina)
+			pagBotoes?.removeAttribute("hidden");
+		else pagBotoes?.setAttribute("hidden", "");
+		if (this.c.totalFiltrado == 0) {
+			mk.Q(this.c.tableInicioFim)?.setAttribute("hidden", "");
+			mk.Q(this.c.tableExibePorPagina)?.setAttribute("hidden", "");
+			mk.Q(this.c.tbody)?.setAttribute("hidden", "");
+			this.dadosExibidos = [];
+		} else {
+			if (pagBotoes) {
+				mk.Q(this.c.tableInicioFim)?.removeAttribute("hidden");
+				mk.Q(this.c.tableExibePorPagina)?.removeAttribute("hidden");
+				mk.Q(this.c.tbody)?.removeAttribute("hidden");
 				this.processoPaginar();
-				this.antesDePopularTabela();
-
-				await mk.mkMoldeOA(this.dadosExibidos, this.c.idModelo, this.c.tbody);
-				this.aoCompletarExibicao();
+			} else {
+				// Caso não tenha onde paginar, exibe geral sem clonar.
+				this.dadosExibidos = this.dadosFiltrado;
 			}
+			this.antesDePopularTabela();
+			await mk.mkMoldeOA(this.dadosExibidos, this.c.idModelo, this.c.tbody);
+			this.aoCompletarExibicao();
 		}
 	};
 
@@ -232,14 +230,10 @@ class mk {
 		// Arredondar pra cima, pois a última página pode exibir conteúdo sem preencher o PorPagina
 		this.c.totPags = Math.ceil(this.dadosFiltrado.length / this.c.pagPorPagina);
 		// Atualizar o Status processado no resumo da tabela
-		let tableTotal = mk.Q(this.c.tableTotal);
-		let tableFiltro = mk.Q(this.c.tableFiltrado);
-		let tableIni = mk.Q(this.c.tableIni);
-		let tableFim = mk.Q(this.c.tableFim);
-		if (tableTotal) tableTotal.innerHTML = this.c.totalFull.toString();
-		if (tableFiltro) tableFiltro.innerHTML = this.c.totalFiltrado.toString();
-		if (tableIni) tableIni.innerHTML = this.c.pagItensIni.toString();
-		if (tableFim) tableFim.innerHTML = this.c.pagItensFim.toString();
+		mk.html(this.c.tableTotal, this.c.totalFull.toString());
+		mk.html(this.c.tableFiltrado, this.c.totalFiltrado.toString());
+		mk.html(this.c.tableIni, this.c.pagItensIni.toString());
+		mk.html(this.c.tableFim, this.c.pagItensFim.toString());
 	};
 
 	// Retorna a pagina 1 e atualiza
@@ -265,7 +259,7 @@ class mk {
 	// Monta os botoes de numero de pagina
 	processoPaginar = () => {
 		// Links
-		mk.Q(this.c.pag + "7").innerHTML = this.c.totPags.toString();
+		mk.html(this.c.pag + "7", this.c.totPags.toString());
 		this.c.pagAtual == 1 ? mk.Qoff(this.c.pag + "0") : mk.Qon(this.c.pag + "0");
 
 		if (this.c.totPags > 1) {
@@ -307,30 +301,30 @@ class mk {
 		if (this.c.pagAtual < 5) {
 			// INI
 			mk.Qon(this.c.pag + "2");
-			mk.Q(this.c.pag + "2").innerHTML = "2";
-			mk.Q(this.c.pag + "3").innerHTML = "3";
-			mk.Q(this.c.pag + "4").innerHTML = "4";
-			mk.Q(this.c.pag + "5").innerHTML = "5";
-			mk.Q(this.c.pag + "6").innerHTML = "...";
+			mk.html(this.c.pag + "2", "2");
+			mk.html(this.c.pag + "3", "3");
+			mk.html(this.c.pag + "4", "4");
+			mk.html(this.c.pag + "5", "5");
+			mk.html(this.c.pag + "6", "...");
 			mk.Qoff(this.c.pag + "6");
 		} else {
 			// END
 			if (this.c.totPags - this.c.pagAtual < 4) {
 				mk.Qoff(this.c.pag + "2");
-				mk.Q(this.c.pag + "2").innerHTML = "...";
-				mk.Q(this.c.pag + "3").innerHTML = (this.c.totPags - 4).toString();
-				mk.Q(this.c.pag + "4").innerHTML = (this.c.totPags - 3).toString();
-				mk.Q(this.c.pag + "5").innerHTML = (this.c.totPags - 2).toString();
-				mk.Q(this.c.pag + "6").innerHTML = (this.c.totPags - 1).toString();
+				mk.html(this.c.pag + "2", "...");
+				mk.html(this.c.pag + "3", (this.c.totPags - 4).toString());
+				mk.html(this.c.pag + "4", (this.c.totPags - 3).toString());
+				mk.html(this.c.pag + "5", (this.c.totPags - 2).toString());
+				mk.html(this.c.pag + "6", (this.c.totPags - 1).toString());
 				mk.Qon(this.c.pag + "6");
 			} else {
 				// MID
 				mk.Qoff(this.c.pag + "2");
-				mk.Q(this.c.pag + "2").innerHTML = "...";
-				mk.Q(this.c.pag + "3").innerHTML = (this.c.pagAtual - 1).toString();
-				mk.Q(this.c.pag + "4").innerHTML = this.c.pagAtual.toString();
-				mk.Q(this.c.pag + "5").innerHTML = (this.c.pagAtual + 1).toString();
-				mk.Q(this.c.pag + "6").innerHTML = "...";
+				mk.html(this.c.pag + "2", "...");
+				mk.html(this.c.pag + "3", (this.c.pagAtual - 1).toString());
+				mk.html(this.c.pag + "4", this.c.pagAtual.toString());
+				mk.html(this.c.pag + "5", (this.c.pagAtual + 1).toString());
+				mk.html(this.c.pag + "6", "...");
 				mk.Qoff(this.c.pag + "6");
 			}
 		}
@@ -639,6 +633,15 @@ class mk {
 		});
 	};
 
+	// Atalho para innerHTML que retorna apenas o primeiro elemento da query.
+	static html = (query: any, conteudo: string) => {
+		let e = mk.Q(query);
+		if (e) {
+			e.innerHTML = conteudo;
+		}
+		return e;
+	};
+
 	static isJson = (s: any): boolean => {
 		try {
 			JSON.parse(s);
@@ -732,27 +735,27 @@ class mk {
 
 	static Qon = (query: HTMLElement | string = "body") => {
 		let temp = mk.Q(query);
-		(temp as HTMLButtonElement).disabled = false;
-		temp.classList.remove("disabled");
+		if (temp) (temp as HTMLButtonElement).disabled = false;
+		temp?.classList.remove("disabled");
 		return temp;
 	};
 
 	static Qoff = (query: HTMLElement | string = "body") => {
 		let temp = mk.Q(query);
-		(temp as HTMLButtonElement).disabled = true;
-		temp.classList.add("disabled");
+		if (temp) (temp as HTMLButtonElement).disabled = true;
+		temp?.classList.add("disabled");
 		return temp;
 	};
 
 	static QverOn = (query: HTMLElement | string = "body") => {
 		let temp = mk.Q(query);
-		temp.classList.remove("oculto");
+		temp?.classList.remove("oculto");
 		return temp;
 	};
 
 	static QverOff = (query: HTMLElement | string = "body") => {
 		let temp = mk.Q(query);
-		temp.classList.add("oculto");
+		temp?.classList.add("oculto");
 		return temp;
 	};
 

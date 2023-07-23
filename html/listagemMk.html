@@ -211,12 +211,12 @@
 		</div>
 	</div>
 </div>
-
-<br /><br />
+<br />
+<br />Exemplo 3:<br />
 <div class="fullCodigoContainer microPos5">
 	<div class="i codigoContainer">
-		<div class="titulo">Modo de uso:</div>
-		<textarea class="regua" rows="30" cols="1" readonly>
+		<div class="titulo">Modo de uso - JS</div>
+		<textarea class="regua" rows="32" cols="1" readonly>
 1
 2
 3
@@ -246,11 +246,13 @@
 27
 28
 29
-30</textarea
+30
+31
+32</textarea
 		>
 		<textarea
 			class="codigo"
-			rows="30"
+			rows="32"
 			cols="120"
 			onfocus="mk.mkSelecionarInner(this)"
 			readonly
@@ -259,36 +261,160 @@
 // STRING, STRING, STRING, STRING, STRING, BOOL, FUNCTION, FUNCTION, FUNCTION
 
 // Instanciando a lista2
-var lista2 = new mk("/GetList2","#tabela2","#modelo2",".fTabela2","mId",true);
+var lista3 = new mk("/GetList","#tabela3","#modelo3",".fTabela3","mId");
 
-// Container de listas:
-var listas = [lista2];
+// Exemplo: Container de listas:
+var listas = [lista, lista2, lista3]; //(Lista 3 está na posicao 2)
 
-// Visualizar a instancia por Container:
-console.log(listas[0]);
+// Exemplo: Visualizar a instancia por Container:
+console.log(listas[2]);
 
-// ADICIONAR direto da instancia:
+// Exemplo: ADICIONAR direto da instancia:
 lista2.add(objeto);
 
-// ADICIONAR por Container (Objeto será adicionado ao final da lista):
+// Exemplo: ADICIONAR por Container (Objeto será adicionado ao final da lista):
 listas[0].add(objeto);
 
-// EDITAR por Container (Requer o K e V para encontrar o alvo):
+// Exemplo: EDITAR por Container (Requer o K e V para encontrar o alvo):
 listas[0].edit(obj, k, v);
 
-// DELETAR por Container (Requer o K e V para encontrar o alvo):
+// Exemplo: DELETAR por Container (Requer o K e V para encontrar o alvo):
 listas[0].del(k, v);
 
-// LIMPAR FILTRO por Container
+// Exemplo: LIMPAR FILTRO por Container
 listas[0].clearFiltro();
 
-// ORDENAR por Container (Requer K e Sentido (0 / 1 / 2)))
-listas[0].orderBy("mTotalAcessos", 2); // 2 == toogle;
+// Exemplo: ORDENAR por Container (Requer K e Sentido (0 / 1 / 2))
+listas[0].orderBy("mTotalAcessos", 2); // 2 == toogle
 
+// Exemplo: ORDENAR por Container
+listas[0].orderBy("mNome");
 </textarea
 		>
 	</div>
 </div>
+
+<br /><br />
+<div class="fullCodigoContainer microPos5">
+	<div class="i codigoContainer">
+		<div class="titulo">Modo de uso - HTML</div>
+		<textarea class="regua" rows="35" cols="1" readonly>
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35</textarea
+		>
+		<textarea
+			class="codigo"
+			cols="120"
+			onfocus="mk.mkSelecionarInner(this)"
+			readonly
+		>
+<!-- TABELA -->
+
+<div id="tabela3">
+  <div>
+    &lt;table class="tableListagem">
+      <thead><tr>
+          <th class="sort-mNome">Usuário</th>
+          <th>Tot. Acessos</th>
+        </tr></thead>
+      <tbody></tbody>
+    &lt;/table>
+  </div>
+  <div>
+    <ul class="pagBotoes">
+      <li class="pagBotao pag0 disabled">Anterior</li>
+      <li class="pagBotao pag1 ativo">1</li>
+      <li class="pagBotao pag2">2</li>
+      <li class="pagBotao pag3 oculto">3</li>
+      <li class="pagBotao pag4 oculto">4</li>
+      <li class="pagBotao pag5 oculto">5</li>
+      <li class="pagBotao pag6 oculto disabled">...</li>
+      <li class="pagBotao pag7">3</li>
+      <li class="pagBotao pag8">Próxima</li>
+    </ul>
+  </div>
+</div>
+
+<!-- MODELO -->
+
+&lt;script type="text/html" id="modelo3" pk="mId">
+  <tr id="${mId}">
+    <td class="sort-mNome">${mNome}</td>
+    <td>${mTotalAcessos}</td>
+  </tr>
+&lt;/script>
+</textarea
+		>
+	</div>
+</div>
+
+<br />Resultado do Modo de Uso acima (Exemplo 3):<br />
+<!-- EXECUCAO DO EXEMPLO 3 -->
+<div id="tabela3">
+	<div>
+		<table class="tableListagem">
+			<thead>
+				<tr>
+					<th class="sort-mNome">Usuário</th>
+					<th>Tot. Acessos</th>
+				</tr>
+			</thead>
+			<tbody></tbody>
+		</table>
+	</div>
+	<div>
+		<ul class="pagBotoes">
+			<li class="pagBotao pag0 disabled">Anterior</li>
+			<li class="pagBotao pag1 ativo">1</li>
+			<li class="pagBotao pag2">2</li>
+			<li class="pagBotao pag3 oculto">3</li>
+			<li class="pagBotao pag4 oculto">4</li>
+			<li class="pagBotao pag5 oculto">5</li>
+			<li class="pagBotao pag6 oculto disabled">...</li>
+			<li class="pagBotao pag7">3</li>
+			<li class="pagBotao pag8">Próxima</li>
+		</ul>
+	</div>
+</div>
+<script type="text/html" id="modelo3" pk="mId">
+	<tr id="${mId}">
+		<td class="sort-mNome">${mNome}</td>
+		<td>${mTotalAcessos}</td>
+	</tr>
+</script>
 
 <br />
 <br />
@@ -314,6 +440,12 @@ listas[0].orderBy("mTotalAcessos", 2); // 2 == toogle;
 			propriedades a partir desta variável. Para facilitar sua UI, você pode
 			colocar ela dentro de uma array com todas as instâncias.
 			<br />
+			&nbsp; Cada instância tem seu próprio armazenamento geral de dados. Se
+			instanciarmos a listagem com nome "lista", os dados armazenados estarão em
+			"lista.dadosFull". Quando modificar dados neste array de objetos, você
+			pode solicitar "lista.atualizarListagem()" que a listagem corrigirá os
+			dados recém modificados.
+			<br />
 			&nbsp; Abaixo será descrita de forma individual as funcionalidades.
 		</div>
 		<div class="quebra">
@@ -328,10 +460,27 @@ listas[0].orderBy("mTotalAcessos", 2); // 2 == toogle;
 			&raquo; Um modelo de linha da tabela (veja ferramenta Molde).
 		</div>
 	</li>
+	<li>
+		<u><br />2. Instanciar uma nova listagem</u>
+	</li>
+	<li>
+		<div class="quebra">
+			<br />
+			&nbsp; Para instanciar uma listagem na página, você vai precisar no mínimo
+			de:
+			<br />&raquo; Um endereço URL para a listagem coletar os dados
+			necessários. <br />&raquo; Um container html com um id/classe incluindo
+			uma tabela html com thead e tbody (obrigatório). <br />&raquo; Um Molde
+			para as linhas da tabela.
+			<br />
+			&nbsp; Quando
+		</div>
+		<div class="quebra">let lista = new mk()</div>
+	</li>
 </ul>
 
 <br /><br />
-<!-- TEMPLATE LISTAGEM 1 -->
+<!-- MODELO LISTAGEM 1 -->
 <script type="text/html" id="modelo" pk="mId">
 	<tr id="${mId}">
 		<td class="sort-mNome">${mNome}</td>
@@ -350,7 +499,7 @@ listas[0].orderBy("mTotalAcessos", 2); // 2 == toogle;
 	</tr>
 </script>
 
-<!-- TEMPLATE LISTAGEM 2 -->
+<!-- MODELO LISTAGEM 2 -->
 <script type="text/html" id="modelo2" pk="mId">
 	<tr id="${mId}">
 		<td class="sort-mNome">${mNome}</td>
@@ -364,7 +513,7 @@ listas[0].orderBy("mTotalAcessos", 2); // 2 == toogle;
 	</tr>
 </script>
 
-<!-- TEMPLATE DE ADICIONAR E EDITAR -->
+<!-- MODELO DE ADICIONAR E EDITAR -->
 <script type="text/html" id="modeloOperacao">
 	<div class="iComGap">
 		<div class="j" style="text-align: right;">${k}</div>
