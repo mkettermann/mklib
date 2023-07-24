@@ -1,4 +1,4 @@
-// Transformar para uma unidade em TS:
+// Transformar para uma unidade:
 // - $ JQuery Framework JS
 // - $ Mask
 // - $ Print
@@ -6,6 +6,13 @@
 // - Bootstrap Toast
 // - Bootstrap Dropdown (quase)
 // - Bootstrap Modal
+
+/** Planejamento
+ * - Criar RESET. Similar ao iniciarGetList novamente.
+ * - CRUD converter pra async para liberar o .then() nas UI.
+ *
+ */
+
 var mkt; // Variavel de Testes;
 var mkt2; // Variavel de Testes;
 
