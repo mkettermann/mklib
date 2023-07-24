@@ -465,8 +465,8 @@ button.mkBtn:hover {
 }
 
 button.mkBtnInv {
-	background: var(--tFundo);
-	color: var(--tTexto);
+	background: transparent;
+	color: var(--tFundo);
 	border-width: 1px;
 	border-style: outset;
 	border-color: var(--tFundo);
@@ -485,7 +485,6 @@ button.mkBtnInv:hover {
 	border-style: inset;
 	border-color: var(--tFundo);
 	color: var(--tFundo);
-	background: var(--tTexto);
 	text-shadow: 1px 1px var(--tTexto);
 }
 
