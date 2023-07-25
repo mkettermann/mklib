@@ -10,7 +10,7 @@
 /** Planejamento
  * - Criar RESET. Similar ao iniciarGetList novamente.
  * - CRUD converter pra async para liberar o .then() nas UI.
- *
+ * - Try Catch no http para dados vazios.
  */
 
 var mkt; // Variavel de Testes;
