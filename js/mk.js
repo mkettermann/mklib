@@ -1,5 +1,5 @@
 "use strict";
-// Transformar para uma unidade em TS:
+// Transformar para uma unidade:
 // - $ JQuery Framework JS
 // - $ Mask
 // - $ Print
@@ -7,6 +7,11 @@
 // - Bootstrap Toast
 // - Bootstrap Dropdown (quase)
 // - Bootstrap Modal
+/** Planejamento
+ * - Criar RESET. Similar ao iniciarGetList novamente.
+ * - CRUD converter pra async para liberar o .then() nas UI.
+ *
+ */
 var mkt; // Variavel de Testes;
 var mkt2; // Variavel de Testes;
 class mk {
@@ -133,7 +138,7 @@ class mk {
             // Armazena em 1 array que está em 2 locais na memória
             this.dadosFull = this.dadosFiltrado = retorno;
             // Coleta Primeira propriedade do Primeiro item para ordenação
-            this.c.sortBy = Object.keys(this.dadosFull[0])[0];
+            //this.c.sortBy = Object.keys(this.dadosFull[0])[0];
             // Ordena a lista geral com base na primeira propriedade.
             mk.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
             //Adiciona eventos aos botões do filtro

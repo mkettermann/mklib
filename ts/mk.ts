@@ -168,7 +168,7 @@ class mk {
 			// Armazena em 1 array que está em 2 locais na memória
 			this.dadosFull = this.dadosFiltrado = retorno;
 			// Coleta Primeira propriedade do Primeiro item para ordenação
-			this.c.sortBy = Object.keys(this.dadosFull[0])[0];
+			//this.c.sortBy = Object.keys(this.dadosFull[0])[0];
 			// Ordena a lista geral com base na primeira propriedade.
 			mk.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
 
