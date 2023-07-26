@@ -180,6 +180,8 @@ class mk {
                 // Caso não tenha onde paginar, exibe geral sem clonar.
                 this.dadosExibidos = this.dadosFiltrado;
             }
+            // Datas YYYY-MM-DD para DD/MM/YYYY são formatadas na array de exibição.
+            mk.mkFormatarDataOA(this.dadosExibidos);
             this.antesDePopularTabela();
             await mk.mkMoldeOA(this.dadosExibidos, this.c.idModelo, this.c.tbody);
             this.aoCompletarExibicao();
