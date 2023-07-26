@@ -8,7 +8,6 @@
 // - Bootstrap Dropdown (quase)
 // - Bootstrap Modal
 /** Planejamento
- * - Criar RESET. Similar ao iniciarGetList novamente.
  * - CRUD converter pra async para liberar o .then() nas UI.
  * - Try Catch no http para dados vazios.
  */
@@ -123,7 +122,7 @@ class mk {
         }
     };
     // Metodo que prepara a listagem e inicia a coleta.
-    getList = async (importar) => {
+    getList = async (importar = false) => {
         // Verifica e importa resumo da tabela se necessario.
         if (importar)
             await mk.importar(this.c.divTabela);
