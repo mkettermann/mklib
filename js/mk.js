@@ -264,7 +264,7 @@ class mk {
         this.c.totPags > 6
             ? mk.QverOn(this.c.pag + "6")
             : mk.QverOff(this.c.pag + "6");
-        if (this.c.pagAtual < 5) {
+        if (this.c.pagAtual < 5 || this.c.totPags == 5 || this.c.totPags == 6) {
             // INI
             mk.Qon(this.c.pag + "2");
             mk.html(this.c.pag + "2", "2");
@@ -275,6 +275,7 @@ class mk {
             mk.Qoff(this.c.pag + "6");
         }
         else {
+            // PAG ATUAL 6+
             // END
             if (this.c.totPags - this.c.pagAtual < 4) {
                 mk.Qoff(this.c.pag + "2");

@@ -19,7 +19,7 @@ var lista2 = new mk(
 	"mId",
 	true
 );
-var lista3 = new mk("/GetList", "#tabela3", "#modelo3", ".fTabela3", "mId");
+var lista3 = new mk("/GetList3", "#tabela3", "#modelo3", ".fTabela3", "mId");
 //var lista = new Mk("/data/usersExemplo.json", ".tabela1", "#modelo");
 
 /* Aqui foi utilizado um container manual das listas instanciadas.
