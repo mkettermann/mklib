@@ -8,7 +8,6 @@
 // - Bootstrap Dropdown (quase)
 // - Bootstrap Modal
 /** Planejamento
- * - Criar RESET. Similar ao iniciarGetList novamente.
  * - CRUD converter pra async para liberar o .then() nas UI.
  * - Try Catch no http para dados vazios.
  */
@@ -142,7 +141,7 @@ class mk {
         }
     };
     // Metodo que prepara a listagem e inicia a coleta.
-    getList = async (importar) => {
+    getList = async (importar = false) => {
         // Verifica e importa resumo da tabela se necessario.
         if (importar)
             await mk.importar(this.c.divTabela);
@@ -199,6 +198,8 @@ class mk {
                 // Caso não tenha onde paginar, exibe geral sem clonar.
                 this.dadosExibidos = this.dadosFiltrado;
             }
+            // Datas YYYY-MM-DD para DD/MM/YYYY são formatadas na array de exibição.
+            mk.mkFormatarDataOA(this.dadosExibidos);
             this.antesDePopularTabela();
             await mk.mkMoldeOA(this.dadosExibidos, this.c.idModelo, this.c.tbody);
             this.aoCompletarExibicao();
@@ -282,7 +283,7 @@ class mk {
         this.c.totPags > 6
             ? mk.QverOn(this.c.pag + "6")
             : mk.QverOff(this.c.pag + "6");
-        if (this.c.pagAtual < 5) {
+        if (this.c.pagAtual < 5 || this.c.totPags == 5 || this.c.totPags == 6) {
             // INI
             mk.Qon(this.c.pag + "2");
             mk.html(this.c.pag + "2", "2");
@@ -293,6 +294,7 @@ class mk {
             mk.Qoff(this.c.pag + "6");
         }
         else {
+            // PAG ATUAL 6+
             // END
             if (this.c.totPags - this.c.pagAtual < 4) {
                 mk.Qoff(this.c.pag + "2");
