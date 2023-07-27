@@ -60,11 +60,12 @@ class mk {
 	) {
 		// ReSET dos parametros (Null para Valor Padrão)
 		urlOrigem == null || urlOrigem == ""
-			? (urlOrigem = urlOrigem.replaceAll("//GetList", "/GetList"))
-			: (urlOrigem = (window.location.href + "/GetList").replaceAll(
+			? (urlOrigem = (window.location.href + "/GetList").replaceAll(
 					"//GetList",
 					"/GetList"
-			  ));
+			  ))
+			: (urlOrigem = urlOrigem.replaceAll("//GetList", "/GetList"));
+		console.log("URL: ", urlOrigem);
 		if (todaListagem == null || todaListagem == "")
 			todaListagem = ".divListagemContainer";
 		if (idModelo == null || idModelo == "") idModelo = "#modelo";

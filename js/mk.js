@@ -39,8 +39,9 @@ class mk {
     constructor(urlOrigem = window.location.href + "/GetList", todaListagem = ".divListagemContainer", idModelo = "#modelo", filtro = ".iConsultas", pk = "", importar = false, aoReceberDados = mk.aoReceberDados, antesDePopularTabela = mk.antesDePopularTabela, aoCompletarExibicao = mk.aoCompletarExibicao) {
         // ReSET dos parametros (Null para Valor Padrão)
         urlOrigem == null || urlOrigem == ""
-            ? (urlOrigem = urlOrigem.replaceAll("//GetList", "/GetList"))
-            : (urlOrigem = (window.location.href + "/GetList").replaceAll("//GetList", "/GetList"));
+            ? (urlOrigem = (window.location.href + "/GetList").replaceAll("//GetList", "/GetList"))
+            : (urlOrigem = urlOrigem.replaceAll("//GetList", "/GetList"));
+        console.log("URL: ", urlOrigem);
         if (todaListagem == null || todaListagem == "")
             todaListagem = ".divListagemContainer";
         if (idModelo == null || idModelo == "")
