@@ -37,7 +37,26 @@ class mk {
     //			CONSTRUTOR									\\
     //___________________________________\\
     constructor(urlOrigem = window.location.href + "/GetList", todaListagem = ".divListagemContainer", idModelo = "#modelo", filtro = ".iConsultas", pk = "", importar = false, aoReceberDados = mk.aoReceberDados, antesDePopularTabela = mk.antesDePopularTabela, aoCompletarExibicao = mk.aoCompletarExibicao) {
-        urlOrigem = urlOrigem.replaceAll("//GetList", "/GetList");
+        // ReSET dos parametros (Null para Valor Padrão)
+        urlOrigem == null || urlOrigem == ""
+            ? (urlOrigem = urlOrigem.replaceAll("//GetList", "/GetList"))
+            : (urlOrigem = (window.location.href + "/GetList").replaceAll("//GetList", "/GetList"));
+        if (todaListagem == null || todaListagem == "")
+            todaListagem = ".divListagemContainer";
+        if (idModelo == null || idModelo == "")
+            idModelo = "#modelo";
+        if (filtro == null || filtro == "")
+            filtro = ".iConsultas";
+        if (pk == null || pk == "")
+            pk = "";
+        if (importar == null || importar == "")
+            importar = false;
+        if (aoReceberDados == null || aoReceberDados == "")
+            aoReceberDados = mk.aoReceberDados;
+        if (antesDePopularTabela == null || antesDePopularTabela == "")
+            antesDePopularTabela = mk.antesDePopularTabela;
+        if (aoCompletarExibicao == null || aoCompletarExibicao == "")
+            aoCompletarExibicao = mk.aoCompletarExibicao;
         this.listagemConfigurar(urlOrigem, todaListagem, idModelo, filtro, pk);
         this.aoReceberDados = aoReceberDados;
         this.antesDePopularTabela = antesDePopularTabela;
