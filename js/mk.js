@@ -35,6 +35,7 @@ class mk {
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //			CONSTRUTOR									\\
     //___________________________________\\
+    // É possível contruir o objeto usando undefined, null ou "" para atingir os valores padrão.
     constructor(urlOrigem = window.location.href + "/GetList", todaListagem = ".divListagemContainer", idModelo = "#modelo", filtro = ".iConsultas", pk = "", importar = false, aoReceberDados = mk.aoReceberDados, antesDePopularTabela = mk.antesDePopularTabela, aoCompletarExibicao = mk.aoCompletarExibicao) {
         // ReSET dos parametros (Null para Valor Padrão)
         urlOrigem == null || urlOrigem == ""

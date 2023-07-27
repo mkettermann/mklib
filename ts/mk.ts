@@ -46,6 +46,7 @@ class mk {
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 	//			CONSTRUTOR									\\
 	//___________________________________\\
+	// É possível contruir o objeto usando undefined, null ou "" para atingir os valores padrão.
 	constructor(
 		urlOrigem: any = window.location.href + "/GetList",
 		todaListagem: any = ".divListagemContainer",
