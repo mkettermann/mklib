@@ -412,6 +412,9 @@ class mk {
         }
     };
     // Ordena a lista e atualiza (Direcao: 0,1,2(toogle))
+    // Direção 0: Crescente
+    // Direção 1: Decrescente
+    // Direção 2: Toogle
     orderBy = (propriedade, direcao = 2) => {
         // Atualiza atual Sort
         this.setDirSort(propriedade, direcao);
