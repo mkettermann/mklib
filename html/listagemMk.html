@@ -481,7 +481,7 @@ listas[0].orderBy("mNome");
 
 <br /><br />
 <!-- MODELO LISTAGEM 1 -->
-<script type="text/html" id="modelo" pk="mId">
+<script type="text/html" id="modelo" pk="mNome" ob="mNome" od="0">
 	<tr id="${mId}">
 		<td class="sort-mNome">${mNome}</td>
 		<td class="sort-mDataCadastro">
@@ -500,7 +500,7 @@ listas[0].orderBy("mNome");
 </script>
 
 <!-- MODELO LISTAGEM 2 -->
-<script type="text/html" id="modelo2" pk="mId">
+<script type="text/html" id="modelo2" pk="mId" ob="mNome">
 	<tr id="${mId}">
 		<td class="sort-mNome">${mNome}</td>
 		<td class="sort-mStatus ${mStatus}"></td>

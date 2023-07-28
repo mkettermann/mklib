@@ -10,7 +10,7 @@
 /** Planejamento
  * - CRUD converter pra async para liberar o .then() nas UI.
  * - Try Catch no http para dados vazios.
- * - O getList está ordenando invertido já de início. Criar mecanica para não reordenar e se for necessário, executa orderBy por dentro da lista dentro de uma função intermediária.
+ * - O getList está ordenando invertido já de início.
  */
 var mkt; // Variavel de Testes;
 var mkt2; // Variavel de Testes;
@@ -123,6 +123,13 @@ class mk {
         else {
             this.c.pk = pk;
         }
+        let sortBy = mk.Q(idModelo)?.getAttribute("ob");
+        if (!sortBy)
+            sortBy = this.c.pk;
+        let sortDir = mk.Q(idModelo)?.getAttribute("od");
+        if (!sortDir)
+            sortDir = 1;
+        this.setDirSort(sortBy, Number(sortDir));
     };
     // Criar eventos para UI permitindo o usuario interagir com a tabela.
     configurarUI = () => {
@@ -157,10 +164,8 @@ class mk {
             mk.mkExecutaNoObj(retorno, this.aoReceberDados);
             // Armazena em 1 array que está em 2 locais na memória
             this.dadosFull = this.dadosFiltrado = retorno;
-            // Coleta Primeira propriedade do Primeiro item para ordenação
-            //this.c.sortBy = Object.keys(this.dadosFull[0])[0];
             // Ordena a lista geral com base na primeira propriedade.
-            mk.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
+            mk.ordenamento(this.dadosFull, this.c.sortBy, this.c.sortDir);
             //Adiciona eventos aos botões do filtro
             this.setFiltroListener();
             // Executa um filtro inicial e na sequencia processa a exibição.
@@ -391,14 +396,17 @@ class mk {
             }
         });
     };
+    // Direção 0: Crescente
+    // Direção 1: Decrescente
+    // Direção 2: Toogle
     setDirSort = (propriedade, direcao = 2) => {
         if (propriedade != null) {
             if (direcao == 2) {
                 if (propriedade != this.c.sortBy) {
-                    this.c.sortDir = false;
+                    this.c.sortDir = 0;
                 }
                 else {
-                    !this.c.sortDir ? (this.c.sortDir = true) : (this.c.sortDir = false);
+                    this.c.sortDir == 0 ? (this.c.sortDir = 1) : (this.c.sortDir = 0);
                 }
             }
             else if (direcao == 1) {
@@ -409,14 +417,12 @@ class mk {
             }
             this.c.sortBy = propriedade;
         }
+        console.log("By: ", this.c.sortBy, " | Dir: ", this.c.sortDir);
     };
     // Ordena a lista e atualiza (Direcao: 0,1,2(toogle))
-    // Direção 0: Crescente
-    // Direção 1: Decrescente
-    // Direção 2: Toogle
     orderBy = (propriedade, direcao = 2) => {
         // Atualiza atual Sort
-        this.setDirSort(propriedade, direcao);
+        this.setDirSort(propriedade, Number(direcao));
         // Executa Ordenador da lista principal
         this.dadosFull = mk.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
         // Atualiza classes indicadoras de ordenamento
@@ -1985,6 +1991,23 @@ class mk {
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //			ORDER LIST									\\
     //___________________________________\\
+    // Funcão de execução de ordenamento
+    static ordenamento = (a = this.fullDados, por = this.sortBy, dir = 0) => {
+        a.sort((oA, oB) => {
+            if (oA[por] !== oB[por]) {
+                if (oA[por] > oB[por])
+                    return 1;
+                if (oA[por] < oB[por])
+                    return -1;
+            }
+            return -1;
+        });
+        if (dir == 1) {
+            // Direção Reversa (Ver setDirSort)
+            a = a.reverse();
+        }
+        return a;
+    };
     // Funcão de ordenamento ao inverter a lista
     static ordenar = (array = this.fullDados, nomeProp = this.sortBy, reverse = false) => {
         array.sort((oA, oB) => {
