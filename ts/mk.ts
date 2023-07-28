@@ -10,6 +10,7 @@
 /** Planejamento
  * - CRUD converter pra async para liberar o .then() nas UI.
  * - Try Catch no http para dados vazios.
+ * - O getList está ordenando invertido já de início. Criar mecanica para não reordenar e se for necessário, executa orderBy por dentro da lista dentro de uma função intermediária.
  */
 
 var mkt; // Variavel de Testes;
@@ -336,7 +337,6 @@ class mk {
 			mk.html(this.c.pag + "6", "...");
 			mk.Qoff(this.c.pag + "6");
 		} else {
-			// PAG ATUAL 6+
 			// END
 			if (this.c.totPags - this.c.pagAtual < 4) {
 				mk.Qoff(this.c.pag + "2");
