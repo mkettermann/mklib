@@ -649,7 +649,7 @@ class mk {
 	//___________________________________\\
 
 	// Atalho para QuerySelector que retorna apenas o primeiro elemento da query.
-	static Q = (query: HTMLElement | string = "body") => {
+	static Q = (query: HTMLElement | string) => {
 		if (query instanceof HTMLElement) return query;
 		return document.querySelector(query)!;
 	};
@@ -721,9 +721,9 @@ class mk {
 
 	// Gerar Objeto a partir de um Form Entries
 	static mkGerarObjeto = (este: any) => {
-		let form: HTMLFormElement = este;
+		let form = este;
 		if (typeof este != "object") {
-			form = mk.Q(este) as HTMLFormElement;
+			form = mk.Q(este);
 		}
 		let rObjeto = mk.mkLimparOA(
 			Object.fromEntries(new FormData(form).entries())

@@ -594,7 +594,7 @@ class mk {
     //			MK FUNCOES UTIL							\\
     //___________________________________\\
     // Atalho para QuerySelector que retorna apenas o primeiro elemento da query.
-    static Q = (query = "body") => {
+    static Q = (query) => {
         if (query instanceof HTMLElement)
             return query;
         return document.querySelector(query);
