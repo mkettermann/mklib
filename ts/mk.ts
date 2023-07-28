@@ -66,7 +66,6 @@ class mk {
 					"/GetList"
 			  ))
 			: (urlOrigem = urlOrigem.replaceAll("//GetList", "/GetList"));
-		console.log("URL: ", urlOrigem);
 		if (todaListagem == null || todaListagem == "")
 			todaListagem = ".divListagemContainer";
 		if (idModelo == null || idModelo == "") idModelo = "#modelo";
