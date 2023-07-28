@@ -417,7 +417,7 @@ class mk {
             }
             this.c.sortBy = propriedade;
         }
-        console.log("By: ", this.c.sortBy, " | Dir: ", this.c.sortDir);
+        //console.log("By: ", this.c.sortBy, " | Dir: ", this.c.sortDir);
     };
     // Ordena a lista e atualiza (Direcao: 0,1,2(toogle))
     orderBy = (propriedade, direcao = 2) => {
