@@ -10,7 +10,7 @@
 /** Planejamento
  * - CRUD converter pra async para liberar o .then() nas UI.
  * - Try Catch no http para dados vazios.
- * - O getList está ordenando invertido já de início.
+ * - Implementar objetoSelecionado na lista individual.
  */
 var mkt; // Variavel de Testes;
 var mkt2; // Variavel de Testes;
