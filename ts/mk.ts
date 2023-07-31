@@ -572,6 +572,10 @@ class mk {
 		this.atualizarListagem();
 	};
 
+	find = (k: any, v: any) => {
+		return this.dadosFull.find((o) => o[k] == v);
+	};
+
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 	//			ATRIBUTOS	ESTATICOS					\\
 	//___________________________________\\

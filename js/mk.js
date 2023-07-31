@@ -520,6 +520,9 @@ class mk {
         mk.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
         this.atualizarListagem();
     };
+    find = (k, v) => {
+        return this.dadosFull.find((o) => o[k] == v);
+    };
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //			ATRIBUTOS	ESTATICOS					\\
     //___________________________________\\
@@ -2124,7 +2127,7 @@ class mk {
         });
         return temPendencia;
     };
-    // $ Unobtrusive: form = atualForm
+    // $ Unobtrusive: id do form
     static verificarCampos = (form) => {
         if (mk.Q(form) == null)
             console.warn("Formulário não encontrado:", form);
@@ -2150,7 +2153,7 @@ class mk {
         resultado ? null : mk.TerremotoErros(form);
         return resultado;
     };
-    // mkValidaFull(atualForm, trocaFaseLiberado, destinoFase)
+    // mk.mkValidaFull("#formNovo_model", CallbackFunction, { f: "#formNovo_model" });
     // Funcao Recursiva: Executa mkAindaPendente ate a resposta do HTTP retornar.
     // Parametro(formulario)        Formulario para validar
     // Parametro(fUIValidou)        Funcao a ser executada apos a validacao ser aprovada e recebida
