@@ -11,6 +11,7 @@
  * - CRUD converter pra async para liberar o .then() nas UI.
  * - Try Catch no http para dados vazios.
  * - Implementar objetoSelecionado na lista individual.
+ * - Implementar 3 (Terceiro) clique no ordenamento, no terceiro a tabela ordena novamente no inicial: pelo pk informado.
  */
 
 var mkt; // Variavel de Testes;
