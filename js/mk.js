@@ -1000,7 +1000,8 @@ class mk {
         while (eTr.tagName != "TR") {
             eTr = eTr.parentElement;
             if (eTr.tagName == "BODY") {
-                console.error("Não foi possível encontrar o elemento FORM na busca getFormFrom()");
+                console.error("Não foi possível encontrar o elemento TR na busca getTr()");
+                eTr = null;
                 break;
             }
         }
