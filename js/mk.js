@@ -11,6 +11,7 @@
  * - CRUD converter pra async para liberar o .then() nas UI.
  * - Try Catch no http para dados vazios.
  * - Implementar objetoSelecionado na lista individual.
+ * - Implementar 3 (Terceiro) clique no ordenamento, no terceiro a tabela ordena novamente no inicial: pelo pk informado.
  */
 var mkt; // Variavel de Testes;
 var mkt2; // Variavel de Testes;
@@ -501,6 +502,9 @@ class mk {
                 maior = Number(o[this.c.pk]);
         });
         return Number(maior) + 1;
+    };
+    getAllTr = () => {
+        return Array.from(mk.QAll(this.c.divTabela + " tbody tr"));
     };
     // USER INTERFACE - UI - INDIVIDUAL
     add = (objDados) => {

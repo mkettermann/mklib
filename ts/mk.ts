@@ -552,6 +552,10 @@ class mk {
 		return Number(maior) + 1;
 	};
 
+	getAllTr = () => {
+		return Array.from(mk.QAll(this.c.divTabela + " tbody tr"));
+	};
+
 	// USER INTERFACE - UI - INDIVIDUAL
 	add = (objDados: object) => {
 		this.dadosFull.push(this.aoReceberDados(objDados));
@@ -573,7 +577,7 @@ class mk {
 		this.atualizarListagem();
 	};
 
-	find = (k: any, v: any) => {
+	find = (k: string, v: any) => {
 		return this.dadosFull.find((o) => o[k] == v);
 	};
 
