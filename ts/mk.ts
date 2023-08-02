@@ -12,6 +12,7 @@
  * - Try Catch no http para dados vazios.
  * - Implementar objetoSelecionado na lista individual.
  * - Implementar 3 (Terceiro) clique no ordenamento, no terceiro a tabela ordena novamente no inicial: pelo pk informado.
+ * - Ordenamento por tipagem(data mes ano)
  */
 
 var mkt; // Variavel de Testes;
