@@ -40,10 +40,10 @@ class mk {
     //			CONSTRUTOR									\\
     //___________________________________\\
     // É possível contruir o objeto usando undefined, null ou "" para atingir os valores padrão.
-    constructor(urlOrigem = window.location.href + "/GetList", todaListagem = ".divListagemContainer", idModelo = "#modelo", filtro = ".iConsultas", pk = "", importar = false, aoReceberDados = mk.aoReceberDados, antesDePopularTabela = mk.antesDePopularTabela, aoCompletarExibicao = mk.aoCompletarExibicao) {
+    constructor(urlOrigem = mk.delUrlQuery(window.location.href) + "/GetList", todaListagem = ".divListagemContainer", idModelo = "#modelo", filtro = ".iConsultas", pk = "", importar = false, aoReceberDados = mk.aoReceberDados, antesDePopularTabela = mk.antesDePopularTabela, aoCompletarExibicao = mk.aoCompletarExibicao) {
         // ReSET dos parametros (Null para Valor Padrão)
         urlOrigem == null || urlOrigem == ""
-            ? (urlOrigem = (window.location.href + "/GetList").replaceAll("//GetList", "/GetList"))
+            ? (urlOrigem = (mk.delUrlQuery(window.location.href) + "/GetList").replaceAll("//GetList", "/GetList"))
             : (urlOrigem = urlOrigem.replaceAll("//GetList", "/GetList"));
         if (todaListagem == null || todaListagem == "")
             todaListagem = ".divListagemContainer";
@@ -772,6 +772,13 @@ class mk {
             }
         }
         return false;
+    };
+    // Remover parametros da URL
+    static delUrlQuery = (url) => {
+        let posIniQuery = url.indexOf("?");
+        if (posIniQuery < 0)
+            return url;
+        return url.slice(0, posIniQuery);
     };
     // Funcção que recebe os dados de um arquivo e executa um Download deste dados.
     static gerarDownload = (conteudo, nomeArquivo = "Arquivo.zip") => {

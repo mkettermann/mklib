@@ -52,7 +52,7 @@ class mk {
 	//___________________________________\\
 	// É possível contruir o objeto usando undefined, null ou "" para atingir os valores padrão.
 	constructor(
-		urlOrigem: any = window.location.href + "/GetList",
+		urlOrigem: any = mk.delUrlQuery(window.location.href) + "/GetList",
 		todaListagem: any = ".divListagemContainer",
 		idModelo: any = "#modelo",
 		filtro: any = ".iConsultas",
@@ -64,10 +64,9 @@ class mk {
 	) {
 		// ReSET dos parametros (Null para Valor Padrão)
 		urlOrigem == null || urlOrigem == ""
-			? (urlOrigem = (window.location.href + "/GetList").replaceAll(
-					"//GetList",
-					"/GetList"
-			  ))
+			? (urlOrigem = (
+					mk.delUrlQuery(window.location.href) + "/GetList"
+			  ).replaceAll("//GetList", "/GetList"))
 			: (urlOrigem = urlOrigem.replaceAll("//GetList", "/GetList"));
 		if (todaListagem == null || todaListagem == "")
 			todaListagem = ".divListagemContainer";
@@ -860,6 +859,13 @@ class mk {
 			}
 		}
 		return false;
+	};
+
+	// Remover parametros da URL
+	static delUrlQuery = (url: string) => {
+		let posIniQuery = url.indexOf("?");
+		if (posIniQuery < 0) return url;
+		return url.slice(0, posIniQuery);
 	};
 
 	// Funcção que recebe os dados de um arquivo e executa um Download deste dados.
