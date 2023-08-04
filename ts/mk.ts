@@ -63,7 +63,7 @@ class mk {
 		aoCompletarExibicao: any = mk.aoCompletarExibicao
 	) {
 		// ReSET dos parametros (Null para Valor Padrão)
-		console.time(this.toString());
+		console.time("Tempo Listagem (" + idModelo + "): ");
 		urlOrigem == null || urlOrigem == ""
 			? (urlOrigem = (
 					mk.delUrlQuery(window.location.href) + "/GetList"
@@ -203,7 +203,7 @@ class mk {
 			// Executa um filtro inicial e na sequencia processa a exibição.
 			this.updateFiltro();
 			this.efeitoSort();
-			console.timeEnd(this.toString());
+			console.timeEnd("Tempo Listagem (" + this.c.idModelo + "): ");
 		}
 	};
 
