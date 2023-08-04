@@ -80,6 +80,8 @@
 	--tonalidadeVerde: #090;
 	--tonalidadeVermelho: #900;
 	--tonalidadeCinza: #999;
+	/* DIMENCOES */
+	--timerW: 30px;
 	/* ELEVACOES */
 	--mkConfirmadorIndex: 1600;
 	--mkSelIndex: 2000;
@@ -925,8 +927,8 @@ button.CarregadorMkTopoDireito:hover {
 =========================*/
 .timerOut {
 	display: flex;
-	width: 30px;
-	height: 30px;
+	width: var(--timerW);
+	height: var(--timerW);
 	font-size: 0.7rem;
 	border: 0px;
 	border-radius: 50%;
