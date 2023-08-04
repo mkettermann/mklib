@@ -200,7 +200,9 @@ class mk {
 			//Adiciona eventos aos botões do filtro
 			this.setFiltroListener();
 			// Executa um filtro inicial e na sequencia processa a exibição.
-			this.updateFiltro();
+			setTimeout(() => {
+				this.updateFiltro();
+			}, 5000);
 
 			this.efeitoSort();
 		}
@@ -516,6 +518,18 @@ class mk {
 	clearFiltroUpdate = () => {
 		this.clearFiltro();
 		this.atualizarListagem();
+	};
+
+	getObj = (valorKey: any): object | null => {
+		let temp: object | null = null;
+		if (Array.isArray(this.dadosFull)) {
+			this.dadosFull.forEach((o) => {
+				if (o[this.c.pk] == valorKey) {
+					temp = o;
+				}
+			});
+		}
+		return temp;
 	};
 
 	getKeys = () => {
@@ -2872,7 +2886,7 @@ class mk {
 					);
 					divMkSeletorBloco.style.setProperty("--mkSelArrowSize", "24px");
 				}
-				// Seta atributos e Getilhos
+				// Seta atributos e Gatilhos
 				e.removeAttribute("style");
 				e.setAttribute("readonly", "true");
 				divMkSeletorInputExibe.setAttribute("placeholder", "Filtro \u{1F50D}");
