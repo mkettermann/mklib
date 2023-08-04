@@ -63,6 +63,7 @@ class mk {
 		aoCompletarExibicao: any = mk.aoCompletarExibicao
 	) {
 		// ReSET dos parametros (Null para Valor Padrão)
+		console.time(this.toString());
 		urlOrigem == null || urlOrigem == ""
 			? (urlOrigem = (
 					mk.delUrlQuery(window.location.href) + "/GetList"
@@ -200,11 +201,9 @@ class mk {
 			//Adiciona eventos aos botões do filtro
 			this.setFiltroListener();
 			// Executa um filtro inicial e na sequencia processa a exibição.
-			setTimeout(() => {
-				this.updateFiltro();
-			}, 5000);
-
+			this.updateFiltro();
 			this.efeitoSort();
+			console.timeEnd(this.toString());
 		}
 	};
 

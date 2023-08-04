@@ -42,6 +42,7 @@ class mk {
     // É possível contruir o objeto usando undefined, null ou "" para atingir os valores padrão.
     constructor(urlOrigem = mk.delUrlQuery(window.location.href) + "/GetList", todaListagem = ".divListagemContainer", idModelo = "#modelo", filtro = ".iConsultas", pk = "", importar = false, aoReceberDados = mk.aoReceberDados, antesDePopularTabela = mk.antesDePopularTabela, aoCompletarExibicao = mk.aoCompletarExibicao) {
         // ReSET dos parametros (Null para Valor Padrão)
+        console.time(this.toString());
         urlOrigem == null || urlOrigem == ""
             ? (urlOrigem = (mk.delUrlQuery(window.location.href) + "/GetList").replaceAll("//GetList", "/GetList"))
             : (urlOrigem = urlOrigem.replaceAll("//GetList", "/GetList"));
@@ -172,10 +173,9 @@ class mk {
             //Adiciona eventos aos botões do filtro
             this.setFiltroListener();
             // Executa um filtro inicial e na sequencia processa a exibição.
-            setTimeout(() => {
-                this.updateFiltro();
-            }, 5000);
+            this.updateFiltro();
             this.efeitoSort();
+            console.timeEnd(this.toString());
         }
     };
     /**
