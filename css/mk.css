@@ -1983,3 +1983,11 @@ ul.mkUlFase li.disabled a {
 .pad5 {
 	padding: 5px;
 }
+
+.relative {
+	position: relative;
+}
+
+.absolute {
+	position: absolute;
+}
