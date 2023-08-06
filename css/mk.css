@@ -2078,6 +2078,7 @@ ul.mkUlFase li.disabled a {
 }
 
 .corte {
+	width: 100%;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
