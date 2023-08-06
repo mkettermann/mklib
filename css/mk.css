@@ -34,7 +34,33 @@
 	--FundoSeletorOpaco: var(--g5AzulClaro99);
 	--FundoSeletorDesativado: #777;
 	--BordaItens: #000;
-	--FundoItens: #fff;
+	--FundoItensBgEC: #fff;
+	--FundoItensBgEG: #0000 8%, var(--FundoItensBgEC) 0 17%, #0000 0 58%;
+	--FundoItensBg: linear-gradient(
+				135deg,
+				#0000 20.5%,
+				var(--FundoItensBgEC) 0 29.5%,
+				#0000 0
+			)
+			0 calc(var(--FundoItensSize) / 4),
+		linear-gradient(45deg, var(--FundoItensBgEG))
+			calc(var(--FundoItensSize) / 2) 0,
+		linear-gradient(
+			135deg,
+			var(--FundoItensBgEG),
+			var(--FundoItensBgEC) 0 67%,
+			#0000 0
+		),
+		linear-gradient(
+			45deg,
+			var(--FundoItensBgEG),
+			var(--FundoItensBgEC) 0 67%,
+			#0000 0 83%,
+			var(--FundoItensBgEC) 0 92%,
+			#0000 0
+		),
+		#f7f7f7;
+	--FundoItensSize: 30px;
 	--FundoItensHover: linear-gradient(0.25turn, var(--g5AzulClaro), transparent);
 	--FundoItensMarK: linear-gradient(
 		0.25turn,
@@ -300,25 +326,9 @@
 	position: absolute;
 	z-index: calc(var(--mkSelIndex));
 	text-align: left;
-	background: var(--FundoItens);
 	color: var(--CorItens);
-	--s: 30px;
-	--c: #fff;
-	--_g: #0000 8%, var(--c) 0 17%, #0000 0 58%;
-	background: linear-gradient(135deg, #0000 20.5%, var(--c) 0 29.5%, #0000 0) 0
-			calc(var(--s) / 4),
-		linear-gradient(45deg, var(--_g)) calc(var(--s) / 2) 0,
-		linear-gradient(135deg, var(--_g), var(--c) 0 67%, #0000 0),
-		linear-gradient(
-			45deg,
-			var(--_g),
-			var(--c) 0 67%,
-			#0000 0 83%,
-			var(--c) 0 92%,
-			#0000 0
-		),
-		#f7f7f7;
-	background-size: var(--s) var(--s);
+	background: var(--FundoItensBg);
+	background-size: var(--FundoItensSize) var(--FundoItensSize);
 	border: 1px solid var(--BordaItens);
 	border-radius: 5px;
 	cursor: pointer;
