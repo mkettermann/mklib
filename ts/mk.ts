@@ -135,6 +135,7 @@ class mk {
 		this.c.tbody = todaListagem + " tbody";
 		this.c.ths = todaListagem + " th";
 		this.c.pagBotoes = todaListagem + " .pagBotoes";
+		this.c.tableResultado = todaListagem + " .tableResultado";
 		this.c.tablePorPagina = todaListagem + " input[name='tablePorPagina']";
 		this.c.tableExibePorPagina = todaListagem + " .tableExibePorPagina";
 		this.c.tableTotal = this.c.divTabela + " .tableTotal";
@@ -203,6 +204,8 @@ class mk {
 			// Executa um filtro inicial e na sequencia processa a exibição.
 			this.updateFiltro();
 			this.efeitoSort();
+			// Remove oculto, caso encontre a tag
+			if (mk.Q(this.c.tableResultado)) mk.Q(this.c.tableResultado).classList.remove("oculto");
 			console.timeEnd("Tempo Listagem (" + this.c.idModelo + "): ");
 		}
 	};
