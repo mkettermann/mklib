@@ -2077,6 +2077,7 @@ ul.mkUlFase li.disabled a {
 	position: absolute;
 }
 
+/* NAO FUNCIONA EM CONJUNTO AOS microPos */
 .corte {
 	width: 100%;
 	white-space: nowrap;
