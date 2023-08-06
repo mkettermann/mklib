@@ -2076,3 +2076,9 @@ ul.mkUlFase li.disabled a {
 .absolute {
 	position: absolute;
 }
+
+.corte {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
