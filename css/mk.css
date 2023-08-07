@@ -2076,6 +2076,9 @@ ul.mkUlFase li.disabled a {
 .absolute {
 	position: absolute;
 }
+.pointer {
+	cursor: pointer;
+}
 
 /* NAO FUNCIONA EM CONJUNTO AOS microPos */
 .corte {
