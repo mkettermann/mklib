@@ -341,7 +341,7 @@ class mk {
         // Clonar Exibidos de Filtrados
         this.dadosFiltrado.forEach((o, i) => {
             if (i + 1 >= this.c.pagItensIni && i + 1 <= this.c.pagItensFim) {
-                this.dadosExibidos.push(mk.mkClonarOA(o));
+                this.dadosExibidos.push(mk.clonar(o));
             }
         });
     };
@@ -964,21 +964,6 @@ class mk {
         };
         leitor.readAsDataURL(arquivo);
     };
-    // Clona tanto uma array quanto um objeto ao ser enviado por parametro. (map não clonou)
-    static mkClonarOA = (oa) => {
-        if (Array.isArray(oa)) {
-            return Array.from(oa); // New Array sem referencia. ES6
-        }
-        else {
-            let novoO = {};
-            if (typeof oa === "object") {
-                for (let p in oa) {
-                    novoO[p] = oa[p];
-                }
-            }
-            return novoO;
-        }
-    };
     static clonar = (i) => {
         return JSON.parse(JSON.stringify(i));
     };
@@ -1555,7 +1540,7 @@ class mk {
         // Clonagem de Paginado
         this.exibeDados.forEach((o, i) => {
             if (i + 1 >= mk.status.pagItensIni && i + 1 <= mk.status.pagItensFim) {
-                this.exibePaginado.push(mk.mkClonarOA(o));
+                this.exibePaginado.push(mk.clonar(o));
             }
         });
     };
