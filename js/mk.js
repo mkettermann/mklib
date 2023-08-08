@@ -7,7 +7,7 @@
 // - Bootstrap Toast
 // - Bootstrap Dropdown (quase)
 // - Bootstrap Modal
-// - Popper
+// - Poper
 /** Planejamento
  * - CRUD converter pra async para liberar o .then() nas UI.
  * - Try Catch no http para dados vazios.
@@ -2537,6 +2537,7 @@ class mk {
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //			MK Seletor (mkSel)					\\
     //___________________________________\\
+    static poppers = [];
     /* CRIA O DROPDOWN por FOCUS */
     static mkSelRenderizar = async () => {
         document.querySelectorAll("input.mkSel").forEach(async (e) => {
@@ -2598,11 +2599,11 @@ class mk {
                 if (e.getAttribute("data-dev") != "true") {
                     e.classList.add("mkSecreto");
                 }
-                console.log("S:", divMkSeletorPesquisa, divMkSeletorList);
-                Popper.createPopper(divMkSeletorPesquisa, divMkSeletorList, {
+                const popperInstance = Popper.createPopper(divMkSeletorPesquisa, divMkSeletorList, {
                     placement: "bottom-start",
                     modifiers: [],
                 });
+                mk.poppers.push(popperInstance);
             }
             else {
                 // Atualiza a lista com base na classe "atualizar"
@@ -2622,7 +2623,10 @@ class mk {
                     e.classList.remove("atualizando");
                 }
                 // Atualiza posição com a mesma frequencia que pesquisa os elementos.
-                mk.mkSelReposicionar(e.parentElement.children[2]);
+                mk.poppers.forEach((o) => {
+                    o.update();
+                });
+                //mk.mkSelReposicionar(e.parentElement.children[2]);
             }
         });
     };
@@ -2820,35 +2824,35 @@ class mk {
         return soma;
     };
     static mkSelReposicionar = (eList) => {
-        return;
+        // Redimenciona a lista do tamanho do campo pesquisar
         let eRef = eList.previousElementSibling;
-        // Posiciona E Redimenciona a lista.
         eList.style.minWidth = eRef.offsetWidth + "px";
+        eList.style.maxWidth = eRef.offsetWidth + "px";
+        /* Substituido pelo Poper
+        // Posiciona a lista.
         // Lado esquerdo baseado na posicao, mas em mobile fica full.
         let wLargura = window.innerWidth;
         if (wLargura < 768) {
             eList.style.top = 35 + "px";
             eList.style.left = 35 + "px";
-        }
-        else {
-            // var eList = mk.Q(".iNovo[name='staAtivo']").nextElementSibling.nextElementSibling
-            // var eRef = eList.previousElementSibling;
-            // eRef.offsetTop;
+        } else {
             // Primeiramente seta a posição ref ao input fixo.
             eList.style.top =
                 eRef.offsetTop -
-                    mk.getParentScrollTop(eRef) +
-                    eRef.offsetHeight +
-                    2 +
-                    "px";
+                mk.getParentScrollTop(eRef) +
+                eRef.offsetHeight +
+                2 +
+                "px";
+
             eList.style.left = eRef.offsetLeft + "px";
             // Depois, verifica se saiu da tela
             let posXCantoOpostoRef = eRef.offsetLeft + eRef.offsetWidth;
             let posXCantoOpostoList = eList.offsetLeft + eList.offsetWidth;
-            if (posXCantoOpostoList > mk.Q("body").offsetWidth) {
+            if (posXCantoOpostoList > (mk.Q("body") as HTMLElement).offsetWidth) {
                 eList.style.left = posXCantoOpostoRef - eList.offsetWidth - 1 + "px";
             }
         }
+    */
     };
     /* EVENTO de Pesquisa (BLUR) */
     static mkSelPesquisaBlur = (e) => {
@@ -3101,7 +3105,7 @@ class mk {
             });
         });
     };
-} // <<< FIM MK Class
+} // <<< FIM MK Class.
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //		AO INICIAR										\\
 //___________________________________\\

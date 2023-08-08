@@ -6,7 +6,7 @@
 // - Bootstrap Toast
 // - Bootstrap Dropdown (quase)
 // - Bootstrap Modal
-// - Popper
+// - Poper
 
 /** Planejamento
  * - CRUD converter pra async para liberar o .then() nas UI.
@@ -2829,6 +2829,7 @@ class mk {
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 	//			MK Seletor (mkSel)					\\
 	//___________________________________\\
+	static poppers = [];
 
 	/* CRIA O DROPDOWN por FOCUS */
 	static mkSelRenderizar = async () => {
@@ -2909,11 +2910,15 @@ class mk {
 				if (e.getAttribute("data-dev") != "true") {
 					e.classList.add("mkSecreto");
 				}
-				console.log("S:", divMkSeletorPesquisa, divMkSeletorList);
-				Popper.createPopper(divMkSeletorPesquisa, divMkSeletorList, {
-					placement: "bottom-start",
-					modifiers: [],
-				});
+				const popperInstance = Popper.createPopper(
+					divMkSeletorPesquisa,
+					divMkSeletorList,
+					{
+						placement: "bottom-start",
+						modifiers: [],
+					}
+				);
+				mk.poppers.push(popperInstance);
 			} else {
 				// Atualiza a lista com base na classe "atualizar"
 				if (e.classList.contains("atualizar")) {
@@ -2934,7 +2939,10 @@ class mk {
 					e.classList.remove("atualizando");
 				}
 				// Atualiza posição com a mesma frequencia que pesquisa os elementos.
-				mk.mkSelReposicionar(e.parentElement.children[2]);
+				mk.poppers.forEach((o) => {
+					o.update();
+				});
+				//mk.mkSelReposicionar(e.parentElement.children[2]);
 			}
 		});
 	};
@@ -3150,20 +3158,18 @@ class mk {
 	};
 
 	static mkSelReposicionar = (eList: any) => {
-		return;
+		// Redimenciona a lista do tamanho do campo pesquisar
 		let eRef = eList.previousElementSibling;
-		// Posiciona E Redimenciona a lista.
 		eList.style.minWidth = eRef.offsetWidth + "px";
+		eList.style.maxWidth = eRef.offsetWidth + "px";
+		/* Substituido pelo Poper
+		// Posiciona a lista.
 		// Lado esquerdo baseado na posicao, mas em mobile fica full.
 		let wLargura = window.innerWidth;
 		if (wLargura < 768) {
 			eList.style.top = 35 + "px";
 			eList.style.left = 35 + "px";
 		} else {
-			// var eList = mk.Q(".iNovo[name='staAtivo']").nextElementSibling.nextElementSibling
-			// var eRef = eList.previousElementSibling;
-			// eRef.offsetTop;
-
 			// Primeiramente seta a posição ref ao input fixo.
 			eList.style.top =
 				eRef.offsetTop -
@@ -3180,6 +3186,7 @@ class mk {
 				eList.style.left = posXCantoOpostoRef - eList.offsetWidth - 1 + "px";
 			}
 		}
+	*/
 	};
 
 	/* EVENTO de Pesquisa (BLUR) */
@@ -3438,7 +3445,7 @@ class mk {
 			});
 		});
 	};
-} // <<< FIM MK Class
+} // <<< FIM MK Class.
 
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //		AO INICIAR										\\
