@@ -1,4 +1,4 @@
-// Transformar para uma unidade:
+// Transformar para uma unidade / modulado:
 // - $ JQuery Framework JS
 // - $ Mask
 // - $ Print
@@ -6,6 +6,7 @@
 // - Bootstrap Toast
 // - Bootstrap Dropdown (quase)
 // - Bootstrap Modal
+// - Popper
 
 /** Planejamento
  * - CRUD converter pra async para liberar o .then() nas UI.
@@ -2919,6 +2920,11 @@ class mk {
 				if (e.getAttribute("data-dev") != "true") {
 					e.classList.add("mkSecreto");
 				}
+				console.log("S:", divMkSeletorPesquisa, divMkSeletorList);
+				Popper.createPopper(divMkSeletorPesquisa, divMkSeletorList, {
+					placement: "bottom-start",
+					modifiers: [],
+				});
 			} else {
 				// Atualiza a lista com base na classe "atualizar"
 				if (e.classList.contains("atualizar")) {
@@ -3155,6 +3161,7 @@ class mk {
 	};
 
 	static mkSelReposicionar = (eList: any) => {
+		return;
 		let eRef = eList.previousElementSibling;
 		// Posiciona E Redimenciona a lista.
 		eList.style.minWidth = eRef.offsetWidth + "px";
