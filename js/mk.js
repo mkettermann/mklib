@@ -979,6 +979,9 @@ class mk {
             return novoO;
         }
     };
+    static clonar = (i) => {
+        return JSON.parse(JSON.stringify(i));
+    };
     static getModelo = (array = this.dadosFull) => {
         let chaves = new Set();
         array.forEach((o) => {

@@ -205,7 +205,8 @@ class mk {
 			this.updateFiltro();
 			this.efeitoSort();
 			// Remove oculto, caso encontre a tag
-			if (mk.Q(this.c.tableResultado)) mk.Q(this.c.tableResultado).classList.remove("oculto");
+			if (mk.Q(this.c.tableResultado))
+				mk.Q(this.c.tableResultado).classList.remove("oculto");
 			console.timeEnd("Tempo Listagem (" + this.c.idModelo + "): ");
 		}
 	};
@@ -1092,6 +1093,10 @@ class mk {
 			}
 			return novoO;
 		}
+	};
+
+	static clonar = (i: any) => {
+		return JSON.parse(JSON.stringify(i));
 	};
 
 	static getModelo = (array = this.dadosFull) => {
