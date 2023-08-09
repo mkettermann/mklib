@@ -2601,6 +2601,7 @@ class mk {
                 }
                 const popperInstance = Popper.createPopper(divMkSeletorPesquisa, divMkSeletorList, {
                     placement: "bottom-start",
+                    strategy: "fixed",
                     modifiers: [],
                 });
                 mk.poppers.push(popperInstance);
@@ -2825,9 +2826,9 @@ class mk {
     };
     static mkSelReposicionar = (eList) => {
         // Redimenciona a lista do tamanho do campo pesquisar
-        let eRef = eList.previousElementSibling;
-        eList.style.minWidth = eRef.offsetWidth + "px";
-        eList.style.maxWidth = eRef.offsetWidth + "px";
+        let ew = eList.previousElementSibling.offsetWidth;
+        eList.style.minWidth = ew + "px";
+        eList.style.maxWidth = ew + "px";
         /* Substituido pelo Poper
         // Posiciona a lista.
         // Lado esquerdo baseado na posicao, mas em mobile fica full.
