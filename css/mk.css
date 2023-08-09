@@ -24,6 +24,7 @@
 	--carregadorInterno2: var(--g5AzulClaroCC);
 	--carregadorExterno1: var(--g5VerdeLimaCC);
 	--carregadorExterno2: var(--g5AzulEscuroCC);
+	--zCarregador: 5011;
 	--carregadorCentro: var(--g5VerdeLima);
 
 	/* Seletor mkSel*/
@@ -651,7 +652,7 @@ button.CarregadorMkTopoDireito:hover {
 	position: absolute;
 	left: 50%;
 	top: 50%;
-	z-index: 5011;
+	z-index: var(--zCarregador);
 	animation: CarregadorMkAni 4000ms linear infinite;
 	overflow: hidden;
 }
