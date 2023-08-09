@@ -1189,6 +1189,7 @@ button.CarregadorMkTopoDireito:hover {
 	background-size: auto 200%;
 	transition: 0.3s;
 	letter-spacing: 3px;
+	user-select: none;
 }
 
 .bBotao:hover {
