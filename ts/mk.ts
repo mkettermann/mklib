@@ -675,8 +675,8 @@ class mk {
 	//___________________________________\\
 
 	// Atalho para QuerySelector que retorna apenas o primeiro elemento da query.
-	static Q = (query: HTMLElement | string) => {
-		if (query instanceof HTMLElement) return query;
+	static Q = (query: any) => {
+		if (typeof query != "string") return query;
 		return document.querySelector(query)!;
 	};
 
@@ -796,23 +796,37 @@ class mk {
 	};
 
 	static Qon = (query: HTMLElement | string = "body") => {
-		let temp = mk.Q(query);
-		if (temp) (temp as HTMLButtonElement).disabled = false;
-		temp?.classList.remove("disabled");
-		return temp;
+		return mk.aCadaElemento(query, (e: any) => {
+			if (e) (e as HTMLButtonElement).disabled = false;
+			e?.classList.remove("disabled");
+		});
 	};
 
-	static Qoff = (query: HTMLElement | string = "body") => {
-		let temp = mk.Q(query);
-		if (temp) (temp as HTMLButtonElement).disabled = true;
-		temp?.classList.add("disabled");
-		return temp;
+	static Qoff = (query: HTMLElement | string | null = "body") => {
+		return mk.aCadaElemento(query, (e: any) => {
+			if (e) (e as HTMLButtonElement).disabled = true;
+			e?.classList.add("disabled");
+		});
 	};
 
-	static QverOn = (query: HTMLElement | string = "body") => {
-		let temp = mk.Q(query);
-		temp?.classList.remove("oculto");
-		return temp;
+	static QverOn = (query: HTMLElement | string | null = "body") => {
+		return mk.aCadaElemento(query, (e: any) => {
+			e.classList.remove("oculto");
+		});
+	};
+
+	static aCadaElemento = (query: any, fn: Function) => {
+		if (typeof query == "string") {
+			let arrayElement = mk.QAll(query);
+			arrayElement.forEach((e) => {
+				fn(e);
+			});
+			return arrayElement;
+		} else {
+			let e = mk.Q(query);
+			fn(e);
+			return e;
+		}
 	};
 
 	static QverOff = (query: HTMLElement | string = "body") => {

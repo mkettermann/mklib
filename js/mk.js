@@ -620,7 +620,7 @@ class mk {
     //___________________________________\\
     // Atalho para QuerySelector que retorna apenas o primeiro elemento da query.
     static Q = (query) => {
-        if (query instanceof HTMLElement)
+        if (typeof query != "string")
             return query;
         return document.querySelector(query);
     };
@@ -726,23 +726,37 @@ class mk {
         return eAfetados;
     };
     static Qon = (query = "body") => {
-        let temp = mk.Q(query);
-        if (temp)
-            temp.disabled = false;
-        temp?.classList.remove("disabled");
-        return temp;
+        return mk.aCadaElemento(query, (e) => {
+            if (e)
+                e.disabled = false;
+            e?.classList.remove("disabled");
+        });
     };
     static Qoff = (query = "body") => {
-        let temp = mk.Q(query);
-        if (temp)
-            temp.disabled = true;
-        temp?.classList.add("disabled");
-        return temp;
+        return mk.aCadaElemento(query, (e) => {
+            if (e)
+                e.disabled = true;
+            e?.classList.add("disabled");
+        });
     };
     static QverOn = (query = "body") => {
-        let temp = mk.Q(query);
-        temp?.classList.remove("oculto");
-        return temp;
+        return mk.aCadaElemento(query, (e) => {
+            e.classList.remove("oculto");
+        });
+    };
+    static aCadaElemento = (query, fn) => {
+        if (typeof query == "string") {
+            let arrayElement = mk.QAll(query);
+            arrayElement.forEach((e) => {
+                fn(e);
+            });
+            return arrayElement;
+        }
+        else {
+            let e = mk.Q(query);
+            fn(e);
+            return e;
+        }
     };
     static QverOff = (query = "body") => {
         let temp = mk.Q(query);
