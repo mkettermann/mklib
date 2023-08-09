@@ -727,30 +727,50 @@ class mk {
     };
     static Qon = (query = "body") => {
         return mk.aCadaElemento(query, (e) => {
-            if (e)
+            if (e instanceof HTMLButtonElement || e instanceof HTMLInputElement) {
                 e.disabled = false;
-            e?.classList.remove("disabled");
+                e.classList.remove("disabled");
+            }
+            else {
+                e.classList.remove("disabled");
+            }
         });
     };
     static Qoff = (query = "body") => {
         return mk.aCadaElemento(query, (e) => {
-            if (e)
+            if (e instanceof HTMLButtonElement || e instanceof HTMLInputElement) {
                 e.disabled = true;
-            e?.classList.add("disabled");
+                e.classList.add("disabled");
+            }
+            else {
+                e.classList.add("disabled");
+            }
         });
     };
     static QverOn = (query = "body") => {
         return mk.aCadaElemento(query, (e) => {
-            e.classList.remove("oculto");
+            e?.classList.remove("oculto");
         });
     };
+    // Query: String, Element, [Element,Element]
     static aCadaElemento = (query, fn) => {
         if (typeof query == "string") {
-            let arrayElement = mk.QAll(query);
-            arrayElement.forEach((e) => {
+            let retorno;
+            let elementos = mk.QAll(query);
+            if (elementos.length == 1)
+                retorno = elementos[0];
+            else
+                retorno = elementos;
+            elementos.forEach((e) => {
                 fn(e);
             });
-            return arrayElement;
+            return retorno;
+        }
+        else if (Array.isArray(query)) {
+            query.forEach((e) => {
+                fn(e);
+            });
+            return query;
         }
         else {
             let e = mk.Q(query);
