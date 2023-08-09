@@ -77,6 +77,7 @@
 	--CorItensHover: #000;
 	--CorSeletor: var(--CorItensHover);
 	--CorItens: var(--BordaItens);
+	--ArrowSelecionado: "\2714";
 
 	/* PADROES DA BIBLIOTECA */
 	--tTexto: var(--tClaroTexto);
@@ -413,7 +414,7 @@
 	color: var(--CorSeletor);
 	background: var(--FundoItensSelArrow);
 	min-height: 100%;
-	content: "\2714";
+	content: var(--ArrowSelecionado);
 }
 
 .mkSelItem[data-m="1"] {
