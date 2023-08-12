@@ -2706,23 +2706,21 @@ class mk {
 
 	static mkToValue = (mk: string, o: any) => {
 		let ret: string = "";
-		if (typeof o == "object") {
-			if (mk.indexOf("${") >= 0) {
-				let ini = mk.split("${");
-				ret = ini[0];
-				for (let i in ini) {
-					if (i == "0") continue;
-					let end: number = ini[i].indexOf("}");
-					let key: string = ini[i].slice(0, end);
+		if (mk.indexOf("${") >= 0) {
+			let ini = mk.split("${");
+			ret = ini[0];
+			for (let i in ini) {
+				if (i == "0") continue;
+				let end: number = ini[i].indexOf("}");
+				let key: string = ini[i].slice(0, end);
+				if (typeof o == "object") {
 					if (key in o) {
 						ret += o[key];
 					} else {
 						//ret += key;
 					}
-					ret += ini[i].slice(end + 1);
 				}
-			} else {
-				ret = mk;
+				ret += ini[i].slice(end + 1);
 			}
 		} else {
 			ret = mk;
