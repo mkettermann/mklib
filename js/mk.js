@@ -999,6 +999,27 @@ class mk {
         };
         leitor.readAsDataURL(arquivo);
     };
+    static ler = async (arquivo, p) => {
+        return new Promise((r) => {
+            let leitor = new FileReader();
+            leitor.onprogress = (ev) => {
+                if (ev.lengthComputable) {
+                    let carga = ev.loaded / ev.total;
+                    if (carga < 1) {
+                        if (p)
+                            p(carga);
+                    }
+                }
+            };
+            leitor.onload = () => {
+                r(leitor.result);
+            };
+            leitor.onerror = () => {
+                console.error("Erro ao ler arquivo.");
+            };
+            leitor.readAsDataURL(arquivo);
+        });
+    };
     static clonar = (i) => {
         return JSON.parse(JSON.stringify(i));
     };
