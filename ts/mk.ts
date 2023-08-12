@@ -1112,7 +1112,7 @@ class mk {
 		leitor.readAsDataURL(arquivo);
 	};
 
-	static ler = async (arquivo: any, p: Function) => {
+	static ler = async (arq: any, p: Function) => {
 		return new Promise((r) => {
 			let leitor = new FileReader();
 			leitor.onprogress = (ev) => {
@@ -1127,9 +1127,19 @@ class mk {
 				r(ev.target?.result);
 			};
 			leitor.onerror = () => {
-				console.error("Erro ao ler arquivo.");
+				console.error("Erro ao ler arquivo: " + arq);
 			};
-			leitor.readAsDataURL(arquivo);
+			if (arq) {
+				if (arq.name != "") {
+					leitor.readAsDataURL(arq);
+				} else {
+					console.log("F: Sem nome de arquivo.", arq);
+					r(null);
+				}
+			} else {
+				console.log("F: Arquivo Nulo.", arq);
+				r(null);
+			}
 		});
 	};
 

@@ -999,7 +999,7 @@ class mk {
         };
         leitor.readAsDataURL(arquivo);
     };
-    static ler = async (arquivo, p) => {
+    static ler = async (arq, p) => {
         return new Promise((r) => {
             let leitor = new FileReader();
             leitor.onprogress = (ev) => {
@@ -1015,9 +1015,21 @@ class mk {
                 r(ev.target?.result);
             };
             leitor.onerror = () => {
-                console.error("Erro ao ler arquivo.");
+                console.error("Erro ao ler arquivo: " + arq);
             };
-            leitor.readAsDataURL(arquivo);
+            if (arq) {
+                if (arq.name != "") {
+                    leitor.readAsDataURL(arq);
+                }
+                else {
+                    console.log("F: Sem nome de arquivo.", arq);
+                    r(null);
+                }
+            }
+            else {
+                console.log("F: Arquivo Nulo.", arq);
+                r(null);
+            }
         });
     };
     static clonar = (i) => {
