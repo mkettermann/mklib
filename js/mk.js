@@ -1011,8 +1011,8 @@ class mk {
                     }
                 }
             };
-            leitor.onload = () => {
-                r(leitor.result);
+            leitor.onload = (ev) => {
+                r(ev.target?.result);
             };
             leitor.onerror = () => {
                 console.error("Erro ao ler arquivo.");
