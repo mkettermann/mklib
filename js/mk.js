@@ -1005,14 +1005,15 @@ class mk {
             leitor.onprogress = (ev) => {
                 if (ev.lengthComputable) {
                     let carga = ev.loaded / ev.total;
-                    if (carga < 1) {
+                    if (carga <= 1) {
                         if (p)
                             p(carga);
                     }
                 }
             };
             leitor.onload = (ev) => {
-                r(ev.target?.result);
+                arq.b64 = ev.target?.result;
+                r(arq);
             };
             leitor.onerror = () => {
                 console.error("Erro ao ler arquivo: " + arq);
