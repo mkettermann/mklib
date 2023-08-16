@@ -1001,6 +1001,40 @@ class mk {
         };
         leitor.readAsDataURL(arquivo);
     };
+    static ler = async (arq, p) => {
+        return new Promise((r) => {
+            let leitor = new FileReader();
+            leitor.onprogress = (ev) => {
+                if (ev.lengthComputable) {
+                    let carga = ev.loaded / ev.total;
+                    if (carga <= 1) {
+                        if (p)
+                            p(carga);
+                    }
+                }
+            };
+            leitor.onload = (ev) => {
+                arq.b64 = ev.target?.result;
+                r(arq);
+            };
+            leitor.onerror = () => {
+                console.error("Erro ao ler arquivo: " + arq);
+            };
+            if (arq) {
+                if (arq.name != "") {
+                    leitor.readAsDataURL(arq);
+                }
+                else {
+                    console.log("F: Sem nome de arquivo.", arq);
+                    r(null);
+                }
+            }
+            else {
+                console.log("F: Arquivo Nulo.", arq);
+                r(null);
+            }
+        });
+    };
     static clonar = (i) => {
         return JSON.parse(JSON.stringify(i));
     };
@@ -2442,11 +2476,13 @@ class mk {
                     continue;
                 let end = ini[i].indexOf("}");
                 let key = ini[i].slice(0, end);
-                if (key in o) {
-                    ret += o[key];
-                }
-                else {
-                    //ret += key;
+                if (typeof o == "object") {
+                    if (key in o) {
+                        ret += o[key];
+                    }
+                    else {
+                        //ret += key;
+                    }
                 }
                 ret += ini[i].slice(end + 1);
             }

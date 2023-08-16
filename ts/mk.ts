@@ -1114,6 +1114,38 @@ class mk {
 		leitor.readAsDataURL(arquivo);
 	};
 
+	static ler = async (arq: any, p: Function) => {
+		return new Promise((r) => {
+			let leitor = new FileReader();
+			leitor.onprogress = (ev) => {
+				if (ev.lengthComputable) {
+					let carga = ev.loaded / ev.total;
+					if (carga <= 1) {
+						if (p) p(carga);
+					}
+				}
+			};
+			leitor.onload = (ev) => {
+				arq.b64 = ev.target?.result;
+				r(arq);
+			};
+			leitor.onerror = () => {
+				console.error("Erro ao ler arquivo: " + arq);
+			};
+			if (arq) {
+				if (arq.name != "") {
+					leitor.readAsDataURL(arq);
+				} else {
+					console.log("F: Sem nome de arquivo.", arq);
+					r(null);
+				}
+			} else {
+				console.log("F: Arquivo Nulo.", arq);
+				r(null);
+			}
+		});
+	};
+
 	static clonar = (i: any) => {
 		return JSON.parse(JSON.stringify(i));
 	};
@@ -2715,10 +2747,12 @@ class mk {
 				if (i == "0") continue;
 				let end: number = ini[i].indexOf("}");
 				let key: string = ini[i].slice(0, end);
-				if (key in o) {
-					ret += o[key];
-				} else {
-					//ret += key;
+				if (typeof o == "object") {
+					if (key in o) {
+						ret += o[key];
+					} else {
+						//ret += key;
+					}
 				}
 				ret += ini[i].slice(end + 1);
 			}
