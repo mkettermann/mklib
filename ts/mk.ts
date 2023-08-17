@@ -97,6 +97,15 @@ class mk {
 	};
 	antesDePopularTabela = () => {};
 	aoCompletarExibicao = () => {};
+	antesDeOrdenar = () => {};
+
+	// Por garantia a funcao async para o carregador da lista esperar a funcao concluir.
+	antesDeOrdenarAsync = async () => {
+		return new Promise((r) => {
+			this.antesDeOrdenar();
+			r(true);
+		});
+	};
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 	//			CONFIGURACOES								\\
@@ -197,11 +206,14 @@ class mk {
 			mk.mkLimparOA(retorno);
 			// Executa funcao personalizada por página
 			mk.mkExecutaNoObj(retorno, this.aoReceberDados);
+
+			// Executa função antes de ordenar a tabela (Util para calcular coisas no conteudo recebido)
+			await this.antesDeOrdenarAsync();
+
 			// Armazena em 1 array que está em 2 locais na memória
 			this.dadosFull = this.dadosFiltrado = retorno;
 			// Ordena a lista geral com base na primeira propriedade.
 			mk.ordenamento(this.dadosFull, this.c.sortBy, this.c.sortDir);
-
 			//Adiciona eventos aos botões do filtro
 			this.setFiltroListener();
 			// Executa um filtro inicial e na sequencia processa a exibição.
