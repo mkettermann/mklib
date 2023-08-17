@@ -206,12 +206,12 @@ class mk {
 			mk.mkLimparOA(retorno);
 			// Executa funcao personalizada por página
 			mk.mkExecutaNoObj(retorno, this.aoReceberDados);
+			// Armazena em 1 array que está em 2 locais na memória
+			this.dadosFull = this.dadosFiltrado = retorno;
 
 			// Executa função antes de ordenar a tabela (Util para calcular coisas no conteudo recebido)
 			await this.antesDeOrdenarAsync();
 
-			// Armazena em 1 array que está em 2 locais na memória
-			this.dadosFull = this.dadosFiltrado = retorno;
 			// Ordena a lista geral com base na primeira propriedade.
 			mk.ordenamento(this.dadosFull, this.c.sortBy, this.c.sortDir);
 			//Adiciona eventos aos botões do filtro
