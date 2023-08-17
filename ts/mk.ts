@@ -10,7 +10,6 @@
 
 /** Planejamento
  * - CRUD converter pra async para liberar o .then() nas UI.
- * - Try Catch no http para dados vazios.
  * - Implementar objetoSelecionado na lista individual.
  * - Implementar 3 (Terceiro) clique no ordenamento, no terceiro a tabela ordena novamente no inicial: pelo pk informado.
  * - Ordenamento por tipagem(data mes ano)
@@ -999,6 +998,7 @@ class mk {
 			mk.detectedServerOn();
 		}
 	};
+	f;
 
 	static detectedServerOff = () => {
 		if (mk.Q("body .offlineBlock") == null) {
@@ -1650,19 +1650,14 @@ class mk {
 			console.groupEnd();
 			//if (sucesso != null) sucesso(corpo);
 		} catch (error) {
-			console.groupCollapsed(
-				"HTTP RETURNO: " + pacoteHttp.status + " " + pacoteHttp.statusText
-			);
-			console.error("HTTP RETURNO: Não retornou 200.");
-			console.info(await pacoteHttp.text()); // Exibir o erro no console;
+			console.groupCollapsed("HTTP ERRO: ");
+			console.error("Erro: ", error);
 			console.groupEnd();
 			if (carregador) {
 				this.CarregarOFF();
 			}
 			return null;
-			return null;
 		}
-
 		return corpo;
 	};
 
