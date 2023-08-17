@@ -893,11 +893,14 @@ class mk {
         });
     };
     // Get Server On
-    static getServerOn = async (url) => {
+    static getServerOn = async (url = "/Login/GetServerOn") => {
         let retorno = await mk.http(url, mk.t.G, mk.t.J);
         // Vem nulo caso falhe
         if (retorno !== true) {
             mk.detectedServerOff();
+        }
+        else {
+            mk.detectedServerOn();
         }
     };
     static detectedServerOff = () => {
@@ -909,7 +912,7 @@ class mk {
             divOfflineBlockInterna.innerHTML = "Servidor OFF-LINE";
             let buttonOfflineBlock = document.createElement("button");
             buttonOfflineBlock.setAttribute("type", "button");
-            buttonOfflineBlock.setAttribute("onClick", "mk.detectedServerOff_display()");
+            buttonOfflineBlock.setAttribute("onClick", "mk.detectedServerOn()");
             // let iOfflineBlock = document.createElement("i");
             // iOfflineBlock.className = "bi bi-x-lg";
             buttonOfflineBlock.innerHTML =
@@ -920,8 +923,8 @@ class mk {
         }
         mk.Q("body .offlineBlock").classList.remove("oculto");
     };
-    static detectedServerOff_display = () => {
-        mk.Q("body .offlineBlock").classList.add("oculto");
+    static detectedServerOn = () => {
+        mk.Q("body .offlineBlock")?.classList?.add("oculto");
     };
     // Eventos HTML5
     // Bloqueio de teclas especificas onKeyDown
