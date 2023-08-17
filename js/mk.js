@@ -491,6 +491,25 @@ class mk {
         }
         return temp;
     };
+    setObj = (v, objeto) => {
+        let temp = null;
+        if (Array.isArray(this.dadosFull)) {
+            let o = this.find(this.c.pk, v);
+            if (o) {
+                if (typeof objeto == "object") {
+                    for (let p in objeto) {
+                        o[p] = objeto[p];
+                    }
+                }
+                temp = o;
+            }
+            else {
+                this.dadosFull.push(mk.aoReceberDados(objeto));
+                temp = objeto;
+            }
+        }
+        return temp;
+    };
     getKeys = () => {
         let chaves = new Set();
         this.dadosFull.forEach((o) => {
@@ -534,7 +553,6 @@ class mk {
         this.atualizarListagem();
     };
     edit = (objDados, k, v) => {
-        // Implementar setObjetoFromId
         this.dadosFull = mk.delObjetoFromId(k, v, this.dadosFull);
         this.dadosFull.push(mk.aoReceberDados(objDados));
         mk.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
