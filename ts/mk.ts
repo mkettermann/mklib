@@ -1611,8 +1611,46 @@ class mk {
 		console.groupEnd();
 
 		// EXECUCAO
-		const pacoteHttp = await fetch(url, pacote);
-		if (!pacoteHttp.ok) {
+		let corpo: any = null;
+		try {
+			const pacoteHttp = await fetch(url, pacote);
+			if (!pacoteHttp.ok) {
+				console.groupCollapsed(
+					"HTTP RETURNO: " + pacoteHttp.status + " " + pacoteHttp.statusText
+				);
+				console.error("HTTP RETURNO: Não retornou 200.");
+				console.info(await pacoteHttp.text()); // Exibir o erro no console;
+				console.groupEnd();
+				if (carregador) {
+					this.CarregarOFF();
+				}
+				return null;
+			}
+			if (tipo == mk.t.J) {
+				corpo = await pacoteHttp.json();
+			} else if (tipo == mk.t.H) {
+				corpo = await pacoteHttp.text();
+			} else if (tipo == mk.t.B) {
+				corpo = await pacoteHttp.blob();
+			} else if (tipo == mk.t.F) {
+				corpo = await pacoteHttp.json();
+			}
+			if (carregador) {
+				this.CarregarOFF();
+			}
+			console.groupCollapsed(
+				"Retorno (" +
+					pacote.method +
+					" " +
+					tipo.toUpperCase().split("/")[1] +
+					"): " +
+					url
+			);
+			console.timeEnd(url);
+			console.info(corpo);
+			console.groupEnd();
+			//if (sucesso != null) sucesso(corpo);
+		} catch (error) {
 			console.groupCollapsed(
 				"HTTP RETURNO: " + pacoteHttp.status + " " + pacoteHttp.statusText
 			);
@@ -1623,32 +1661,9 @@ class mk {
 				this.CarregarOFF();
 			}
 			return null;
+			return null;
 		}
-		let corpo: any = null;
-		if (tipo == mk.t.J) {
-			corpo = await pacoteHttp.json();
-		} else if (tipo == mk.t.H) {
-			corpo = await pacoteHttp.text();
-		} else if (tipo == mk.t.B) {
-			corpo = await pacoteHttp.blob();
-		} else if (tipo == mk.t.F) {
-			corpo = await pacoteHttp.json();
-		}
-		if (carregador) {
-			this.CarregarOFF();
-		}
-		console.groupCollapsed(
-			"Retorno (" +
-				pacote.method +
-				" " +
-				tipo.toUpperCase().split("/")[1] +
-				"): " +
-				url
-		);
-		console.timeEnd(url);
-		console.info(corpo);
-		console.groupEnd();
-		//if (sucesso != null) sucesso(corpo);
+
 		return corpo;
 	};
 
