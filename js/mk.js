@@ -39,7 +39,7 @@ class mk {
     dadosFull = []; // Todos os dados sem filtro, mas ordenaveis.
     dadosFiltrado = []; // Mesmos dadosFull, mas após filtro.
     dadosExibidos = []; // Clonado de dadosFiltrado, mas apenas os desta pagina.
-    alvo = {}; // Guarda o objeto selecionado para possivel consulta futura.
+    alvo = {}; // Guarda o objeto selecionado permitindo manupular outro dado com este de referencia.
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //			CONSTRUTOR									\\
     //___________________________________\\
