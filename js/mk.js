@@ -46,9 +46,14 @@ class mk {
     constructor(urlOrigem = mk.delUrlQuery(window.location.href) + "/GetList", todaListagem = ".divListagemContainer", idModelo = "#modelo", filtro = ".iConsultas", pk = "", importar = false, aoReceberDados = mk.aoReceberDados, antesDePopularTabela = mk.antesDePopularTabela, aoCompletarExibicao = mk.aoCompletarExibicao) {
         // ReSET dos parametros (Null para Valor Padrão)
         console.time("Tempo Listagem (" + idModelo + "): ");
-        urlOrigem == null || urlOrigem == ""
-            ? (urlOrigem = (mk.delUrlQuery(window.location.href) + "/GetList").replaceAll("//GetList", "/GetList"))
-            : (urlOrigem = urlOrigem.replaceAll("//GetList", "/GetList"));
+        if (urlOrigem == null || urlOrigem == "") {
+            urlOrigem = (mk.delUrlQuery(window.location.href) + "/GetList").replaceAll("//GetList", "/GetList");
+        }
+        else {
+            if (typeof urlOrigem == "string") {
+                urlOrigem = urlOrigem.replaceAll("//GetList", "/GetList");
+            }
+        }
         if (todaListagem == null || todaListagem == "")
             todaListagem = ".divListagemContainer";
         if (idModelo == null || idModelo == "")
@@ -171,15 +176,25 @@ class mk {
         if (importar)
             await mk.importar(this.c.divTabela);
         this.configurarUI();
-        // Inicia o Coleta de dados
-        let retorno = await mk.http(this.c.urlOrigem, mk.t.G, mk.t.J);
-        if (retorno != null) {
+        // Caso o receba uma array na url, os dados já estão aqui.
+        let temosDados = null;
+        if (Array.isArray(this.c.urlOrigem)) {
+            temosDados = this.c.urlOrigem;
+        }
+        else {
+            // Inicia o Coleta de dados
+            let retorno = await mk.http(this.c.urlOrigem, mk.t.G, mk.t.J);
+            if (retorno != null) {
+                temosDados = retorno;
+            }
+        }
+        if (temosDados != null) {
             // Limpar Dados nulos
-            mk.mkLimparOA(retorno);
+            mk.mkLimparOA(temosDados);
             // Executa funcao personalizada por página
-            mk.mkExecutaNoObj(retorno, this.aoReceberDados);
+            mk.mkExecutaNoObj(temosDados, this.aoReceberDados);
             // Armazena em 1 array que está em 2 locais na memória
-            this.dadosFull = this.dadosFiltrado = retorno;
+            this.dadosFull = this.dadosFiltrado = temosDados;
             // Executa função antes de ordenar a tabela (Util para calcular coisas no conteudo recebido)
             await this.antesDeOrdenarAsync();
             // Ordena a lista geral com base na primeira propriedade.
