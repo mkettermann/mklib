@@ -15,6 +15,8 @@
  * - Implementar 3 (Terceiro) clique no ordenamento, no terceiro a tabela ordena novamente no inicial: pelo pk informado.
  * - Ordenamento por tipagem(data mes ano)
  * - Menu topo direito, oculto, saindo de traz da tabela com configurações personalizadas.
+ * - mkSel com exibição dos itens selecionados ao :Focus:Hover
+ * - - Focus e Hover ao mesmo tempo no campo de pesquisa que geram um info.
  */
 
 var mkt; // Variavel de Testes;

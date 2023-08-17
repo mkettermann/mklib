@@ -2089,8 +2089,8 @@ ul.mkUlFase li.disabled a {
 
 /* NAO FUNCIONA EM CONJUNTO AOS microPos */
 .corte {
-	width: 100%;
-	white-space: nowrap;
-	overflow: hidden;
+	width: 100% !important;
+	white-space: nowrap !important;
+	overflow: hidden !important;
 	text-overflow: ellipsis;
 }
