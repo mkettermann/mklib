@@ -179,7 +179,7 @@ class mk {
         // Caso o receba uma array na url, os dados já estão aqui.
         let temosDados = null;
         if (Array.isArray(this.c.urlOrigem)) {
-            temosDados = this.c.urlOrigem;
+            temosDados = mk.clonar(this.c.urlOrigem);
         }
         else {
             // Inicia o Coleta de dados
