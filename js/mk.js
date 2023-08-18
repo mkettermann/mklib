@@ -3156,6 +3156,14 @@ class mk {
                     if (retorno != null) {
                         e.innerHTML = retorno;
                         //mk.mkNodeToScript(e);
+                        try {
+                            mk.mkNodeToScript(e);
+                        }
+                        catch (error) {
+                            console.group("Auto Import por TAG lancou erros:");
+                            console.error("ERRO: ", error);
+                            console.groupEnd();
+                        }
                     }
                     else {
                         console.log("Falhou ao coletar dados");
