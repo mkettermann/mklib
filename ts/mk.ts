@@ -1253,6 +1253,23 @@ class mk {
 		return eTr;
 	};
 
+	// Sobe elementos pais até encontrar esta classe
+	static getEClass = (e: any, classe: string) => {
+		let eClass = e;
+		while (!eClass.classList.contains(classe)) {
+			eClass = eClass.parentElement;
+			if (eClass == null) {
+				console.error(
+					"Não foi possível encontrar o elemento com esta classe. getEClass.",
+					classe
+				);
+				eClass = null;
+				break;
+			}
+		}
+		return eClass;
+	};
+
 	// Retorna uma array utilizando um template do que deve ser preenchido.
 	static encheArray = (
 		arrTemplate: any[],
