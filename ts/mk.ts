@@ -10,7 +10,6 @@
 
 /** Planejamento
  * - CRUD converter pra async para liberar o .then() nas UI.
- * - Try Catch no http para dados vazios.
  * - Implementar objetoSelecionado na lista individual.
  * - Implementar 3 (Terceiro) clique no ordenamento, no terceiro a tabela ordena novamente no inicial: pelo pk informado.
  * - Ordenamento por tipagem(data mes ano)
@@ -49,6 +48,7 @@ class mk {
 	dadosFull: any = []; // Todos os dados sem filtro, mas ordenaveis.
 	dadosFiltrado: any = []; // Mesmos dadosFull, mas após filtro.
 	dadosExibidos: any = []; // Clonado de dadosFiltrado, mas apenas os desta pagina.
+	alvo: any = {}; // Guarda o objeto selecionado permitindo manupular outro dado com este de referencia.
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 	//			CONSTRUTOR									\\
@@ -67,11 +67,15 @@ class mk {
 	) {
 		// ReSET dos parametros (Null para Valor Padrão)
 		console.time("Tempo Listagem (" + idModelo + "): ");
-		urlOrigem == null || urlOrigem == ""
-			? (urlOrigem = (
-					mk.delUrlQuery(window.location.href) + "/GetList"
-			  ).replaceAll("//GetList", "/GetList"))
-			: (urlOrigem = urlOrigem.replaceAll("//GetList", "/GetList"));
+		if (urlOrigem == null || urlOrigem == "") {
+			urlOrigem = (
+				mk.delUrlQuery(window.location.href) + "/GetList"
+			).replaceAll("//GetList", "/GetList");
+		} else {
+			if (typeof urlOrigem == "string") {
+				urlOrigem = urlOrigem.replaceAll("//GetList", "/GetList");
+			}
+		}
 		if (todaListagem == null || todaListagem == "")
 			todaListagem = ".divListagemContainer";
 		if (idModelo == null || idModelo == "") idModelo = "#modelo";
@@ -97,6 +101,15 @@ class mk {
 	};
 	antesDePopularTabela = () => {};
 	aoCompletarExibicao = () => {};
+	antesDeOrdenar = () => {};
+
+	// Por garantia a funcao async para o carregador da lista esperar a funcao concluir.
+	antesDeOrdenarAsync = async () => {
+		return new Promise((r) => {
+			this.antesDeOrdenar();
+			r(true);
+		});
+	};
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 	//			CONFIGURACOES								\\
@@ -190,18 +203,31 @@ class mk {
 		if (importar) await mk.importar(this.c.divTabela);
 		this.configurarUI();
 
-		// Inicia o Coleta de dados
-		let retorno = await mk.http(this.c.urlOrigem, mk.t.G, mk.t.J);
-		if (retorno != null) {
+		// Caso o receba uma array na url, os dados já estão aqui.
+		let temosDados = null;
+		if (Array.isArray(this.c.urlOrigem)) {
+			temosDados = mk.clonar(this.c.urlOrigem);
+		} else {
+			// Inicia o Coleta de dados
+			let retorno = await mk.http(this.c.urlOrigem, mk.t.G, mk.t.J);
+			if (retorno != null) {
+				temosDados = retorno;
+			}
+		}
+
+		if (temosDados != null) {
 			// Limpar Dados nulos
-			mk.mkLimparOA(retorno);
+			mk.mkLimparOA(temosDados);
 			// Executa funcao personalizada por página
-			mk.mkExecutaNoObj(retorno, this.aoReceberDados);
+			mk.mkExecutaNoObj(temosDados, this.aoReceberDados);
 			// Armazena em 1 array que está em 2 locais na memória
-			this.dadosFull = this.dadosFiltrado = retorno;
+			this.dadosFull = this.dadosFiltrado = temosDados;
+
+			// Executa função antes de ordenar a tabela (Util para calcular coisas no conteudo recebido)
+			await this.antesDeOrdenarAsync();
+
 			// Ordena a lista geral com base na primeira propriedade.
 			mk.ordenamento(this.dadosFull, this.c.sortBy, this.c.sortDir);
-
 			//Adiciona eventos aos botões do filtro
 			this.setFiltroListener();
 			// Executa um filtro inicial e na sequencia processa a exibição.
@@ -536,6 +562,25 @@ class mk {
 		return temp;
 	};
 
+	setObj = (v: any, objeto: any): any => {
+		let temp: any = null;
+		if (Array.isArray(this.dadosFull)) {
+			let o = this.find(this.c.pk, v);
+			if (o) {
+				if (typeof objeto == "object") {
+					for (let p in objeto) {
+						o[p] = objeto[p];
+					}
+				}
+				temp = o;
+			} else {
+				this.dadosFull.push(mk.aoReceberDados(objeto));
+				temp = objeto;
+			}
+		}
+		return temp;
+	};
+
 	getKeys = () => {
 		let chaves = new Set();
 		this.dadosFull.forEach((o) => {
@@ -583,7 +628,6 @@ class mk {
 	};
 
 	edit = (objDados: object, k: any, v: any) => {
-		// Implementar setObjetoFromId
 		this.dadosFull = mk.delObjetoFromId(k, v, this.dadosFull);
 		this.dadosFull.push(mk.aoReceberDados(objDados));
 		mk.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
@@ -971,13 +1015,16 @@ class mk {
 	};
 
 	// Get Server On
-	static getServerOn = async (url: string) => {
+	static getServerOn = async (url: string = "/Login/GetServerOn") => {
 		let retorno = await mk.http(url, mk.t.G, mk.t.J);
 		// Vem nulo caso falhe
 		if (retorno !== true) {
 			mk.detectedServerOff();
+		} else {
+			mk.detectedServerOn();
 		}
 	};
+	f;
 
 	static detectedServerOff = () => {
 		if (mk.Q("body .offlineBlock") == null) {
@@ -988,10 +1035,7 @@ class mk {
 			divOfflineBlockInterna.innerHTML = "Servidor OFF-LINE";
 			let buttonOfflineBlock = document.createElement("button");
 			buttonOfflineBlock.setAttribute("type", "button");
-			buttonOfflineBlock.setAttribute(
-				"onClick",
-				"mk.detectedServerOff_display()"
-			);
+			buttonOfflineBlock.setAttribute("onClick", "mk.detectedServerOn()");
 			// let iOfflineBlock = document.createElement("i");
 			// iOfflineBlock.className = "bi bi-x-lg";
 			buttonOfflineBlock.innerHTML =
@@ -1002,8 +1046,8 @@ class mk {
 		}
 		mk.Q("body .offlineBlock").classList.remove("oculto");
 	};
-	static detectedServerOff_display = () => {
-		mk.Q("body .offlineBlock").classList.add("oculto");
+	static detectedServerOn = () => {
+		mk.Q("body .offlineBlock")?.classList?.add("oculto");
 	};
 
 	// Eventos HTML5
@@ -1592,44 +1636,54 @@ class mk {
 		console.groupEnd();
 
 		// EXECUCAO
-		const pacoteHttp = await fetch(url, pacote);
-		if (!pacoteHttp.ok) {
+		let corpo: any = null;
+		try {
+			const pacoteHttp = await fetch(url, pacote);
+			if (!pacoteHttp.ok) {
+				console.groupCollapsed(
+					"HTTP RETURNO: " + pacoteHttp.status + " " + pacoteHttp.statusText
+				);
+				console.error("HTTP RETURNO: Não retornou 200.");
+				console.info(await pacoteHttp.text()); // Exibir o erro no console;
+				console.groupEnd();
+				if (carregador) {
+					this.CarregarOFF();
+				}
+				return null;
+			}
+			if (tipo == mk.t.J) {
+				corpo = await pacoteHttp.json();
+			} else if (tipo == mk.t.H) {
+				corpo = await pacoteHttp.text();
+			} else if (tipo == mk.t.B) {
+				corpo = await pacoteHttp.blob();
+			} else if (tipo == mk.t.F) {
+				corpo = await pacoteHttp.json();
+			}
+			if (carregador) {
+				this.CarregarOFF();
+			}
 			console.groupCollapsed(
-				"HTTP RETURNO: " + pacoteHttp.status + " " + pacoteHttp.statusText
+				"Retorno (" +
+					pacote.method +
+					" " +
+					tipo.toUpperCase().split("/")[1] +
+					"): " +
+					url
 			);
-			console.error("HTTP RETURNO: Não retornou 200.");
-			console.info(await pacoteHttp.text()); // Exibir o erro no console;
+			console.timeEnd(url);
+			console.info(corpo);
+			console.groupEnd();
+			//if (sucesso != null) sucesso(corpo);
+		} catch (error) {
+			console.groupCollapsed("HTTP ERRO: ");
+			console.error("Erro: ", error);
 			console.groupEnd();
 			if (carregador) {
 				this.CarregarOFF();
 			}
 			return null;
 		}
-		let corpo: any = null;
-		if (tipo == mk.t.J) {
-			corpo = await pacoteHttp.json();
-		} else if (tipo == mk.t.H) {
-			corpo = await pacoteHttp.text();
-		} else if (tipo == mk.t.B) {
-			corpo = await pacoteHttp.blob();
-		} else if (tipo == mk.t.F) {
-			corpo = await pacoteHttp.json();
-		}
-		if (carregador) {
-			this.CarregarOFF();
-		}
-		console.groupCollapsed(
-			"Retorno (" +
-				pacote.method +
-				" " +
-				tipo.toUpperCase().split("/")[1] +
-				"): " +
-				url
-		);
-		console.timeEnd(url);
-		console.info(corpo);
-		console.groupEnd();
-		//if (sucesso != null) sucesso(corpo);
 		return corpo;
 	};
 
