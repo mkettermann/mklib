@@ -1456,14 +1456,14 @@ class mk {
 	};
 
 	// Injeção de elementos via http
-	static mkGeraElemento(node: any, nomeElemento: string = "script") {
+	static mkGeraElemento(e: any, nomeElemento: string = "script") {
 		// Cria Elemento
 		let elemento: any = document.createElement(nomeElemento);
 		// Popular Elemento
-		elemento.text = node.innerHTML;
+		elemento.text = e.innerHTML;
 		// Set Atributos
 		let i = -1,
-			attrs = node.attributes,
+			attrs = e.attributes,
 			attr;
 		while (++i < attrs.length) {
 			elemento.setAttribute((attr = attrs[i]).name, attr.value);
