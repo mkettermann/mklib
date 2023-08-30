@@ -2453,6 +2453,12 @@ class mk {
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //			MK Molde (Template/Modelo)	\\
     //___________________________________\\
+    static removerAspasDuplas = (s) => {
+        if (typeof s == "string") {
+            s = s.replaceAll('"', "&quot;");
+        }
+        return s;
+    };
     static mkToValue = (mk, o) => {
         let ret = "";
         if (mk.indexOf("${") >= 0) {
@@ -2465,7 +2471,11 @@ class mk {
                 let key = ini[i].slice(0, end);
                 if (typeof o == "object") {
                     if (key in o) {
-                        ret += o[key];
+                        let v = o[key];
+                        if (typeof v == "string") {
+                            v = v.replaceAll('"', "&quot;");
+                        }
+                        ret += v;
                     }
                     else {
                         //ret += key;
