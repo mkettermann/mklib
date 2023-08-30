@@ -923,6 +923,19 @@ class mk {
 		return mk.Q(query).setAttribute("data-" + atributoNome, atributoValor);
 	};
 
+	static toggleSwitcher = (e: HTMLElement) => {
+		if (e.classList.contains("True")) {
+			e.classList.remove("True");
+			e.classList.add("False");
+		} else {
+			if (e.classList.contains("False")) {
+				e.classList.remove("False");
+				e.classList.add("True");
+			}
+		}
+		return e;
+	};
+
 	// static QaSet = (query = "body", atributoNome, atributoValor) => {
 	// 	return mk.Q(query).setAttribute(atributoNome, atributoValor);
 	// };
