@@ -3174,11 +3174,10 @@ class mk {
             mk.QAll(tagBuscar + " *").forEach(async (e) => {
                 let destino = e.getAttribute("mkImportar");
                 if (destino != null) {
-                    //console.log("Incluindo: " + destino);
                     let retorno = await mk.http(destino, mk.t.G, mk.t.H);
                     if (retorno != null) {
+                        e.removeAttribute("mkImportar");
                         e.innerHTML = retorno;
-                        //mk.mkNodeToScript(e);
                         try {
                             mk.mkNodeToScript(e);
                         }
