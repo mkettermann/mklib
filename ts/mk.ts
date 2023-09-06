@@ -2541,10 +2541,14 @@ class mk {
 		let validador = $.data($(form)[0], "validator");
 		if (!validador) {
 			console.warn(
-				"Validador NULO. Provavelmente nenhum campo estava como requerido.",
+				"Validador inicialmente NULO. Provavelmente nenhum campo estava como requerido.",
 				validador
 			);
-			return true;
+			$.validator.unobtrusive.parse(".AreaFicha");
+			if (!validador) {
+				console.warn("Parse fail", validador);
+				return true;
+			}
 		}
 		// Ignorara os campos com classe ignore
 		if (validador) validador.settings.ignore = ":hidden";
