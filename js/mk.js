@@ -843,6 +843,19 @@ class mk {
     static QdataSet = (query = "body", atributoNome, atributoValor) => {
         return mk.Q(query).setAttribute("data-" + atributoNome, atributoValor);
     };
+    static toggleSwitcher = (e) => {
+        if (e.classList.contains("True")) {
+            e.classList.remove("True");
+            e.classList.add("False");
+        }
+        else {
+            if (e.classList.contains("False")) {
+                e.classList.remove("False");
+                e.classList.add("True");
+            }
+        }
+        return e;
+    };
     // static QaSet = (query = "body", atributoNome, atributoValor) => {
     // 	return mk.Q(query).setAttribute(atributoNome, atributoValor);
     // };
@@ -1316,13 +1329,13 @@ class mk {
         return d * 86400000;
     };
     // Injeção de elementos via http
-    static mkGeraElemento(node, nomeElemento = "script") {
+    static mkGeraElemento(e, nomeElemento = "script") {
         // Cria Elemento
         let elemento = document.createElement(nomeElemento);
         // Popular Elemento
-        elemento.text = node.innerHTML;
+        elemento.text = e.innerHTML;
         // Set Atributos
-        let i = -1, attrs = node.attributes, attr;
+        let i = -1, attrs = e.attributes, attr;
         while (++i < attrs.length) {
             elemento.setAttribute((attr = attrs[i]).name, attr.value);
         }
@@ -2294,8 +2307,12 @@ class mk {
         // Buscando validador
         let validador = $.data($(form)[0], "validator");
         if (!validador) {
-            console.warn("Validador NULO. Provavelmente nenhum campo estava como requerido.", validador);
-            return true;
+            console.warn("Validador inicialmente NULO. Provavelmente nenhum campo estava como requerido.", validador);
+            $.validator.unobtrusive.parse(".AreaFicha");
+            if (!validador) {
+                console.warn("Parse fail", validador);
+                return true;
+            }
         }
         // Ignorara os campos com classe ignore
         if (validador)
@@ -3161,11 +3178,10 @@ class mk {
             mk.QAll(tagBuscar + " *").forEach(async (e) => {
                 let destino = e.getAttribute("mkImportar");
                 if (destino != null) {
-                    //console.log("Incluindo: " + destino);
                     let retorno = await mk.http(destino, mk.t.G, mk.t.H);
                     if (retorno != null) {
+                        e.removeAttribute("mkImportar");
                         e.innerHTML = retorno;
-                        //mk.mkNodeToScript(e);
                         try {
                             mk.mkNodeToScript(e);
                         }
