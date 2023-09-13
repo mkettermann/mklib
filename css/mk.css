@@ -1618,6 +1618,14 @@ ul.mkUlFase li.disabled a {
 	align-content: flex-end;
 }
 
+/* GRID */
+.macroGrid {
+	--min: 180px;
+	--max: 1fr;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(var(--min), var(--max)));
+}
+
 /* ABSOLUTE */
 .absPos1 {
 	display: flex;
