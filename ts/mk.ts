@@ -1266,6 +1266,22 @@ class mk {
 		return eTr;
 	};
 
+	// Sobe elementos pais até encontrar este elemento
+	static getETag = (e: any, tag: string) => {
+		let eTr = e;
+		while (eTr.tagName != tag) {
+			eTr = eTr.parentElement;
+			if (eTr.tagName == "BODY") {
+				console.error(
+					"Não foi possível encontrar o elemento " + tag + " na busca getETag()"
+				);
+				eTr = null;
+				break;
+			}
+		}
+		return eTr;
+	};
+
 	// Sobe elementos pais até encontrar esta classe
 	static getEClass = (e: any, classe: string) => {
 		let eClass = e;
@@ -2536,7 +2552,6 @@ class mk {
 	// $ Unobtrusive: id do form
 	static verificarCampos = (form: string) => {
 		if (mk.Q(form) == null) console.warn("Formulário não encontrado:", form);
-		mkt = form;
 		// Buscando validador
 		let validador = $.data($(form)[0], "validator");
 		if (!validador) {
