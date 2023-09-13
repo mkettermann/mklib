@@ -2565,6 +2565,7 @@ class mk {
 				return true;
 			}
 		}
+
 		// Ignorara os campos com classe ignore
 		if (validador) validador.settings.ignore = ":hidden";
 		// Conversor de validadores
