@@ -3042,7 +3042,7 @@ class mk {
 			let pes = e.nextElementSibling;
 			if (pes) {
 				if (pes.classList.contains("mkSelPesquisa")) {
-					pes.firstElementChild?.addAttribute("tabindex", "-1");
+					pes.firstElementChild?.setAttribute("tabindex", "-1");
 				}
 			}
 		} else {
