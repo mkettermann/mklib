@@ -2684,6 +2684,7 @@ class mk {
                 // Seta atributos e Gatilhos
                 e.removeAttribute("style");
                 e.setAttribute("readonly", "true");
+                e.setAttribute("tabindex", "-1");
                 mk.mkSelTabIndex(e);
                 divMkSeletorInputExibe.setAttribute("placeholder", "Filtro \u{1F50D}");
                 divMkSeletorInputExibe.setAttribute("onfocus", "mk.mkSelPesquisaFocus(this)");
@@ -2725,6 +2726,8 @@ class mk {
                     e.dispatchEvent(new Event("change"));
                     e.classList.remove("atualizando");
                 }
+                // Manter index em -1 para não chegar até esse campo
+                e.setAttribute("tabindex", "-1");
                 mk.mkSelTabIndex(e);
                 // Atualiza posição com a mesma frequencia que pesquisa os elementos.
                 mk.poppers.forEach((o) => {
