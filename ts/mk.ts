@@ -845,9 +845,11 @@ class mk {
 		return mk.aCadaElemento(query, (e: any) => {
 			if (e instanceof HTMLButtonElement || e instanceof HTMLInputElement) {
 				e.disabled = false;
-				e.classList.remove("disabled");
-			} else {
-				e.classList.remove("disabled");
+			}
+			e.classList.remove("disabled");
+			e.removeAttribute("tabindex");
+			if (e.classList.contains("mkSel")) {
+				e.nextElementSibling?.firstElementChild?.removeAttribute("tabindex");
 			}
 		});
 	};
@@ -856,9 +858,11 @@ class mk {
 		return mk.aCadaElemento(query, (e: any) => {
 			if (e instanceof HTMLButtonElement || e instanceof HTMLInputElement) {
 				e.disabled = true;
-				e.classList.add("disabled");
-			} else {
-				e.classList.add("disabled");
+			}
+			e.classList.add("disabled");
+			e.setAttribute("tabindex", "-1");
+			if (e.classList.contains("mkSel")) {
+				e.nextElementSibling?.firstElementChild?.setAttribute("tabindex", "-1");
 			}
 		});
 	};
