@@ -777,9 +777,6 @@ class mk {
             }
             e.classList.remove("disabled");
             e.removeAttribute("tabindex");
-            if (e.classList.contains("mkSel")) {
-                e.nextElementSibling?.firstElementChild?.removeAttribute("tabindex");
-            }
         });
     };
     static Qoff = (query = "body") => {
@@ -789,9 +786,6 @@ class mk {
             }
             e.classList.add("disabled");
             e.setAttribute("tabindex", "-1");
-            if (e.classList.contains("mkSel")) {
-                e.nextElementSibling?.firstElementChild?.setAttribute("tabindex", "-1");
-            }
         });
     };
     static QverOn = (query = "body") => {
@@ -2690,6 +2684,7 @@ class mk {
                 // Seta atributos e Gatilhos
                 e.removeAttribute("style");
                 e.setAttribute("readonly", "true");
+                mk.mkSelTabIndex(e);
                 divMkSeletorInputExibe.setAttribute("placeholder", "Filtro \u{1F50D}");
                 divMkSeletorInputExibe.setAttribute("onfocus", "mk.mkSelPesquisaFocus(this)");
                 divMkSeletorInputExibe.setAttribute("onblur", "mk.mkSelPesquisaBlur(this)");
@@ -2730,6 +2725,7 @@ class mk {
                     e.dispatchEvent(new Event("change"));
                     e.classList.remove("atualizando");
                 }
+                mk.mkSelTabIndex(e);
                 // Atualiza posição com a mesma frequencia que pesquisa os elementos.
                 mk.poppers.forEach((o) => {
                     o.update();
@@ -2737,6 +2733,25 @@ class mk {
                 //mk.mkSelReposicionar(e.parentElement.children[2]);
             }
         });
+    };
+    // Quando desativado, precisa desativar o TAB também
+    static mkSelTabIndex = (e) => {
+        if (e.classList.contains("disabled")) {
+            let pes = e.nextElementSibling;
+            if (pes) {
+                if (pes.classList.contains("mkSelPesquisa")) {
+                    pes.firstElementChild?.addAttribute("tabindex", "-1");
+                }
+            }
+        }
+        else {
+            let pes = e.nextElementSibling;
+            if (pes) {
+                if (pes.classList.contains("mkSelPesquisa")) {
+                    pes.firstElementChild?.removeAttribute("tabindex");
+                }
+            }
+        }
     };
     /* Ao Tentar Selecionar um novo item */
     static mkSelSelecionar = (eItem) => {
