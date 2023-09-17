@@ -71,9 +71,8 @@ class mk {
             arg.antesDePopularTabela = mk.antesDePopularTabela;
         if (arg.aoCompletarExibicao == null)
             arg.aoCompletarExibicao = mk.aoCompletarExibicao;
-        // Recebe o MAP do modelo.
         if (arg.keys == null)
-            arg.keys = new Map();
+            arg.keys = [];
         // Setando Config
         this.listagemConfigurar(urlOrigem, todaListagem, idModelo, filtro, arg);
         this.aoReceberDados = arg.aoReceberDados;
@@ -139,8 +138,6 @@ class mk {
         this.c.tableInicioFim = this.c.divTabela + " .tableInicioFim";
         this.c.pag = this.c.pagBotoes + " .pag";
         this.c.pagBotao = this.c.pagBotoes + " .pagBotao";
-        // (m)apa das Chaves:
-        // "STRING CHAVE" > [...ARRAY PROPRIEDADES]
         this.c.m = arg.keys;
         // Primary Key
         if (!arg.pk) {
