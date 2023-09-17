@@ -46,7 +46,7 @@ class mk {
     constructor(urlOrigem = mk.delUrlQuery(window.location.href) + "/GetList", todaListagem = ".divListagemContainer", idModelo = "#modelo", filtro = ".iConsultas", pk = "", importar = false, aoReceberDados = mk.aoReceberDados, antesDePopularTabela = mk.antesDePopularTabela, aoCompletarExibicao = mk.aoCompletarExibicao) {
         // ReSET dos parametros (Null para Valor Padrão)
         console.time("Tempo Listagem (" + idModelo + "): ");
-        if (urlOrigem == null || urlOrigem == "") {
+        if (urlOrigem == null || urlOrigem === "") {
             urlOrigem = (mk.delUrlQuery(window.location.href) + "/GetList").replaceAll("//GetList", "/GetList");
         }
         else {

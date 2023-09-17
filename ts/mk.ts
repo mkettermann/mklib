@@ -67,7 +67,7 @@ class mk {
 	) {
 		// ReSET dos parametros (Null para Valor Padrão)
 		console.time("Tempo Listagem (" + idModelo + "): ");
-		if (urlOrigem == null || urlOrigem == "") {
+		if (urlOrigem == null || urlOrigem === "") {
 			urlOrigem = (
 				mk.delUrlQuery(window.location.href) + "/GetList"
 			).replaceAll("//GetList", "/GetList");
