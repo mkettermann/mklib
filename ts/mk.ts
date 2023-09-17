@@ -586,37 +586,31 @@ class mk {
 	};
 
 	// Modelo de Chaves e Propriedades do Modelo, podendo conter todo o design e estrutura dos dados da lista
+	// Formato K V L R (Chave, Valor, Label, Regex) V é vazio/nulo, pois não recebe objeto nessa função.
 	getModel = () => {
 		return this.c.m;
 	};
 
-	// K L R (Chave, Label, Regex) (Esse não recebe objeto)
-	getKeys = () => {
-		let kv: any = [];
-		for (let [k, v] of this.c.m) {
-			kv.push({ k: k, l: v?.[0], r: v?.[1] });
-		}
-		return kv;
+	// K V L R (Chave, Valor, Label e Regex)
+	// Recebendo o objeto da lista, traz o getKeys juntamente aos Values deste objeto;
+	getKVLR = (obj: any) => {
+		let model = this.getModel();
+		let kvlr: any = [];
+		model.forEach((krl: any) => {
+			kvlr.push({ ...krl, v: obj?.[krl.k] });
+		});
+		return kvlr;
 	};
 
-	// K V L (Chave, Valor e Label)
-	getKV = (obj: any) => {
+	// Cria um Set retorna um array de Keys Usadas
+	getUsedKeys = () => {
 		let chaves = new Set();
 		this.dadosFull.forEach((o) => {
 			Object.keys(o).forEach((p) => {
 				chaves.add(p);
 			});
 		});
-		let kvl: any = [];
-		chaves.forEach((k: any) => {
-			let v = obj?.[k] || "";
-			if (this.c.m.has(k)) {
-				kvl.push({ k: k, v: v, l: this.c.m.get(k)?.[0] });
-			} else {
-				kvl.push({ k: k, v: v });
-			}
-		});
-		return kvl;
+		return [...chaves];
 	};
 
 	getNewPK = () => {
