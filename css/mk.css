@@ -1121,8 +1121,8 @@ button.CarregadorMkTopoDireito:hover {
 
 .mkConfirmadorArea {
 	position: fixed;
-	width: 400px;
-	height: 150px;
+	width: auto;
+	height: auto;
 	border: 1px outset var(--tFundoHigh);
 	box-shadow: 6px 6px 10px 1px var(--sombraForte);
 
