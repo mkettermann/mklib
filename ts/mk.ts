@@ -2892,7 +2892,7 @@ class mk {
 				divMkConfirmarArea.className = "mkConfirmadorArea microPos5 tb fsb";
 				divMkConfirmarTitulo.className = "mkConfirmadorTitulo";
 				divMkConfirmarTexto.className = "mkConfirmadorTexto";
-				divMkConfirmarBotoes.className = "fsb";
+				divMkConfirmarBotoes.className = "mkConfirmadorBotoes fsb";
 				divMkConfirmarSim.className = "bBotao icoSim " + corSim;
 				divMkConfirmarNao.className = "bBotao icoNao " + corNao;
 				divMkConfirmarTitulo.innerHTML =
