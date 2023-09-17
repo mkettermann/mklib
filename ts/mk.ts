@@ -590,6 +590,7 @@ class mk {
 		return this.c.m;
 	};
 
+	// K L (Chave, Label) (Esse não recebe objeto)
 	getKeys = () => {
 		let chaves = new Set();
 		this.dadosFull.forEach((o) => {
@@ -608,6 +609,7 @@ class mk {
 		return kv;
 	};
 
+	// K V L (Chave, Valor e Label)
 	getKV = (obj: any) => {
 		let chaves = new Set();
 		this.dadosFull.forEach((o) => {
@@ -618,7 +620,11 @@ class mk {
 		let kv: any = [];
 		chaves.forEach((k: any) => {
 			let v = obj?.[k] || "";
-			kv.push({ k: k, v: v });
+			if (this.c.m.has(k)) {
+				kv.push({ k: k, v: v, l: this.c.m.get(k)?.[0] });
+			} else {
+				kv.push({ k: k, v: v });
+			}
 		});
 		return kv;
 	};
