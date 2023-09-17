@@ -1132,7 +1132,7 @@ button.CarregadorMkTopoDireito:hover {
 	margin: auto auto;
 	overflow-x: hidden;
 	overflow-y: auto;
-	padding: 3px;
+	padding: 2px;
 	display: flex;
 	flex-direction: column;
 	text-align: center;
