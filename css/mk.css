@@ -1746,7 +1746,7 @@ ul.mkUlFase li.disabled a {
 
 .comGap {
 	display: flex;
-	grid-column-gap: 5px;
+	grid-column-gap: 10px;
 	flex-direction: row;
 	flex-wrap: wrap;
 	width: 100%;
