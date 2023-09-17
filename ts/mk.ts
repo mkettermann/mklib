@@ -2416,10 +2416,14 @@ class mk {
 		por: string = this.sortBy,
 		dir: any = 0
 	) => {
-		a.sort((oA, oB) => {
-			if (oA[por as keyof typeof oA] !== oB[por as keyof typeof oB]) {
-				if (oA[por as keyof typeof oA] > oB[por as keyof typeof oB]) return 1;
-				if (oA[por as keyof typeof oA] < oB[por as keyof typeof oB]) return -1;
+		a.sort((oA: any, oB: any) => {
+			let a = oA[por];
+			let b = oB[por];
+			if (typeof a == "string") a = a.toLowerCase();
+			if (typeof b == "string") b = b.toLowerCase();
+			if (a !== b) {
+				if (a > b) return 1;
+				if (a < b) return -1;
 			}
 			return -1;
 		});

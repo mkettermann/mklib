@@ -2187,10 +2187,16 @@ class mk {
     // Funcão de execução de ordenamento
     static ordenamento = (a = this.fullDados, por = this.sortBy, dir = 0) => {
         a.sort((oA, oB) => {
-            if (oA[por] !== oB[por]) {
-                if (oA[por] > oB[por])
+            let a = oA[por];
+            let b = oB[por];
+            if (typeof a == "string")
+                a = a.toLowerCase();
+            if (typeof b == "string")
+                b = b.toLowerCase();
+            if (a !== b) {
+                if (a > b)
                     return 1;
-                if (oA[por] < oB[por])
+                if (a < b)
                     return -1;
             }
             return -1;
