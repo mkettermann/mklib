@@ -42,8 +42,8 @@ class mk {
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //			CONSTRUTOR									\\
     //___________________________________\\
-    // É possível contruir o objeto usando undefined, null ou "" para atingir os valores padrão.
-    constructor(urlOrigem = mk.delUrlQuery(window.location.href) + "/GetList", todaListagem = ".divListagemContainer", idModelo = "#modelo", filtro = ".iConsultas", pk = "", importar = false, aoReceberDados = mk.aoReceberDados, antesDePopularTabela = mk.antesDePopularTabela, aoCompletarExibicao = mk.aoCompletarExibicao) {
+    // É possível construir o objeto usando undefined ou null para atingir os valores padrão.
+    constructor(urlOrigem = mk.delUrlQuery(window.location.href) + "/GetList", todaListagem = ".divListagemContainer", idModelo = "#modelo", filtro = ".iConsultas", arg = null) {
         // ReSET dos parametros (Null para Valor Padrão)
         console.time("Tempo Listagem (" + idModelo + "): ");
         if (urlOrigem == null || urlOrigem === "") {
@@ -60,21 +60,27 @@ class mk {
             idModelo = "#modelo";
         if (filtro == null || filtro == "")
             filtro = ".iConsultas";
-        if (pk == null || pk == "")
-            pk = "";
-        if (importar == null || importar == "")
-            importar = false;
-        if (aoReceberDados == null || aoReceberDados == "")
-            aoReceberDados = mk.aoReceberDados;
-        if (antesDePopularTabela == null || antesDePopularTabela == "")
-            antesDePopularTabela = mk.antesDePopularTabela;
-        if (aoCompletarExibicao == null || aoCompletarExibicao == "")
-            aoCompletarExibicao = mk.aoCompletarExibicao;
-        this.listagemConfigurar(urlOrigem, todaListagem, idModelo, filtro, pk);
-        this.aoReceberDados = aoReceberDados;
-        this.antesDePopularTabela = antesDePopularTabela;
-        this.aoCompletarExibicao = aoCompletarExibicao;
-        this.getList(importar);
+        // Objeto de parametros
+        if (arg == null)
+            arg = {};
+        if (arg.importar == null)
+            arg.importar = false;
+        if (arg.aoReceberDados == null)
+            arg.aoReceberDados = mk.aoReceberDados;
+        if (arg.antesDePopularTabela == null)
+            arg.antesDePopularTabela = mk.antesDePopularTabela;
+        if (arg.aoCompletarExibicao == null)
+            arg.aoCompletarExibicao = mk.aoCompletarExibicao;
+        // Recebe o MAP do modelo.
+        if (arg.keys == null)
+            arg.keys = new Map();
+        // Setando Config
+        this.listagemConfigurar(urlOrigem, todaListagem, idModelo, filtro, arg);
+        this.aoReceberDados = arg.aoReceberDados;
+        this.antesDePopularTabela = arg.antesDePopularTabela;
+        this.aoCompletarExibicao = arg.aoCompletarExibicao;
+        // Finaliza Contrutor chamando o método de coleta
+        this.getList(arg.importar);
     }
     // Funcoes Individuais.
     aoReceberDados = (objeto) => {
@@ -115,7 +121,7 @@ class mk {
     //			LISTAGEM										\\
     //___________________________________\\
     // Seta as variaveis de uso interno.
-    listagemConfigurar = (urlOrigem, todaListagem, idModelo, fTag, pk) => {
+    listagemConfigurar = (urlOrigem, todaListagem, idModelo, fTag, arg) => {
         this.c.urlOrigem = urlOrigem;
         this.c.filtro = fTag;
         this.c.divTabela = todaListagem;
@@ -133,7 +139,11 @@ class mk {
         this.c.tableInicioFim = this.c.divTabela + " .tableInicioFim";
         this.c.pag = this.c.pagBotoes + " .pag";
         this.c.pagBotao = this.c.pagBotoes + " .pagBotao";
-        if (!pk) {
+        // (m)apa das Chaves:
+        // "STRING CHAVE" > [...ARRAY PROPRIEDADES]
+        this.c.m = arg.keys;
+        // Primary Key
+        if (!arg.pk) {
             // PrimaryKey do Parametro tem preferência sobre Modelo.
             // Quando PrimaryKey não informada no parametro, tentar usar a do modelo.
             this.c.pk = mk.Q(idModelo)?.getAttribute("pk");
@@ -142,7 +152,7 @@ class mk {
                 this.c.pk = "pk";
         }
         else {
-            this.c.pk = pk;
+            this.c.pk = arg.pk;
         }
         let sortBy = mk.Q(idModelo)?.getAttribute("ob");
         if (!sortBy)
@@ -533,6 +543,10 @@ class mk {
             }
         }
         return temp;
+    };
+    // Modelo de Chaves e Propriedades do Modelo, podendo conter todo o design e estrutura dos dados da lista
+    getModel = () => {
+        return this.c.m;
     };
     getKeys = () => {
         let chaves = new Set();
