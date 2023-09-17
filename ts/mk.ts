@@ -607,16 +607,16 @@ class mk {
 				chaves.add(p);
 			});
 		});
-		let kv: any = [];
+		let kvl: any = [];
 		chaves.forEach((k: any) => {
 			let v = obj?.[k] || "";
 			if (this.c.m.has(k)) {
-				kv.push({ k: k, v: v, l: this.c.m.get(k)?.[0] });
+				kvl.push({ k: k, v: v, l: this.c.m.get(k)?.[0] });
 			} else {
-				kv.push({ k: k, v: v });
+				kvl.push({ k: k, v: v });
 			}
 		});
-		return kv;
+		return kvl;
 	};
 
 	getNewPK = () => {
