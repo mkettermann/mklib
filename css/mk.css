@@ -1514,6 +1514,8 @@ ul.mkUlFase li.disabled a {
 	flex-wrap: wrap;
 	justify-content: center;
 	align-content: center;
+	justify-items: center;
+	align-items: center;
 }
 
 .microPos6 {
