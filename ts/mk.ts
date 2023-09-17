@@ -2462,14 +2462,14 @@ class mk {
 	// Funcao que ordena os dados
 	static ordenarDados = (a: object[] = this.fullDados) => {
 		// Array é ordenada
-		a.sort((oA, oB) => {
-			if (
-				oA[mk.sortBy as keyof typeof oA] !== oB[mk.sortBy as keyof typeof oB]
-			) {
-				if (oA[mk.sortBy as keyof typeof oA] > oB[mk.sortBy as keyof typeof oB])
-					return 1;
-				if (oA[mk.sortBy as keyof typeof oA] < oB[mk.sortBy as keyof typeof oB])
-					return -1;
+		a.sort((oA: any, oB: any) => {
+			let a = oA[mk.sortBy];
+			let b = oB[mk.sortBy];
+			if (typeof a == "string") a = a.toLowerCase();
+			if (typeof b == "string") b = b.toLowerCase();
+			if (a !== b) {
+				if (a > b) return 1;
+				if (a < b) return -1;
 			}
 			return 0;
 		});

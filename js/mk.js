@@ -2234,10 +2234,16 @@ class mk {
     static ordenarDados = (a = this.fullDados) => {
         // Array é ordenada
         a.sort((oA, oB) => {
-            if (oA[mk.sortBy] !== oB[mk.sortBy]) {
-                if (oA[mk.sortBy] > oB[mk.sortBy])
+            let a = oA[mk.sortBy];
+            let b = oB[mk.sortBy];
+            if (typeof a == "string")
+                a = a.toLowerCase();
+            if (typeof b == "string")
+                b = b.toLowerCase();
+            if (a !== b) {
+                if (a > b)
                     return 1;
-                if (oA[mk.sortBy] < oB[mk.sortBy])
+                if (a < b)
                     return -1;
             }
             return 0;
