@@ -1174,6 +1174,7 @@ button.CarregadorMkTopoDireito:hover {
 }
 .mkConfirmadorTexto {
 	padding: 5px;
+	color: var(--tClaroTexto);
 }
 .mkConfirmadorBotoes {
 	column-gap: 1rem;
