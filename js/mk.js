@@ -235,13 +235,13 @@ class mk {
             if (pagBotoes) {
                 mk.Q(this.c.tableInicioFim)?.removeAttribute("hidden");
                 mk.Q(this.c.tableExibePorPagina)?.removeAttribute("hidden");
-                mk.Q(this.c.tbody)?.removeAttribute("hidden");
                 this.processoPaginar();
             }
             else {
                 // Caso não tenha onde paginar, exibe geral sem clonar.
                 this.dadosExibidos = this.dadosFiltrado;
             }
+            mk.Q(this.c.tbody)?.removeAttribute("hidden");
             this.antesDePopularTabela();
             await mk.mkMoldeOA(this.dadosExibidos, this.c.idModelo, this.c.tbody);
             this.aoCompletarExibicao();
