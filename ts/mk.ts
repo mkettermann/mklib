@@ -2436,12 +2436,14 @@ class mk {
 		nomeProp: string = this.sortBy,
 		reverse: any = false
 	) => {
-		array.sort((oA, oB) => {
-			if (oA[nomeProp as keyof typeof oA] !== oB[nomeProp as keyof typeof oB]) {
-				if (oA[nomeProp as keyof typeof oA] > oB[nomeProp as keyof typeof oB])
-					return 1;
-				if (oA[nomeProp as keyof typeof oA] < oB[nomeProp as keyof typeof oB])
-					return -1;
+		array.sort((oA: any, oB: any) => {
+			let a = oA[nomeProp];
+			let b = oB[nomeProp];
+			if (typeof a == "string") a = a.toLowerCase();
+			if (typeof b == "string") b = b.toLowerCase();
+			if (a !== b) {
+				if (a > b) return 1;
+				if (a < b) return -1;
 			}
 			return -1;
 		});

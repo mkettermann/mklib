@@ -2204,10 +2204,16 @@ class mk {
     // Funcão de ordenamento ao inverter a lista
     static ordenar = (array = this.fullDados, nomeProp = this.sortBy, reverse = false) => {
         array.sort((oA, oB) => {
-            if (oA[nomeProp] !== oB[nomeProp]) {
-                if (oA[nomeProp] > oB[nomeProp])
+            let a = oA[nomeProp];
+            let b = oB[nomeProp];
+            if (typeof a == "string")
+                a = a.toLowerCase();
+            if (typeof b == "string")
+                b = b.toLowerCase();
+            if (a !== b) {
+                if (a > b)
                     return 1;
-                if (oA[nomeProp] < oB[nomeProp])
+                if (a < b)
                     return -1;
             }
             return -1;
