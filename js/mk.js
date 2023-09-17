@@ -738,13 +738,22 @@ class mk {
         return rObjeto;
     };
     static QSet = (query = "body", valor = null) => {
-        if (valor != null) {
-            mk.Q(query).value = valor;
+        let e = mk.Q(query);
+        if (e) {
+            if (valor != null) {
+                if (e)
+                    e.value = valor;
+            }
+            else {
+                let e = mk.Q(query);
+                if (e)
+                    e.value = "";
+            }
+            return e;
         }
         else {
-            mk.Q(query).value = "";
+            return null;
         }
-        return mk.Q(query);
     };
     // Seta todos os query com os valores das propriedades informadas nos campos.
     // O nome da propriedade precisa ser compatível com o PROPNAME do query.
