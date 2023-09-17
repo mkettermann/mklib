@@ -598,7 +598,13 @@ class mk {
 			});
 		});
 		let kv: any = [];
-		chaves.forEach((k) => kv.push({ k: k }));
+		chaves.forEach((k) => {
+			if (this.c.m.has(k)) {
+				kv.push({ k: k, l: this.c.m.get(k)?.[0] });
+			} else {
+				kv.push({ k: k });
+			}
+		});
 		return kv;
 	};
 
