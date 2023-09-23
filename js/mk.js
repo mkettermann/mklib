@@ -2347,13 +2347,14 @@ class mk {
     };
     // $ Unobtrusive: id do form
     static verificarCampos = (form) => {
+        // Fast Parse Call all forms
+        $.validator.unobtrusive.parse(document);
         if (mk.Q(form) == null)
             console.warn("Formulário não encontrado:", form);
         // Buscando validador
         let validador = $.data($(form)[0], "validator");
         if (!validador) {
             console.warn("Validador inicialmente NULO. Provavelmente nenhum campo estava como requerido.", validador);
-            $.validator.unobtrusive.parse(".AreaFicha");
             if (!validador) {
                 console.warn("Parse fail", validador);
                 return true;
@@ -2363,7 +2364,7 @@ class mk {
         if (validador)
             validador.settings.ignore = ":hidden";
         // Conversor de validadores
-        $.validator.unobtrusive.parse(form);
+        $.validator.unobtrusive.parse(document);
         // Buscando Unobtrusive Validador da microsoft
         let unobtrusiveValidation = $(form).data("unobtrusiveValidation");
         if (!unobtrusiveValidation)
