@@ -1623,8 +1623,8 @@ class mk {
 		mk.Q("body").classList.remove("CarregadorMkSemScrollY");
 	};
 
-	static CarregarHtml = () => {
-		return '<div class="CarregadorMk relative" style=""></div>';
+	static CarregarHtml = (style = "") => {
+		return `<div class="CarregadorMk relative" style="${style}"></div>`;
 	};
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
