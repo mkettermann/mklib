@@ -670,7 +670,7 @@ button.CarregadorMkTopoDireito:hover {
 	animation: CarregadorMkAni 2s linear infinite;
 }
 
-.CarregadorMk::after {
+.CarregadorMk:not(.semAfter)::after {
 	border: var(--carregadorCentro) inset 3px;
 	position: absolute;
 	content: "";
