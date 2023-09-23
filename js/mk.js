@@ -1064,6 +1064,14 @@ class mk {
             currency: "BRL",
         }); // R$ 12.123,45
     };
+    // String qualquer para B64
+    static encod = (texto = "") => {
+        return btoa(encodeURIComponent(texto));
+    };
+    // B64 para String
+    static decod = (texto = "") => {
+        return decodeURIComponent(atob(texto));
+    };
     static mkBase64 = (arquivo, tagImg, tagHidden) => {
         // Verificar se esta nulo
         let leitor = new FileReader();
