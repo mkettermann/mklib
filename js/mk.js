@@ -1,5 +1,5 @@
 "use strict";
-// Transformar para uma unidade / modulado:
+// Transformar para uma unidade / modulado. Dependencias diretas/indiretas:
 // - $ JQuery Framework JS
 // - $ Mask
 // - $ Print
@@ -8,29 +8,12 @@
 // - Bootstrap Dropdown (quase)
 // - Bootstrap Modal
 // - Poper
-/** Planejamento
- * - CRUD converter pra async para liberar o .then() nas UI.
- * - Implementar objetoSelecionado na lista individual.
- * - Implementar 3 (Terceiro) clique no ordenamento, no terceiro a tabela ordena novamente no inicial: pelo pk informado.
- * - Ordenamento por tipagem(data mes ano)
- * - Menu topo direito, oculto, saindo de traz da tabela com configurações personalizadas.
- * - mkSel com exibição dos itens selecionados ao :Focus:Hover
- * - - Focus e Hover ao mesmo tempo no campo de pesquisa que geram um info.
- */
 var mkt; // Variavel de Testes;
 var mkt2; // Variavel de Testes;
+//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+//			CLASSE MK Instanciavel			\\
+//___________________________________\\
 class mk {
-    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-    //			CLASSE MK Instanciavel			\\
-    //___________________________________\\
-    /**
-     * Características da classe:
-     * - Armazenável: Tripa camada de dados, mas usando a segundo por referência, que não consome muito do navegador.
-     * - Escalonavel: Possibilidade de instanciar uma ou mais dela.
-     * - Filtravel: Filtro individual e genérico por instância. Atribuido a cada propriedade.
-     * - Ordenavel: Definindo os 'sort-campo', o usuário pode ordenar a tabela por este campo.
-     * - Flexível: Capacidade de efetuar as operações basicas na tabela (CRUD)
-     */
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //			PROPRIEDADES								\\
     //___________________________________\\
@@ -40,7 +23,7 @@ class mk {
     dadosExibidos = []; // Clonado de dadosFiltrado, mas apenas os desta pagina.
     alvo = {}; // Guarda o objeto selecionado permitindo manupular outro dado com este de referencia.
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-    //			CONSTRUTOR									\\
+    //			CONSTRUTOR (contrutor)			\\
     //___________________________________\\
     // É possível construir o objeto usando undefined ou null para atingir os valores padrão.
     constructor(urlOrigem = mk.delUrlQuery(window.location.href) + "/GetList", todaListagem = ".divListagemContainer", idModelo = "#modelo", filtro = ".iConsultas", arg = null) {
@@ -467,7 +450,7 @@ class mk {
         this.setDirSort(propriedade, Number(direcao));
         // Executa Ordenador da lista principal
         this.dadosFull = mk.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
-        // Atualiza classes indicadoras de ordenamento
+        // Atualiza classes indicadoras de ordem
         this.efeitoSort();
         this.atualizarListagem();
     };
@@ -481,7 +464,6 @@ class mk {
             });
         }
         // Busca elemento que está sendo ordenado
-        //console.log("Ordenando: " + this.sortBy + " EM: " + this.sortDir);
         let thsSort = mk.QAll(this.c.ths + ".sort-" + this.c.sortBy);
         if (thsSort.length != 0) {
             thsSort.forEach((thSort) => {
@@ -600,29 +582,14 @@ class mk {
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //			ATRIBUTOS	ESTATICOS					\\
     //___________________________________\\
-    static fullDados = [];
-    static exibeDados = [];
-    static exibePaginado = [];
-    static sortDir = "a";
-    static sortBy = "";
+    static contaOrdena = 0;
     static paginationAtual = 1;
-    static objFiltro = [];
     static objetoSelecionado = {};
     static sendObjFull = {};
     static mkFaseAtual = 1;
     static mkCountValidate = 0;
-    static contaOrdena = 0;
     static debug = 0; // 0 / 1
     static arrayFuncoes;
-    static status = {
-        totalFull: this.fullDados.length,
-        totalFiltrado: this.exibeDados.length,
-        totalPorPagina: this.exibePaginado.length,
-        pagItensIni: 0,
-        pagItensFim: 0,
-        pagPorPagina: 5,
-        totalPaginas: 0,
-    };
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //			TITULOS CONSTANTES					\\
     //___________________________________\\
@@ -1118,7 +1085,7 @@ class mk {
     static clonar = (i) => {
         return JSON.parse(JSON.stringify(i));
     };
-    static getModelo = (array = this.dadosFull) => {
+    static getModelo = (array) => {
         let chaves = new Set();
         array.forEach((o) => {
             Object.keys(o).forEach((p) => {
@@ -1631,26 +1598,6 @@ class mk {
     static aoCompletarExibicao = () => { };
     // Metodo que eh executado antes de exibir (PODE SOBREESCREVER NA VIEW)
     static antesDePopularTabela = () => { };
-    static atualizarStatusLista = () => {
-        if (mk.Q("input[name='tablePorPagina']") == null) {
-            mk.status.pagPorPagina = 5;
-        }
-        else {
-            mk.status.pagPorPagina = Number(mk.Q("input[name='tablePorPagina']").value);
-        }
-        mk.status.totalFull = this.fullDados.length;
-        mk.status.totalFiltrado = this.exibeDados.length;
-        mk.status.totalPorPagina = this.exibePaginado.length;
-        mk.status.pagItensIni =
-            (this.paginationAtual - 1) * mk.status.pagPorPagina + 1; // Calculo Pagination
-        mk.status.pagItensFim =
-            mk.status.pagItensIni + (mk.status.pagPorPagina - 1); // Calculo genérico do último
-        if (mk.status.pagItensFim > mk.status.totalFiltrado) {
-            mk.status.pagItensFim = mk.status.totalFiltrado; // Na última página não pode exibir o valor genérico.
-        }
-        // Arredondar pra cima, pois a última página pode exibir conteúdo sem preencher o PorPagina
-        mk.status.totalPaginas = Math.ceil(this.exibeDados.length / mk.status.pagPorPagina);
-    };
     // Torna ativo o botao que se refere ao paginationAtual
     static ativaPaginaAtual = () => {
         mk.QAll(".paginate_button").forEach((item) => {
@@ -1662,230 +1609,9 @@ class mk {
             }
         });
     }; // Desativa e ativa botao correto
-    // Monta os botoes de numero de pagina
-    static filtraPagination = () => {
-        // Status
-        mk.Q(".tableResultado .tableIni").innerHTML =
-            mk.status.pagItensIni.toString();
-        mk.Q(".tableResultado .tableFim").innerHTML =
-            mk.status.pagItensFim.toString();
-        // Links
-        mk.Q(".tablePaginacao .paginate_Ultima a").innerHTML =
-            mk.status.totalPaginas.toString();
-        this.paginationAtual == 1
-            ? mk.Qoff(".tablePaginacao .pagBack")
-            : mk.Qon(".tablePaginacao .pagBack");
-        this.paginationAtual >= mk.status.totalPaginas
-            ? mk.Qoff(".tablePaginacao .pagNext")
-            : mk.Qon(".tablePaginacao .pagNext");
-        mk.status.totalPaginas > 2
-            ? mk.QverOn(".tablePaginacao .pageCod2")
-            : mk.QverOff(".tablePaginacao .pageCod2");
-        mk.status.totalPaginas > 3
-            ? mk.QverOn(".tablePaginacao .pageCod3")
-            : mk.QverOff(".tablePaginacao .pageCod3");
-        mk.status.totalPaginas > 4
-            ? mk.QverOn(".tablePaginacao .pageCod4")
-            : mk.QverOff(".tablePaginacao .pageCod4");
-        mk.status.totalPaginas > 5
-            ? mk.QverOn(".tablePaginacao .pageCod5")
-            : mk.QverOff(".tablePaginacao .pageCod5");
-        mk.status.totalPaginas > 6
-            ? mk.QverOn(".tablePaginacao .pageCod6")
-            : mk.QverOff(".tablePaginacao .pageCod6");
-        if (this.paginationAtual < 5) {
-            // INI
-            mk.Qon(".tablePaginacao .pageCod2");
-            mk.Q(".tablePaginacao .pageCod2 a").innerHTML = "2";
-            mk.Q(".tablePaginacao .pageCod3 a").innerHTML = "3";
-            mk.Q(".tablePaginacao .pageCod4 a").innerHTML = "4";
-            mk.Q(".tablePaginacao .pageCod5 a").innerHTML = "5";
-            mk.Q(".tablePaginacao .pageCod6 a").innerHTML = "...";
-            mk.Qoff(".tablePaginacao .pageCod6");
-        }
-        else {
-            // END
-            if (mk.status.totalPaginas - this.paginationAtual < 4) {
-                mk.Qoff(".tablePaginacao .pageCod2");
-                mk.Q(".tablePaginacao .pageCod2 a").innerHTML = "...";
-                mk.Q(".tablePaginacao .pageCod3 a").innerHTML = (mk.status.totalPaginas - 4).toString();
-                mk.Q(".tablePaginacao .pageCod4 a").innerHTML = (mk.status.totalPaginas - 3).toString();
-                mk.Q(".tablePaginacao .pageCod5 a").innerHTML = (mk.status.totalPaginas - 2).toString();
-                mk.Q(".tablePaginacao .pageCod6 a").innerHTML = (mk.status.totalPaginas - 1).toString();
-                mk.Qon(".tablePaginacao .pageCod6");
-            }
-            else {
-                // MID
-                mk.Qoff(".tablePaginacao .pageCod2");
-                mk.Q(".tablePaginacao .pageCod2 a").innerHTML = "...";
-                mk.Q(".tablePaginacao .pageCod3 a").innerHTML = (this.paginationAtual - 1).toString();
-                mk.Q(".tablePaginacao .pageCod4 a").innerHTML =
-                    this.paginationAtual.toString();
-                mk.Q(".tablePaginacao .pageCod5 a").innerHTML = (this.paginationAtual + 1).toString();
-                mk.Q(".tablePaginacao .pageCod6 a").innerHTML = "...";
-                mk.Qoff(".tablePaginacao .pageCod6");
-            }
-        }
-        mk.ativaPaginaAtual();
-        this.exibePaginado = [];
-        // Clonagem de Paginado
-        this.exibeDados.forEach((o, i) => {
-            if (i + 1 >= mk.status.pagItensIni && i + 1 <= mk.status.pagItensFim) {
-                this.exibePaginado.push(mk.clonar(o));
-            }
-        });
-    };
-    /**
-     * FullFiltroFull
-     * Busca as mesmas propriedades no filtro e nos itens de fullDados;
-     * Uma lista exibeDados eh formada por referencia de memoria a partir dos resultados encontrados apos filtro.
-     * //mk.fullDados.filter(o => {return o.codPessoa < 5}).map(o => {return o.codPessoa + " - " + o.nomPessoa}).join("<br>");
-     * //Não é possível utilizar o filter(), pois nesse caso estamos girando 2 filter ao mesmo tempo e comparando os parametros.
-     */
-    static mkFiltragemDados = () => {
-        if (Array.isArray(this.fullDados)) {
-            let temp = [];
-            this.fullDados.forEach((o) => {
-                let podeExibir = true; // Verificara cada prop, logica de remocao seletiva.
-                for (let propFiltro in mk.objFiltro) {
-                    // Cada Propriedade de Cada Item da Array
-                    if (o[propFiltro] != null) {
-                        // Cruzar referencia com objFiltro e se so avancar se realmente for um objeto
-                        let m = o[propFiltro]; // m representa o dado do item
-                        let k = this.objFiltro[propFiltro]; // k representa a config do filtro para essa propriedade
-                        // console.log(
-                        // 	propFiltro +
-                        // 		"(" +
-                        // 		typeof mk.objFiltro[propFiltro] +
-                        // 		"): " +
-                        // 		m +
-                        // 		" >> " +
-                        // 		k.formato +
-                        // 		": " +
-                        // 		k.conteudo
-                        // );
-                        if (k.formato === "string") {
-                            // Filtro por string (Tipo Like)
-                            k.conteudo = k.conteudo.toString().toLowerCase();
-                            if (!m.toString().toLowerCase().match(k.conteudo) &&
-                                k.conteudo !== "0") {
-                                // LIKE
-                                podeExibir = false;
-                            }
-                        }
-                        else if (k.formato === "stringNumerosVirgula") {
-                            // Filtro por numero exado. Provavelmente sejam duas arrays (MultiSelect), O filtro precisa encontrar tudo no objeto.
-                            let filtroInvertido = false;
-                            if (this.isJson(k.conteudo)) {
-                                let arrayM = m.toString().split(","); // String de Numeros em Array de Strings
-                                let mayBeArrayK = JSON.parse(k.conteudo); // << No objFiltro
-                                if (Array.isArray(mayBeArrayK)) {
-                                    mayBeArrayK.forEach((numeroK) => {
-                                        // A cada numero encontrado pos split na string do item verificado
-                                        filtroInvertido = arrayM.some((numeroM) => {
-                                            return Number(numeroM) == Number(numeroK);
-                                        });
-                                    });
-                                }
-                                else {
-                                    filtroInvertido = arrayM.some((numeroM) => {
-                                        return Number(numeroM) == Number(mayBeArrayK);
-                                    });
-                                }
-                                if (!filtroInvertido) {
-                                    podeExibir = false;
-                                }
-                            }
-                            else
-                                console.warn("Não é um JSON");
-                        }
-                        else if (k.formato === "number") {
-                            // Filtro por numero exado. Apenas exibe este exato numero.
-                            // Ignorar filtro com 0
-                            if (Number(m) !== Number(k.conteudo) &&
-                                Number(k.conteudo) !== 0) {
-                                podeExibir = false;
-                            }
-                        }
-                        else if (k.formato === "date") {
-                            // Filtro por Data (Gera milissegundos e faz comparacao)
-                            let dateM = new Date(m).getTime();
-                            let dateK = new Date(k.conteudo).getTime();
-                            if (k.operador === ">=") {
-                                // MAIOR OU IGUAL
-                                if (!(dateM >= dateK)) {
-                                    podeExibir = false;
-                                }
-                            }
-                            else if (k.operador === "<=") {
-                                // MENOR OU IGUAL
-                                if (!(dateM <= dateK)) {
-                                    podeExibir = false;
-                                }
-                            }
-                            else if (k.operador === ">") {
-                                // MAIOR
-                                if (!(dateM > dateK)) {
-                                    podeExibir = false;
-                                }
-                            }
-                            else if (k.operador === "<") {
-                                // MENOR
-                                if (!(dateM < dateK)) {
-                                    podeExibir = false;
-                                }
-                            }
-                            else {
-                                // IGUAL ou nao informado
-                                if (!(dateM == dateK)) {
-                                    podeExibir = false;
-                                }
-                            }
-                        }
-                    }
-                    else {
-                        if (propFiltro != "mkFullFiltro") {
-                            podeExibir = false;
-                        }
-                    }
-                }
-                if (podeExibir) {
-                    // Verificara todas prop, logica da adicao por caracteristica buscada
-                    if (this.objFiltro["mkFullFiltro"]) {
-                        // Se houver pesquisa generica no filtro
-                        let k = this.objFiltro["mkFullFiltro"]["conteudo"]
-                            .toString()
-                            .toLowerCase(); // k = Dado que estamos procurando
-                        podeExibir = false; // Inverter para verificar se alguma prop do item possui a caracteristica
-                        for (var propNameItem in o) {
-                            let m = o[propNameItem];
-                            //console.log(m + " FILTRO: " + k);
-                            if (m != null) {
-                                // <= Nao pode tentar filtrar em itens nulos
-                                m = m.toString().toLowerCase();
-                                if (m.match(k)) {
-                                    podeExibir = true;
-                                }
-                            }
-                        }
-                    }
-                }
-                if (podeExibir) {
-                    temp.push(o);
-                }
-            });
-            this.exibeDados = temp;
-        }
-        else {
-            this.exibeDados = [];
-        }
-    };
     /**
      * FullFiltroFull - processoFiltragem
-     * Busca as mesmas propriedades no filtro e nos itens de fullDados;
-     * Uma lista exibeDados eh formada por referencia de memoria a partir dos resultados encontrados apos filtro.
-     * //mk.fullDados.filter(o => {return o.codPessoa < 5}).map(o => {return o.codPessoa + " - " + o.nomPessoa}).join("<br>");
-     * //Não é possível utilizar o filter(), pois nesse caso estamos girando 2 filter ao mesmo tempo e comparando os parametros.
+     * Executa a redução da listagem basedo no objFiltro.
      */
     static processoFiltragem = (aTotal, objFiltro) => {
         let aFiltrada = [];
@@ -1899,23 +1625,10 @@ class mk {
                         // Cruzar referencia com objFiltro e se so avancar se realmente for um objeto
                         let m = o[propFiltro]; // m representa o dado do item
                         let k = objFiltro[propFiltro]; // k representa a config do filtro para essa propriedade
-                        // console.log(
-                        // 	propFiltro +
-                        // 		"(" +
-                        // 		typeof mk.objFiltro[propFiltro] +
-                        // 		"): " +
-                        // 		m +
-                        // 		" >> " +
-                        // 		k.formato +
-                        // 		": " +
-                        // 		k.conteudo
-                        // );
                         if (k.formato === "string") {
-                            // Filtro por string (Tipo Like)
                             k.conteudo = k.conteudo.toString().toLowerCase();
                             if (!m.toString().toLowerCase().match(k.conteudo) &&
                                 k.conteudo !== "0") {
-                                // LIKE
                                 podeExibir = false;
                             }
                         }
@@ -2005,7 +1718,6 @@ class mk {
                         podeExibir = false; // Inverter para verificar se alguma prop do item possui a caracteristica
                         for (var propNameItem in o) {
                             let m = o[propNameItem];
-                            //console.log(m + " FILTRO: " + k);
                             if (m != null) {
                                 // <= Nao pode tentar filtrar em itens nulos
                                 m = m.toString().toLowerCase();
@@ -2027,183 +1739,15 @@ class mk {
         }
         return aFiltrada;
     };
-    /**
-     * ATUALIZA a listagem com os dados ja ordenados de fullDados;
-     * Executa a filtragem dos dados;
-     * POPULA a lista atravez de uma nova lista: exibePaginado;
-     */
-    static atualizarLista = async () => {
-        let tablePaginacao = mk.Q(".tablePaginacao");
-        // Apenas executa a atualização e filtro, se a tablePaginacao estiver presente na página.
-        if (tablePaginacao) {
-            mk.mkFiltragemDados(); // Popular exibeDados
-            mk.atualizarStatusLista();
-            // Atualizar os Status
-            let labelTotal = mk.Q(".tableResultado .tableTotal");
-            if (labelTotal != null) {
-                labelTotal.innerHTML = mk.status.totalFull.toString();
-            }
-            let labelFiltrado = mk.Q(".tableResultado .tableFiltrado");
-            if (labelFiltrado != null) {
-                labelFiltrado.innerHTML = mk.status.totalFiltrado.toString();
-            }
-            let labelInicio = mk.Q(".tableResultado .tableIni");
-            if (labelInicio != null) {
-                labelInicio.innerHTML = mk.status.pagItensIni.toString();
-            }
-            let labelFinal = mk.Q(".tableResultado .tableFim");
-            if (labelFinal != null) {
-                labelFinal.innerHTML = mk.status.pagItensFim.toString();
-            }
-            if (this.exibeDados.length > mk.status.pagPorPagina) {
-                mk.Q(".tablePaginacao").removeAttribute("hidden");
-            }
-            else {
-                mk.Q(".tablePaginacao").setAttribute("hidden", "");
-            }
-            if (this.exibeDados.length == 0) {
-                mk.Q(".tableInicioFim").setAttribute("hidden", "");
-                mk.Q(".tableExibePorPagina").setAttribute("hidden", "");
-                mk.Q(".listBody").setAttribute("hidden", "");
-                this.exibePaginado = [];
-            }
-            else {
-                mk.Q(".tableInicioFim").removeAttribute("hidden");
-                mk.Q(".tableExibePorPagina").removeAttribute("hidden");
-                mk.Q(".listBody").removeAttribute("hidden");
-                mk.filtraPagination();
-                mk.antesDePopularTabela();
-                await mk.mkMoldeOA(mk.exibePaginado, "#modelo", ".tableListagem .listBody");
-                mk.aoCompletarExibicao();
-            }
-        }
-    };
-    // Gatilho para trocar a pagina
-    static mudaPagina = (e) => {
-        // vem o this do evento / 'next' / 'back'
-        if (typeof e == "string") {
-            if (e == "next") {
-                this.paginationAtual += 1;
-            }
-            else if (e == "back") {
-                this.paginationAtual -= 1;
-            }
-        }
-        else {
-            this.paginationAtual = Number(e.innerHTML);
-        }
-        mk.atualizarLista();
-    };
-    // Retorna a pagina 1 e atualiza
-    static atualizarPorPagina = () => {
-        this.paginationAtual = 1;
-        mk.atualizarLista();
-    };
-    // Gerar Filtro baseado nos atributos do MKF gerados no campo.
-    static mkGerarFiltro = (e) => {
-        // Para ignorar filtro: data-mkfignore="true" (Ou nao colocar o atributo mkfformato no elemento)
-        if (e.value != null && e.getAttribute("data-mkfignore") != "true") {
-            this.objFiltro[e.name] = {
-                formato: e.getAttribute("data-mkfformato"),
-                operador: e.getAttribute("data-mkfoperador"),
-                conteudo: e.value,
-            };
-        }
-        // Limpar filtro caso o usuario limpe o campo
-        if (this.objFiltro[e.name]["conteudo"] == "" ||
-            this.objFiltro[e.name]["conteudo"] == "0" ||
-            this.objFiltro[e.name]["conteudo"] == 0 ||
-            this.objFiltro[e.name]["conteudo"] === null) {
-            delete this.objFiltro[e.name];
-        }
-        mk.atualizarPorPagina();
-    };
-    // Force Update Filtro ()
-    static mkUpdateFiltro = () => {
-        this.objFiltro = {};
-        mk.QAll("input.iConsultas").forEach((e) => {
-            mk.mkGerarFiltro(e);
-        });
-        mk.QAll("select.iConsultas").forEach((e) => {
-            mk.mkGerarFiltro(e);
-        });
-        mk.atualizarPorPagina();
-    };
     // Metodo que eh executado sempre que um dado for recebido. (PODE SOBREESCREVER NA VIEW)
     static aoReceberDados = (data) => {
         return data;
     };
-    // LER (cRud) Metodo que inicia a coleta.
-    static iniciarGetList = async (url, resumoViaInclude = false) => {
-        if (resumoViaInclude) {
-            await mk.mkInclude();
-        }
-        mk.Ao("input", "input[name='tablePorPagina']", async () => {
-            mk.atualizarPorPagina();
-        });
-        let retorno = await mk.http(url, mk.t.G, mk.t.J);
-        if (retorno != null) {
-            mk.mkLimparOA(retorno);
-            mk.mkExecutaNoObj(retorno, mk.aoReceberDados);
-            this.fullDados = this.exibeDados = retorno;
-            mk.ordenarDados();
-            mk.mkUpdateFiltro(); // Se remover aqui, verificar objFiltro em PlacasFixas
-        }
-    };
-    static adicionarDados = (objDados) => {
-        this.fullDados.push(mk.aoReceberDados(objDados));
-        mk.ordenarDados();
-        mk.atualizarLista();
-    };
-    static editarDados = (objDados, nomeKey, valorKey) => {
-        // Implementar setObjetoFromId
-        this.fullDados = mk.delObjetoFromId(nomeKey, valorKey, this.fullDados);
-        this.fullDados.push(mk.aoReceberDados(objDados));
-        mk.ordenarDados();
-        mk.atualizarLista();
-    };
-    static excluirDados = (nomeKey, valorKey) => {
-        this.fullDados = mk.delObjetoFromId(nomeKey, valorKey, this.fullDados);
-        mk.ordenarDados();
-        mk.atualizarLista();
-    };
-    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-    //			FILTRO											\\
-    //___________________________________\\
-    // Gatilho FILTRO
-    static mkSetFiltroListener = () => {
-        mk.QAll("input.iConsultas").forEach((e) => {
-            e.addEventListener("input", () => {
-                mk.mkGerarFiltro(e);
-            });
-        });
-        mk.QAll("select.iConsultas").forEach((e) => {
-            e.addEventListener("change", () => {
-                mk.mkGerarFiltro(e);
-            });
-        });
-    };
-    // LIMPAR FILTRO  LimparFiltro("#consulta_form"); //Passar o form que contem os SELECT/INPUT de filtro (search).
-    static LimparFiltro = (form = "#consulta_form") => {
-        this.objFiltro = {};
-        // RESET Form (Limpar seria "0" / "") (Set e.defaultValue)
-        let eForm = mk.Q(form);
-        eForm.reset();
-        // Solicita Atualizacao de todos mkSel
-        mk.QAll("#consulta_form .mkSel").forEach((mkSel) => {
-            mkSel.classList.add("atualizar");
-        });
-    };
-    // LIMPAR FILTRO  LimparFiltro("#consulta_form"); //Passar o form que contem os SELECT/INPUT de filtro (search).
-    static LimparFiltroUpdate = (form = "#consulta_form") => {
-        mk.LimparFiltro(form);
-        mk.atualizarLista();
-    };
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //			ORDER LIST									\\
     //___________________________________\\
-    // Funcão de execução de ordenamento
-    static ordenamento = (a = this.fullDados, por = this.sortBy, dir = 0) => {
+    // Está sendo utilizado no GetList. Verificar como utilizar o ordenar no getlist para deletar este aqui.
+    static ordenamento = (a, por, dir) => {
         a.sort((oA, oB) => {
             let a = oA[por];
             let b = oB[por];
@@ -2225,8 +1769,9 @@ class mk {
         }
         return a;
     };
-    // Funcão de ordenamento ao inverter a lista
-    static ordenar = (array = this.fullDados, nomeProp = this.sortBy, reverse = false) => {
+    // Possibilidade de inverter a lista (Tentar deixar esse padrao)
+    // Essa funcção deveria ser da instancia atual para recever os atributos da instancia por padrao
+    static ordenar = (array, nomeProp, reverse) => {
         array.sort((oA, oB) => {
             let a = oA[nomeProp];
             let b = oB[nomeProp];
@@ -2253,79 +1798,6 @@ class mk {
             }
         }
         return array;
-    };
-    // Funcao que ordena os dados
-    static ordenarDados = (a = this.fullDados) => {
-        // Array é ordenada
-        a.sort((oA, oB) => {
-            let a = oA[mk.sortBy];
-            let b = oB[mk.sortBy];
-            if (typeof a == "string")
-                a = a.toLowerCase();
-            if (typeof b == "string")
-                b = b.toLowerCase();
-            if (a !== b) {
-                if (a > b)
-                    return 1;
-                if (a < b)
-                    return -1;
-            }
-            return 0;
-        });
-        if (this.sortDir == "d") {
-            a = a.reverse();
-        }
-        // Limpa mkSorting
-        let thsAll = mk.QAll("th");
-        if (thsAll.length != 0) {
-            thsAll.forEach((th) => {
-                th.classList.remove("mkEfeitoDesce");
-                th.classList.remove("mkEfeitoSobe");
-            });
-        }
-        // Busca elemento que está sendo ordenado
-        //console.log("Ordenando: " + this.sortBy + " EM: " + this.sortDir);
-        let thsSort = mk.QAll(".sort-" + this.sortBy);
-        if (thsSort.length != 0) {
-            thsSort.forEach((thSort) => {
-                if (this.sortDir == "a") {
-                    thSort.classList.add("mkEfeitoDesce");
-                }
-                else {
-                    thSort.classList.add("mkEfeitoSobe");
-                }
-            });
-        }
-    };
-    // Funcao que inverte a direcao, reordena e atualiza
-    static inverteDir = (ordenar = null) => {
-        if (ordenar != null) {
-            if (ordenar != this.sortBy) {
-                this.sortDir = "a";
-            }
-            else {
-                this.sortDir == "a" ? (this.sortDir = "d") : (this.sortDir = "a");
-            }
-            this.sortBy = ordenar;
-        }
-        mk.ordenarDados();
-        mk.atualizarLista();
-    };
-    static GerarAoSort = (trHeadPai = "table.tableListagem thead tr") => {
-        let eTrHeadPai = mk.Q(trHeadPai);
-        Array.from(eTrHeadPai.children).forEach((th) => {
-            th.classList.forEach((classe) => {
-                // Verifica se contém sort- no inicio da class
-                if (classe.indexOf("sort-") == 0) {
-                    let campo = classe.replace("sort-", "");
-                    if (campo != "") {
-                        mk.Ao("click", "thead tr .sort-" + campo, () => {
-                            mk.inverteDir(campo);
-                        });
-                    }
-                }
-            });
-        });
     };
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //			VALIDADOR										\\
