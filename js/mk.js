@@ -2012,7 +2012,7 @@ class mk {
                     continue;
                 let end = ini[i].indexOf("}");
                 let key = ini[i].slice(0, end);
-                if (typeof o == "object") {
+                if (typeof o == "object" && o != null) {
                     if (key in o) {
                         let v = o[key];
                         if (typeof v == "string") {

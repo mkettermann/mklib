@@ -2213,7 +2213,7 @@ class mk {
 				if (i == "0") continue;
 				let end: number = ini[i].indexOf("}");
 				let key: string = ini[i].slice(0, end);
-				if (typeof o == "object") {
+				if (typeof o == "object" && o != null) {
 					if (key in o) {
 						let v = o[key];
 						if (typeof v == "string") {
