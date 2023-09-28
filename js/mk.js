@@ -2145,7 +2145,7 @@ class mk {
             else {
                 // Limpeza de cores anteriores
                 possiveisBotoes.forEach((s) => {
-                    mk.Q(".mkConfirmadorBloco .bBotao").forEach((botao) => {
+                    mk.QAll(".mkConfirmadorBloco .bBotao").forEach((botao) => {
                         botao.classList.remove(s);
                     });
                 });
