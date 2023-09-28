@@ -2085,6 +2085,7 @@ class mk {
     //___________________________________\\
     // p { corSim: "bVerde", corNao: "bCinza"}
     static mkConfirma = async (texto = "Você tem certeza?", p = null) => {
+        let possiveisBotoes = ["bCinza", "bVermelho", "bVerde"];
         let corSim = "bVerde";
         if (p?.corSim != undefined)
             corSim = p.corSim;
@@ -2142,6 +2143,15 @@ class mk {
                 divMkConfirmarBotoes.appendChild(divMkConfirmarNao);
             }
             else {
+                // Limpeza de cores anteriores
+                possiveisBotoes.forEach((s) => {
+                    mk.Q(".mkConfirmadorBloco .bBotao").forEach((botao) => {
+                        botao.classList.remove(s);
+                    });
+                });
+                // Set das cores novas
+                mk.Q(".mkConfirmadorBloco .bBotao.icoSim").classList.add(corSim);
+                mk.Q(".mkConfirmadorBloco .bBotao.icoNao").classList.add(corNao);
                 mk.Q(".mkConfirmadorBloco").classList.remove("oculto");
                 mk.Q(".mkConfirmadorTexto").innerHTML = texto;
             }
