@@ -2466,7 +2466,8 @@ class mk {
 				if (e.getAttribute("data-dev") != "true") {
 					e.classList.add("mkSecreto");
 				}
-				const popperInstance = Popper.createPopper(
+				// v2
+				const popperInstance: any = Popper.createPopper(
 					divMkSeletorPesquisa,
 					divMkSeletorList,
 					{
