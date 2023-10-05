@@ -2183,11 +2183,11 @@ class mk {
                     if (t.length === 3) {
                         if (t.toString().toLowerCase() == "pdf") {
                             // - Se for PDF, coloca um objeto no inner
-                            e.innerHTML = "<object data='" + v + "'>";
+                            e.innerHTML = "<object data='" + v + "' class='mkCem'>";
                         }
                         else {
                             // - Se for outro poem imagem no inner.
-                            e.innerHTML = "<img src='" + v + "'>";
+                            e.innerHTML = "<img src='" + v + "' class='mkCem'>";
                         }
                     }
                 }
