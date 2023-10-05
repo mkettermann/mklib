@@ -2379,6 +2379,29 @@ class mk {
 			}
 		});
 	};
+	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+	//			MK Botao Imagem (mkBot)			\\
+	//___________________________________\\
+	// Botao incluido uma imagem/pdf visualizavel e clicavel.
+	static mkBotCheck = async () => {
+		mk.QAll("button.mkBot").forEach(async (e) => {
+			// Apenas quando contem Atualizar
+			if (e.classList.contains("atualizar")) {
+				e.classList.remove("atualizar");
+				e.classList.add("atualizando");
+				// - Remove conteudo
+				e.innerHTML = "";
+				// - Coleta value do campo (ex: botao tem value="/img/teste.jpg")
+				let valor = e.getAttribute("value");
+				if (valor != null) {
+					// - Verifica se terminacao do arquivo é PDF ou OUTRO,
+					// - Se for PDF, coloca um objeto no inner
+					// - Se for outro poem imagem no inner.
+				}
+				e.classList.remove("atualizando");
+			}
+		});
+	};
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 	//			MK Seletor (mkSel)					\\
@@ -2387,7 +2410,7 @@ class mk {
 
 	/* CRIA O DROPDOWN por FOCUS */
 	static mkSelRenderizar = async () => {
-		document.querySelectorAll("input.mkSel").forEach(async (e) => {
+		mk.QAll("input.mkSel").forEach(async (e) => {
 			// Transforma elemento se ele ainda não foi transformado
 			if (!e.parentElement?.classList.contains("mkSelBloco")) {
 				// COLETA
@@ -3041,7 +3064,8 @@ mk.mkClicarNaAba(mk.Q(".mkAbas a.active")); // Inicia no ativo
 mk.mkSelRenderizar();
 setInterval(() => {
 	mk.mkSelRenderizar();
-}, 300);
+	mk.mkBotCheck();
+}, 150);
 
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //			OBJETOS CONSTANTES					\\
