@@ -2379,6 +2379,7 @@ class mk {
 			}
 		});
 	};
+
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 	//			MK Botao Imagem (mkBot)			\\
 	//___________________________________\\
@@ -2392,11 +2393,19 @@ class mk {
 				// - Remove conteudo
 				e.innerHTML = "";
 				// - Coleta value do campo (ex: botao tem value="/img/teste.jpg")
-				let valor = e.getAttribute("value");
-				if (valor != null) {
+				let v = e.getAttribute("value");
+				if (v != null) {
 					// - Verifica se terminacao do arquivo é PDF ou OUTRO,
-					// - Se for PDF, coloca um objeto no inner
-					// - Se for outro poem imagem no inner.
+					let t = v.slice(v.length - 3, v.length);
+					if (t.length === 3) {
+						if (t.toString().toLowerCase() == "pdf") {
+							// - Se for PDF, coloca um objeto no inner
+							e.innerHTML = "<object data='" + v + "'>";
+						} else {
+							// - Se for outro poem imagem no inner.
+							e.innerHTML = "<img src='" + v + "'>";
+						}
+					}
 				}
 				e.classList.remove("atualizando");
 			}
