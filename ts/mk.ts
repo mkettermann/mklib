@@ -2394,7 +2394,14 @@ class mk {
 				e.innerHTML = "";
 				// - Coleta value do campo (ex: botao tem value="/img/teste.jpg")
 				let v = e.getAttribute("value");
-				if (v != null) {
+				// - Caso Nulo, Tentar pelo dataset
+				if (v == null || v == "") {
+					v = e.dataset.value;
+				}
+
+				if (v != null && v != "") {
+					// Verificar aqui se trata-se de um link ou de uma base64 direto no elemento.
+
 					// - Verifica se terminacao do arquivo é PDF ou OUTRO,
 					let t = v.slice(v.length - 3, v.length);
 					if (t.length === 3) {
@@ -2406,6 +2413,8 @@ class mk {
 							e.innerHTML = "<img src='" + v + "' class='mkCem'>";
 						}
 					}
+				} else {
+					console.warn("Elemento com 'value' nulo. Esperava-se um link: ", v);
 				}
 				e.classList.remove("atualizando");
 			}
