@@ -2182,18 +2182,24 @@ class mk {
                     v = e.dataset.value;
                 }
                 if (v != null && v != "") {
+                    let tipo = null;
                     // Verificar aqui se trata-se de um link ou de uma base64 direto no elemento.
+                    if (v.includes("application/pdf")) {
+                        tipo = "pdf";
+                    }
                     // - Verifica se terminacao do arquivo é PDF ou OUTRO,
                     let t = v.slice(v.length - 3, v.length);
-                    if (t.length === 3) {
-                        if (t.toString().toLowerCase() == "pdf") {
-                            // - Se for PDF, coloca um objeto no inner
-                            e.innerHTML = "<object data='" + v + "' class='mkCem'>";
-                        }
-                        else {
-                            // - Se for outro poem imagem no inner.
-                            e.innerHTML = "<img src='" + v + "' class='mkCem'>";
-                        }
+                    if (t.toString().toLowerCase() == "pdf") {
+                        tipo = "pdf";
+                    }
+                    // Troca o inner
+                    if (tipo == "pdf") {
+                        // - Se for PDF, coloca um objeto no inner
+                        e.innerHTML = "<object data='" + v + "' class='mkCem'>";
+                    }
+                    else {
+                        // - Se for outro poem imagem no inner.
+                        e.innerHTML = "<img src='" + v + "' class='mkCem'>";
                     }
                 }
                 else {
