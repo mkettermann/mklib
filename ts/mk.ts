@@ -31,6 +31,32 @@ class mk {
 	alvo: any = {}; // Guarda o objeto selecionado permitindo manupular outro dado com este de referencia.
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+	//			MASCARAS E REGEX						\\
+	//___________________________________\\
+	// Ex Regex: mk.util.cpf[1];
+	util: object = {
+		cpf: [
+			"000.000.000-00",
+			/^([0-9]{3}[\.]?[0-9]{3}[\.]?[0-9]{3}[\.]?[0-9]{2})$/,
+		],
+		cep: ["00000-000", /^([0-9]{5}[-]?[0-9]{3})$/],
+		cnpj: [
+			"000.000.000-00",
+			/^([0-9]{2}[\.]?[0-9]{3}[\.]?[0-9]{3}[\/]?[0-9]{4}[-]?[0-9]{2})$/,
+		],
+		cnh: ["00000000000", /^([0-9]{11})$/],
+		placaAntesMercosul: ["AAA-0000", /^([A-Za-z]{3}[-]?[0-9]{4})$/],
+		placaMercosul: [
+			"AAA-0A00",
+			/^([A-Za-z]{3}[-]?[0-9]{1}[A-Za-z]{1}[0-9]{2})$/,
+		],
+		pis: [
+			"000.00000.00-0",
+			/^([0-9]{3}[\.]?[0-9]{5}[\.]?[0-9]{2}[-]?[0-9]{1})$/,
+		],
+	};
+
+	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 	//			CONSTRUTOR (contrutor)			\\
 	//___________________________________\\
 	// É possível construir o objeto usando undefined ou null para atingir os valores padrão.
