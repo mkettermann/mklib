@@ -568,7 +568,7 @@ class mk {
 	};
 
 	// K V L R (Chave, Valor, Label e Regex)
-	// Recebendo o objeto da lista, traz o getKeys juntamente aos Values deste objeto;
+	// Recebendo o objeto da lista, traz o getUsedKeys juntamente aos Values deste objeto;
 	getKVLR = (obj: any) => {
 		let model = this.getModel();
 		if (model.length == 0) model = this.getUsedKeys(true);
