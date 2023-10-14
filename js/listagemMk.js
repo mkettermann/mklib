@@ -1,18 +1,13 @@
 "use strict";
-/*
+
 // mk.aoReceberDados = (data) => {
 // 	console.log("oi");
 // };
-var lista = new mk("/GetList", "#tabela1", "", "", "", true);
-var lista2 = new mk(
-	"/GetList2",
-	"#tabela2",
-	"#modelo2",
-	".fTabela2",
-	"mId",
-	true
-);
-var lista3 = new mk("/GetList3", "#tabela3", "#modelo3", ".fTabela3", "mId");
+var lista = new mk("/GetList", "#tabela1", "", "", { importar: true });
+var lista2 = new mk("/GetList2", "#tabela2", "#modelo2", ".fTabela2", {
+	importar: true,
+});
+var lista3 = new mk("/GetList3", "#tabela3", "#modelo3", ".fTabela3");
 //var lista = new Mk("/data/usersExemplo.json", ".tabela1", "#modelo");
 
 //Aqui foi utilizado um container manual das listas instanciadas.
@@ -90,4 +85,3 @@ var uiClearFiltro = async (listId) => {
 	listas[listId].clearFiltro();
 	mk.QverOff(".operacaoContainer");
 };
-*/
