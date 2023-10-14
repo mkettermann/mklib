@@ -257,11 +257,25 @@
 			onfocus="mk.mkSelecionarInner(this)"
 			readonly
 		>
-// PARAMETROS PARA INSTANCIAR: 
-// STRING, STRING, STRING, STRING, STRING, BOOL, FUNCTION, FUNCTION, FUNCTION
+// NOS PARAMETROS PARA INSTANCIAR A CLASSE: 
+// DADOS_, TagTab, MODELO, FILTRO, OPCOES
+// STRING, STRING, STRING, STRING, OBJECT
+// REQUER, REQUER, REQUER, OPCION, OPCION
+
+// Caso algum dos parametros não for informado, os valores padrões são:
+"/GetList", ".divListagemContainer", "#modelo", ".iConsultas", {}.
 
 // Instanciando a lista2
-var lista3 = new mk("/GetList","#tabela3","#modelo3",".fTabela3","mId");
+var lista2 = new mk("/GetList2", "#tabela2", "#modelo2", ".fTabela2", {
+	importar: true,
+});
+
+// QUINTO PARAMETRO (OBJETO):
+importar: BOOLEAN, (True faz a listagem esperar todos mkImportar serem concluidos)
+aoReceberDados: FUNCTION,
+antesDePopularTabela: FUNCTION,
+aoCompletarExibicao: FUNCTION,
+keys: ARRAY de OBJETOS, (Formato KVLR. getModel())
 
 // Exemplo: Container de listas:
 var listas = [lista, lista2, lista3]; //(Lista 3 está na posicao 2)
