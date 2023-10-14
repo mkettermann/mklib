@@ -22,7 +22,7 @@ var uiGetADD = async (listId, strListagem) => {
 	mk.Q(".operacaoAcao").innerHTML = "Adicionar na " + strListagem;
 	mk.Q(".operacaoAcao").setAttribute("onclick", "uiSetADD(" + listId + ")");
 	await mk.mkMoldeOA(
-		listas[listId].getKeys(),
+		listas[listId].getUsedKeys(true),
 		"#modeloOperacao",
 		".operacaoCampos"
 	);
