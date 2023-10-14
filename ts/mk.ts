@@ -571,22 +571,35 @@ class mk {
 	// Recebendo o objeto da lista, traz o getKeys juntamente aos Values deste objeto;
 	getKVLR = (obj: any) => {
 		let model = this.getModel();
+		if (model.length == 0) model = this.getUsedKeys(true);
 		let kvlr: any = [];
 		model.forEach((krl: any) => {
-			kvlr.push({ ...krl, v: obj?.[krl.k] });
+			let o = { ...krl };
+			if (obj?.[krl.k]) o.v = obj?.[krl.k];
+			kvlr.push(o);
 		});
 		return kvlr;
 	};
 
 	// Cria um Set retorna um array de Keys Usadas
-	getUsedKeys = () => {
+	getUsedKeys = (formatoKV = false) => {
+		let kv: any = [];
 		let chaves = new Set();
 		this.dadosFull.forEach((o) => {
 			Object.keys(o).forEach((p) => {
 				chaves.add(p);
 			});
 		});
-		return [...chaves];
+		if (formatoKV) {
+			[...chaves].forEach((k: any) => {
+				let obj = {};
+				obj.k = k;
+				kv.push(obj);
+			});
+			return kv;
+		} else {
+			return [...chaves];
+		}
 	};
 
 	getNewPK = () => {
