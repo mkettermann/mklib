@@ -46,7 +46,7 @@ var uiGetEDIT = async (tr, listId) => {
 	let objeto = listas[listId].dadosFull.find((o) => o[k] == v);
 	//console.log("Editando: [k:" + k + ",v:" + v + "]", objeto);
 	await mk.mkMoldeOA(
-		listas[listId].getKV(objeto),
+		listas[listId].getKVLR(objeto),
 		"#modeloOperacao",
 		".operacaoCampos"
 	);
