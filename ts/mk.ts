@@ -1037,7 +1037,7 @@ class mk {
 	static mkSelDlRefill = async (
 		eName: string | HTMLElement,
 		cod: any,
-		clear: boolean = true
+		clear: boolean = false
 	): Promise<void> => {
 		mk.mkSelDelRefillProcesso(eName, cod).then((e: any) => {
 			e.classList.add("atualizar");
