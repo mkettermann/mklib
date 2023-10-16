@@ -947,9 +947,11 @@ class mk {
             }
         });
     };
-    static mkSelDlRefill = async (eName, cod) => {
+    static mkSelDlRefill = async (eName, cod, clear = true) => {
         mk.mkSelDelRefillProcesso(eName, cod).then((e) => {
             e.classList.add("atualizar");
+            if (clear)
+                e.value = "";
         });
     };
     // Get Server On

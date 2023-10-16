@@ -1036,10 +1036,12 @@ class mk {
 
 	static mkSelDlRefill = async (
 		eName: string | HTMLElement,
-		cod: any
+		cod: any,
+		clear: boolean = true
 	): Promise<void> => {
 		mk.mkSelDelRefillProcesso(eName, cod).then((e: any) => {
 			e.classList.add("atualizar");
+			if (clear) e.value = "";
 		});
 	};
 
