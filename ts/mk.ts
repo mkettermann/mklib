@@ -3096,6 +3096,7 @@ class mk {
 				// Clear Force (Não selecionou)
 				if (display == "-- Selecione --") {
 					e.value = "";
+					e.classList.add("atualizar");
 				}
 				e.nextElementSibling.firstElementChild.value = display;
 			} else if (KV.length > 1) {
