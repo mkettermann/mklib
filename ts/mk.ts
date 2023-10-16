@@ -3093,6 +3093,10 @@ class mk {
 				if (KV[0].v != null) {
 					display = KV[0].v;
 				}
+				// Clear Force (Não selecionou)
+				if (display == "-- Selecione --") {
+					e.value = "";
+				}
 				e.nextElementSibling.firstElementChild.value = display;
 			} else if (KV.length > 1) {
 				e.nextElementSibling.firstElementChild.value =
