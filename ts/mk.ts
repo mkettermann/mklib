@@ -978,6 +978,21 @@ class mk {
 		);
 	};
 
+	// Ignora qualquer outro caracter além de Numeros e Letras formato ocidental
+	static apenasNumerosLetras = (s: string = ""): string => {
+		return s.replace(/(?![a-zA-Z0-9])./g, "");
+	};
+
+	// Ignora qualquer outro caracter além de Numeros
+	static apenasNumeros = (s: string = ""): string => {
+		return s.replace(/(?![0-9])./g, "");
+	};
+
+	// Ignora qualquer outro caracter além de Letras formato ocidental
+	static apenasLetras = (s: string = ""): string => {
+		return s.replace(/(?![a-zA-Z])./g, "");
+	};
+
 	static isFloat = (x: any): boolean => {
 		if (!isNaN(x)) {
 			if (parseInt(x) != parseFloat(x)) {

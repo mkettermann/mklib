@@ -900,6 +900,18 @@ class mk {
     static isVisible = (e) => {
         return (e.offsetWidth > 0 || e.offsetHeight > 0 || e.getClientRects().length > 0);
     };
+    // Ignora qualquer outro caracter além de Numeros e Letras formato ocidental
+    static apenasNumerosLetras = (s = "") => {
+        return s.replace(/(?![a-zA-Z0-9])./g, "");
+    };
+    // Ignora qualquer outro caracter além de Numeros
+    static apenasNumeros = (s = "") => {
+        return s.replace(/(?![0-9])./g, "");
+    };
+    // Ignora qualquer outro caracter além de Letras formato ocidental
+    static apenasLetras = (s = "") => {
+        return s.replace(/(?![a-zA-Z])./g, "");
+    };
     static isFloat = (x) => {
         if (!isNaN(x)) {
             if (parseInt(x) != parseFloat(x)) {
