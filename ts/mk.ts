@@ -889,6 +889,12 @@ class mk {
 		});
 	};
 
+	static QverOff = (query: HTMLElement | string | null = "body") => {
+		return mk.aCadaElemento(query, (e: any) => {
+			e?.classList.add("oculto");
+		});
+	};
+
 	// Query: String, Element, [Element,Element]
 	static aCadaElemento = (query: any, fn: Function) => {
 		if (typeof query == "string") {
@@ -910,12 +916,6 @@ class mk {
 			fn(e);
 			return e;
 		}
-	};
-
-	static QverOff = (query: HTMLElement | string = "body") => {
-		let temp = mk.Q(query);
-		temp?.classList.add("oculto");
-		return temp;
 	};
 
 	static QScrollTo = (query: HTMLElement | string = "body") => {

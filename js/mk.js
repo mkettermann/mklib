@@ -824,6 +824,11 @@ class mk {
             e?.classList.remove("oculto");
         });
     };
+    static QverOff = (query = "body") => {
+        return mk.aCadaElemento(query, (e) => {
+            e?.classList.add("oculto");
+        });
+    };
     // Query: String, Element, [Element,Element]
     static aCadaElemento = (query, fn) => {
         if (typeof query == "string") {
@@ -849,11 +854,6 @@ class mk {
             fn(e);
             return e;
         }
-    };
-    static QverOff = (query = "body") => {
-        let temp = mk.Q(query);
-        temp?.classList.add("oculto");
-        return temp;
     };
     static QScrollTo = (query = "body") => {
         let temp = mk.Q(query);
