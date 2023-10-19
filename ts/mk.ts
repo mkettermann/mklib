@@ -895,6 +895,12 @@ class mk {
 		});
 	};
 
+	static QverToggle = (query: HTMLElement | string | null = "body") => {
+		return mk.aCadaElemento(query, (e: any) => {
+			e?.classList.toggle("oculto");
+		});
+	};
+
 	// Query: String, Element, [Element,Element]
 	static aCadaElemento = (query: any, fn: Function) => {
 		if (typeof query == "string") {

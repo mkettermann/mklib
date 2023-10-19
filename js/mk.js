@@ -829,6 +829,11 @@ class mk {
             e?.classList.add("oculto");
         });
     };
+    static QverToggle = (query = "body") => {
+        return mk.aCadaElemento(query, (e) => {
+            e?.classList.toggle("oculto");
+        });
+    };
     // Query: String, Element, [Element,Element]
     static aCadaElemento = (query, fn) => {
         if (typeof query == "string") {
