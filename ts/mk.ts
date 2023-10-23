@@ -1438,7 +1438,10 @@ class mk {
 		return novaArray;
 	};
 
-	static isData = () => {};
+	// YYYY-MM-DD
+	static isData = (i: string) => {
+		return mk.util.data[1].test(i);
+	};
 
 	// Retorna Milisegundos da data no formato Javascript
 	static getMs = (dataYYYYMMDD: string | null = null): number => {
