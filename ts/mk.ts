@@ -727,6 +727,7 @@ class mk {
 		mes: ["00", /^([0-1]?[0-9])$/],
 		ano: ["0000", /^([0-2]?([0-9]){3})$/],
 		ip: ["000.000.000.000", /^([0-9]?[0-9]?[0-9]([\.]?[0-9]?[0-9]?[0-9]){3})$/],
+		dataJs: ["0000-00-00", /^([0-9]{4}(-[0-9]{2}){2})$/],
 	};
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
@@ -1436,6 +1437,8 @@ class mk {
 		}
 		return novaArray;
 	};
+
+	static isData = () => {};
 
 	// Retorna Milisegundos da data no formato Javascript
 	static getMs = (dataYYYYMMDD: string | null = null): number => {
