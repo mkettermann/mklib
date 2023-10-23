@@ -1496,7 +1496,39 @@ class mk {
 		else return Number(mk.getFullData().split("-")[0]);
 	};
 
-	static getDiasDiferenca = (msOld: number, msNew: number | null = null) => {
+	static getTempoDiferenca = (msOld: number, msNew: number | null = null) => {
+		if (msNew == null) msNew = mk.getMs();
+		let dias = mk.getDiasDiferenca(msNew! - msOld);
+		if (dias < 0) {
+			dias = dias * -1;
+		}
+		let strTempo = "";
+		if (dias > 30) {
+			let meses = dias / 30;
+			if (dias < 60) {
+				strTempo = "1 mês";
+			} else {
+				if (dias > 365) {
+					let anos = dias / 365;
+					strTempo = anos + " anos " + mk.mkNCasas(meses) + " meses";
+				} else {
+					strTempo = mk.mkNCasas(meses) + " meses";
+				}
+			}
+		} else {
+			if (dias < 2) {
+				strTempo = "~1 dia";
+			} else {
+				strTempo = dias + " dias";
+			}
+		}
+		return strTempo;
+	};
+
+	static getDiasDiferenca = (
+		msOld: number,
+		msNew: number | null = null
+	): number => {
 		if (msNew == null) msNew = mk.getMs();
 		return mk.transMsEmDias(msNew! - msOld);
 	};
