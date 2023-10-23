@@ -1504,20 +1504,31 @@ class mk {
 		}
 		let strTempo = "";
 		if (dias > 30) {
-			let meses = dias / 30;
 			if (dias < 60) {
 				strTempo = "1 mês";
 			} else {
 				if (dias > 365) {
-					let anos = dias / 365;
-					strTempo = anos + " anos " + mk.mkNCasas(meses) + " meses";
+					let anos = Math.floor(dias / 365);
+					let diasRestoAno = dias % 365;
+					if (anos < 2) {
+						strTempo += anos + " ano ";
+					} else {
+						strTempo += anos + " anos ";
+					}
+					if (diasRestoAno > 30) {
+						if (diasRestoAno < 60) {
+							strTempo += "1 mês";
+						} else {
+							strTempo += Math.floor(diasRestoAno / 30) + " meses";
+						}
+					}
 				} else {
-					strTempo = mk.mkNCasas(meses) + " meses";
+					strTempo = Math.floor(dias / 30) + " meses";
 				}
 			}
 		} else {
-			if (dias < 2) {
-				strTempo = "~1 dia";
+			if (dias < 1) {
+				strTempo = "menos de 1 dia";
 			} else {
 				strTempo = dias + " dias";
 			}
