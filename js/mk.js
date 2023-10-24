@@ -1363,9 +1363,7 @@ class mk {
             return Number(mk.getFullData().split("-")[0]);
     };
     static getTempoDiferenca = (msOld, msNew = null) => {
-        if (msNew == null)
-            msNew = mk.getMs();
-        let dias = mk.getDiasDiferenca(msNew - msOld);
+        let dias = mk.getDiasDiferenca(msOld, msNew);
         if (dias < 0) {
             dias = dias * -1;
         }
