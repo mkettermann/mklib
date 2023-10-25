@@ -1942,9 +1942,9 @@ class mk {
         return temPendencia;
     };
     // Limpar Validates adicionados anteriormente e fazer novamente com os atuais.
-    static FixValidate = () => {
+    static FixValidate = (form) => {
         // Parse + Remove
-        $.validator.unobtrusive.parse($(document).removeData("validator").removeData("unobtrusiveValidation"));
+        $.validator.unobtrusive.parse($(form).removeData("validator").removeData("unobtrusiveValidation"));
     };
     // $ Unobtrusive: id do form
     static verificarCampos = (form) => {
