@@ -2121,6 +2121,7 @@ class mk {
 
 	// Limpar Validates adicionados anteriormente e fazer novamente com os atuais.
 	static FixValidate = () => {
+		// Parse + Remove
 		$.validator.unobtrusive.parse(
 			$(document).removeData("validator").removeData("unobtrusiveValidation")
 		);
