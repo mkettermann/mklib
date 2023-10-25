@@ -2332,7 +2332,6 @@ class mk {
 	};
 
 	static mkToValue = (mk: string, o: any) => {
-		console.group("MoldeProcesso");
 		let ret: string = "";
 		if (mk.indexOf("${") >= 0) {
 			let ini = mk.split("${");
@@ -2343,20 +2342,23 @@ class mk {
 				let key: string = ini[i].slice(0, end);
 				if (typeof o == "object" && o != null) {
 					if (key in o) {
-						let v = o[key];
-						if (typeof v == "string") {
-							v = v.replaceAll('"', "&quot;");
-						}
+						let v = this.removerAspasDuplas(o[key]);
 						ret += v;
 					} else {
 						// Verificar Possibilidade de objeto interno
 						if (key.includes(".")) {
-							let keyIni: string[] = key.split(".");
-
-							console.log(o);
-							console.log("Keys: ", keyIni);
+							let p: string[] = key.split(".");
+							if (p[0] in o) {
+								if (typeof o[p[0]] == "object") {
+									if (o[p[0]] != null) {
+										let v = this.removerAspasDuplas(o[p[0]]?.[p[1]]);
+										if (v != null) {
+											ret += v;
+										}
+									}
+								}
+							}
 						}
-
 						//ret += key;
 					}
 				}
@@ -2365,7 +2367,6 @@ class mk {
 		} else {
 			ret = mk;
 		}
-		console.groupEnd();
 		return ret;
 	};
 
