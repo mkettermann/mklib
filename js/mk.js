@@ -2398,19 +2398,10 @@ class mk {
                     mk.mkSelPopularLista(e);
                     mk.mkSelUpdate(e);
                     // Executa evento, em todos atualizar.
+                    // O evento serve para que ao trocar o 1, o 2 execute input para então o 3 tb ter como saber que é pra atualizar
                     e.dispatchEvent(new Event("input"));
                     e.dispatchEvent(new Event("change"));
                     e.classList.remove("atualizando");
-                }
-                // Refill não gera evento input nem change
-                if (e.classList.contains("refill")) {
-                    e.classList.remove("refill");
-                    e.classList.add("refillando");
-                    // Se não tem array, mas tem o refill e entrou para atualizar, faz o processo de refill genérico
-                    await mk.mkSelDelRefillProcesso(e);
-                    mk.mkSelPopularLista(e);
-                    mk.mkSelUpdate(e);
-                    e.classList.remove("refillando");
                 }
                 // Manter index em -1 para não chegar até esse campo
                 e.setAttribute("tabindex", "-1");
@@ -2451,7 +2442,7 @@ class mk {
     };
     static mkSelDlRefill = async (eName, cod, clear = false) => {
         mk.mkSelDelRefillProcesso(eName, cod).then((e) => {
-            e.classList.add("refill");
+            e.classList.add("atualizar");
             if (clear)
                 e.value = "";
         });
