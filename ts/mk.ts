@@ -727,6 +727,7 @@ class mk {
 		mes: ["00", /^([0-1]?[0-9])$/],
 		ano: ["0000", /^([0-2]?([0-9]){3})$/],
 		ip: ["000.000.000.000", /^([0-9]?[0-9]?[0-9]([\.]?[0-9]?[0-9]?[0-9]){3})$/],
+		data: ["0000-00-00", /^([0-9]{4}(-[0-9]{2}){2})$/],
 	};
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
@@ -1437,6 +1438,11 @@ class mk {
 		return novaArray;
 	};
 
+	// YYYY-MM-DD
+	static isData = (i: string) => {
+		return mk.util.data[1].test(i);
+	};
+
 	// Retorna Milisegundos da data no formato Javascript
 	static getMs = (dataYYYYMMDD: string | null = null): number => {
 		if (dataYYYYMMDD != null) {
@@ -1496,7 +1502,49 @@ class mk {
 		else return Number(mk.getFullData().split("-")[0]);
 	};
 
-	static getDiasDiferenca = (msOld: number, msNew: number | null = null) => {
+	static getTempoDiferenca = (msOld: number, msNew: number | null = null) => {
+		let dias = mk.getDiasDiferenca(msOld, msNew);
+		if (dias < 0) {
+			dias = dias * -1;
+		}
+		let strTempo = "";
+		if (dias > 30) {
+			if (dias < 60) {
+				strTempo = "1 mês";
+			} else {
+				if (dias > 365) {
+					let anos = Math.floor(dias / 365);
+					let diasRestoAno = dias % 365;
+					if (anos < 2) {
+						strTempo += anos + " ano ";
+					} else {
+						strTempo += anos + " anos ";
+					}
+					if (diasRestoAno > 30) {
+						if (diasRestoAno < 60) {
+							strTempo += "1 mês";
+						} else {
+							strTempo += Math.floor(diasRestoAno / 30) + " meses";
+						}
+					}
+				} else {
+					strTempo = Math.floor(dias / 30) + " meses";
+				}
+			}
+		} else {
+			if (dias < 1) {
+				strTempo = "menos de 1 dia";
+			} else {
+				strTempo = dias + " dias";
+			}
+		}
+		return strTempo;
+	};
+
+	static getDiasDiferenca = (
+		msOld: number,
+		msNew: number | null = null
+	): number => {
 		if (msNew == null) msNew = mk.getMs();
 		return mk.transMsEmDias(msNew! - msOld);
 	};
