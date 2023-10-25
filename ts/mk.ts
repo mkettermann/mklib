@@ -842,7 +842,8 @@ class mk {
 	// O nome da propriedade precisa ser compatível com o PROPNAME do query.
 	static QSetAll = (
 		query: string = "input[name='#PROP#']",
-		o: object | null = null
+		o: object | null = null,
+		update: boolean | null = true
 	) => {
 		let eAfetados = [];
 		if (o != null) {
@@ -854,7 +855,7 @@ class mk {
 					if (eDynamicQuery) {
 						if (o[p as keyof typeof o]) {
 							eDynamicQuery.value = o[p as keyof typeof o];
-							eDynamicQuery.classList.add("atualizar");
+							if (update) eDynamicQuery.classList.add("atualizar");
 							eAfetados.push(eDynamicQuery);
 						}
 					}
@@ -2685,11 +2686,11 @@ class mk {
 	static mkSelDlRefill = async (
 		eName: string | HTMLElement,
 		cod: any,
-		clear: boolean = false
+		clear: boolean = true
 	): Promise<void> => {
 		mk.mkSelDelRefillProcesso(eName, cod).then((e: any) => {
-			e.classList.add("atualizar");
 			if (clear) e.value = "";
+			e.classList.add("atualizar");
 		});
 	};
 

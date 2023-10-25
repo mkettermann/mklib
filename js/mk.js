@@ -780,7 +780,7 @@ class mk {
     };
     // Seta todos os query com os valores das propriedades informadas nos campos.
     // O nome da propriedade precisa ser compatível com o PROPNAME do query.
-    static QSetAll = (query = "input[name='#PROP#']", o = null) => {
+    static QSetAll = (query = "input[name='#PROP#']", o = null, update = true) => {
         let eAfetados = [];
         if (o != null) {
             if (typeof o == "object" && !Array.isArray(o)) {
@@ -789,7 +789,8 @@ class mk {
                     if (eDynamicQuery) {
                         if (o[p]) {
                             eDynamicQuery.value = o[p];
-                            eDynamicQuery.classList.add("atualizar");
+                            if (update)
+                                eDynamicQuery.classList.add("atualizar");
                             eAfetados.push(eDynamicQuery);
                         }
                     }
@@ -2440,11 +2441,11 @@ class mk {
             }
         });
     };
-    static mkSelDlRefill = async (eName, cod, clear = false) => {
+    static mkSelDlRefill = async (eName, cod, clear = true) => {
         mk.mkSelDelRefillProcesso(eName, cod).then((e) => {
-            e.classList.add("atualizar");
             if (clear)
                 e.value = "";
+            e.classList.add("atualizar");
         });
     };
     // Quando desativado, precisa desativar o TAB também
