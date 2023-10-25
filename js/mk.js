@@ -2912,13 +2912,21 @@ class mk {
                 if (KV[0].v != null) {
                     display = KV[0].v;
                 }
-                // Clear Force (Não selecionou)
-                // O Force clear não pode ser usado devido as veses que possui conteúdos previamente inseridos, e este campo é um dependente de outro.
-                // Talvez seja interessante criar um argumento no campo solicitando isso neste campo
-                // if (display == "-- Selecione --") {
-                // 	e.value = "";
-                // 	e.classList.add("atualizar");
-                // }
+                if (display == "-- Selecione --") {
+                    // Criado um argumento indicando que o VALOR do campo está dessincronizado com as POSSIBILIDADDES em kv.
+                    e.dataset.selerror = "true";
+                    e.dataset.selerrorMsg =
+                        "O item selecionado não está na lista de possibilidades";
+                    // Clear Force (Não selecionou)
+                    // O Force clear não pode ser usado devido as veses que possui conteúdos previamente inseridos, e este campo é um dependente de outro.
+                    // Talvez seja interessante criar um argumento no campo solicitando isso neste campo
+                    // 	e.value = "";
+                    // 	e.classList.add("atualizar");
+                }
+                else {
+                    e.dataset.selerror = "false";
+                    e.dataset.selerrorMsg = "";
+                }
                 e.nextElementSibling.firstElementChild.value = display;
             }
             else if (KV.length > 1) {
