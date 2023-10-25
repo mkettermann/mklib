@@ -2387,21 +2387,27 @@ class mk {
                 mk.poppers.push(popperInstance);
             }
             else {
+                // Se não tem array, mas tem o refill e entrou para atualizar, faz o processo de refill genérico
+                if (!e.getAttribute("data-selarray") && e.getAttribute("data-refill")) {
+                    await mk.mkSelDelRefillProcesso(e);
+                }
                 // Atualiza a lista com base na classe "atualizar" (Gera Evento input e change)
                 if (e.classList.contains("atualizar")) {
                     e.classList.remove("atualizar");
                     e.classList.add("atualizando");
-                    // Se não tem array, mas tem o refill e entrou para atualizar, faz o processo de refill genérico
-                    if (!e.getAttribute("data-selarray") &&
-                        e.getAttribute("data-refill")) {
-                        await mk.mkSelDelRefillProcesso(e);
-                    }
                     mk.mkSelPopularLista(e);
                     mk.mkSelUpdate(e);
                     // Executa evento, em todos atualizar.
                     // O evento serve para que ao trocar o 1, o 2 execute input para então o 3 tb ter como saber que é pra atualizar
                     e.dispatchEvent(new Event("input"));
                     e.dispatchEvent(new Event("change"));
+                    e.classList.remove("atualizando");
+                }
+                if (e.classList.contains("atualizarSemEvento")) {
+                    e.classList.remove("atualizarSemEvento");
+                    e.classList.add("atualizando");
+                    mk.mkSelPopularLista(e);
+                    mk.mkSelUpdate(e);
                     e.classList.remove("atualizando");
                 }
                 // Manter index em -1 para não chegar até esse campo
