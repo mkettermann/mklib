@@ -2332,6 +2332,7 @@ class mk {
 	};
 
 	static mkToValue = (mk: string, o: any) => {
+		console.group("MoldeProcesso");
 		let ret: string = "";
 		if (mk.indexOf("${") >= 0) {
 			let ini = mk.split("${");
@@ -2348,6 +2349,14 @@ class mk {
 						}
 						ret += v;
 					} else {
+						// Verificar Possibilidade de objeto interno
+						if (key.includes(".")) {
+							let keyIni: string[] = key.split(".");
+
+							console.log(o);
+							console.log("Keys: ", keyIni);
+						}
+
 						//ret += key;
 					}
 				}
@@ -2356,6 +2365,7 @@ class mk {
 		} else {
 			ret = mk;
 		}
+		console.groupEnd();
 		return ret;
 	};
 

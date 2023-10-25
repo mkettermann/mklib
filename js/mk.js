@@ -2126,6 +2126,7 @@ class mk {
         return s;
     };
     static mkToValue = (mk, o) => {
+        console.group("MoldeProcesso");
         let ret = "";
         if (mk.indexOf("${") >= 0) {
             let ini = mk.split("${");
@@ -2144,6 +2145,12 @@ class mk {
                         ret += v;
                     }
                     else {
+                        // Verificar Possibilidade de objeto interno
+                        if (key.includes(".")) {
+                            let keyIni = key.split(".");
+                            console.log(o);
+                            console.log("Keys: ", keyIni);
+                        }
                         //ret += key;
                     }
                 }
@@ -2153,6 +2160,7 @@ class mk {
         else {
             ret = mk;
         }
+        console.groupEnd();
         return ret;
     };
     static mkMoldeOA = async (dadosOA, modelo = "#modelo", repositorio = ".tableListagem .listBody") => {
