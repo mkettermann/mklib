@@ -61,7 +61,7 @@
 		>
 <div id="exibir"></div>
 <script type="text/html" id="modelo">
-	Olá ${nome} ${sobrenome}!
+	Olá ${nome} ${sobrenome} (${data.d}/${data.m}/${data.a})!
 </script></textarea
 		>
 	</div>
@@ -83,9 +83,9 @@
 			onfocus="mk.mkSelecionarInner(this)"
 			readonly
 		>
-var dados = [{ nome: "Marcos", sobrenome: "Kettermann" }, { nome: "Zé", data: { d: "01", m: "01", a: "2023" } }];
-dados.push({nome:"Fulano",sobrenome:"dos Santos Silva"});
-mk.mkMoldeOA(dados, "#modelo", "#exibir");</textarea
+var dados = [{ nome: "Marcos", sobrenome: "Kettermann" },{ nome: "Zé", data: { d: "31", m: "12", a: "2023" } },];
+dados.push({nome: "Fulano",sobrenome: "dos Santos Silva",data: { d: 31 },});
+mk.mkMoldeOA(dados, "#modelo333", "#exibir");</textarea
 		>
 	</div>
 </div>
@@ -96,10 +96,14 @@ mk.mkMoldeOA(dados, "#modelo", "#exibir");</textarea
 </script>
 <script>
 	var dados = [
-		{ nome: "Marcos", sobrenome: "Kettermann" },
-		{ nome: "Zé", data: { d: "01", m: "01", a: "2023" } },
+		{ nome: "Marcos", sobrenome: "K" },
+		{ nome: "Zé", data: { d: "31", m: "12", a: "2023" } },
 	];
-	dados.push({ nome: "Fulano", sobrenome: "dos Santos Silva" });
+	dados.push({
+		nome: "Fulano",
+		sobrenome: "dos Santos Silva",
+		data: { d: 31 },
+	});
 	mk.mkMoldeOA(dados, "#modelo333", "#exibir");
 </script>
 
