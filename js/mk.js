@@ -780,7 +780,7 @@ class mk {
     };
     // Seta todos os query com os valores das propriedades informadas nos campos.
     // O nome da propriedade precisa ser compatível com o PROPNAME do query.
-    static QSetAll = (query = "input[name='#PROP#']", o = null, update = true) => {
+    static QSetAll = (query = "input[name='#PROP#']", o = null, comEvento = true) => {
         let eAfetados = [];
         if (o != null) {
             if (typeof o == "object" && !Array.isArray(o)) {
@@ -789,8 +789,12 @@ class mk {
                     if (eDynamicQuery) {
                         if (o[p]) {
                             eDynamicQuery.value = o[p];
-                            if (update)
+                            if (comEvento) {
                                 eDynamicQuery.classList.add("atualizar");
+                            }
+                            else {
+                                eDynamicQuery.classList.add("atualizarSemEvento");
+                            }
                             eAfetados.push(eDynamicQuery);
                         }
                     }

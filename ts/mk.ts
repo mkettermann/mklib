@@ -843,7 +843,7 @@ class mk {
 	static QSetAll = (
 		query: string = "input[name='#PROP#']",
 		o: object | null = null,
-		update: boolean | null = true
+		comEvento: boolean | null = true
 	) => {
 		let eAfetados = [];
 		if (o != null) {
@@ -855,7 +855,11 @@ class mk {
 					if (eDynamicQuery) {
 						if (o[p as keyof typeof o]) {
 							eDynamicQuery.value = o[p as keyof typeof o];
-							if (update) eDynamicQuery.classList.add("atualizar");
+							if (comEvento) {
+								eDynamicQuery.classList.add("atualizar");
+							} else {
+								eDynamicQuery.classList.add("atualizarSemEvento");
+							}
 							eAfetados.push(eDynamicQuery);
 						}
 					}
