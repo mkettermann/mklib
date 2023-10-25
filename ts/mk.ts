@@ -1030,47 +1030,6 @@ class mk {
 		return nomeArquivo;
 	};
 
-	static mkSelDelRefillProcesso = async (
-		eName: string | HTMLElement,
-		cod = null
-	) => {
-		return new Promise(async (r) => {
-			let e = mk.Q(eName);
-			if (e) {
-				let url = appPath + e.getAttribute("data-refill");
-				cod != null ? (url += cod) : null;
-				let retorno = await mk.http(url, mk.t.G, mk.t.J);
-				if (retorno != null) {
-					let kv = retorno;
-					if (typeof retorno == "object") {
-						kv = JSON.stringify(retorno);
-						r(e);
-					}
-					if (mk.isJson(kv)) {
-						e.setAttribute("data-selarray", kv);
-					} else {
-						console.error("Resultado não é um JSON. (mkSelDlRefill)");
-					}
-				}
-			} else {
-				console.warn(
-					"Função (mkSelDlRefill) solicitou Refill em um campo inexistente (JS)"
-				);
-			}
-		});
-	};
-
-	static mkSelDlRefill = async (
-		eName: string | HTMLElement,
-		cod: any,
-		clear: boolean = false
-	): Promise<void> => {
-		mk.mkSelDelRefillProcesso(eName, cod).then((e: any) => {
-			e.classList.add("atualizar");
-			if (clear) e.value = "";
-		});
-	};
-
 	// Get Server On
 	static getServerOn = async (url: string = "/Login/GetServerOn") => {
 		let retorno = await mk.http(url, mk.t.G, mk.t.J);
@@ -2663,7 +2622,7 @@ class mk {
 				);
 				mk.poppers.push(popperInstance);
 			} else {
-				// Atualiza a lista com base na classe "atualizar"
+				// Atualiza a lista com base na classe "atualizar" (Gera Evento input e change)
 				if (e.classList.contains("atualizar")) {
 					e.classList.remove("atualizar");
 					e.classList.add("atualizando");
@@ -2681,17 +2640,68 @@ class mk {
 					e.dispatchEvent(new Event("change"));
 					e.classList.remove("atualizando");
 				}
+				// Refill não gera evento input nem change
+				if (e.classList.contains("refill")) {
+					e.classList.remove("refill");
+					e.classList.add("refillando");
+					// Se não tem array, mas tem o refill e entrou para atualizar, faz o processo de refill genérico
+					await mk.mkSelDelRefillProcesso(e as HTMLElement);
+					mk.mkSelPopularLista(e);
+					mk.mkSelUpdate(e);
+					e.classList.remove("refillando");
+				}
 				// Manter index em -1 para não chegar até esse campo
 				e.setAttribute("tabindex", "-1");
 				mk.mkSelTabIndex(e);
-				// Atualiza posição com a mesma frequencia que pesquisa os elementos.
-				mk.poppers.forEach((o) => {
-					o.update();
-				});
 				//mk.mkSelReposicionar(e.parentElement.children[2]);
 			}
 		});
+		// Atualiza posição com a mesma frequencia que pesquisa os elementos.
+		mk.poppers.forEach((o) => {
+			o.update();
+		});
 	};
+
+	static mkSelDelRefillProcesso = async (
+		eName: string | HTMLElement,
+		cod = null
+	) => {
+		return new Promise(async (r) => {
+			let e = mk.Q(eName);
+			if (e) {
+				let url = appPath + e.getAttribute("data-refill");
+				cod != null ? (url += cod) : null;
+				let retorno = await mk.http(url, mk.t.G, mk.t.J);
+				if (retorno != null) {
+					let kv = retorno;
+					if (typeof retorno == "object") {
+						kv = JSON.stringify(retorno);
+					}
+					if (mk.isJson(kv)) {
+						e.setAttribute("data-selarray", kv);
+						r(e);
+					} else {
+						console.error("Resultado não é um JSON. (mkSelDlRefill)");
+					}
+				}
+			} else {
+				console.warn(
+					"Função (mkSelDlRefill) solicitou Refill em um campo inexistente (JS)"
+				);
+			}
+		});
+	};
+	static mkSelDlRefill = async (
+		eName: string | HTMLElement,
+		cod: any,
+		clear: boolean = false
+	): Promise<void> => {
+		mk.mkSelDelRefillProcesso(eName, cod).then((e: any) => {
+			e.classList.add("refill");
+			if (clear) e.value = "";
+		});
+	};
+
 	// Quando desativado, precisa desativar o TAB também
 	static mkSelTabIndex = (e: any) => {
 		if (e.classList.contains("disabled")) {
@@ -3242,7 +3252,7 @@ mk.mkSelRenderizar();
 setInterval(() => {
 	mk.mkSelRenderizar();
 	mk.mkBotCheck();
-}, 150);
+}, 100);
 
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //			OBJETOS CONSTANTES					\\
