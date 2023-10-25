@@ -3184,10 +3184,12 @@ class mk {
 					display = KV[0].v;
 				}
 				// Clear Force (Não selecionou)
-				if (display == "-- Selecione --") {
-					e.value = "";
-					e.classList.add("atualizar");
-				}
+				// O Force clear não pode ser usado devido as veses que possui conteúdos previamente inseridos, e este campo é um dependente de outro.
+				// Talvez seja interessante criar um argumento no campo solicitando isso neste campo
+				// if (display == "-- Selecione --") {
+				// 	e.value = "";
+				// 	e.classList.add("atualizar");
+				// }
 				e.nextElementSibling.firstElementChild.value = display;
 			} else if (KV.length > 1) {
 				e.nextElementSibling.firstElementChild.value =
