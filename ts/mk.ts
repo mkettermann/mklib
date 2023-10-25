@@ -2125,6 +2125,8 @@ class mk {
 		$.validator.unobtrusive.parse(
 			$(form).removeData("validator").removeData("unobtrusiveValidation")
 		);
+		// Para modificar campos setados:
+		// $(form).data('unobtrusiveValidation').options.rules
 	};
 
 	// $ Unobtrusive: id do form
