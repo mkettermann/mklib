@@ -514,7 +514,7 @@ class mk {
             if (typeof k === "string") {
                 this.dadosFull.forEach((o) => {
                     if (k in o) {
-                        if (o[k] === v) {
+                        if (o[k] == v) {
                             array.push(o);
                         }
                     }

@@ -552,7 +552,7 @@ class mk {
 			if (typeof k === "string") {
 				this.dadosFull.forEach((o) => {
 					if (k in o) {
-						if (o[k] === v) {
+						if (o[k] == v) {
 							array.push(o);
 						}
 					} else {
@@ -564,9 +564,7 @@ class mk {
 			}
 		}
 		if (errNotPresent)
-			mk.warn(
-				"Erro getObjs(): Key não está presente em um ou mais objetos."
-			);
+			mk.warn("Erro getObjs(): Key não está presente em um ou mais objetos.");
 		if (errKeyInvalid)
 			mk.warn("Erro getObjs(): Key precisa ser no formato string.");
 		return array;
