@@ -530,6 +530,7 @@ class mk {
 		this.atualizarListagem();
 	};
 
+	// Retorna o último objeto da lista onde a chave primaria bateu.
 	getObj = (valorKey: any): object | null => {
 		let temp: object | null = null;
 		if (Array.isArray(this.dadosFull)) {
@@ -540,6 +541,35 @@ class mk {
 			});
 		}
 		return temp;
+	};
+
+	// Retorna uma lista de todos objetos encontrados onde o KV bateu.
+	getObjs = (k: string, v: any): object[] => {
+		let array: object[] = [];
+		let errNotPresent = false;
+		let errKeyInvalid = false;
+		if (Array.isArray(this.dadosFull)) {
+			if (typeof k === "string") {
+				this.dadosFull.forEach((o) => {
+					if (k in o) {
+						if (o[k] === v) {
+							array.push(o);
+						}
+					} else {
+						errNotPresent = true;
+					}
+				});
+			} else {
+				errKeyInvalid = true;
+			}
+		}
+		if (errNotPresent)
+			mk.warn(
+				"Erro getObjs(): Key não está presente em um ou mais objetos."
+			);
+		if (errKeyInvalid)
+			mk.warn("Erro getObjs(): Key precisa ser no formato string.");
+		return array;
 	};
 
 	setObj = (v: any, objeto: any): any => {
@@ -733,6 +763,14 @@ class mk {
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 	//			MK FUNCOES UTIL							\\
 	//___________________________________\\
+
+	// Função de log erros ou informacoes
+	static warn = (...s: any) => {
+		console.warn("> ", ...s);
+	};
+	static log = (...s: any) => {
+		console.log("> ", ...s);
+	};
 
 	// Atalho para QuerySelector que retorna apenas o primeiro elemento da query.
 	static Q = (query: any) => {
