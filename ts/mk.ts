@@ -1938,7 +1938,7 @@ class mk {
 					podeExibir = this.aoFiltrarTabela(o);
 				}
 				if (typeof podeExibir != "boolean") {
-					podeExibir = false;
+					podeExibir = true;
 					mk.warn("aoFiltrarTabela() precisa retornar boolean");
 				}
 				for (let propFiltro in objFiltro) {
