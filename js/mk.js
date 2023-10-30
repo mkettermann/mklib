@@ -50,6 +50,8 @@ class mk {
             arg.importar = false;
         if (arg.aoReceberDados == null)
             arg.aoReceberDados = mk.aoReceberDados;
+        if (arg.modicaFiltro == null)
+            arg.modicaFiltro = mk.modicaFiltro;
         if (arg.antesDePopularTabela == null)
             arg.antesDePopularTabela = mk.antesDePopularTabela;
         if (arg.aoCompletarExibicao == null)
@@ -59,7 +61,7 @@ class mk {
         // Setando Config
         this.listagemConfigurar(urlOrigem, todaListagem, idModelo, filtro, arg);
         this.aoReceberDados = arg.aoReceberDados;
-        this.aoFiltrarTabela = arg.aoFiltrarTabela;
+        this.modicaFiltro = arg.modicaFiltro;
         this.antesDePopularTabela = arg.antesDePopularTabela;
         this.aoCompletarExibicao = arg.aoCompletarExibicao;
         // Finaliza Contrutor chamando o método de coleta
@@ -70,10 +72,10 @@ class mk {
         return objeto;
     };
     antesDePopularTabela = () => { };
-    // aoFiltrarTabela
-    aoFiltrarTabela = (obj) => {
+    modicaFiltro = (obj) => {
         let resultado = true;
-        // if(obj.X == "Y") return false;
+        mk.log(obj);
+        //if(obj.X == "Y") return false;
         return resultado;
     };
     aoCompletarExibicao = () => { };
@@ -1729,8 +1731,8 @@ class mk {
     static aoCompletarExibicao = () => { };
     // Metodo que eh executado antes de exibir (PODE SOBREESCREVER NA VIEW)
     static antesDePopularTabela = () => { };
-    // Metodo que eh executado DURANTE o filtro (Precisa retornar true)
-    static aoFiltrarTabela = (obj) => {
+    // Método Statico da funcao que modifica o start do filtro. Precisa retornar boolean
+    static modicaFiltro = (objeto) => {
         return true;
     };
     // Torna ativo o botao que se refere ao paginationAtual
@@ -1754,12 +1756,12 @@ class mk {
             let temp = [];
             aTotal.forEach((o) => {
                 let podeExibir = true; // Verificara cada prop, logica de remocao seletiva.
-                if (this.aoFiltrarTabela) {
-                    podeExibir = this.aoFiltrarTabela(o);
+                if (this.modicaFiltro) {
+                    podeExibir = this.modicaFiltro(o);
                 }
                 if (typeof podeExibir != "boolean") {
                     podeExibir = true;
-                    mk.warn("aoFiltrarTabela() precisa retornar boolean");
+                    mk.warn("modicaFiltro() precisa retornar boolean");
                 }
                 for (let propFiltro in objFiltro) {
                     // Cada Propriedade de Cada Item da Array
