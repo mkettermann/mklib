@@ -51,7 +51,7 @@ class mk {
         if (arg.aoReceberDados == null)
             arg.aoReceberDados = mk.aoReceberDados;
         if (arg.modicaFiltro == null)
-            arg.modicaFiltro = mk.modicaFiltro;
+            arg.modicaFiltro = this.modicaFiltro;
         if (arg.antesDePopularTabela == null)
             arg.antesDePopularTabela = mk.antesDePopularTabela;
         if (arg.aoCompletarExibicao == null)
@@ -74,7 +74,7 @@ class mk {
     antesDePopularTabela = () => { };
     modicaFiltro = (obj) => {
         let resultado = true;
-        mk.log(obj);
+        mk.log("inst modicaFiltro");
         //if(obj.X == "Y") return false;
         return resultado;
     };
@@ -216,7 +216,7 @@ class mk {
     atualizarListagem = async () => {
         let pagBotoes = mk.Q(this.c.pagBotoes);
         // Processo de filtro que usa o objFiltro nos dadosFull e retorna dadosFiltrado já filtrado.
-        this.dadosFiltrado = mk.processoFiltragem(this.dadosFull, this.c.objFiltro);
+        this.dadosFiltrado = mk.processoFiltragem(this.dadosFull, this.c.objFiltro, this);
         // Processar calculos de paginacao
         this.atualizarStatusListagem();
         // Apenas executa a atualização do resumo, se a pagBotoes estiver presente na página.
@@ -1731,10 +1731,6 @@ class mk {
     static aoCompletarExibicao = () => { };
     // Metodo que eh executado antes de exibir (PODE SOBREESCREVER NA VIEW)
     static antesDePopularTabela = () => { };
-    // Método Statico da funcao que modifica o start do filtro. Precisa retornar boolean
-    static modicaFiltro = (objeto) => {
-        return true;
-    };
     // Torna ativo o botao que se refere ao paginationAtual
     static ativaPaginaAtual = () => {
         mk.QAll(".paginate_button").forEach((item) => {
@@ -1750,15 +1746,12 @@ class mk {
      * FullFiltroFull - processoFiltragem
      * Executa a redução da listagem basedo no objFiltro.
      */
-    static processoFiltragem = (aTotal, objFiltro) => {
+    static processoFiltragem = (aTotal, objFiltro, inst) => {
         let aFiltrada = [];
         if (Array.isArray(aTotal)) {
             let temp = [];
             aTotal.forEach((o) => {
-                let podeExibir = true; // Verificara cada prop, logica de remocao seletiva.
-                if (this.modicaFiltro) {
-                    podeExibir = this.modicaFiltro(o);
-                }
+                let podeExibir = inst.modicaFiltro(o); // true
                 if (typeof podeExibir != "boolean") {
                     podeExibir = true;
                     mk.warn("modicaFiltro() precisa retornar boolean");
