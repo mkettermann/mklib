@@ -498,6 +498,7 @@ class mk {
         this.clearFiltro();
         this.atualizarListagem();
     };
+    // Retorna o último objeto da lista onde a chave primaria bateu.
     getObj = (valorKey) => {
         let temp = null;
         if (Array.isArray(this.dadosFull)) {
@@ -508,6 +509,34 @@ class mk {
             });
         }
         return temp;
+    };
+    // Retorna uma lista de todos objetos encontrados onde o KV bateu.
+    getObjs = (k, v) => {
+        let array = [];
+        let errNotPresent = false;
+        let errKeyInvalid = false;
+        if (Array.isArray(this.dadosFull)) {
+            if (typeof k === "string") {
+                this.dadosFull.forEach((o) => {
+                    if (k in o) {
+                        if (o[k] == v) {
+                            array.push(o);
+                        }
+                    }
+                    else {
+                        errNotPresent = true;
+                    }
+                });
+            }
+            else {
+                errKeyInvalid = true;
+            }
+        }
+        if (errNotPresent)
+            mk.warn("Erro getObjs(): Key não está presente em um ou mais objetos.");
+        if (errKeyInvalid)
+            mk.warn("Erro getObjs(): Key precisa ser no formato string.");
+        return array;
     };
     setObj = (v, objeto) => {
         let temp = null;
@@ -691,6 +720,13 @@ class mk {
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //			MK FUNCOES UTIL							\\
     //___________________________________\\
+    // Função de log erros ou informacoes
+    static warn = (...s) => {
+        console.warn("> ", ...s);
+    };
+    static log = (...s) => {
+        console.log("> ", ...s);
+    };
     // Atalho para QuerySelector que retorna apenas o primeiro elemento da query.
     static Q = (query) => {
         if (typeof query != "string")
@@ -785,7 +821,7 @@ class mk {
     };
     // Seta todos os query com os valores das propriedades informadas nos campos.
     // O nome da propriedade precisa ser compatível com o PROPNAME do query.
-    static QSetAll = (query = "input[name='#PROP#']", o = null) => {
+    static QSetAll = (query = "input[name='#PROP#']", o = null, comEvento = true) => {
         let eAfetados = [];
         if (o != null) {
             if (typeof o == "object" && !Array.isArray(o)) {
@@ -794,7 +830,12 @@ class mk {
                     if (eDynamicQuery) {
                         if (o[p]) {
                             eDynamicQuery.value = o[p];
-                            eDynamicQuery.classList.add("atualizar");
+                            if (comEvento) {
+                                eDynamicQuery.classList.add("atualizar");
+                            }
+                            else {
+                                eDynamicQuery.classList.add("atualizarSemEvento");
+                            }
                             eAfetados.push(eDynamicQuery);
                         }
                     }
@@ -947,39 +988,6 @@ class mk {
         link.click();
         URL.revokeObjectURL(fileUrl);
         return nomeArquivo;
-    };
-    static mkSelDelRefillProcesso = async (eName, cod = null) => {
-        return new Promise(async (r) => {
-            let e = mk.Q(eName);
-            if (e) {
-                let url = appPath + e.getAttribute("data-refill");
-                cod != null ? (url += cod) : null;
-                let retorno = await mk.http(url, mk.t.G, mk.t.J);
-                if (retorno != null) {
-                    let kv = retorno;
-                    if (typeof retorno == "object") {
-                        kv = JSON.stringify(retorno);
-                        r(e);
-                    }
-                    if (mk.isJson(kv)) {
-                        e.setAttribute("data-selarray", kv);
-                    }
-                    else {
-                        console.error("Resultado não é um JSON. (mkSelDlRefill)");
-                    }
-                }
-            }
-            else {
-                console.warn("Função (mkSelDlRefill) solicitou Refill em um campo inexistente (JS)");
-            }
-        });
-    };
-    static mkSelDlRefill = async (eName, cod, clear = false) => {
-        mk.mkSelDelRefillProcesso(eName, cod).then((e) => {
-            e.classList.add("atualizar");
-            if (clear)
-                e.value = "";
-        });
     };
     // Get Server On
     static getServerOn = async (url = "/Login/GetServerOn") => {
@@ -1947,6 +1955,13 @@ class mk {
         });
         return temPendencia;
     };
+    // Limpar Validates adicionados anteriormente e fazer novamente com os atuais.
+    static FixValidate = (form) => {
+        // Parse + Remove
+        $.validator.unobtrusive.parse($(form).removeData("validator").removeData("unobtrusiveValidation"));
+        // Para modificar campos setados:
+        // $(form).data('unobtrusiveValidation').options.rules
+    };
     // $ Unobtrusive: id do form
     static verificarCampos = (form) => {
         // Fast Parse Call all forms
@@ -2136,13 +2151,24 @@ class mk {
                 let key = ini[i].slice(0, end);
                 if (typeof o == "object" && o != null) {
                     if (key in o) {
-                        let v = o[key];
-                        if (typeof v == "string") {
-                            v = v.replaceAll('"', "&quot;");
-                        }
+                        let v = this.removerAspasDuplas(o[key]);
                         ret += v;
                     }
                     else {
+                        // Verificar Possibilidade de objeto interno
+                        if (key.includes(".")) {
+                            let p = key.split(".");
+                            if (p[0] in o) {
+                                if (typeof o[p[0]] == "object") {
+                                    if (o[p[0]] != null) {
+                                        let v = this.removerAspasDuplas(o[p[0]]?.[p[1]]);
+                                        if (v != null) {
+                                            ret += v;
+                                        }
+                                    }
+                                }
+                            }
+                        }
                         //ret += key;
                     }
                 }
@@ -2407,31 +2433,71 @@ class mk {
                 mk.poppers.push(popperInstance);
             }
             else {
-                // Atualiza a lista com base na classe "atualizar"
+                // Se não tem array, mas tem o refill e entrou para atualizar, faz o processo de refill genérico
+                if (!e.getAttribute("data-selarray") && e.getAttribute("data-refill")) {
+                    await mk.mkSelDelRefillProcesso(e);
+                }
+                // Atualiza a lista com base na classe "atualizar" (Gera Evento input e change)
                 if (e.classList.contains("atualizar")) {
                     e.classList.remove("atualizar");
                     e.classList.add("atualizando");
-                    // Se não tem array, mas tem o refill e entrou para atualizar, faz o processo de refill genérico
-                    if (!e.getAttribute("data-selarray") &&
-                        e.getAttribute("data-refill")) {
-                        await mk.mkSelDelRefillProcesso(e);
-                    }
                     mk.mkSelPopularLista(e);
                     mk.mkSelUpdate(e);
                     // Executa evento, em todos atualizar.
+                    // O evento serve para que ao trocar o 1, o 2 execute input para então o 3 tb ter como saber que é pra atualizar
                     e.dispatchEvent(new Event("input"));
                     e.dispatchEvent(new Event("change"));
+                    e.classList.remove("atualizando");
+                }
+                if (e.classList.contains("atualizarSemEvento")) {
+                    e.classList.remove("atualizarSemEvento");
+                    e.classList.add("atualizando");
+                    mk.mkSelPopularLista(e);
+                    mk.mkSelUpdate(e);
                     e.classList.remove("atualizando");
                 }
                 // Manter index em -1 para não chegar até esse campo
                 e.setAttribute("tabindex", "-1");
                 mk.mkSelTabIndex(e);
-                // Atualiza posição com a mesma frequencia que pesquisa os elementos.
-                mk.poppers.forEach((o) => {
-                    o.update();
-                });
                 //mk.mkSelReposicionar(e.parentElement.children[2]);
             }
+        });
+        // Atualiza posição com a mesma frequencia que pesquisa os elementos.
+        mk.poppers.forEach((o) => {
+            o.update();
+        });
+    };
+    static mkSelDelRefillProcesso = async (eName, cod = null) => {
+        return new Promise(async (r) => {
+            let e = mk.Q(eName);
+            if (e) {
+                let url = appPath + e.getAttribute("data-refill");
+                cod != null ? (url += cod) : null;
+                let retorno = await mk.http(url, mk.t.G, mk.t.J);
+                if (retorno != null) {
+                    let kv = retorno;
+                    if (typeof retorno == "object") {
+                        kv = JSON.stringify(retorno);
+                    }
+                    if (mk.isJson(kv)) {
+                        e.setAttribute("data-selarray", kv);
+                        r(e);
+                    }
+                    else {
+                        console.error("Resultado não é um JSON. (mkSelDlRefill)");
+                    }
+                }
+            }
+            else {
+                console.warn("Função (mkSelDlRefill) solicitou Refill em um campo inexistente (JS)");
+            }
+        });
+    };
+    static mkSelDlRefill = async (eName, cod, clear = true) => {
+        mk.mkSelDelRefillProcesso(eName, cod).then((e) => {
+            if (clear)
+                e.value = "";
+            e.classList.add("atualizar");
         });
     };
     // Quando desativado, precisa desativar o TAB também
@@ -2900,10 +2966,20 @@ class mk {
                 if (KV[0].v != null) {
                     display = KV[0].v;
                 }
-                // Clear Force (Não selecionou)
                 if (display == "-- Selecione --") {
-                    e.value = "";
-                    e.classList.add("atualizar");
+                    // Criado um argumento indicando que o VALOR do campo está dessincronizado com as POSSIBILIDADDES em kv.
+                    e.dataset.selerror = "true";
+                    e.dataset.selerrorMsg =
+                        "O item selecionado não está na lista de possibilidades";
+                    // Clear Force (Não selecionou)
+                    // O Force clear não pode ser usado devido as veses que possui conteúdos previamente inseridos, e este campo é um dependente de outro.
+                    // Talvez seja interessante criar um argumento no campo solicitando isso neste campo
+                    // 	e.value = "";
+                    // 	e.classList.add("atualizar");
+                }
+                else {
+                    e.dataset.selerror = "false";
+                    e.dataset.selerrorMsg = "";
                 }
                 e.nextElementSibling.firstElementChild.value = display;
             }
@@ -2950,7 +3026,7 @@ mk.mkSelRenderizar();
 setInterval(() => {
     mk.mkSelRenderizar();
     mk.mkBotCheck();
-}, 150);
+}, 100);
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //			OBJETOS CONSTANTES					\\
 //___________________________________\\
