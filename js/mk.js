@@ -74,7 +74,6 @@ class mk {
     antesDePopularTabela = () => { };
     modicaFiltro = (obj) => {
         let resultado = true;
-        mk.log("inst modicaFiltro");
         //if(obj.X == "Y") return false;
         return resultado;
     };
