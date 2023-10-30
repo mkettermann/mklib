@@ -81,8 +81,9 @@ class mk {
 	};
 	antesDePopularTabela = () => {};
 	// aoFiltrarTabela
-	aoFiltrarTabela = () => {
+	aoFiltrarTabela = (obj: any) => {
 		let resultado = true;
+		// if(obj.X == "Y") return false;
 		return resultado;
 	};
 	aoCompletarExibicao = () => {};
@@ -1906,6 +1907,11 @@ class mk {
 	// Metodo que eh executado antes de exibir (PODE SOBREESCREVER NA VIEW)
 	static antesDePopularTabela = () => {};
 
+	// Metodo que eh executado DURANTE o filtro (Precisa retornar true)
+	static aoFiltrarTabela = (obj: any) => {
+		return true;
+	};
+
 	// Torna ativo o botao que se refere ao paginationAtual
 	static ativaPaginaAtual = () => {
 		mk.QAll(".paginate_button").forEach((item) => {
@@ -1928,7 +1934,13 @@ class mk {
 			let temp: any[] = [];
 			aTotal.forEach((o) => {
 				let podeExibir = true; // Verificara cada prop, logica de remocao seletiva.
-				podeExibir = this.aoFiltrarTabela(o);
+				if (this.aoFiltrarTabela) {
+					podeExibir = this.aoFiltrarTabela(o);
+				}
+				if (typeof podeExibir != "boolean") {
+					podeExibir = false;
+					mk.warn("aoFiltrarTabela() precisa retornar boolean");
+				}
 				for (let propFiltro in objFiltro) {
 					// Cada Propriedade de Cada Item da Array
 					if (o[propFiltro as keyof typeof o] != null) {
