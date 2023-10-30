@@ -68,6 +68,7 @@ class mk {
 		// Setando Config
 		this.listagemConfigurar(urlOrigem, todaListagem, idModelo, filtro, arg);
 		this.aoReceberDados = arg.aoReceberDados;
+		this.aoFiltrarTabela = arg.aoFiltrarTabela;
 		this.antesDePopularTabela = arg.antesDePopularTabela;
 		this.aoCompletarExibicao = arg.aoCompletarExibicao;
 		// Finaliza Contrutor chamando o método de coleta
@@ -79,6 +80,10 @@ class mk {
 		return objeto;
 	};
 	antesDePopularTabela = () => {};
+	aoFiltrarTabela = () => {
+		let resultado = true;
+		return resultado;
+	};
 	aoCompletarExibicao = () => {};
 	antesDeOrdenar = () => {};
 
@@ -1922,6 +1927,7 @@ class mk {
 			let temp: any[] = [];
 			aTotal.forEach((o) => {
 				let podeExibir = true; // Verificara cada prop, logica de remocao seletiva.
+				podeExibir = this.aoFiltrarTabela(o);
 				for (let propFiltro in objFiltro) {
 					// Cada Propriedade de Cada Item da Array
 					if (o[propFiltro as keyof typeof o] != null) {
