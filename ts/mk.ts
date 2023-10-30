@@ -80,6 +80,7 @@ class mk {
 		return objeto;
 	};
 	antesDePopularTabela = () => {};
+	// aoFiltrarTabela
 	aoFiltrarTabela = () => {
 		let resultado = true;
 		return resultado;
