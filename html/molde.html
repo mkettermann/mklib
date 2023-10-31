@@ -15,7 +15,7 @@
 					Olá ${nome}!<br />
 					Este: ${naoEstouNoObjeto}, nem exibe.<br />
 					<br />hey ${nome}! <br />hey ${nome }! <br />Objeto dentro de Objeto:
-					${temp.temp}!
+					${temp.temp}! <br />Multi Camadas Objeto: ${o.a.b.c}!
 				</div>
 			</td>
 			<td style="vertical-align: top">
@@ -35,6 +35,15 @@
 					name="temp.temp"
 					value="Show!"
 					oninput="aoModificarObjeto(this)"
+				/>
+				<br />
+				<br />Objeto o.a.b.c:
+				<input
+					id="inputTeste3"
+					type="text"
+					name="o.a.b.c"
+					value="InternoMulti"
+					oninput="aoModificarMulti(this)"
 				/>
 			</td>
 			<td style="vertical-align: top"><div class="resultado"></div></td>
@@ -180,6 +189,13 @@ function aoModificarInput(e) {
 	var objeto = {
 		nome: "Seu Zé",
 		temp: { temp: "Show" },
+		o: {
+			a: {
+				b: {
+					c: "InternoMulti",
+				},
+			},
+		},
 	};
 
 	function aoModificarInput(e) {
@@ -190,6 +206,12 @@ function aoModificarInput(e) {
 	function aoModificarObjeto(e) {
 		// Aqui já ocorre um problema de get encadeado
 		objeto.temp.temp = e.value;
+		mk.mkMoldeOA(objeto, "#modelo", ".resultado");
+	}
+
+	function aoModificarMulti(e) {
+		// Aqui já ocorre um problema de get encadeado
+		objeto.o.a.b.c = e.value;
 		mk.mkMoldeOA(objeto, "#modelo", ".resultado");
 	}
 
