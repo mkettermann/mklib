@@ -2145,6 +2145,41 @@ class mk {
         }
         return s;
     };
+    // Retorna o valor do chave informada, podendo ser obj.obj.chave
+    // mk.getV("a.b.c",{a:{b:{c:"d"}}})
+    static getV = (keys, objeto) => {
+        if (typeof objeto == "object") {
+            if (typeof keys == "string") {
+                if (keys.includes(".")) {
+                    // Multi
+                    let ks = keys.split(".");
+                    let lastObj = objeto;
+                    let lastV = {};
+                    // Iterar o Keys, Ver Obj atual e Setar Conteudo;
+                    ks.forEach((k) => {
+                        lastV = lastObj[k];
+                        if (typeof lastV == "object") {
+                            lastObj = lastV;
+                        }
+                    });
+                    return lastV;
+                }
+                else {
+                    // Simples
+                    return objeto[keys];
+                }
+            }
+            else {
+                mk.warn("As chaves precisam estar em formato string (" + typeof keys + ")");
+            }
+        }
+        else {
+            mk.warn("Para ver a chave, o parametro objeto precisa receber um objeto. (" +
+                typeof objeto +
+                ")");
+        }
+        return null;
+    };
     static mkToValue = (mk, o) => {
         let ret = "";
         if (mk.indexOf("${") >= 0) {
@@ -2161,21 +2196,11 @@ class mk {
                         ret += v;
                     }
                     else {
-                        // Verificar Possibilidade de objeto interno
-                        if (key.includes(".")) {
-                            let p = key.split(".");
-                            if (p[0] in o) {
-                                if (typeof o[p[0]] == "object") {
-                                    if (o[p[0]] != null) {
-                                        let v = this.removerAspasDuplas(o[p[0]]?.[p[1]]);
-                                        if (v != null) {
-                                            ret += v;
-                                        }
-                                    }
-                                }
-                            }
+                        // Traduz multi obj em valor formatado.
+                        let v = this.removerAspasDuplas(this.getV(key, o));
+                        if (v != null) {
+                            ret += v;
                         }
-                        //ret += key;
                     }
                 }
                 ret += ini[i].slice(end + 1);
