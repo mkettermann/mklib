@@ -2180,6 +2180,7 @@ class mk {
         }
         return null;
     };
+    // Conversor de "${obj.key}" em valor.
     static mkToValue = (mk, o) => {
         let ret = "";
         if (mk.indexOf("${") >= 0) {
@@ -2191,7 +2192,6 @@ class mk {
                 let end = ini[i].indexOf("}");
                 let key = ini[i].slice(0, end);
                 if (typeof o == "object" && o != null) {
-                    // Traduz multi obj em valor formatado.
                     let v = this.removerAspasDuplas(this.getV(key, o));
                     if (v != null) {
                         ret += v;
