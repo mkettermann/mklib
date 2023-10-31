@@ -872,7 +872,7 @@ class mk {
     static Qison = (query = "body") => {
         return mk.cadaExe(query, (e) => {
             let b = false;
-            if (e.classList.contains("disabled")) {
+            if (!e.classList.contains("disabled")) {
                 b = true;
             }
             return b;
