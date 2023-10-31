@@ -869,6 +869,15 @@ class mk {
             e.setAttribute("tabindex", "-1");
         });
     };
+    static QisOn = (query = "body") => {
+        let result = false;
+        mk.aCadaElemento(query, (e) => {
+            if (e.classList.contains("disabled")) {
+                result = true;
+            }
+        });
+        return result;
+    };
     static QverOn = (query = "body") => {
         return mk.aCadaElemento(query, (e) => {
             e?.classList.remove("oculto");

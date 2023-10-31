@@ -937,6 +937,16 @@ class mk {
 		});
 	};
 
+	static QisOn = (query: any = "body") => {
+		let result = false;
+		mk.aCadaElemento(query, (e: any) => {
+			if (e.classList.contains("disabled")) {
+				result = true;
+			}
+		});
+		return result;
+	};
+
 	static QverOn = (query: HTMLElement | string | null = "body") => {
 		return mk.aCadaElemento(query, (e: any) => {
 			e?.classList.remove("oculto");
