@@ -2394,15 +2394,10 @@ class mk {
 				let end: number = ini[i].indexOf("}");
 				let key: string = ini[i].slice(0, end);
 				if (typeof o == "object" && o != null) {
-					if (key in o) {
-						let v = this.removerAspasDuplas(o[key]);
+					// Traduz multi obj em valor formatado.
+					let v = this.removerAspasDuplas(this.getV(key, o));
+					if (v != null) {
 						ret += v;
-					} else {
-						// Traduz multi obj em valor formatado.
-						let v = this.removerAspasDuplas(this.getV(key, o));
-						if (v != null) {
-							ret += v;
-						}
 					}
 				}
 				ret += ini[i].slice(end + 1);
