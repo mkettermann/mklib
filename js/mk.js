@@ -869,7 +869,7 @@ class mk {
             e.setAttribute("tabindex", "-1");
         });
     };
-    static QisOn = (query = "body") => {
+    static Qison = (query = "body") => {
         let result = false;
         mk.aCadaElemento(query, (e) => {
             if (e.classList.contains("disabled")) {

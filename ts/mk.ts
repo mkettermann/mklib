@@ -937,7 +937,7 @@ class mk {
 		});
 	};
 
-	static QisOn = (query: any = "body") => {
+	static Qison = (query: any = "body") => {
 		let result = false;
 		mk.aCadaElemento(query, (e: any) => {
 			if (e.classList.contains("disabled")) {
