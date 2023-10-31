@@ -938,13 +938,13 @@ class mk {
 	};
 
 	static Qison = (query: any = "body") => {
-		let result = false;
-		mk.aCadaElemento(query, (e: any) => {
+		return mk.cadaExe(query, (e: any) => {
+			let b = false;
 			if (e.classList.contains("disabled")) {
-				result = true;
+				b = true;
 			}
+			return b;
 		});
-		return result;
 	};
 
 	static QverOn = (query: HTMLElement | string | null = "body") => {
@@ -986,6 +986,26 @@ class mk {
 			fn(e);
 			return e;
 		}
+	};
+
+	// Query: String, Element, [Element,Element]
+	// Retorna uma array de resultados de cada execucao
+	static cadaExe = (query: any, fn: Function) => {
+		let retorno: any = [];
+		if (typeof query == "string") {
+			let elementos = mk.QAll(query);
+			elementos.forEach((e) => {
+				retorno.push(fn(e));
+			});
+		} else if (Array.isArray(query)) {
+			query.forEach((e) => {
+				retorno.push(fn(e));
+			});
+		} else {
+			let e = mk.Q(query);
+			retorno.push(fn(e));
+		}
+		return retorno;
 	};
 
 	static QScrollTo = (query: HTMLElement | string = "body") => {
