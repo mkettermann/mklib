@@ -682,6 +682,13 @@ class mk {
 		return this.dadosFull;
 	};
 
+	toString = () => {
+		return JSON.stringify(this.dadosFull, null, "\t");
+	};
+
+	valueOf = () => {
+		return this.dadosFull;
+	};
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 	//			ATRIBUTOS	ESTATICOS					\\
 	//___________________________________\\
@@ -772,6 +779,10 @@ class mk {
 		ano: ["0000", /^([0-2]?([0-9]){3})$/],
 		ip: ["000.000.000.000", /^([0-9]?[0-9]?[0-9]([\.]?[0-9]?[0-9]?[0-9]){3})$/],
 		data: ["0000-00-00", /^([0-9]{4}(-[0-9]{2}){2})$/],
+		dataIso8601: [
+			"0000-00-00T00:00:00.000Z",
+			/^([0-9]{4}(-[0-9]{2}){2}T[0-9]{2}(:[0-9]{2})\.[0-9]{3}Z)$/,
+		],
 	};
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
@@ -2513,6 +2524,8 @@ class mk {
 		if (p?.corSim != undefined) corSim = p.corSim;
 		let corNao = "bCinza";
 		if (p?.corNao != undefined) corNao = p.corNao;
+		let classContainer = "";
+		if (p?.classContainer != undefined) classContainer = p.classContainer;
 		return new Promise((r) => {
 			function verficiarResposta() {
 				let resposta = null;
@@ -2542,7 +2555,8 @@ class mk {
 				let divMkConfirmarNao = document.createElement("button");
 				divMkConfirmarBloco.className = "mkConfirmadorBloco microPos5";
 				divMkConfirmarFora.className = "mkConfirmadorFora";
-				divMkConfirmarArea.className = "mkConfirmadorArea microPos5 tb fsb";
+				divMkConfirmarArea.className =
+					"mkConfirmadorArea microPos5 tb fsb " + classContainer;
 				divMkConfirmarTitulo.className = "mkConfirmadorTitulo";
 				divMkConfirmarTexto.className = "mkConfirmadorTexto";
 				divMkConfirmarBotoes.className = "mkConfirmadorBotoes fsb";
