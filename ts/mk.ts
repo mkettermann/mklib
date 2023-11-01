@@ -678,6 +678,10 @@ class mk {
 		return this.dadosFull.find((o) => o[k] == v);
 	};
 
+	toJSON = () => {
+		return this.dadosFull;
+	};
+
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 	//			ATRIBUTOS	ESTATICOS					\\
 	//___________________________________\\
