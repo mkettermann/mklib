@@ -812,19 +812,43 @@ class mk {
         }
         return true;
     };
-    static comparar = (strMenor, strMaior) => {
-        let result = false;
-        let likeMatcher = new Intl.Collator(undefined, {
-            sensitivity: "base",
-            ignorePunctuation: true,
-        }).compare;
-        if (likeMatcher(strMaior, strMenor) === 0) {
-            result = true;
-            mk.l("LIKE: Menor: ", strMenor, " Maior: ", strMaior);
+    static removeEspecias = (s) => {
+        let r = "";
+        let sS = "áàãâäéèêëíìîïóòõôöúùûüçÁÀÃÂÄÉÈÊËÍÌÎÏÓÒÕÖÔÚÙÛÜÇ";
+        let sN = "aaaaaeeeeiiiiooooouuuucAAAAAEEEEIIIIOOOOOUUUUC";
+        for (let p = 0; p < s.length; p++) {
+            if (sS.indexOf(s.charAt(p)) != -1) {
+                r += sN.charAt(sS.indexOf(s.charAt(p)));
+            }
+            else {
+                r += s.charAt(p);
+            }
         }
+        r = mk.apenasNumerosLetras(r);
+        return r;
+    };
+    // Comparardor de string
+    static comparar = (strMenor, strMaior, like = true) => {
+        let result = false;
+        // Quando for por Like, comparar semelhança
+        if (like) {
+            let rmMaior = mk.removeEspecias(strMaior).toLowerCase();
+            let rmMenor = mk.removeEspecias(strMenor).toLowerCase();
+            if (rmMaior.match(rmMenor)) {
+                result = true;
+            }
+            // Internacionalizador de comparação... (Galês CH e DD e Latin ä))
+            let likeMatcher = new Intl.Collator(undefined, {
+                sensitivity: "base",
+                ignorePunctuation: true,
+            }).compare;
+            if (likeMatcher(strMaior, strMenor) === 0) {
+                result = true;
+            }
+        }
+        // Contem (MENOR está dentro da MAIOR)
         if (strMaior.match(strMenor)) {
             result = true;
-            mk.l("MATC: Menor: ", strMenor, " Maior: ", strMaior);
         }
         return result;
     };
