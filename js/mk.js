@@ -756,11 +756,23 @@ class mk {
         console.groupEnd();
     };
     static ct = (s) => {
-        mk.timers.push(s);
-        console.time(s);
+        let t = mk.timers.find((t) => t.name == s);
+        if (!t) {
+            mk.timers.push({
+                name: s,
+                ini: mk.getMs(),
+                fim: 0,
+                tempo: -1,
+            });
+        }
     };
-    static cte = (...s) => {
-        console.timeEnd(...s);
+    static cte = (s) => {
+        let t = mk.timers.find((t) => t.name == s);
+        if (t.fim == 0) {
+            t.fim = mk.getMs();
+            t.tempo = t.fim - t.ini;
+        }
+        mk.l(s + " \t-> " + t.tempo + " ms");
     };
     // Atalho para QuerySelector que retorna apenas o primeiro elemento da query.
     static Q = (query) => {
