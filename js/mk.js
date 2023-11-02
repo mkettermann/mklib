@@ -67,7 +67,7 @@ class mk {
         // Finaliza Contrutor chamando o método de coleta
         this.getList(arg.importar);
     }
-    // Funcoes Individuais.
+    // Fn Individuais da Listagem.
     aoReceberDados = (objeto) => {
         return objeto;
     };
@@ -450,7 +450,7 @@ class mk {
             }
             this.c.sortBy = propriedade;
         }
-        //console.log("By: ", this.c.sortBy, " | Dir: ", this.c.sortDir);
+        //mk.l("By: ", this.c.sortBy, " | Dir: ", this.c.sortDir);
     };
     // Ordena a lista e atualiza (Direcao: 0,1,2(toogle))
     orderBy = (propriedade, direcao = 2) => {
@@ -536,9 +536,9 @@ class mk {
             }
         }
         if (errNotPresent)
-            mk.warn("Erro getObjs(): Key não está presente em um ou mais objetos.");
+            mk.w("Erro getObjs(): Key não está presente em um ou mais objetos.");
         if (errKeyInvalid)
-            mk.warn("Erro getObjs(): Key precisa ser no formato string.");
+            mk.w("Erro getObjs(): Key precisa ser no formato string.");
         return array;
     };
     setObj = (v, objeto) => {
@@ -651,7 +651,6 @@ class mk {
     static mkFaseAtual = 1;
     static mkCountValidate = 0;
     static debug = 0; // 0 / 1
-    static arrayFuncoes;
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //			TITULOS CONSTANTES					\\
     //___________________________________\\
@@ -737,11 +736,20 @@ class mk {
     //			MK FUNCOES UTIL							\\
     //___________________________________\\
     // Função de log erros ou informacoes
-    static warn = (...s) => {
+    static w = (...s) => {
         console.warn("> ", ...s);
     };
-    static log = (...s) => {
+    static l = (...s) => {
         console.log("> ", ...s);
+    };
+    static cls = () => {
+        console.clear();
+    };
+    static gc = (...s) => {
+        console.groupCollapsed(...s);
+    };
+    static ge = () => {
+        console.groupEnd();
     };
     // Atalho para QuerySelector que retorna apenas o primeiro elemento da query.
     static Q = (query) => {
@@ -778,6 +786,22 @@ class mk {
             return false;
         }
         return true;
+    };
+    static comparar = (strMenor, strMaior) => {
+        let result = false;
+        let likeMatcher = new Intl.Collator(undefined, {
+            sensitivity: "base",
+            ignorePunctuation: true,
+        }).compare;
+        if (likeMatcher(strMaior, strMenor) === 0) {
+            result = true;
+            mk.l("LIKE: Menor: ", strMenor, " Maior: ", strMaior);
+        }
+        if (strMaior.match(strMenor)) {
+            result = true;
+            mk.l("MATC: Menor: ", strMenor, " Maior: ", strMaior);
+        }
+        return result;
     };
     // Verifica se ARRAY ou OBJETO e executa a função FUNC a cada objeto dentro de OA.
     static mkExecutaNoObj = (oa, func) => {
@@ -858,10 +882,10 @@ class mk {
                 }
             }
             else
-                console.warn("QSetAll - Precisa receber um objeto: " + o);
+                mk.w("QSetAll - Precisa receber um objeto: " + o);
         }
         else
-            console.warn("QSetAll - Objeto não pode ser nulo: " + o);
+            mk.w("QSetAll - Objeto não pode ser nulo: " + o);
         return eAfetados;
     };
     static Qon = (query = "body") => {
@@ -1085,7 +1109,7 @@ class mk {
         let isNegado = true;
         for (var i = 0; i < permitido.length; i++) {
             if (permitido[i] == ev.key.toString()) {
-                //console.log(permitido[i] + " == " + ev.key.toString());
+                //mk.l(permitido[i] + " == " + ev.key.toString());
                 isNegado = false;
             }
         }
@@ -1097,12 +1121,12 @@ class mk {
         ev.key == "Tab" ? (isNegado = false) : null; // Liberar Deletar
         if (isNegado) {
             ev.preventDefault();
-            console.warn("Negado");
+            mk.w("Negado");
         }
     };
     // Bloqueios de eventos especificos (varios, exemplo: onContextMenu)
     static mkEventBlock = (ev) => {
-        console.warn("Negado");
+        mk.w("Negado");
         ev.preventDefault();
     };
     // Imprimir e Exportar de ListaPrecos
@@ -1199,12 +1223,12 @@ class mk {
                     leitor.readAsDataURL(arq);
                 }
                 else {
-                    console.log("F: Sem nome de arquivo.", arq);
+                    mk.l("F: Sem nome de arquivo.", arq);
                     r(null);
                 }
             }
             else {
-                console.log("F: Arquivo Nulo.", arq);
+                mk.l("F: Arquivo Nulo.", arq);
                 r(null);
             }
         });
@@ -1796,7 +1820,7 @@ class mk {
                 let podeExibir = inst.modicaFiltro(o); // true
                 if (typeof podeExibir != "boolean") {
                     podeExibir = true;
-                    mk.warn("modicaFiltro() precisa retornar boolean");
+                    mk.w("modicaFiltro() precisa retornar boolean");
                 }
                 for (let propFiltro in objFiltro) {
                     // Cada Propriedade de Cada Item da Array
@@ -1835,7 +1859,7 @@ class mk {
                                 }
                             }
                             else
-                                console.warn("Não é um JSON");
+                                mk.w("Não é um JSON");
                         }
                         else if (k.formato === "number") {
                             // Filtro por numero exado. Apenas exibe este exato numero.
@@ -2016,13 +2040,13 @@ class mk {
         // Fast Parse Call all forms
         $.validator.unobtrusive.parse(document);
         if (mk.Q(form) == null)
-            console.warn("Formulário não encontrado:", form);
+            mk.w("Formulário não encontrado:", form);
         // Buscando validador
         let validador = $.data($(form)[0], "validator");
         if (!validador) {
-            console.warn("Validador inicialmente NULO. Provavelmente nenhum campo estava como requerido.", validador);
+            mk.w("Validador inicialmente NULO. Provavelmente nenhum campo estava como requerido.", validador);
             if (!validador) {
-                console.warn("Parse fail", validador);
+                mk.w("Parse fail", validador);
                 return true;
             }
         }
@@ -2034,7 +2058,7 @@ class mk {
         // Buscando Unobtrusive Validador da microsoft
         let unobtrusiveValidation = $(form).data("unobtrusiveValidation");
         if (!unobtrusiveValidation)
-            console.warn("Unobtrusive nulo", unobtrusiveValidation);
+            mk.w("Unobtrusive nulo", unobtrusiveValidation);
         // Executa validador se ele estiver presente
         var resultado = unobtrusiveValidation?.validate();
         console.info("ModelState é Valido? " + resultado);
@@ -2213,11 +2237,11 @@ class mk {
                 }
             }
             else {
-                mk.warn("As chaves precisam estar em formato string (" + typeof keys + ")");
+                mk.w("As chaves precisam estar em formato string (" + typeof keys + ")");
             }
         }
         else {
-            mk.warn("Para ver a chave, o parametro objeto precisa receber um objeto. (" +
+            mk.w("Para ver a chave, o parametro objeto precisa receber um objeto. (" +
                 typeof objeto +
                 ")");
         }
@@ -2282,14 +2306,14 @@ class mk {
             mk.QAll("body *").forEach(async (e) => {
                 let destino = e.getAttribute("mkInclude");
                 if (destino != null) {
-                    //console.log("Incluindo: " + destino);
+                    //mk.l("Incluindo: " + destino);
                     let retorno = await mk.http(destino, mk.t.G, mk.t.H);
                     if (retorno != null) {
                         e.innerHTML = retorno;
                         //mk.mkNodeToScript(mk.Q(".conteudo"));
                     }
                     else {
-                        console.log("Falhou ao coletar dados");
+                        mk.l("Falhou ao coletar dados");
                     }
                     r(retorno);
                 }
@@ -2318,7 +2342,7 @@ class mk {
                     resposta = true;
                 if (mk.Q(".mkConfirmadorBloco .mkConfirmadorArea .bBotao.icoNao.true"))
                     resposta = false;
-                //console.log("Resposta: " + resposta);
+                //mk.l("Resposta: " + resposta);
                 if (resposta !== null) {
                     mk.Q(".mkConfirmadorBloco .icoSim").classList.remove("true");
                     mk.Q(".mkConfirmadorBloco .icoNao").classList.remove("true");
@@ -2350,7 +2374,7 @@ class mk {
                 divMkConfirmarTexto.innerHTML = texto;
                 divMkConfirmarSim.innerHTML = "Sim";
                 divMkConfirmarNao.innerHTML = "Não";
-                divMkConfirmarFora.setAttribute("onclick", "console.warn('Essa funcionalidade não está disponível no momento.')");
+                divMkConfirmarFora.setAttribute("onclick", "mk.w('Essa funcionalidade não está disponível no momento.')");
                 divMkConfirmarSim.setAttribute("onclick", "this.classList.add(true);");
                 divMkConfirmarNao.setAttribute("onclick", "this.classList.add(true);");
                 mk.Q("body").appendChild(divMkConfirmarBloco);
@@ -2423,7 +2447,7 @@ class mk {
                     }
                 }
                 else {
-                    console.warn("Elemento com 'value' nulo. Esperava-se um link: ", v);
+                    mk.w("Elemento com 'value' nulo. Esperava-se um link: ", v);
                 }
                 e.classList.remove("atualizando");
             }
@@ -2561,7 +2585,7 @@ class mk {
                 }
             }
             else {
-                console.warn("Função (mkSelDlRefill) solicitou Refill em um campo inexistente (JS)");
+                mk.w("Função (mkSelDlRefill) solicitou Refill em um campo inexistente (JS)");
             }
         });
     };
@@ -2817,7 +2841,7 @@ class mk {
     /* EVENTO de Pesquisa (KEYDOWN) */
     static mkSelPesquisaKeyDown = (ev) => {
         let isNegado = false;
-        //console.log(ev);
+        //mk.l(ev);
         if (ev.key == "Escape") {
             ev.srcElement.blur();
         }
@@ -2916,9 +2940,9 @@ class mk {
         Array.from(eList.children).forEach((el) => {
             let exibe = false;
             if (el.classList.contains("mkSelItem")) {
-                if (el.firstElementChild.innerHTML
-                    .toLowerCase()
-                    .match(e.value.toLowerCase())) {
+                let strInputado = e.value.toLowerCase();
+                let strFromKv = el.firstElementChild.innerHTML.toLowerCase();
+                if (mk.comparar(strInputado, strFromKv)) {
                     exibe = true;
                     cVisivel++;
                 }
@@ -3024,7 +3048,7 @@ class mk {
     };
     static mkSelSetDisplay = (e, KV) => {
         if (KV.length <= 0) {
-            console.warn("Não foi possível encontrar os itens selecionados.");
+            mk.w("Não foi possível encontrar os itens selecionados.");
             e.nextElementSibling.firstElementChild.value = "Opções \u{2209}";
         }
         else {
@@ -3076,7 +3100,7 @@ class mk {
                         }
                     }
                     else {
-                        console.log("Falhou ao coletar dados");
+                        mk.l("Falhou ao coletar dados");
                     }
                     r(retorno);
                 }
