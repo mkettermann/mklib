@@ -2763,11 +2763,6 @@ class mk {
             if (el.getAttribute("data-s") == 1 && ePrimeiroSel == null)
                 ePrimeiroSel = el;
         });
-        // Se iniciar no topo, sumir as setas pra cima.
-        // let temOsDeCima =
-        // 	eList.firstElementChild?.classList.contains("mkSelItemDeCima");
-        // if (temOsDeCima && eList.scrollTop == 0)
-        // 	eList.firstElementChild.style.display = "none";
         // Faz movimento no scroll até o primeiro item selecionado
         let primeiroOffSet = ePrimeiroSel?.offsetTop || 0;
         eList.scrollTop =
