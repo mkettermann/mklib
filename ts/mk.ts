@@ -29,6 +29,7 @@ class mk {
 	dadosFiltrado: any = []; // Mesmos dadosFull, mas após filtro.
 	dadosExibidos: any = []; // Clonado de dadosFiltrado, mas apenas os desta pagina.
 	alvo: any = {}; // Guarda o objeto selecionado permitindo manupular outro dado com este de referencia.
+	thisListNum = 0;
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 	//			CONSTRUTOR (contrutor)			\\
@@ -41,8 +42,10 @@ class mk {
 		filtro: any = ".iConsultas",
 		arg: any = null
 	) {
+		this.thisListNum = ++mk.contaListas;
+		if (idModelo == null || idModelo == "") idModelo = "#modelo";
 		// ReSET dos parametros (Null para Valor Padrão)
-		mk.ct("Tempo Listagem (" + idModelo + "): ");
+		mk.ct("Tempo Listagem " + this.thisListNum + " (" + idModelo + "): ");
 		if (urlOrigem == null || urlOrigem === "") {
 			urlOrigem = (
 				mk.delUrlQuery(window.location.href) + "/GetList"
@@ -54,7 +57,6 @@ class mk {
 		}
 		if (todaListagem == null || todaListagem == "")
 			todaListagem = ".divListagemContainer";
-		if (idModelo == null || idModelo == "") idModelo = "#modelo";
 		if (filtro == null || filtro == "") filtro = ".iConsultas";
 		// Objeto de parametros
 		if (arg == null) arg = {};
@@ -225,7 +227,9 @@ class mk {
 			// Remove oculto, caso encontre a tag
 			if (mk.Q(this.c.tableResultado))
 				mk.Q(this.c.tableResultado).classList.remove("oculto");
-			console.timeEnd("Tempo Listagem (" + this.c.idModelo + "): ");
+			mk.cte(
+				"Tempo Listagem " + this.thisListNum + " (" + this.c.idModelo + "): "
+			);
 		}
 	};
 
@@ -692,7 +696,7 @@ class mk {
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 	//			ATRIBUTOS	ESTATICOS					\\
 	//___________________________________\\
-
+	static contaListas = 0;
 	static contaOrdena = 0;
 	static paginationAtual = 1;
 	static objetoSelecionado = {};
@@ -700,6 +704,7 @@ class mk {
 	static mkFaseAtual = 1;
 	static mkCountValidate = 0;
 	static debug = 0; // 0 / 1
+	static timers: any = []; // Array para guardar timers em andamento ou finalizados
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 	//			TITULOS CONSTANTES					\\
@@ -804,10 +809,14 @@ class mk {
 	static ge = () => {
 		console.groupEnd();
 	};
-	static ct = (...s: any) => {
-		console.time(...s);
+	static ct = (s: any) => {
+		mk.timers.push(s);
+		mk.l("Timers: ", mk.timers);
+		console.time(s);
 	};
-
+	static cte = (...s: any) => {
+		console.timeEnd(...s);
+	};
 	// Atalho para QuerySelector que retorna apenas o primeiro elemento da query.
 	static Q = (query: any) => {
 		if (typeof query != "string") return query;
@@ -1842,7 +1851,7 @@ class mk {
 
 		// INFO DEV
 		mk.gc(pacote.method + ": " + url);
-		mk.ct(url);
+		mk.ct("http>" + url);
 		if (mk.debug == 1) {
 			mk.gc(">> Cabecalho do pacote");
 			mk.l(Object.fromEntries(headers.entries()));
@@ -1906,7 +1915,7 @@ class mk {
 					"): " +
 					url
 			);
-			console.timeEnd(url);
+			mk.cte("http>" + url);
 			mk.l(corpo);
 			mk.ge();
 			//if (sucesso != null) sucesso(corpo);
