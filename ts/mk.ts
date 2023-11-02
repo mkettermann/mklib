@@ -885,6 +885,45 @@ class mk {
 		return r;
 	};
 
+	static range = (from: number, to: number): object => {
+		// Obtem-se o acesso a um range de numeros.
+		// Ambos os parametros são necessários: FROM(DE) e TO(PARA)
+		class Range {
+			// Propriedades
+			from: number; // <= Número Inicial
+			to: number; // <= Número Final
+			// Contrutor
+			constructor(from: number, to: number) {
+				this.from = from;
+				this.to = to;
+			}
+			has(x: number) {
+				return typeof x === "number" && this.from <= x && x <= this.to;
+			}
+			// Representação matemática do range.
+			toString() {
+				return `{ x | ${this.from} <= x <= ${this.to} }`;
+			}
+			// Iterator
+			[Symbol.iterator]() {
+				// Individual por Instancia
+				let next = Math.ceil(this.from);
+				let last = this.to;
+				return {
+					next() {
+						// Só avança se não estiver no fim.
+						return next <= last ? { value: next++ } : { done: true };
+					},
+					// Range Iteravel
+					[Symbol.iterator]() {
+						return this;
+					},
+				};
+			}
+		}
+		return new Range(from, to);
+	};
+
 	// Comparardor de string
 	static comparar = (
 		strMenor: string,
