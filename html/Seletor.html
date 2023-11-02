@@ -167,12 +167,31 @@
 			&nbsp; Todos representa vazio, 1 para Sim e 2 para Não. Você pode utilizar
 			JSON para converter ou desconverter nessa propriedade.
 			<br />
-			&nbsp; Você pode alterar o conteúdo desta array em formato string. Mas
-			para o seletor atualizar os valores, você precisará adicionar ao input
-			principal a classe: "atualizar", igual ao exemplo acima e o "atualizar"
-			sumirá sozinho se for detectado.
+			&nbsp;
+			<strong
+				>Você pode alterar o conteúdo desta array em formato string. Mas para o
+				seletor atualizar os valores, você precisará adicionar ao input
+				principal a classe: "atualizar"</strong
+			>, igual ao exemplo acima e o "atualizar" sumirá sozinho se for detectado.
+			Ao atualizar o seletor executará evento de 'input' e 'change'.
+			<br />
+			&nbsp; Caso você modifique o seletor após ele já ter sido renderizado, mas
+			não deseja que lance eventos neste input, adicione a classe
+			"atualizarSemEvento" em vez da classe "atualizar". O efeito é o mesmo, mas
+			pode evitar alguma cascata de eventos pré estabelecidos por você no seu
+			projeto.
 		</div>
-		<div class="quebra">data-selarray=""</div>
+		<div class="quebra">
+			<ol>
+				<li>Atributo:</li>
+				<li>&raquo; data-selarray=""</li>
+				<li>&nbsp;</li>
+				<li>&nbsp;</li>
+				<li>Classes de atualização</li>
+				<li>&raquo; class="atualizar"</li>
+				<li>&raquo; class="atualizarSemEvento"</li>
+			</ol>
+		</div>
 	</li>
 	<li>
 		<u><br />5. Personalizar CSS:</u>
