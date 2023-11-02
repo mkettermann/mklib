@@ -757,7 +757,6 @@ class mk {
     };
     static ct = (s) => {
         mk.timers.push(s);
-        mk.l("Timers: ", mk.timers);
         console.time(s);
     };
     static cte = (...s) => {
