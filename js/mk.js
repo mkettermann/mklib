@@ -32,7 +32,7 @@ class mk {
         if (idModelo == null || idModelo == "")
             idModelo = "#modelo";
         // ReSET dos parametros (Null para Valor Padrão)
-        mk.ct("Tempo Listagem " + this.thisListNum + " (" + idModelo + "): ");
+        mk.ct("Tempo Listagem " + this.thisListNum + " (" + idModelo + ")");
         if (urlOrigem == null || urlOrigem === "") {
             urlOrigem = (mk.delUrlQuery(window.location.href) + "/GetList").replaceAll("//GetList", "/GetList");
         }
@@ -207,7 +207,7 @@ class mk {
             // Remove oculto, caso encontre a tag
             if (mk.Q(this.c.tableResultado))
                 mk.Q(this.c.tableResultado).classList.remove("oculto");
-            mk.cte("Tempo Listagem " + this.thisListNum + " (" + this.c.idModelo + "): ");
+            mk.cte("Tempo Listagem " + this.thisListNum + " (" + this.c.idModelo + ")");
         }
     };
     /**
@@ -764,6 +764,7 @@ class mk {
                 fim: 0,
                 tempo: -1,
             });
+            // console.time(s);
         }
     };
     static cte = (s) => {
@@ -773,6 +774,7 @@ class mk {
             t.tempo = t.fim - t.ini;
         }
         mk.l(s + " \t-> " + t.tempo + " ms");
+        // console.timeEnd(s);
     };
     // Atalho para QuerySelector que retorna apenas o primeiro elemento da query.
     static Q = (query) => {
