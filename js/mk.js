@@ -28,7 +28,7 @@ class mk {
     // É possível construir o objeto usando undefined ou null para atingir os valores padrão.
     constructor(urlOrigem = mk.delUrlQuery(window.location.href) + "/GetList", todaListagem = ".divListagemContainer", idModelo = "#modelo", filtro = ".iConsultas", arg = null) {
         // ReSET dos parametros (Null para Valor Padrão)
-        console.time("Tempo Listagem (" + idModelo + "): ");
+        mk.ct("Tempo Listagem (" + idModelo + "): ");
         if (urlOrigem == null || urlOrigem === "") {
             urlOrigem = (mk.delUrlQuery(window.location.href) + "/GetList").replaceAll("//GetList", "/GetList");
         }
@@ -735,7 +735,7 @@ class mk {
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //			MK FUNCOES UTIL							\\
     //___________________________________\\
-    // Função de log erros ou informacoes
+    // Classes do Console.
     static w = (...s) => {
         console.warn("> ", ...s);
     };
@@ -750,6 +750,9 @@ class mk {
     };
     static ge = () => {
         console.groupEnd();
+    };
+    static ct = (...s) => {
+        console.time(...s);
     };
     // Atalho para QuerySelector que retorna apenas o primeiro elemento da query.
     static Q = (query) => {
@@ -836,9 +839,9 @@ class mk {
             form = mk.Q(este);
         }
         let rObjeto = mk.mkLimparOA(Object.fromEntries(new FormData(form).entries()));
-        console.groupCollapsed("Objeto Gerado: ");
-        console.info(rObjeto);
-        console.groupEnd();
+        mk.gc("Objeto Gerado: ");
+        mk.l(rObjeto);
+        mk.ge();
         return rObjeto;
     };
     static QSet = (query = "body", valor = null) => {
@@ -1673,43 +1676,43 @@ class mk {
             this.CarregarON();
         }
         // INFO DEV
-        console.groupCollapsed(pacote.method + ": " + url);
-        console.time(url);
+        mk.gc(pacote.method + ": " + url);
+        mk.ct(url);
         if (mk.debug == 1) {
-            console.groupCollapsed(">> Cabecalho do pacote");
-            console.info(Object.fromEntries(headers.entries()));
-            console.groupCollapsed(">> Pacote full");
-            console.info(pacote);
-            console.groupEnd();
-            console.groupEnd();
+            mk.gc(">> Cabecalho do pacote");
+            mk.l(Object.fromEntries(headers.entries()));
+            mk.gc(">> Pacote full");
+            mk.l(pacote);
+            mk.ge();
+            mk.ge();
         }
         if (metodo == mk.t.P) {
-            console.groupCollapsed(">> Objeto Enviado (Body)");
+            mk.gc(">> Objeto Enviado (Body)");
             console.group(">>> Dados de entrada");
-            console.info(dados);
-            console.groupEnd();
-            console.groupCollapsed(">>> Processado em String");
-            console.info(body?.toString());
-            console.groupEnd();
+            mk.l(dados);
+            mk.ge();
+            mk.gc(">>> Processado em String");
+            mk.l(body?.toString());
+            mk.ge();
             if (typeof dados == "object") {
                 if (dados.entries != null) {
-                    console.groupCollapsed(">>> Form Object");
-                    console.info(Object.fromEntries(dados.entries()));
-                    console.groupEnd();
+                    mk.gc(">>> Form Object");
+                    mk.l(Object.fromEntries(dados.entries()));
+                    mk.ge();
                 }
             }
-            console.groupEnd();
+            mk.ge();
         }
-        console.groupEnd();
+        mk.ge();
         // EXECUCAO
         let corpo = null;
         try {
             const pacoteHttp = await fetch(url, pacote);
             if (!pacoteHttp.ok) {
-                console.groupCollapsed("HTTP RETURNO: " + pacoteHttp.status + " " + pacoteHttp.statusText);
+                mk.gc("HTTP RETURNO: " + pacoteHttp.status + " " + pacoteHttp.statusText);
                 console.error("HTTP RETURNO: Não retornou 200.");
-                console.info(await pacoteHttp.text()); // Exibir o erro no console;
-                console.groupEnd();
+                mk.l(await pacoteHttp.text()); // Exibir o erro no console;
+                mk.ge();
                 if (carregador) {
                     this.CarregarOFF();
                 }
@@ -1730,21 +1733,21 @@ class mk {
             if (carregador) {
                 this.CarregarOFF();
             }
-            console.groupCollapsed("Retorno (" +
+            mk.gc("Retorno (" +
                 pacote.method +
                 " " +
                 tipo.toUpperCase().split("/")[1] +
                 "): " +
                 url);
             console.timeEnd(url);
-            console.info(corpo);
-            console.groupEnd();
+            mk.l(corpo);
+            mk.ge();
             //if (sucesso != null) sucesso(corpo);
         }
         catch (error) {
-            console.groupCollapsed("HTTP ERRO: ");
+            mk.gc("HTTP ERRO: ");
             console.error("Erro: ", error);
-            console.groupEnd();
+            mk.ge();
             if (carregador) {
                 this.CarregarOFF();
             }
@@ -2061,7 +2064,7 @@ class mk {
             mk.w("Unobtrusive nulo", unobtrusiveValidation);
         // Executa validador se ele estiver presente
         var resultado = unobtrusiveValidation?.validate();
-        console.info("ModelState é Valido? " + resultado);
+        mk.l("ModelState é Valido? " + resultado);
         resultado ? null : mk.TerremotoErros(form);
         return resultado;
     };
@@ -3096,7 +3099,7 @@ class mk {
                         catch (error) {
                             console.group("Auto Import por TAG lancou erros:");
                             console.error("ERRO: ", error);
-                            console.groupEnd();
+                            mk.ge();
                         }
                     }
                     else {
