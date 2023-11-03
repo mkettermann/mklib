@@ -337,10 +337,10 @@ ul.tabela li div.quebra {
 	border-bottom: 1px solid var(--tTextoHigh);
 }
 ul.tabela li div.quebra:nth-child(1) {
-	flex: 0 0 70%;
+	flex: 0 0 60%;
 }
 ul.tabela li div.quebra:nth-child(2) {
-	flex: 0 0 30%;
+	flex: 0 0 40%;
 }
 ul.tabela li:nth-child(1) div.quebra {
 	font-weight: bold;
