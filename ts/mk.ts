@@ -2093,6 +2093,7 @@ class mk {
 	/**
 	 * FullFiltroFull - processoFiltragem
 	 * Executa a redução da listagem basedo no objFiltro.
+	 * Usando modificaFiltro(), pode-se filtrar o objeto da lista também.
 	 */
 	static processoFiltragem = (aTotal: any, objFiltro: any, inst: any) => {
 		let aFiltrada = [];
