@@ -3094,6 +3094,66 @@ class mk {
         // Seta Valor do display
         mk.mkSelSetDisplay(e, KV);
     };
+    // SET a ARRAY do SELETOR, formato MAP (Recebe array de arrays)
+    static mkSelArraySetMap = (e, map) => {
+        if (e) {
+            if (map instanceof Map) {
+                let kv = [];
+                for (let [k, v] of map) {
+                    kv.push({
+                        k: k,
+                        v: v,
+                    });
+                }
+                mk.mkSelArraySetKV(e, kv);
+            }
+            else {
+                mk.w("Função mkSelArraySetMap() precisa receber um objeto formato Map no segundo parametro");
+            }
+            return e;
+        }
+        else {
+            mk.w("Função mkSelArraySetMap() precisa receber o elemento no primeiro parametro");
+            return null;
+        }
+    };
+    // SET a ARRAY do SELETOR, formato KV (Recebe uma array de objetos)
+    static mkSelArraySetKV = (e, kv) => {
+        let kvj = JSON.stringify(kv);
+        e.dataset.selarray = kvj;
+        e.classList.add("atualizarSemEvento");
+        return e;
+    };
+    // GET do ARRAY do SELETOR, formato MAP
+    static mkSelArrayGetMap = (e) => {
+        let kvs = e.dataset.selarray;
+        let map = [];
+        if (mk.isJson(kvs)) {
+            let kv = JSON.parse(kvs);
+            kv.forEach((o) => {
+                map.push([o.k, o.v]);
+            });
+        }
+        return new Map(map);
+    };
+    // GET do ARRAY do SELETOR, formato KV
+    static mkSelArrayGetKV = (e) => {
+        let kv = e.dataset.selarray;
+        if (mk.isJson(kv)) {
+            kv = JSON.parse(kv);
+        }
+        return kv;
+    };
+    // GET do ATUAL SELECIONADO do SELETOR, formato MAP
+    static mkSelGetMap = (e) => {
+        let kv = mk.mkSelGetKV(e);
+        let map = [];
+        kv.forEach((o) => {
+            map.push([o.k, o.v]);
+        });
+        return new Map(map);
+    };
+    // GET do ATUAL SELECIONADO do SELETOR, formato KV
     // Retorna o Objeto em formato KV dos itens selecionados do elemento E
     static mkSelGetKV = (e) => {
         let kSels;
@@ -3114,8 +3174,8 @@ class mk {
         else
             kSels = [{ k: e.value }];
         // Prepara lista de Opções para iterar
-        if (mk.isJson(e.getAttribute("data-selarray"))) {
-            kOpcoes = JSON.parse(e.getAttribute("data-selarray"));
+        if (mk.isJson(e.dataset.selarray)) {
+            kOpcoes = JSON.parse(e.dataset.selarray);
             if (!Array.isArray(kOpcoes)) {
                 kOpcoes = [{ k: kOpcoes, v: "\u{2209} Opções" }];
             }
@@ -3150,11 +3210,6 @@ class mk {
                     e.dataset.selerror = "true";
                     e.dataset.selerrorMsg =
                         "O item selecionado não está na lista de possibilidades";
-                    // Clear Force (Não selecionou)
-                    // O Force clear não pode ser usado devido as veses que possui conteúdos previamente inseridos, e este campo é um dependente de outro.
-                    // Talvez seja interessante criar um argumento no campo solicitando isso neste campo
-                    // 	e.value = "";
-                    // 	e.classList.add("atualizar");
                 }
                 else {
                     e.dataset.selerror = "false";
