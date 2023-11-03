@@ -100,28 +100,37 @@
 		<div class="tableResumo" mkImportar="/html/_resumoListaNovo.html"></div>
 	</div>
 	<br />
-	<div class="iComGap">
-		<div class="col30">
+	<div class="i">
+		<div class="col40">
 			<div class="i">
-				<div class="col60">Filtro Usuário:</div>
-				<div class="col40">
+				<div class="col25">Data Inicio:</div>
+				<div class="col25">
 					<input
-						name="mNome"
+						name="mDataUltimoAcesso"
+						type="date"
 						class="iConsultas"
-						data-mkfformato="string"
-						placeholder="Nome do Usuario"
+						data-mkfformato="date"
+						data-mkfoperador=">="
+						value=""
+					/>
+				</div>
+				<div class="col25">Data Fim:</div>
+				<div class="col25">
+					<input
+						name="mDataUltimoAcesso"
+						type="date"
+						class="iConsultas"
+						data-mkfformato="date"
 						value=""
 					/>
 				</div>
 			</div>
 		</div>
 		<div class="col20">
-			<div class="i microPos6">
+			<div class="i microPos5">
 				<button onclick="uiGetADD(0,'Listagem 1')">Adicionar</button>
 			</div>
-		</div>
-		<div class="col20">
-			<div class="i microPos4">
+			<div class="i microPos5">
 				<button onclick="uiClearFiltro(0)">Limpar Filtros</button>
 			</div>
 		</div>

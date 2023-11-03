@@ -14,6 +14,16 @@ var lista3 = new mk("/GetList3", "#tabela3", "#modelo3", ".fTabela3");
 //Basta a funcão enviar o id correto para o Set ser na lista correta.
 var listas = [lista, lista2, lista3]; //(Lista 3 está na posicao 2)
 
+// Aqui modificamos a exibicao de um campo por outro formato
+lista.antesDePopularTabela = () => {
+	// Aplicar em Dados Exibidos,
+	// pois esta array é apenas a que o usuário vê,
+	// então preserva os dados originais.
+	lista.dadosExibidos.forEach((o) => {
+		o.mDataUltimoAcesso = mk.mkYYYYMMDDtoDDMMYYYY(o.mDataUltimoAcesso);
+	});
+};
+
 // CRUD LISTAGEM 1
 var uiGetADD = async (listId, strListagem) => {
 	mk.QverOn(".operacaoContainer");
@@ -82,6 +92,6 @@ var uiSetDEL = async (k, v, listId) => {
 };
 var uiClearFiltro = async (listId) => {
 	// Método de LIMPAR FILTRO da biblioteca:
-	listas[listId].clearFiltro();
+	listas[listId].clearFiltroUpdate();
 	mk.QverOff(".operacaoContainer");
 };
