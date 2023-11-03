@@ -1761,7 +1761,7 @@ class mk {
         }
         // INFO DEV
         mk.gc(pacote.method + ": " + url);
-        mk.ct("http>" + url);
+        mk.ct("Request: " + url);
         if (mk.debug == 1) {
             mk.gc(">> Cabecalho do pacote");
             mk.l(Object.fromEntries(headers.entries()));
@@ -1823,7 +1823,7 @@ class mk {
                 tipo.toUpperCase().split("/")[1] +
                 "): " +
                 url);
-            mk.cte("http>" + url);
+            mk.cte("Request: " + url);
             mk.l(corpo);
             mk.ge();
             //if (sucesso != null) sucesso(corpo);
