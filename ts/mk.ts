@@ -795,10 +795,10 @@ class mk {
 
 	// Classes do Console.
 	static w = (...s: any) => {
-		console.warn("> ", ...s);
+		console.warn(...s);
 	};
 	static l = (...s: any) => {
-		console.log("> ", ...s);
+		console.log(...s);
 	};
 	static cls = () => {
 		console.clear();
@@ -1946,10 +1946,10 @@ class mk {
 		}
 		if (metodo == mk.t.P) {
 			mk.gc(">> Objeto Enviado (Body)");
-			console.group(">>> Dados de entrada");
+			console.group(">> Dados transmitidos");
 			mk.l(dados);
 			mk.ge();
-			mk.gc(">>> Processado em String");
+			mk.gc(">> JSON String");
 			mk.l(body?.toString());
 			mk.ge();
 			if (typeof dados == "object") {
