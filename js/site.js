@@ -21,7 +21,7 @@ const aoIncrementar = async (e) => {
 		return novoValor;
 	}
 	let alvo = e?.previousElementSibling;
-	mk.mkConfirma("Aumentr 1 unidade. Tem Certeza?").then((r) => {
+	mk.mkConfirma("Aumentar 1 unidade. Tem Certeza?").then((r) => {
 		r ? edit(alvo, Number(alvo?.value) + 1) : console.log("Você não confirmou");
 	});
 };

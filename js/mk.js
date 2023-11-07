@@ -152,6 +152,20 @@ class mk {
             sortDir = 1;
         this.setDirSort(sortBy, Number(sortDir));
     };
+    // Iterator
+    [Symbol.iterator]() {
+        let iteratorArray = this.dadosFull[Symbol.iterator]();
+        // Iteration result
+        return {
+            next() {
+                return iteratorArray.next();
+            },
+            // Iterable
+            [Symbol.iterator]() {
+                return this;
+            },
+        };
+    }
     // Criar eventos para UI permitindo o usuario interagir com a tabela.
     configurarUI = () => {
         if (mk.Q(this.c.divTabela)) {
