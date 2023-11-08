@@ -2550,7 +2550,7 @@ class mk {
                         e.innerHTML = "<img src='" + v + "' class='mkCem'>";
                     }
                     // Ao concluir, tenta executar atributo onchange, se houver
-                    let funcaoChange = e.dataset.onchange;
+                    let funcaoChange = e.onchange;
                     mk.l("Change: ", funcaoChange);
                 }
                 else {
