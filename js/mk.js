@@ -2518,8 +2518,10 @@ class mk {
     static mkBotCheck = async () => {
         mk.QAll("button.mkBot").forEach(async (e) => {
             // Apenas quando contem Atualizar
-            if (e.classList.contains("atualizar")) {
+            let geraEvento = e.classList.contains("atualizarSemEvento");
+            if (e.classList.contains("atualizar") || geraEvento) {
                 e.classList.remove("atualizar");
+                e.classList.remove("atualizarSemEvento");
                 e.classList.add("atualizando");
                 // - Remove conteudo
                 e.innerHTML = "";
@@ -2550,8 +2552,10 @@ class mk {
                         e.innerHTML = "<img src='" + v + "' class='mkCem'>";
                     }
                     // Ao concluir, tenta executar atributo onchange, se houver
-                    let funcaoChange = e.onchange;
-                    mk.l("Change: ", funcaoChange);
+                    if (geraEvento) {
+                        let funcaoChange = e.onchange;
+                        funcaoChange();
+                    }
                 }
                 else {
                     mk.w("Elemento com 'value' nulo. Esperava-se conteudo: ", v);

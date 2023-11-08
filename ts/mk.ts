@@ -82,15 +82,15 @@ class mk {
 	aoReceberDados = (objeto: object) => {
 		return objeto;
 	};
-	antesDePopularTabela = () => {};
+	antesDePopularTabela = () => { };
 
 	modicaFiltro = (obj: any) => {
 		let resultado = true;
 		//if(obj.X == "Y") return false;
 		return resultado;
 	};
-	aoCompletarExibicao = () => {};
-	antesDeOrdenar = () => {};
+	aoCompletarExibicao = () => { };
+	antesDeOrdenar = () => { };
 
 	// Por garantia a funcao async para o carregador da lista esperar a funcao concluir.
 	antesDeOrdenarAsync = async () => {
@@ -169,20 +169,20 @@ class mk {
 		this.setDirSort(sortBy, Number(sortDir));
 	};
 
-// Iterator
-[Symbol.iterator]() {
-	let iteratorArray = this.dadosFull[Symbol.iterator]();
-	// Iteration result
-	return {
-		next() {
-			return iteratorArray.next();
-		},
-		// Iterable
-		[Symbol.iterator]() {
-			return this;
-		},
-	};
-}
+	// Iterator
+	[Symbol.iterator]() {
+		let iteratorArray = this.dadosFull[Symbol.iterator]();
+		// Iteration result
+		return {
+			next() {
+				return iteratorArray.next();
+			},
+			// Iterable
+			[Symbol.iterator]() {
+				return this;
+			},
+		};
+	}
 
 	// Criar eventos para UI permitindo o usuario interagir com a tabela.
 	configurarUI = () => {
@@ -2008,11 +2008,11 @@ class mk {
 			}
 			mk.gc(
 				"Retorno (" +
-					pacote.method +
-					" " +
-					tipo.toUpperCase().split("/")[1] +
-					"): " +
-					url
+				pacote.method +
+				" " +
+				tipo.toUpperCase().split("/")[1] +
+				"): " +
+				url
 			);
 			mk.cte("Request: " + url);
 			mk.l(corpo);
@@ -2088,10 +2088,10 @@ class mk {
 	};
 
 	// Metodo que eh executado ao completar a exibicao (PODE SOBREESCREVER NA VIEW)
-	static aoCompletarExibicao = () => {};
+	static aoCompletarExibicao = () => { };
 
 	// Metodo que eh executado antes de exibir (PODE SOBREESCREVER NA VIEW)
-	static antesDePopularTabela = () => {};
+	static antesDePopularTabela = () => { };
 
 	// Torna ativo o botao que se refere ao paginationAtual
 	static ativaPaginaAtual = () => {
@@ -2558,8 +2558,8 @@ class mk {
 		} else {
 			mk.w(
 				"Para ver a chave, o parametro objeto precisa receber um objeto. (" +
-					typeof objeto +
-					")"
+				typeof objeto +
+				")"
 			);
 		}
 		return null;
@@ -2745,12 +2745,14 @@ class mk {
 	//___________________________________\\
 	// Botao incluido uma imagem/pdf visualizavel e clicavel.
 	// Valor inicial no value, quando não presente, exibe data-value.	
-	static elementoDuranteUpload:any;
+	static elementoDuranteUpload: any;
 	static mkBotCheck = async () => {
-		mk.QAll("button.mkBot").forEach(async (e) => {
+		mk.QAll("button.mkBot").forEach(async (e: any) => {
 			// Apenas quando contem Atualizar
-			if (e.classList.contains("atualizar")) {
+			let geraEvento = e.classList.contains("atualizarSemEvento");
+			if (e.classList.contains("atualizar") || geraEvento) {
 				e.classList.remove("atualizar");
+				e.classList.remove("atualizarSemEvento");
 				e.classList.add("atualizando");
 				// - Remove conteudo
 				e.innerHTML = "";
@@ -2783,13 +2785,15 @@ class mk {
 					}
 
 					// Ao concluir, tenta executar atributo onchange, se houver
-					let funcaoChange = e.onchange;
-					mk.l("Change: ",funcaoChange);
+					if (geraEvento) {
+						let funcaoChange = e.onchange;
+						funcaoChange();
+					}
 
 				} else {
 					mk.w("Elemento com 'value' nulo. Esperava-se conteudo: ", v);
 				}
-								e.classList.remove("atualizando");
+				e.classList.remove("atualizando");
 			}
 		});
 	};
