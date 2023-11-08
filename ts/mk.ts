@@ -2749,8 +2749,8 @@ class mk {
 	static mkBotCheck = async () => {
 		mk.QAll("button.mkBot").forEach(async (e: any) => {
 			// Apenas quando contem Atualizar
-			let geraEvento = e.classList.contains("atualizarSemEvento");
-			if (e.classList.contains("atualizar") || geraEvento) {
+			let semEvento = e.classList.contains("atualizarSemEvento");
+			if (e.classList.contains("atualizar") || semEvento) {
 				e.classList.remove("atualizar");
 				e.classList.remove("atualizarSemEvento");
 				e.classList.add("atualizando");
@@ -2785,9 +2785,8 @@ class mk {
 					}
 
 					// Ao concluir, tenta executar atributo onchange, se houver
-					if (geraEvento) {
-						let funcaoChange = e.onchange;
-						funcaoChange();
+					if (!semEvento) {
+						e.onchange();
 					}
 
 				} else {
