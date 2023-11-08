@@ -2513,6 +2513,7 @@ class mk {
     //			MK Botao Imagem (mkBot)			\\
     //___________________________________\\
     // Botao incluido uma imagem/pdf visualizavel e clicavel.
+    // Valor inicial no value, quando não presente, exibe data-value.
     static mkBotCheck = async () => {
         mk.QAll("button.mkBot").forEach(async (e) => {
             // Apenas quando contem Atualizar
