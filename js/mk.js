@@ -2549,9 +2549,12 @@ class mk {
                         // - Se for outro poem imagem no inner.
                         e.innerHTML = "<img src='" + v + "' class='mkCem'>";
                     }
+                    // Ao concluir, tenta executar atributo onchange, se houver
+                    let funcaoChange = e.dataset.onchange;
+                    mk.l("Change: ", funcaoChange);
                 }
                 else {
-                    mk.w("Elemento com 'value' nulo. Esperava-se um link: ", v);
+                    mk.w("Elemento com 'value' nulo. Esperava-se conteudo: ", v);
                 }
                 e.classList.remove("atualizando");
             }
