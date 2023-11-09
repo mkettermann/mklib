@@ -2786,7 +2786,9 @@ class mk {
 
 					// Ao concluir, tenta executar atributo onchange, se houver
 					if (!semEvento) {
-						e.onchange();
+						if (e.onchange) {
+							e.onchange();
+						}
 					}
 
 				} else {
