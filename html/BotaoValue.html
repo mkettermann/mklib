@@ -1,0 +1,76 @@
+<h1 class="microPos2 h1">Botão Value Objeto</h1>
+<div class="microPos5">
+<!-- MKBOT: Ao Atualizar, Exibe Imagem/PDF do value no botão, mantendo o botão clicável -->
+<button name="urlImg"
+  data-value="/img/mkico.jpg"
+  value="/img/mkico.pdf"
+  class="mkBot imgArea iNovo microPos5 atualizarSemEvento"
+  onclick="console.log('CLICOU NO BOTAO')"
+  onchange="console.log('ONCHANGE FOI EXECUTADO')"
+  title="Clique Aqui"
+  type="button"></button>
+</div>
+<br />
+<br />
+<div class="fullCodigoContainer microPos5">
+	<div class="i codigoContainer">
+		<div class="titulo">Modo de uso - HTML</div>
+		<textarea class="regua" rows="8" cols="1" readonly>
+1
+2
+3
+4
+5
+6
+7
+8
+9</textarea
+		>
+		<textarea
+			class="codigo"
+			rows="8"
+			cols="100"
+			onfocus="mk.mkSelecionarInner(this)"
+			readonly
+		>
+<button name="urlImg"
+  data-value="/img/mkico.jpg"
+  value="/img/mkico.pdf"
+  class="mkBot imgArea iNovo microPos5 atualizarSemEvento"
+  onclick="console.log('CLICOU NO BOTAO')"
+  onchange="console.log('ONCHANGE FOI EXECUTADO')"
+  title="Enviar Imagem"
+  type="button"></button></textarea
+		>
+	</div>
+</div>
+<!-- O script está em Site, pois se eu colocar aqui, dará eval toda vez -->
+
+<br />
+<ul class="tabela">
+	<li>
+		<div class="quebra">Funcionalidades</div>
+		<div class="quebra">Modo de uso</div>
+	</li>
+	<li>
+		<u><br />1. Sobre o básico/padrão:</u>
+	</li>
+	<li>
+		<div class="quebra">
+			&nbsp; Trata-se de um elemento html de uso comum (button) com características diferenciadas.
+			<br /><br />
+			&nbsp; Ao utilizar a classe mkBot no elemento button, a biblioteca irá modificar o conteúdo do botão &lg;button&gt;CONTEUDO&lg;/button&gt; pelo valor inicial do argumento do botão data-value.
+			<br /><br />
+			&nbsp; Se houver value (não é nativo do button) no elemento, o botão processará um algorítmo de verificação deste conteúdo e se ele for um PDF ou IMAGEM, ele colocará estes dentro do botão, de forma que o usuário consiga clicar no botão sem selecionar o conteudo do pdf ou imagem.
+			<br /><br />
+			&nbsp; Ao clicar executa-se o onclick e ao receber a classe "atualizar", o elemento executará onchange (não é nativo do button) do botão e fará a verificação do conteúdo do value para o algorítmo de exibição do PDF.
+		</div>
+		<div class="quebra">
+			Em função Javascript
+			<br /><br />
+			&nbsp; <u>Pré-Requisitos:</u>
+			<br />
+			&raquo; A biblioteca precisa estar iniciada.
+		</div>
+	</li>
+</ul>

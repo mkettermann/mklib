@@ -2778,10 +2778,10 @@ class mk {
 					// Troca o inner
 					if (tipo == "pdf") {
 						// - Se for PDF, coloca um objeto no inner
-						e.innerHTML = "<object data='" + v + "' class='mkCem'>";
+						e.innerHTML = "<object type='text/html' width='100' height='100' data='" + v + "' class='mkCem'></object><div class='mkBotSobre'></div>";
 					} else {
 						// - Se for outro poem imagem no inner.
-						e.innerHTML = "<img src='" + v + "' class='mkCem'>";
+						e.innerHTML = "<img src='" + v + "' class='mkCem'><div class='mkBotSobre'></div>";
 					}
 
 					// Ao concluir, tenta executar atributo onchange, se houver
