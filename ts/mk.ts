@@ -2888,9 +2888,7 @@ class mk {
 				/* ITENS */
 				kvList.forEach((o: any) => {
 					if (o.v != null && o.v != "") {
-						let strInputado = e.value.toLowerCase().trim();
-						let strFromKv = o.v.toLowerCase().trim();
-						if (mk.comparar(strInputado, strFromKv) && strInputado !== strFromKv) {
+						if (mk.comparar(e.value, o.v) && e.value.trim() != o.v.trim()) {
 							c++;
 							let item = document.createElement("div");
 							let itemTexto = document.createElement("span");
