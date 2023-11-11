@@ -949,8 +949,8 @@ class mk {
 
 		// Quando for por Like, comparar semelhança
 		if (like) {
-			let rmMaior = mk.removeEspecias(strMaior).toLowerCase();
-			let rmMenor = mk.removeEspecias(strMenor).toLowerCase();
+			let rmMaior = mk.removeEspecias(strMaior).toLowerCase().trim();
+			let rmMenor = mk.removeEspecias(strMenor).toLowerCase().trim();
 			if (rmMaior.match(rmMenor)) {
 				result = true;
 			}
@@ -2814,6 +2814,135 @@ class mk {
 	};
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+	//			MK Recomendador (mkRec)			\\
+	//___________________________________\\
+
+	static mkRecRenderizar = async () => {
+		mk.QAll("input.mkRec").forEach(async (e) => {
+			// Gerar Elemento de recomendações
+			if (!e.nextElementSibling?.classList.contains("mkRecList")) {
+				let ePai: any = e.parentElement;
+				let ePos = Array.from(ePai?.children).indexOf(e);
+				let divMkRecList = document.createElement("div");
+				divMkRecList.className = "mkRecList emFoco";
+				divMkRecList.setAttribute("tabindex", "-1");
+				ePai?.insertBefore(divMkRecList, ePai?.children[ePos + 1]);
+				e.setAttribute(
+					"oninput",
+					"mk.mkRecUpdate(this)"
+				);
+				e.setAttribute(
+					"onfocus",
+					"mk.mkRecFoco(this,true)"
+				);
+				e.setAttribute(
+					"onblur",
+					"mk.mkRecFoco(this,false)"
+				);
+				const popperInstance: any = Popper.createPopper(
+					e,
+					divMkRecList,
+					{
+						placement: "bottom-start",
+						strategy: "fixed",
+						modifiers: [],
+					}
+				);
+				mk.poppers.push(popperInstance);
+
+				mk.mkRecUpdate(e);
+			} else {
+				if (!e.getAttribute("data-selarray") && e.getAttribute("data-refill")) {
+					//await mk.mkRecDelRefillProcesso(e as HTMLElement);
+				}
+				let geraEvento = false;
+				if (e.classList.contains("atualizar")) geraEvento = true;
+				// Atualiza a lista com base na classe "atualizar" (Gera Evento input e change)
+				if (e.classList.contains("atualizar") || e.classList.contains("atualizarSemEvento")) {
+					e.classList.remove("atualizar");
+					e.classList.remove("atualizarSemEvento");
+					e.classList.add("atualizando");
+					mk.mkRecUpdate(e)
+					e.classList.remove("atualizando");
+				}
+				if (geraEvento) {
+					// Executa evento, em todos atualizar.
+					// O evento serve para que ao trocar o 1, o 2 execute input para então o 3 tb ter como saber que é pra atualizar
+					e.dispatchEvent(new Event("input"));
+					e.dispatchEvent(new Event("change"));
+				}
+			}
+		});
+	};
+
+	static mkRecUpdate = (e: any) => {
+		// Recebe o elemento input principal.
+		// GERA CADA ITEM DA LISTA COM BASE NO JSON
+		if (e?.getAttribute("data-selarray") != "") {
+			let eList = e.nextElementSibling;
+			let array = e.dataset.selarray;
+			eList.innerHTML = "";
+			if (mk.isJson(array)) {
+				let kvList = JSON.parse(array);
+				let c = 0;
+				/* ITENS */
+				kvList.forEach((o: any) => {
+					if (o.v != null && o.v != "") {
+						let strInputado = e.value.toLowerCase().trim();
+						let strFromKv = o.v.toLowerCase().trim();
+						if (mk.comparar(strInputado, strFromKv) && strInputado !== strFromKv) {
+							c++;
+							let item = document.createElement("div");
+							let itemTexto = document.createElement("span");
+							item.className = "recItem";
+							item.setAttribute("data-k", o.k);
+							item.setAttribute(
+								"onmousedown",
+								"mk.mkRecChange(this,'" + o.v + "')"
+							);
+							itemTexto.innerHTML = o.v;
+							item.appendChild(itemTexto);
+							eList.appendChild(item);
+						}
+					}
+				});
+				if (c <= 0) {
+					eList.innerHTML = "Sem recomendações";
+				}
+			} else {
+				mk.w(
+					"mkRecUpdate(e):  atributo selarray Não é um JSON válido: ", array
+				);
+			}
+		} else {
+			mk.w("mkRecUpdate(e): Elemento não encontrado ou selarray dele está vazia.", e);
+		}
+	};
+
+	static mkRecChange = (recItem: any, texto: string) => {
+		let e = recItem?.parentElement?.previousElementSibling
+		if (e) {
+			e.value = texto;
+			setTimeout(() => { mk.mkRecUpdate(e); e.focus() }, 10);
+		} else {
+			mk.w("Não foi possível alterar o elemento: ", e);
+		}
+	}
+
+	static mkRecFoco = (input: any, f: Boolean) => {
+		let e = input?.nextElementSibling
+		if (e) {
+			if (!f) {
+				e.classList.add("emFoco")
+			} else {
+				e.classList.remove("emFoco");
+			}
+		} else {
+			mk.w("Não foi possível alterar o elemento: ", e);
+		}
+	}
+
+	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 	//			MK Seletor (mkSel)					\\
 	//___________________________________\\
 	static poppers = [];
@@ -3586,10 +3715,16 @@ class mk {
 mk.mkClicarNaAba(mk.Q(".mkAbas a.active")); // Inicia no ativo
 
 /* INICIALIZA e GERA TIMER de busca por novos elementos */
-mk.mkSelRenderizar();
+//mk.mkSelRenderizar();
 setInterval(() => {
 	mk.mkSelRenderizar();
+	mk.mkRecRenderizar();
 	mk.mkBotCheck();
+
+	// Itera sobre todos os Poppers para atualizar na mesma frequencia deste intervalo.
+	mk.poppers.forEach((o) => {
+		o.update();
+	});
 }, 100);
 
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
