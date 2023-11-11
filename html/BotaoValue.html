@@ -1,14 +1,16 @@
 <h1 class="microPos2 h1">Botão Value Objeto</h1>
 <div class="microPos5">
-<!-- MKBOT: Ao Atualizar, Exibe Imagem/PDF do value no botão, mantendo o botão clicável -->
-<button name="urlImg"
-  data-value="/img/mkico.jpg"
-  value="/img/mkico.pdf"
-  class="mkBot imgArea iNovo microPos5 atualizarSemEvento"
-  onclick="console.log('CLICOU NO BOTAO')"
-  onchange="console.log('ONCHANGE FOI EXECUTADO')"
-  title="Clique Aqui"
-  type="button"></button>
+	<!-- MKBOT: Ao Atualizar, Exibe Imagem/PDF do value no botão, mantendo o botão clicável -->
+	<button name="urlImg" data-value="/img/mkico.jpg" value="/img/mkico.pdf"
+		class="mkBot microPos5 atualizarSemEvento bBotao bCinza" onclick="console.log('CLICOU NESTE BOTAO EXTERNO')"
+		onchange="console.log('ONCHANGE FOI EXECUTADO')" title="Clique Aqui" type="button"
+		style="width: 200px;aspect-ratio: 1/1;"></button>
+	&nbsp;&lt;&lt;&nbsp;Exibindo um PDF aqui.&nbsp;&nbsp;<br>
+
+	&nbsp;&nbsp;Exibindo uma Imagem aqui.&nbsp;&gt;&gt;&nbsp;
+	<button name="urlImg" data-value="/img/mkico.jpg" class="mkBot microPos5 atualizarSemEvento bBotao bCinza"
+		onclick="console.log('CLICOU NESTE BOTAO EXTERNO')" onchange="console.log('ONCHANGE FOI EXECUTADO')"
+		title="Clique Aqui" type="button" style="width: 200px;aspect-ratio: 1/1;"></button>
 </div>
 <br />
 <br />
@@ -24,15 +26,8 @@
 6
 7
 8
-9</textarea
-		>
-		<textarea
-			class="codigo"
-			rows="8"
-			cols="100"
-			onfocus="mk.mkSelecionarInner(this)"
-			readonly
-		>
+9</textarea>
+		<textarea class="codigo" rows="9" cols="100" onfocus="mk.mkSelecionarInner(this)" readonly>
 <button name="urlImg"
   data-value="/img/mkico.jpg"
   value="/img/mkico.pdf"
@@ -40,8 +35,8 @@
   onclick="console.log('CLICOU NO BOTAO')"
   onchange="console.log('ONCHANGE FOI EXECUTADO')"
   title="Enviar Imagem"
-  type="button"></button></textarea
-		>
+	type="button" style="width: 200px;"></button>	
+<!-- Quando Value não estiver no campo, Data-Value será exibido inicialmente --></textarea>
 	</div>
 </div>
 <!-- O script está em Site, pois se eu colocar aqui, dará eval toda vez -->
@@ -59,11 +54,20 @@
 		<div class="quebra">
 			&nbsp; Trata-se de um elemento html de uso comum (button) com características diferenciadas.
 			<br /><br />
-			&nbsp; Ao utilizar a classe mkBot no elemento button, a biblioteca irá modificar o conteúdo do botão &lg;button&gt;CONTEUDO&lg;/button&gt; pelo valor inicial do argumento do botão data-value.
+			&nbsp; Ao utilizar a classe mkBot no elemento button e contiver a classe "atualizar" ou "atualizarSemEvento",
+			a biblioteca irá modificar o conteúdo do botão &lt;button class="mkBot atualizar"&gt;CONTEUDO&lt;/button&gt;
+			pelo conteúdo do data-value. Mas o data-value só serve para valores iniciais, similar ao placeholder de um
+			elemento input.
 			<br /><br />
-			&nbsp; Se houver value (não é nativo do button) no elemento, o botão processará um algorítmo de verificação deste conteúdo e se ele for um PDF ou IMAGEM, ele colocará estes dentro do botão, de forma que o usuário consiga clicar no botão sem selecionar o conteudo do pdf ou imagem.
+			&nbsp; Se houver value (não é nativo do button) no elemento,
+			o botão verificará se este conteúdo for um PDF ou IMAGEM, para então exibir estes dentro do botão,
+			mas quando o usuário clica no botão, não irá clicar no conteúdo do pdf ou imagem,
+			desta forma o gatilho onClick do permanece funcionando mesmo com um pdf dentro do botão.
+			Note que se pdf tiver botões dentro, por padrão estará clicando no botão externo e não nos botões internos.
 			<br /><br />
-			&nbsp; Ao clicar executa-se o onclick e ao receber a classe "atualizar", o elemento executará onchange (não é nativo do button) do botão e fará a verificação do conteúdo do value para o algorítmo de exibição do PDF.
+			&nbsp; Ao clicar executa-se o onclick e ao receber a classe "atualizar",
+			o elemento executará onchange (não é nativo do button) do botão
+			e fará a verificação do conteúdo do value para o algorítmo de exibição do PDF.
 		</div>
 		<div class="quebra">
 			Em função Javascript
@@ -72,5 +76,31 @@
 			<br />
 			&raquo; A biblioteca precisa estar iniciada.
 		</div>
+	</li>
+	<li>
+		<u><br />2. Liberar clicar internamente</u>
+	</li>
+	<li>
+		<div class="quebra">
+			&nbsp; Com dito a cima, por padrão o botão não bloqueia cliques dentro do objeto interno.
+			Para liberar o usuário de clicar no que estiver dentro do botão utilize data-clicavel="false",
+			o botão perderá prioridade na parte onde o objeto foi renderizado.
+
+		</div>
+		<div class="quebra">data-clicavel="false"</div>
+	</li>
+	<li>
+		<u><br />3. Exibir Barra</u>
+	</li>
+	<li>
+		<div class="quebra">
+			&nbsp; Normalmente os navegadores já incrementam alguns objetos,
+			como PDF com uma barra para download e impressão deste pdf por alí mesmo.
+			Quando liberado para clicar internamente,
+			essa barra irá surgir em larguras acima de aproximadamente 250 píxels.
+			<br /><br />
+			&nbsp; Para impedir a exibição da imagem, você pode utilizar atributo data-exibirbarra="false".
+		</div>
+		<div class="quebra">data-exibirbarra="false"</div>
 	</li>
 </ul>

@@ -2048,12 +2048,7 @@ ul.mkUlFase li.disabled a {
 /* MKBot */
 .mkBot {
 	position: relative;
-	overflow: hidden;
-}
-
-.mkBot * {
-	max-width: 100%;
-	max-height: 100%;
+	padding: 0;
 }
 
 .mkBot .mkBotSobre {
@@ -2063,4 +2058,9 @@ ul.mkUlFase li.disabled a {
 	height: 100%;
 	left: 0;
 	top: 0;
+}
+
+.mkBot * {
+	user-select: none;
+	border-radius: inherit;
 }

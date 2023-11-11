@@ -2531,26 +2531,37 @@ class mk {
                 if (v == null || v == "") {
                     v = e.dataset.value;
                 }
+                let clicavel = e.dataset.clicavel;
+                let exibirbarra = e.dataset.exibirbarra;
                 if (v != null && v != "") {
                     let tipo = null;
-                    // Verificar aqui se trata-se de um link ou de uma base64 direto no elemento.
-                    if (v.includes("application/pdf")) {
-                        tipo = "pdf";
-                    }
+                    let terminacao = v.slice(v.length - 3, v.length).toString().toLowerCase();
+                    // Verificar aqui se trata-se de um link ou de uma base64 direto no elemento.					
                     // - Verifica se terminacao do arquivo é PDF ou OUTRO,
-                    let t = v.slice(v.length - 3, v.length);
-                    if (t.toString().toLowerCase() == "pdf") {
+                    if ((v.includes("application/pdf")) || (terminacao == "pdf")) {
                         tipo = "pdf";
                     }
-                    // Troca o inner
+                    // << Inicio do conteúdo
+                    let retornar = "<";
+                    // FORMATOS DE ARQUIVO
                     if (tipo == "pdf") {
-                        // - Se for PDF, coloca um objeto no inner
-                        e.innerHTML = "<object data='" + v + "' class='mkCem'>";
+                        retornar += "embed type='application/pdf' class='mkCem mkBotEmbed' src='" + v;
                     }
                     else {
-                        // - Se for outro poem imagem no inner.
-                        e.innerHTML = "<img src='" + v + "' class='mkCem'>";
+                        retornar +=
+                            e.innerHTML = "img class='mkCem' src='" + v;
                     }
+                    if (exibirbarra) {
+                        retornar += "#toolbar=0";
+                    }
+                    // << Fim o conteúdo
+                    retornar += "'>";
+                    // Se é ou não clicavel
+                    if (!clicavel) {
+                        retornar += "<div class='mkBotSobre'></div>";
+                    }
+                    // Set
+                    e.innerHTML = retornar;
                     // Ao concluir, tenta executar atributo onchange, se houver
                     if (!semEvento) {
                         if (e.onchange) {
