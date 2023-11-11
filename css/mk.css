@@ -2064,3 +2064,23 @@ ul.mkUlFase li.disabled a {
 	user-select: none;
 	border-radius: inherit;
 }
+
+/* Recomendador */
+.mkRecList {
+	display: flex;
+	flex-direction: column;
+	position: fixed;
+	padding: 5px;
+	border-radius: 5px;
+	background: var(--FundoItensBgEC);
+	z-index: calc(var(--mkSelIndex));
+}
+
+.mkRecList .recItem {
+	padding: 5px;
+	border-bottom: 1px solid var(--BordaItens);
+}
+
+.mkRecList.emFoco {
+	display: none;
+}
