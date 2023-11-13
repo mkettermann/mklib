@@ -904,6 +904,24 @@ class mk {
         }
         return result;
     };
+    // Informando a Array ou o Objeto, itera sobre todas e executa a funcao, e retorna o total de propriedades iteradas.
+    static allSubPropriedades = (OA, funcao = null, exceto = "object") => {
+        let c = 0;
+        for (let a in OA) {
+            let target = OA[a];
+            if (typeof target != exceto) {
+                if (funcao) {
+                    funcao(target);
+                }
+            }
+            c++;
+            // Se o atual é objeto, itera internamente
+            if (typeof target == "object") {
+                c += mk.allSubPropriedades(target, funcao, exceto);
+            }
+        }
+        return c;
+    };
     // Verifica se ARRAY ou OBJETO e executa a função FUNC a cada objeto dentro de OA.
     static mkExecutaNoObj = (oa, func) => {
         if (Array.isArray(oa)) {
@@ -2030,16 +2048,15 @@ class mk {
                             .toString()
                             .toLowerCase(); // k = Dado que estamos procurando
                         podeExibir = false; // Inverter para verificar se alguma prop do item possui a caracteristica
-                        for (var propNameItem in o) {
-                            let m = o[propNameItem];
-                            if (m != null) {
+                        mk.allSubPropriedades(o, (v) => {
+                            if (v != null) {
                                 // <= Nao pode tentar filtrar em itens nulos
-                                m = m.toString().toLowerCase();
-                                if (m.match(k)) {
+                                v = v.toString().toLowerCase();
+                                if (v.match(k)) {
                                     podeExibir = true;
                                 }
                             }
-                        }
+                        });
                     }
                 }
                 if (podeExibir) {
