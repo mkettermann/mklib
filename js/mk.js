@@ -1925,10 +1925,19 @@ class mk {
                     mk.w("modicaFiltro() precisa retornar boolean");
                 }
                 for (let propFiltro in objFiltro) {
-                    // Cada Propriedade de Cada Item da Array
+                    // Faz-se o cruzamento dos dados, quando encontrar a prorpiedade no outro objeto, seta pra executar o filtro.
+                    let m = null;
                     if (o[propFiltro] != null) {
+                        m = o[propFiltro]; // m representa o dado do item
+                    }
+                    if (propFiltro.includes(".")) {
+                        m = mk.getV(propFiltro, o); // m representa o dado do item
+                        //this.l("NoFIltro: ", objFiltro[propFiltro].conteudo.toString().toLowerCase(), " > DadoItem: ", m)
+                    }
+                    //this.l("objFiltro[propFiltro]: ", objFiltro[propFiltro])
+                    // Cada Propriedade de Cada Item da Array
+                    if (m != null) {
                         // Cruzar referencia com objFiltro e se so avancar se realmente for um objeto
-                        let m = o[propFiltro]; // m representa o dado do item
                         let k = objFiltro[propFiltro]; // k representa a config do filtro para essa propriedade
                         if (k.formato === "string") {
                             k.conteudo = k.conteudo.toString().toLowerCase();

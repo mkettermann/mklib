@@ -4,18 +4,21 @@
 		width: auto;
 		max-width: 100px;
 	}
+
 	#tabela1 td:nth-child(2) {
 		--w: 13%;
 		width: var(--w);
 		min-width: var(--w);
 		max-width: var(--w);
 	}
+
 	#tabela1 td:nth-child(3) {
 		--w: 13%;
 		width: var(--w);
 		min-width: var(--w);
 		max-width: var(--w);
 	}
+
 	#tabela1 td:nth-child(4) {
 		--w: 13%;
 		width: var(--w);
@@ -23,12 +26,14 @@
 		max-width: var(--w);
 		text-align: right;
 	}
+
 	#tabela1 td:nth-child(5) {
 		--w: 8%;
 		width: var(--w);
 		min-width: var(--w);
 		max-width: var(--w);
 	}
+
 	#tabela1 td:nth-child(6) {
 		--w: 8%;
 		width: var(--w);
@@ -36,6 +41,7 @@
 		max-width: var(--w);
 		cursor: pointer;
 	}
+
 	#tabela1 td:nth-child(7) {
 		--w: 8%;
 		width: var(--w);
@@ -49,18 +55,21 @@
 		width: auto;
 		max-width: 100px;
 	}
+
 	#tabela2 td:nth-child(2) {
 		--w: 6%;
 		width: var(--w);
 		min-width: var(--w);
 		max-width: var(--w);
 	}
+
 	#tabela2 td:nth-child(3) {
 		--w: 8%;
 		width: var(--w);
 		min-width: var(--w);
 		max-width: var(--w);
 	}
+
 	#tabela2 td:nth-child(4) {
 		--w: 8%;
 		width: var(--w);
@@ -103,27 +112,19 @@
 	<div class="i">
 		<div class="col40">
 			<div class="i">
-				<div class="col25">Data Inicio:</div>
-				<div class="col25">
-					<input
-						name="mDataUltimoAcesso"
-						type="date"
-						class="iConsultas"
-						data-mkfformato="date"
-						data-mkfoperador=">="
-						value=""
-					/>
+				<div class="col20">Data Inicio:</div>
+				<div class="col20">
+					<input name="mDataUltimoAcesso" type="date" class="iConsultas" data-mkfformato="date" data-mkfoperador=">="
+						value="" />
 				</div>
-				<div class="col25">Data Fim:</div>
-				<div class="col25">
-					<input
-						name="mDataUltimoAcesso"
-						type="date"
-						class="iConsultas"
-						data-mkfformato="date"
-						data-mkfoperador="<="
-						value=""
-					/>
+				<div class="col20">Data Fim:</div>
+				<div class="col20">
+					<input name="mDataUltimoAcesso" type="date" class="iConsultas" data-mkfformato="date" data-mkfoperador="<="
+						value="" />
+				</div>
+				<div class="col10">Acessos:</div>
+				<div class="col10">
+					<input name="mTotalAcessos.a.b" type="text" class="iConsultas" value="77" data-mkfformato="string" />
 				</div>
 			</div>
 		</div>
@@ -137,12 +138,7 @@
 		</div>
 		<div class="col20">
 			<div class="i">
-				<input
-					type="search"
-					name="mkFullFiltro"
-					class="iConsultas"
-					placeholder="Filtro Geral Listagem 1"
-				/>
+				<input type="search" name="mkFullFiltro" class="iConsultas" placeholder="Filtro Geral Listagem 1" />
 			</div>
 		</div>
 	</div>
@@ -175,13 +171,7 @@
 			<div class="i">
 				<div class="col60">Filtro Usuário:</div>
 				<div class="col40">
-					<input
-						name="mNome"
-						class="fTabela2"
-						data-mkfformato="string"
-						placeholder="Nome do Usuario"
-						value="a"
-					/>
+					<input name="mNome" class="fTabela2" data-mkfformato="string" placeholder="Nome do Usuario" />
 				</div>
 			</div>
 		</div>
@@ -196,12 +186,7 @@
 			</div>
 		</div>
 		<div class="col20">
-			<input
-				type="search"
-				name="mkFullFiltro"
-				class="fTabela2"
-				placeholder="Filtro Geral Listagem 2"
-			/>
+			<input type="search" name="mkFullFiltro" class="fTabela2" placeholder="Filtro Geral Listagem 2" />
 		</div>
 	</div>
 </div>
@@ -258,15 +243,8 @@
 29
 30
 31
-32</textarea
-		>
-		<textarea
-			class="codigo"
-			rows="32"
-			cols="120"
-			onfocus="mk.mkSelecionarInner(this)"
-			readonly
-		>
+32</textarea>
+		<textarea class="codigo" rows="32" cols="120" onfocus="mk.mkSelecionarInner(this)" readonly>
 // NOS PARAMETROS PARA INSTANCIAR A CLASSE: 
 // DADOS_, TagTab, MODELO, FILTRO, OPCOES
 // STRING, STRING, STRING, STRING, OBJECT
@@ -313,8 +291,7 @@ listas[0].orderBy("mTotalAcessos", 2); // 2 == toogle
 
 // Exemplo: ORDENAR por Container
 listas[0].orderBy("mNome");
-</textarea
-		>
+</textarea>
 	</div>
 </div>
 
@@ -357,14 +334,8 @@ listas[0].orderBy("mNome");
 32
 33
 34
-35</textarea
-		>
-		<textarea
-			class="codigo"
-			cols="120"
-			onfocus="mk.mkSelecionarInner(this)"
-			readonly
-		>
+35</textarea>
+		<textarea class="codigo" cols="120" onfocus="mk.mkSelecionarInner(this)" readonly>
 <!-- TABELA -->
 
 <div id="tabela3">
@@ -400,8 +371,7 @@ listas[0].orderBy("mNome");
     <td>${mTotalAcessos}</td>
   </tr>
 &lt;/script>
-</textarea
-		>
+</textarea>
 	</div>
 </div>
 
@@ -513,7 +483,7 @@ listas[0].orderBy("mNome");
 			<input type="date" value="${mDataCadastro}" />
 		</td>
 		<td class="sort-mDataUltimoAcesso">${mDataUltimoAcesso}</td>
-		<td class="sort-mTotalAcessos">${mTotalAcessos}</td>
+		<td class="sort-mTotalAcessos">${mTotalAcessos.a.b}</td>
 		<td class="sort-mStatus ${mStatus}"></td>
 		<td class="acao">
 			<a onclick="uiGetEDIT(mk.getTr(this),0);">EDIT</a>

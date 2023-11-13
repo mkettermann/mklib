@@ -8,6 +8,7 @@ var lista2 = new mk("/GetList2", "#tabela2", "#modelo2", ".fTabela2", {
 	importar: true,
 });
 var lista3 = new mk("/GetList3", "#tabela3", "#modelo3", ".fTabela3");
+
 //var lista = new Mk("/data/usersExemplo.json", ".tabela1", "#modelo");
 
 //Aqui foi utilizado um container manual das listas instanciadas.
@@ -20,7 +21,9 @@ lista.antesDePopularTabela = () => {
 	// pois esta array é apenas a que o usuário vê,
 	// então preserva os dados originais.
 	lista.dadosExibidos.forEach((o) => {
-		o.mDataUltimoAcesso = mk.mkYYYYMMDDtoDDMMYYYY(o.mDataUltimoAcesso);
+		if (o.mDataUltimoAcesso) {
+			o.mDataUltimoAcesso = mk.mkYYYYMMDDtoDDMMYYYY(o.mDataUltimoAcesso);
+		}
 	});
 };
 
