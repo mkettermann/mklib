@@ -1737,7 +1737,7 @@ class mk {
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //			Carregador									\\
     //___________________________________\\
-    static CarregarON = () => {
+    static CarregarON = (nomeDoRequest = "") => {
         if (mk.Q("body .CarregadorMkBlock") == null) {
             let divCarregadorMkBlock = document.createElement("div");
             divCarregadorMkBlock.className = "CarregadorMkBlock";
@@ -1756,7 +1756,7 @@ class mk {
         mk.Q("body .CarregadorMkBlock").classList.remove("oculto");
         mk.Q("body").classList.add("CarregadorMkSemScrollY");
     };
-    static CarregarOFF = () => {
+    static CarregarOFF = (nomeDoRequest = "") => {
         if (mk.Q("body .CarregadorMkBlock") != null) {
             mk.Q("body .CarregadorMkBlock").classList.add("oculto");
         }
@@ -1770,64 +1770,182 @@ class mk {
     //___________________________________\\
     // Objeto de Request mk.r. ...
     static get = {
-        json: (config) => {
+        json: async (config) => {
             if (typeof config != "object")
                 config = { url: config };
-            config.metodo = "GET";
+            config.metodo = mk.t.G;
             config.tipo = mk.t.J;
-            mk.request(config);
+            return await mk.request(config);
         },
-        html: (config) => {
+        html: async (config) => {
             if (typeof config != "object")
                 config = { url: config };
-            config.metodo = "GET";
+            config.metodo = mk.t.G;
             config.tipo = mk.t.H;
-            mk.request(config);
+            let retorno = await mk.request(config);
+            return retorno;
         }
     };
     static post = {
-        json: (config, json) => {
+        json: async (config, json) => {
             if (typeof config != "object")
                 config = { url: config };
-            config.metodo = "POST";
+            config.metodo = mk.t.P;
             config.tipo = mk.t.J;
             config.dados = json;
-            mk.request(config);
+            let retorno = await mk.request(config);
+            return retorno;
         },
-        html: (config, text) => {
+        html: async (config, text) => {
             if (typeof config != "object")
                 config = { url: config };
-            config.metodo = "POST";
+            config.metodo = mk.t.P;
             config.tipo = mk.t.H;
             config.dados = text;
-            mk.request(config);
+            let retorno = await mk.request(config);
+            return retorno;
         },
-        form: (config, formdata) => {
+        form: async (config, formdata) => {
             if (typeof config != "object")
                 config = { url: config };
-            config.metodo = "POST";
+            config.metodo = mk.t.P;
             config.tipo = mk.t.F;
             config.dados = formdata;
-            mk.request(config);
+            let retorno = await mk.request(config);
+            return retorno;
         }
     };
     static request = async (config) => {
-        return new Promise((r) => {
-            if (!config?.url) {
-                this.w("Necessário informar uma URL nos requests.");
+        // CONFIG
+        if (typeof config != "object") {
+            this.w("É necessário informar o objeto de configuração com a URL.");
+            return null;
+        }
+        // URL ! Necessário
+        if (!config?.url) {
+            this.w("Necessário informar uma URL nos requests.");
+            return null;
+        }
+        // GET ? POST, PUT, DELETE
+        if (!config?.metodo) {
+            this.w("Nenhum método informado. Avançando com GET");
+            config.metodo = "GET";
+        }
+        else {
+            if (config.metodo == "POST" && config.dados == null) { // Todo POST requer dados a serem enviados.
+                this.w("Método POST, mas SEM DADOS informados. Enviando string vazia ''.");
+                config.dados = "";
+            }
+        }
+        // Name e Timer Start
+        let nomeRequest = config.metodo + ": " + config.url;
+        mk.ct("Request: " + nomeRequest);
+        // JSON / FORM / *
+        if (!config?.tipo) {
+            this.w("Nenhum tipo de dado informado. Avançando com " + mk.t.J);
+            config.tipo = mk.t.J;
+        }
+        if (!config?.headers) {
+            config.headers = new Headers();
+            // CONTENT TYPE
+            if (config.tipo == mk.t.J) {
+                config.headers.append("Content-Type", config.tipo);
+            }
+            // TOKEN
+            let aft = document.getElementsByName("__RequestVerificationToken")[0]?.value;
+            config.headers.append("MKANTI-FORGERY-TOKEN", aft || "");
+        }
+        // TIPO DE ENVIO
+        config.json = JSON.stringify(config.dados);
+        if (config.metodo != mk.t.G) {
+            if (config.tipo == mk.t.J) {
+                config.body = config.json;
+            }
+            else if (config.tipo == mk.t.F) {
+                config.body = config.dados;
+            }
+        }
+        // config.dev = true;
+        // INFO CONSOLE
+        if (!config.quiet) {
+            mk.gc(nomeRequest);
+            if (config.dev) {
+                mk.l("Header: ", Object.fromEntries(config.headers.entries()));
+                mk.l("Config: ", config);
+            }
+            if (config.metodo == mk.t.P) {
+                mk.l("DADOS: ", config.dados);
+                mk.gc("JSON: ");
+                mk.l(config.json);
+                mk.ge();
+                if (typeof config.dados == "object") {
+                    if (config.dados.entries != null) {
+                        mk.gc("FORM OBJECT");
+                        mk.l(Object.fromEntries(config.dados.entries()));
+                        mk.ge();
+                    }
+                }
+            }
+            mk.ge(); // Fim do metodo
+        }
+        // Inicia o carregador 
+        if (config.carregador) {
+            this.CarregarON(nomeRequest);
+        }
+        // O EXECUTOR		
+        config.retorno = null;
+        try {
+            config.pacote = await fetch(config.url, {
+                method: config.metodo,
+                headers: config.headers,
+                body: config.body,
+            });
+            if (!config.pacote.ok) {
+                // FALHA (NÂO 200)
+                mk.gc("HTTP RETURNO: " + config.pacote.status + " " + config.pacote.statusText);
+                mk.l(await config.pacote.text()); // Exibir o erro no console;
+                mk.ge();
+                if (config.carregador) {
+                    this.CarregarOFF(nomeRequest);
+                }
                 return null;
             }
-            if (!config?.metodo) {
-                this.w("Nenhum método informado. Avançando com GET");
-                config.metodo = "GET";
+            else {
+                // 200 DONE (Retorna baseado no tipo de envio)
+                if (config.tipo == mk.t.J) {
+                    config.retorno = await config.pacote.json();
+                }
+                else if (config.tipo == mk.t.H) {
+                    config.retorno = await config.pacote.text();
+                }
+                else if (config.tipo == mk.t.B) {
+                    config.retorno = await config.pacote.blob();
+                }
+                else if (config.tipo == mk.t.F) {
+                    config.retorno = await config.pacote.json();
+                }
+                if (config.carregador) {
+                    this.CarregarOFF(nomeRequest);
+                }
+                mk.gc("Retorno " + config.pacote.status +
+                    " (" + config.metodo + "): " +
+                    config.url + " (" + config.tipo + ")");
+                mk.cte("Request: " + nomeRequest);
+                mk.l(config.retorno);
+                mk.ge();
             }
-            if (!config?.tipo) {
-                this.w("Nenhum tipo de dado informado. Avançando com " + mk.t.J);
-                config.tipo = mk.t.J;
+        }
+        catch (error) {
+            mk.gc("HTTP ERRO: ");
+            console.error("Erro: ", error);
+            mk.ge();
+            if (config.carregador) {
+                this.CarregarOFF(nomeRequest);
             }
-            this.l("Config: ", config);
-            r(this);
-        });
+            return null;
+        }
+        // Se tudo ocorreu bem, retorna os dados request.then()
+        return config;
     };
     // Método principal de chamada Http. tanto GET quanto POST
     static http = async (url, metodo = mk.t.G, tipo = mk.t.J, dados = null, carregador = false) => {
@@ -1910,8 +2028,8 @@ class mk {
             if (carregador) {
                 this.CarregarOFF();
             }
-            mk.gc("Retorno (" +
-                pacote.method +
+            mk.gc("Retorno (" + pacoteHttp.status +
+                " " + pacote.method +
                 " " +
                 tipo.toUpperCase().split("/")[1] +
                 "): " +
