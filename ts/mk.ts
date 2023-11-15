@@ -1931,10 +1931,11 @@ class mk {
 	};
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-	//			HTTP												\\
+	//			REQUEST											\\
 	//___________________________________\\
 
-	// Objeto de Request mk.r. ...
+	// Formas pre formatadas de chamar o Request de forma simples.
+	// mk.get.json({ url:"/GetList", done: (c)=>{console.log("done:",c)}})
 	static get = {
 		json: async (config: any) => {
 			if (typeof config != "object") config = { url: config };
@@ -1978,6 +1979,26 @@ class mk {
 		}
 	};
 
+	/** REQUEST
+	 * Se Utilizar o await, o config enviado retorna com o resultado e o pacote
+	 * Se definir o done e/ou o error no config, será executado como callback também.
+	 * @param config  Estes são as propriedades em uso do config:
+	 * {
+	 * 	url: "http://www.google.com",
+	 * 	metoto: "GET",
+	 * 	tipo: "application/json",
+	 * 	dados: ["a",1],
+	 * 	headers: new Headers(),
+	 * 	quiet: false,
+	 * 	dev: false,
+	 * 	carregador: false,
+	 * 	done: (c)=>{mk.l("Deu Boa? ",c.pacote.ok)},
+	 * 	error: (c)=>{mk.l("Deu Boa? ",c.pacote.ok)},
+	 *  //pacote: É populado com os dados do pacote.
+	 *  //retorno: É populado com os dados retornados.
+	 * }
+	 * @returns config (utilizar await para capturar o resultado)
+	 */
 	static request = async (config: any) => {
 		// CONFIG
 		if (typeof config != "object") {
@@ -2076,6 +2097,7 @@ class mk {
 				if (config.carregador) {
 					this.CarregarOFF(nomeRequest);
 				}
+				if (config.error) { config.error(config); }
 				return null;
 			} else {
 				// 200 DONE (Retorna baseado no tipo de envio)
@@ -2099,6 +2121,7 @@ class mk {
 				mk.cte("Request: " + nomeRequest);
 				mk.l(config.retorno);
 				mk.ge();
+				if (config.done) { config.done(config); }
 			}
 		} catch (error) {
 			mk.gc("HTTP ERRO: ");
