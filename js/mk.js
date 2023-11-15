@@ -197,9 +197,9 @@ class mk {
         }
         else {
             // Inicia o Coleta de dados
-            let retorno = await mk.http(this.c.urlOrigem, mk.t.G, mk.t.J);
-            if (retorno != null) {
-                temosDados = retorno;
+            let pac = await mk.get.json(this.c.urlOrigem);
+            if (pac.retorno != null) {
+                temosDados = pac.retorno;
             }
         }
         if (temosDados != null) {
@@ -781,13 +781,15 @@ class mk {
             // console.time(s);
         }
     };
-    static cte = (s) => {
+    static cte = (s, quietMode) => {
         let t = mk.timers.find((t) => t.name == s);
         if (t.fim == 0) {
             t.fim = mk.getMs();
             t.tempo = t.fim - t.ini;
         }
-        mk.l(s + " \t-> " + t.tempo + " ms");
+        if (!quietMode) {
+            mk.l(s + " \t-> " + t.tempo + " ms");
+        }
         // console.timeEnd(s);
     };
     // Atalho para QuerySelector que retorna apenas o primeiro elemento da query.
@@ -1180,16 +1182,15 @@ class mk {
     };
     // Get Server On
     static getServerOn = async (url = "/Login/GetServerOn") => {
-        let retorno = await mk.http(url, mk.t.G, mk.t.J);
+        let pac = await mk.get.json({ url: url, quiet: true });
         // Vem nulo caso falhe
-        if (retorno !== true) {
+        if (pac.retorno !== true) {
             mk.detectedServerOff();
         }
         else {
             mk.detectedServerOn();
         }
     };
-    f;
     static detectedServerOff = () => {
         if (mk.Q("body .offlineBlock") == null) {
             let divOfflineBlock = document.createElement("div");
@@ -1646,7 +1647,7 @@ class mk {
     static transDiasEmMs = (d) => {
         return d * 86400000;
     };
-    // Injeção de elementos via http
+    // Injeção de elementos
     static mkGeraElemento(e, nomeElemento = "script") {
         // Cria Elemento
         let elemento = document.createElement(nomeElemento);
@@ -1821,7 +1822,7 @@ class mk {
      * Se definir o done e/ou o error no config, será executado como callback também.
      * @param config  Estes são as propriedades em uso do config:
      * {
-     * 	url: "http://www.google.com",
+     * 	url: "www.google.com",
      * 	metoto: "GET",
      * 	tipo: "application/json",
      * 	dados: ["a",1],
@@ -1951,12 +1952,14 @@ class mk {
                 if (config.carregador) {
                     this.CarregarOFF(nomeRequest);
                 }
-                mk.gc("Retorno " + config.pacote.status +
-                    " (" + config.metodo + "): " +
-                    config.url + " (" + config.tipo + ")");
-                mk.cte("Request: " + nomeRequest);
-                mk.l(config.retorno);
-                mk.ge();
+                mk.cte("Request: " + nomeRequest, config.quiet);
+                if (!config.quiet) {
+                    mk.gc("Retorno " + config.pacote.status +
+                        " (" + config.metodo + "): " +
+                        config.url + " (" + config.tipo + ")");
+                    mk.l(config.retorno);
+                    mk.ge();
+                }
                 if (config.done) {
                     config.done(config);
                 }
@@ -2641,15 +2644,15 @@ class mk {
                 let destino = e.getAttribute("mkInclude");
                 if (destino != null) {
                     //mk.l("Incluindo: " + destino);
-                    let retorno = await mk.http(destino, mk.t.G, mk.t.H);
-                    if (retorno != null) {
-                        e.innerHTML = retorno;
+                    let p = await mk.get.html(destino);
+                    if (p.retorno != null) {
+                        e.innerHTML = p.retorno;
                         //mk.mkNodeToScript(mk.Q(".conteudo"));
                     }
                     else {
                         mk.l("Falhou ao coletar dados");
                     }
-                    r(retorno);
+                    r(p.retorno);
                 }
             });
         });
@@ -3034,11 +3037,11 @@ class mk {
             if (e) {
                 let url = appPath + e.getAttribute("data-refill");
                 cod != null ? (url += cod) : null;
-                let retorno = await mk.http(url, mk.t.G, mk.t.J);
-                if (retorno != null) {
-                    let kv = retorno;
-                    if (typeof retorno == "object") {
-                        kv = JSON.stringify(retorno);
+                let p = await mk.get.json(url);
+                if (p.retorno != null) {
+                    let kv = p.retorno;
+                    if (typeof p.retorno == "object") {
+                        kv = JSON.stringify(p.retorno);
                     }
                     if (mk.isJson(kv)) {
                         e.setAttribute("data-selarray", kv);
@@ -3606,10 +3609,10 @@ class mk {
             mk.QAll(tagBuscar + " *").forEach(async (e) => {
                 let destino = e.getAttribute("mkImportar");
                 if (destino != null) {
-                    let retorno = await mk.http(destino, mk.t.G, mk.t.H);
-                    if (retorno != null) {
+                    let p = await mk.get.html(destino);
+                    if (p.retorno != null) {
                         e.removeAttribute("mkImportar");
-                        e.innerHTML = retorno;
+                        e.innerHTML = p.retorno;
                         try {
                             mk.mkNodeToScript(e);
                         }
@@ -3622,7 +3625,7 @@ class mk {
                     else {
                         mk.l("Falhou ao coletar dados");
                     }
-                    r(retorno);
+                    r(p.retorno);
                 }
             });
         });
@@ -3643,9 +3646,3 @@ setInterval(() => {
         o.update();
     });
 }, 100);
-//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-//			OBJETOS CONSTANTES					\\
-//___________________________________\\
-Object.defineProperty(mk, "http", {
-    writable: false,
-});
