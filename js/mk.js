@@ -1768,6 +1768,67 @@ class mk {
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //			HTTP												\\
     //___________________________________\\
+    // Objeto de Request mk.r. ...
+    static get = {
+        json: (config) => {
+            if (typeof config != "object")
+                config = { url: config };
+            config.metodo = "GET";
+            config.tipo = mk.t.J;
+            mk.request(config);
+        },
+        html: (config) => {
+            if (typeof config != "object")
+                config = { url: config };
+            config.metodo = "GET";
+            config.tipo = mk.t.H;
+            mk.request(config);
+        }
+    };
+    static post = {
+        json: (config, json) => {
+            if (typeof config != "object")
+                config = { url: config };
+            config.metodo = "POST";
+            config.tipo = mk.t.J;
+            config.dados = json;
+            mk.request(config);
+        },
+        html: (config, text) => {
+            if (typeof config != "object")
+                config = { url: config };
+            config.metodo = "POST";
+            config.tipo = mk.t.H;
+            config.dados = text;
+            mk.request(config);
+        },
+        form: (config, formdata) => {
+            if (typeof config != "object")
+                config = { url: config };
+            config.metodo = "POST";
+            config.tipo = mk.t.F;
+            config.dados = formdata;
+            mk.request(config);
+        }
+    };
+    static request = async (config) => {
+        return new Promise((r) => {
+            if (!config?.url) {
+                this.w("Necessário informar uma URL nos requests.");
+                return null;
+            }
+            if (!config?.metodo) {
+                this.w("Nenhum método informado. Avançando com GET");
+                config.metodo = "GET";
+            }
+            if (!config?.tipo) {
+                this.w("Nenhum tipo de dado informado. Avançando com " + mk.t.J);
+                config.tipo = mk.t.J;
+            }
+            this.l("Config: ", config);
+            r(this);
+        });
+    };
     // Método principal de chamada Http. tanto GET quanto POST
     static http = async (url, metodo = mk.t.G, tipo = mk.t.J, dados = null, carregador = false) => {
         const mkaft = document.getElementsByName("__RequestVerificationToken")[0];
