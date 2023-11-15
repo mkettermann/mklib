@@ -45,7 +45,6 @@ class mk {
 		this.thisListNum = ++mk.contaListas;
 		if (idModelo == null || idModelo == "") idModelo = "#modelo";
 		// ReSET dos parametros (Null para Valor Padrão)
-		mk.ct("Tempo Listagem " + this.thisListNum + " (" + idModelo + ")");
 		if (urlOrigem == null || urlOrigem === "") {
 			urlOrigem = (
 				mk.delUrlQuery(window.location.href) + "/GetList"
@@ -242,9 +241,6 @@ class mk {
 			// Remove oculto, caso encontre a tag
 			if (mk.Q(this.c.tableResultado))
 				mk.Q(this.c.tableResultado).classList.remove("oculto");
-			mk.cte(
-				"Tempo Listagem " + this.thisListNum + " (" + this.c.idModelo + ")"
-			);
 		}
 	};
 
@@ -836,7 +832,7 @@ class mk {
 			// console.time(s);
 		}
 	};
-	static cte = (s: any, quietMode: any) => {
+	static cte = (s: any, quietMode: any = false) => {
 		let t = mk.timers.find((t: any) => t.name == s);
 		if (t.fim == 0) {
 			t.fim = mk.getMs();
@@ -2042,6 +2038,7 @@ class mk {
 			)[0]?.value;
 			config.headers.append("MKANTI-FORGERY-TOKEN", aft || "");
 		}
+		if (!config.quiet) config.quiet = false;
 		// TIPO DE ENVIO
 		config.json = JSON.stringify(config.dados);
 		if (config.metodo != mk.t.G) {
@@ -2115,13 +2112,15 @@ class mk {
 				if (config.carregador) {
 					this.CarregarOFF(nomeRequest);
 				}
-				mk.cte("Request: " + nomeRequest, config.quiet);
 				if (!config.quiet) {
 					mk.gc(
 						"Retorno " + config.pacote.status +
 						" (" + config.metodo + "): " +
 						config.url + " (" + config.tipo + ")"
 					);
+				}
+				mk.cte("Request: " + nomeRequest, config.quiet);
+				if (!config.quiet) {
 					mk.l(config.retorno);
 					mk.ge();
 				}
