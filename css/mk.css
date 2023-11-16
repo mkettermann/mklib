@@ -1995,21 +1995,21 @@ ul.mkUlFase li.disabled a {
 	gap: 10px;
 }
 
-.fsb {
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: space-between;
+*.fsb {
+	display: flex !important;
+	flex-wrap: wrap !important;
+	justify-content: space-between !important;
 }
 
-.tb,
-.ftb {
-	display: flex;
-	flex-direction: column;
+*.tb,
+*.ftb {
+	display: flex !important;
+	flex-direction: column !important;
 }
 
 .mkCem {
-	width: 100%;
-	height: 100%;
+	width: 100% !important;
+	height: 100% !important;
 }
 
 /*Desativar via CSS*/
