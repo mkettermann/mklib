@@ -2074,6 +2074,8 @@ ul.mkUlFase li.disabled a {
 	padding: 5px;
 	border-radius: 5px;
 	background: var(--FundoItensBgEC);
+	max-height: 300px;
+	overflow: auto;
 	z-index: calc(var(--mkSelIndex));
 }
 
