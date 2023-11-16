@@ -2001,7 +2001,8 @@ ul.mkUlFase li.disabled a {
 	justify-content: space-between;
 }
 
-.tb {
+.tb,
+.ftb {
 	display: flex;
 	flex-direction: column;
 }

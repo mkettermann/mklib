@@ -879,30 +879,32 @@ class mk {
         }
         return new Range(from, to);
     };
-    // Comparardor de string
-    static comparar = (strMenor, strMaior, like = true) => {
+    // Comparardor de string LIKE
+    static like = (strMenor, strMaior) => {
         let result = false;
-        // Quando for por Like, comparar semelhança
-        if (like) {
-            let rmMaior = mk.removeEspecias(strMaior).toLowerCase().trim();
-            let rmMenor = mk.removeEspecias(strMenor).toLowerCase().trim();
-            if (rmMaior.match(rmMenor)) {
-                result = true;
-            }
-            // Internacionalizador de comparação... (Galês CH e DD e Latin ä))
-            let likeMatcher = new Intl.Collator(undefined, {
-                sensitivity: "base",
-                ignorePunctuation: true,
-            }).compare;
-            if (likeMatcher(strMaior, strMenor) === 0) {
-                result = true;
-            }
+        // Se utilizar match, não pode ter os reservados do regex.
+        strMaior = mk.apenasNumerosLetras(strMaior).toLowerCase().trim();
+        strMenor = mk.apenasNumerosLetras(strMenor).toLowerCase().trim();
+        let rmMaior = strMaior.toLowerCase().trim();
+        let rmMenor = strMenor.toLowerCase().trim();
+        if (rmMaior.match(rmMenor)) {
+            result = true;
         }
-        // Contem (MENOR está dentro da MAIOR)
-        if (strMaior.match(strMenor)) {
+        // Internacionalizador de comparação... (Galês CH e DD e Latin ä))
+        let likeMatcher = new Intl.Collator(undefined, {
+            sensitivity: "base",
+            ignorePunctuation: true,
+        }).compare;
+        if (likeMatcher(strMaior, strMenor) === 0) {
             result = true;
         }
         return result;
+    };
+    // Comparardor de string CONTEM
+    static contem = (strMaior, strMenor) => {
+        strMaior = mk.removeEspecias(strMaior).toLowerCase();
+        strMenor = mk.removeEspecias(strMenor).toLowerCase();
+        return (strMaior.includes(strMenor));
     };
     // Informando a Array ou o Objeto, itera sobre todas e executa a funcao, e retorna o total de propriedades iteradas.
     static allSubPropriedades = (OA, funcao = null, exceto = "object") => {
@@ -2170,8 +2172,7 @@ class mk {
                         let k = objFiltro[propFiltro]; // k representa a config do filtro para essa propriedade
                         if (k.formato === "string") {
                             k.conteudo = k.conteudo.toString().toLowerCase();
-                            if (!m.toString().toLowerCase().match(k.conteudo) &&
-                                k.conteudo !== "0") {
+                            if (!mk.contem(m, k.conteudo)) {
                                 podeExibir = false;
                             }
                         }
@@ -2829,6 +2830,7 @@ class mk {
                 e.setAttribute("oninput", "mk.mkRecUpdate(this)");
                 e.setAttribute("onfocus", "mk.mkRecFoco(this,true)");
                 e.setAttribute("onblur", "mk.mkRecFoco(this,false)");
+                e.setAttribute("autocomplete", "off");
                 const popperInstance = Popper.createPopper(e, divMkRecList, {
                     placement: "bottom-start",
                     strategy: "fixed",
@@ -2874,7 +2876,7 @@ class mk {
                 /* ITENS */
                 kvList.forEach((o) => {
                     if (o.v != null && o.v != "") {
-                        if (mk.comparar(e.value, o.v) && e.value.trim() != o.v.trim()) {
+                        if (mk.like(e.value, o.v) && e.value.trim() != o.v.trim()) {
                             c++;
                             let item = document.createElement("div");
                             let itemTexto = document.createElement("span");
@@ -2979,6 +2981,7 @@ class mk {
                 divMkSeletorInputExibe.setAttribute("onblur", "mk.mkSelPesquisaBlur(this)");
                 divMkSeletorInputExibe.setAttribute("oninput", "mk.mkSelPesquisaInput(this)");
                 divMkSeletorInputExibe.setAttribute("onkeydown", "mk.mkSelPesquisaKeyDown(event)");
+                divMkSeletorInputExibe.setAttribute("autocomplete", "off");
                 divMkSeletorList.addEventListener("scroll", (ev) => {
                     mk.mkSelMoveu(ev.target);
                 });
@@ -3412,7 +3415,7 @@ class mk {
             if (el.classList.contains("mkSelItem")) {
                 let strInputado = e.value.toLowerCase();
                 let strFromKv = el.firstElementChild.innerHTML.toLowerCase();
-                if (mk.comparar(strInputado, strFromKv)) {
+                if (mk.like(strInputado, strFromKv)) {
                     exibe = true;
                     cVisivel++;
                 }
