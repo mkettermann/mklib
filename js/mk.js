@@ -3625,7 +3625,7 @@ class mk {
             mk.QAll(tagBuscar + " *").forEach(async (e) => {
                 let destino = e.getAttribute("mkImportar");
                 if (destino != null) {
-                    let p = await mk.get.html(destino);
+                    let p = await mk.get.html({ url: destino, quiet: true });
                     if (p.retorno != null) {
                         e.removeAttribute("mkImportar");
                         e.innerHTML = p.retorno;
