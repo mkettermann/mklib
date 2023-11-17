@@ -2884,7 +2884,7 @@ class mk {
 				let destino = e.getAttribute("mkInclude");
 				if (destino != null) {
 					//mk.l("Incluindo: " + destino);
-					let p = await mk.get.html(destino);
+					let p = await mk.get.html({ url: destino, quiet: true });
 					if (p.retorno != null) {
 						e.innerHTML = p.retorno;
 						//mk.mkNodeToScript(mk.Q(".conteudo"));
