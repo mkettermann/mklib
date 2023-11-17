@@ -1971,11 +1971,10 @@ class mk {
         }
         // Aqui tem Status code se o erro foi no servidor, Mas não tem se o servidor não estiver online.
         if (!config.conectou) {
-            mk.gc("HTTP ERRO: ");
-            // Expoem código de erro
-            mk.l(config.statusCode);
+            mk.gc("(" + config.statusCode + ") HTTP ERRO:");
             // Se bateu no catch, expoem trace error do JS
             if (config.catch && !config.quiet) {
+                mk.l("Config: " + config);
                 console.error("Erro: ", config.catch);
             }
             // Executa funcao de erro externa.
