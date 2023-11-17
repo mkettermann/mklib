@@ -1184,11 +1184,11 @@ class mk {
     static getServerOn = async (url = "/Login/GetServerOn") => {
         let pac = await mk.get.json({ url: url, quiet: true });
         // Vem nulo caso falhe
-        if (pac.retorno !== true) {
-            mk.detectedServerOff();
+        if (pac?.retorno) {
+            mk.detectedServerOn();
         }
         else {
-            mk.detectedServerOn();
+            mk.detectedServerOff();
         }
     };
     static detectedServerOff = () => {
@@ -1835,18 +1835,18 @@ class mk {
      *  //pacote: É populado com os dados do pacote.
      *  //retorno: É populado com os dados retornados.
      * }
-     * @returns config (utilizar await para capturar o resultado)
+     * @returns Sempre retorna o config preenchido (utilizar await para capturar o resultado)
      */
     static request = async (config) => {
-        // CONFIG
+        // CONFIG ! Necessário
         if (typeof config != "object") {
             this.w("É necessário informar o objeto de configuração com a URL.");
-            return null;
+            return { url: null, retorno: null }; // Não há config, Mas pra retornar sempre o config
         }
         // URL ! Necessário
         if (!config?.url) {
             this.w("Necessário informar uma URL nos requests.");
-            return null;
+            return { url: config?.url, retorno: null };
         }
         // GET ? POST, PUT, DELETE
         if (!config?.metodo) {
@@ -1918,6 +1918,7 @@ class mk {
         }
         // O EXECUTOR		
         config.retorno = null;
+        config.statusCode = "SEM CONEXÃO";
         try {
             config.pacote = await fetch(config.url, {
                 method: config.metodo,
@@ -1925,19 +1926,16 @@ class mk {
                 body: config.body,
             });
             if (!config.pacote.ok) {
+                config.conectou = false;
+                config.statusCode = config.pacote.status;
                 // FALHA (NÂO 200)
                 mk.gc("HTTP RETURNO: " + config.pacote.status + " " + config.pacote.statusText);
                 mk.l(await config.pacote.text()); // Exibir o erro no console;
                 mk.ge();
-                if (config.carregador) {
-                    this.CarregarOFF(nomeRequest);
-                }
-                if (config.error) {
-                    config.error(config);
-                }
-                return null;
             }
             else {
+                config.conectou = true;
+                config.statusCode = config.pacote.status;
                 // 200 DONE (Retorna baseado no tipo de envio)
                 if (config.tipo == mk.t.J) {
                     config.retorno = await config.pacote.json();
@@ -1950,9 +1948,6 @@ class mk {
                 }
                 else if (config.tipo == mk.t.F) {
                     config.retorno = await config.pacote.json();
-                }
-                if (config.carregador) {
-                    this.CarregarOFF(nomeRequest);
                 }
                 if (!config.quiet) {
                     mk.gc("Retorno " + config.pacote.status +
@@ -1970,15 +1965,30 @@ class mk {
             }
         }
         catch (error) {
-            mk.gc("HTTP ERRO: ");
-            console.error("Erro: ", error);
-            mk.ge();
-            if (config.carregador) {
-                this.CarregarOFF(nomeRequest);
-            }
-            return null;
+            // Caso Conection_Refused, Não tem código de erro. Então cai aqui.
+            config.conectou = false;
+            config.catch = error;
         }
-        // Se tudo ocorreu bem, retorna os dados request.then()
+        // Aqui tem Status code se o erro foi no servidor, Mas não tem se o servidor não estiver online.
+        if (!config.conectou) {
+            mk.gc("HTTP ERRO: ");
+            // Expoem código de erro
+            mk.l(config.statusCode);
+            // Se bateu no catch, expoem trace error do JS
+            if (config.catch && !config.quiet) {
+                console.error("Erro: ", config.catch);
+            }
+            // Executa funcao de erro externa.
+            if (config.error) {
+                config.error(config);
+            }
+            mk.ge();
+        }
+        // Finaliza o carregador 
+        if (config.carregador) {
+            this.CarregarOFF(nomeRequest);
+        }
+        // Sempre retorna o config
         return config;
     };
     // Método principal de chamada Http. tanto GET quanto POST
@@ -2074,11 +2084,13 @@ class mk {
             //if (sucesso != null) sucesso(corpo);
         }
         catch (error) {
-            mk.gc("HTTP ERRO: ");
-            console.error("Erro: ", error);
-            mk.ge();
             if (carregador) {
                 this.CarregarOFF();
+            }
+            if (error) {
+                mk.gc("HTTP ERRO: ");
+                console.error("Erro: ", error);
+                mk.ge();
             }
             return null;
         }
