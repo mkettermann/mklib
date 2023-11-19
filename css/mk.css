@@ -2033,7 +2033,7 @@ ul.mkUlFase li.disabled a {
 }
 
 .bordaBaixo {
-	border: 1px solid var(--bordaMaster);
+	border-bottom: 1px solid var(--bordaMaster);
 }
 
 .pad5 {
