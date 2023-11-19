@@ -585,21 +585,26 @@ class mk {
     // keys.push({ k: "mDes", v: "", l: "Descrição", r: "", t: "textarea", a: "cols='50' rows='10'", i: true });
     // Recebendo o objeto da lista, traz o getUsedKeys juntamente aos Values deste objeto;
     getKVLR = (obj) => {
-        let model = this.getModel();
-        if (model.length == 0)
-            model = this.getUsedKeys(true);
+        let models = this.getModel();
+        if (models.length == 0)
+            models = this.getUsedKeys(true);
         let kvlr = [];
-        model.forEach((krl) => {
-            let o = { ...krl };
-            if (obj?.[krl.k]) {
+        models.forEach((p) => {
+            // A cada Propriedade do Modelo
+            let o = { ...p };
+            if (obj?.[p.k]) {
                 if (o.i == true) {
-                    o.i = obj?.[krl.k];
+                    o.i = obj?.[p.k];
                     o.v = "";
                 }
                 else {
                     o.i = null;
-                    o.v = obj?.[krl.k];
+                    o.v = obj?.[p.k];
                 }
+            }
+            else {
+                o.i = null;
+                o.v = "";
             }
             kvlr.push(o);
         });
