@@ -622,7 +622,10 @@ class mk {
 		return this.c.m;
 	};
 
-	// K V L R (Chave, Valor, Label e Regex)
+	// KVLR (E mais...)
+	// K (Chave)	- V (Valor) - L (Label) - R (REGEX)	- T (TAG Html) - A (Attributos Tag) - I (Value no Inner)
+	// keys.push({ k: "mDat", v: "", l: "Data", r: mk.util.data[1], t: "input", a: "type='text'" });
+	// keys.push({ k: "mDes", v: "", l: "Descrição", r: "", t: "textarea", a: "cols='50' rows='10'", i: true });
 	// Recebendo o objeto da lista, traz o getUsedKeys juntamente aos Values deste objeto;
 	getKVLR = (obj: any) => {
 		let model = this.getModel();
@@ -630,7 +633,15 @@ class mk {
 		let kvlr: any = [];
 		model.forEach((krl: any) => {
 			let o = { ...krl };
-			if (obj?.[krl.k]) o.v = obj?.[krl.k];
+			if (obj?.[krl.k]) {
+				if (o.i == true) {
+					o.i = obj?.[krl.k]
+					o.v = "";
+				} else {
+					o.i = null;
+					o.v = obj?.[krl.k];
+				}
+			}
 			kvlr.push(o);
 		});
 		return kvlr;
