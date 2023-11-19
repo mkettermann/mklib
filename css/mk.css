@@ -1995,6 +1995,16 @@ ul.mkUlFase li.disabled a {
 	gap: 10px;
 }
 
+@media (max-width: 499px) {
+	.i {
+		flex-direction: column;
+	}
+
+	.iComGap {
+		flex-direction: column;
+	}
+}
+
 *.fsb {
 	display: flex !important;
 	flex-wrap: wrap !important;
@@ -2020,6 +2030,10 @@ ul.mkUlFase li.disabled a {
 .bordaDupla {
 	border: 3px double var(--bordaMaster);
 	border-radius: 5px;
+}
+
+.bordaBaixo {
+	border: 1px solid var(--bordaMaster);
 }
 
 .pad5 {
