@@ -1234,8 +1234,6 @@ class mk {
     static regras = [];
     //mk.regrar(eParametro1, { k: "charProibido", v: "" });
     static regrar = (e, obj) => {
-        // Primeiro verifica se o campo tem o executor no oninput
-        this.l("e: ", e);
         // Incrementar Evento
         let oninput = e.getAttribute("oninput");
         if (!oninput || !oninput.includes(";mk.exeregra(this)")) {
@@ -1244,12 +1242,15 @@ class mk {
         // Atualiza a regra com a informada no kv.
         let regra = { e: e, ...obj };
         this.l("Regra: ", regra);
-        if (mk.regras.includes(regra)) {
-            this.l("Já tinha: ", regra);
+        if (mk.regras.map(o => o.e).includes(regra.e)) {
+            // Update
+            let posRegra = mk.regras.findIndex(o => o.e == mk.regras[0].e);
+            mk.regras[posRegra] = regra;
+            this.l("Já tinha: ", mk.regras[posRegra]);
         }
         else {
             this.l("Não tinha: ", regra);
-            mk.regras.push(e);
+            mk.regras.push(regra);
         }
         this.l("Regras Atuais: ", mk.regras);
     };
