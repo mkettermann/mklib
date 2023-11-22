@@ -1259,6 +1259,15 @@ class mk {
         else {
             mk.regras.push(novaregra);
         }
+        // Limpeza (Elementos fora do DOM) (Tecnica do Invisivel)
+        for (let r of mk.regras) {
+            if (!r.e.offsetParent) {
+                this.l("Removeu: ", r);
+                mk.regras.splice(mk.regras.indexOf(r), 1);
+            }
+        }
+        ;
+        // Auto Executa
         mk.exeregra(e);
     };
     // Função que executa as regras deste campo com base nos objetos salvos
