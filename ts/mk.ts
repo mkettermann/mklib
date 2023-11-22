@@ -1345,12 +1345,14 @@ class mk {
 	static regrar = (e: any, obj: any) => {
 		// Primeiro verifica se o campo tem o executor no oninput
 		this.l("e: ", e);
-		this.l("e.oninput: ", e.oninput);
-		if (e.oninput.includes(";mk.exeregra(this)")) {
+		let oninput = e.getAttribute("oninput");
+		this.l("oninput: ", oninput);
+
+		if (oninput.includes(";mk.exeregra(this)")) {
 			this.l("Contem executor.");
 		} else {
-			e.oninput = e.oninput + ";mk.exeregra(this)";
-			this.l("Não tinha, agora tem executor: ", e.oninput);
+			e.setAttribute("oninput", oninput + ";mk.exeregra(this)");
+			this.l("Não tinha, agora tem executor: ", oninput);
 		}
 		// Atualiza a regra com a informada no kv.
 		let regra = { e: e, ...obj };
