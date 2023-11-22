@@ -1231,6 +1231,7 @@ class mk {
         mk.Q("body .offlineBlock")?.classList?.add("oculto");
     };
     // REGRAR (Gera uma regra para o campo)
+    static regras = [];
     //mk.regrar(eParametro1, { k: "charProibido", v: "" });
     static regrar = (e, obj) => {
         // Primeiro verifica se o campo tem o executor no oninput
@@ -1243,6 +1244,17 @@ class mk {
             e.oninput = e.oninput + ";mk.exeregra(this)";
             this.l("Não tinha, agora tem executor: ", e.oninput);
         }
+        // Atualiza a regra com a informada no kv.
+        let regra = { e: e, ...obj };
+        this.l("Regra: ", regra);
+        if (mk.regras.includes(regra)) {
+            this.l("Já tinha: ", regra);
+        }
+        else {
+            this.l("Não tinha: ", regra);
+            mk.regras.push(e);
+        }
+        this.l("Regras Atuais: ", mk.regras);
     };
     // Função que executa as regras deste campo com base nos objetos salvos
     static exeregra = (e) => {

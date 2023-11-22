@@ -1339,7 +1339,9 @@ class mk {
 	};
 
 	// REGRAR (Gera uma regra para o campo)
+	static regras: any = [];
 	//mk.regrar(eParametro1, { k: "charProibido", v: "" });
+
 	static regrar = (e: any, obj: any) => {
 		// Primeiro verifica se o campo tem o executor no oninput
 		this.l("e: ", e);
@@ -1350,7 +1352,16 @@ class mk {
 			e.oninput = e.oninput + ";mk.exeregra(this)";
 			this.l("Não tinha, agora tem executor: ", e.oninput);
 		}
-
+		// Atualiza a regra com a informada no kv.
+		let regra = { e: e, ...obj };
+		this.l("Regra: ", regra);
+		if (mk.regras.includes(regra)) {
+			this.l("Já tinha: ", regra);
+		} else {
+			this.l("Não tinha: ", regra);
+			mk.regras.push(e);
+		}
+		this.l("Regras Atuais: ", mk.regras)
 	}
 
 	// Função que executa as regras deste campo com base nos objetos salvos
