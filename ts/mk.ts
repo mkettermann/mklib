@@ -1359,11 +1359,11 @@ class mk {
 		} else {
 			mk.regras.push(novaregra);
 		}
-		this.l("Regras Atuais: ", mk.regras)
 	}
 
 	// Função que executa as regras deste campo com base nos objetos salvos
 	static exeregra = (e) => {
+		this.l("Regras Atuais: ", mk.regras)
 		//
 	}
 
