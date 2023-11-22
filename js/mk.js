@@ -3662,19 +3662,28 @@ class mk {
             });
         });
     };
+    // Variavel de recarga que permite modificar a frequencia de atualizacao
+    // em casos de telas sobrecarregadas.
+    static mkRecargaTimer = 500;
+    static mkRecargaTimerPause = false;
+    // Reloader (RECURSIVA TIMEROUT)
+    //Constroi, Reconstroi novos, Reposiciona e Corrige elementos
+    static mkRecargaExe = () => {
+        if (mk.mkRecargaTimerPause) {
+            mk.mkSelRenderizar();
+            mk.mkRecRenderizar();
+            mk.mkBotCheck();
+            // Itera sobre todos os Poppers para atualizar na mesma frequencia deste intervalo.
+            mk.poppers.forEach((o) => {
+                o.update();
+            });
+        }
+        // Recursiva
+        setTimeout(mk.mkRecargaExe, mk.mkRecargaTimer);
+    };
 } // <<< FIM MK Class.
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //		AO INICIAR										\\
 //___________________________________\\
 mk.mkClicarNaAba(mk.Q(".mkAbas a.active")); // Inicia no ativo
-/* INICIALIZA e GERA TIMER de busca por novos elementos */
-//mk.mkSelRenderizar();
-setInterval(() => {
-    mk.mkSelRenderizar();
-    mk.mkRecRenderizar();
-    mk.mkBotCheck();
-    // Itera sobre todos os Poppers para atualizar na mesma frequencia deste intervalo.
-    mk.poppers.forEach((o) => {
-        o.update();
-    });
-}, 100);
+mk.mkRecargaExe();
