@@ -2103,6 +2103,5 @@ ul.mkUlFase li.disabled a {
 }
 
 .regraBlink {
-	background-color: red;
-	border-color: red;
+	outline: 2px dotted #F009 !important;
 }
