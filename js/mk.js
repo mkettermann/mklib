@@ -1236,14 +1236,10 @@ class mk {
     static regrar = (e, obj) => {
         // Primeiro verifica se o campo tem o executor no oninput
         this.l("e: ", e);
+        // Incrementar Evento
         let oninput = e.getAttribute("oninput");
-        this.l("oninput: ", oninput);
-        if (oninput.includes(";mk.exeregra(this)")) {
-            this.l("Contem executor.");
-        }
-        else {
+        if (!oninput || !oninput.includes(";mk.exeregra(this)")) {
             e.setAttribute("oninput", oninput + ";mk.exeregra(this)");
-            this.l("Não tinha, agora tem executor: ", oninput);
         }
         // Atualiza a regra com a informada no kv.
         let regra = { e: e, ...obj };
@@ -2885,9 +2881,19 @@ class mk {
                 divMkRecList.className = "mkRecList emFoco";
                 divMkRecList.setAttribute("tabindex", "-1");
                 ePai?.insertBefore(divMkRecList, ePai?.children[ePos + 1]);
-                e.setAttribute("oninput", "mk.mkRecUpdate(this)");
-                e.setAttribute("onfocus", "mk.mkRecFoco(this,true)");
-                e.setAttribute("onblur", "mk.mkRecFoco(this,false)");
+                // Incrementar Evento
+                let oninput = e.getAttribute("oninput");
+                if (!oninput || !oninput.includes(";mk.mkRecUpdate(this)")) {
+                    e.setAttribute("oninput", oninput + ";mk.mkRecUpdate(this)");
+                }
+                let onfocus = e.getAttribute("onfocus");
+                if (!oninput || !oninput.includes(";mk.mkRecFoco(this,true)")) {
+                    e.setAttribute("onfocus", oninput + ";mk.mkRecFoco(this,true)");
+                }
+                let onblur = e.getAttribute("onblur");
+                if (!oninput || !oninput.includes(";mk.mkRecFoco(this,false)")) {
+                    e.setAttribute("onblur", oninput + ";mk.mkRecFoco(this,false)");
+                }
                 e.setAttribute("autocomplete", "off");
                 const popperInstance = Popper.createPopper(e, divMkRecList, {
                     placement: "bottom-start",
