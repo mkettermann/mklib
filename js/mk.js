@@ -1233,24 +1233,23 @@ class mk {
     // REGRAR (Gera uma regra para o campo)
     static regras = [];
     //mk.regrar(eParametro1, { k: "charProibido", v: "" });
-    static regrar = (e, obj) => {
+    static regrar = (e, ...obj) => {
         // Incrementar Evento
         let oninput = e.getAttribute("oninput");
         if (!oninput || !oninput.includes(";mk.exeregra(this)")) {
             e.setAttribute("oninput", oninput + ";mk.exeregra(this)");
         }
-        // Atualiza a regra com a informada no kv.
-        let regra = { e: e, ...obj };
-        this.l("Regra: ", regra);
-        if (mk.regras.map(o => o.e).includes(regra.e)) {
-            // Update
-            let posRegra = mk.regras.findIndex(o => o.e == mk.regras[0].e);
-            mk.regras[posRegra] = regra;
-            this.l("Já tinha: ", mk.regras[posRegra]);
+        // Buscar Elemento e regra
+        let novaregra = { e: e, r: mk.mkMerge({}, ...obj) };
+        let posRegra = mk.regras.findIndex(o => o.e == e);
+        if (posRegra >= 0) {
+            // Elemento já encontrado, substituir a regra específica
+            for (let p in novaregra.r) {
+                mk.regras[posRegra].r[p] = novaregra.r[p];
+            }
         }
         else {
-            this.l("Não tinha: ", regra);
-            mk.regras.push(regra);
+            mk.regras.push(novaregra);
         }
         this.l("Regras Atuais: ", mk.regras);
     };
