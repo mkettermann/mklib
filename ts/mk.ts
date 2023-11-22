@@ -1387,7 +1387,7 @@ class mk {
 						e.value = e.value.replaceAll(c, "");
 						setTimeout(() => {
 							e.classList.remove("regraBlink");
-						}, 500);
+						}, 300);
 					}
 				}
 			});
