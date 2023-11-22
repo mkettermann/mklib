@@ -1366,6 +1366,7 @@ class mk {
 		} else {
 			mk.regras.push(novaregra);
 		}
+		mk.exeregra(e);
 	}
 
 	// Função que executa as regras deste campo com base nos objetos salvos
