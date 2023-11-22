@@ -1338,6 +1338,26 @@ class mk {
 		mk.Q("body .offlineBlock")?.classList?.add("oculto");
 	};
 
+	// REGRAR (Gera uma regra para o campo)
+	//mk.regrar(eParametro1, { k: "charProibido", v: "" });
+	static regrar = (e: any, obj: any) => {
+		// Primeiro verifica se o campo tem o executor no oninput
+		this.l("e: ", e);
+		this.l("e.oninput: ", e.oninput);
+		if (e.oninput.includes(";mk.exeregra(this)")) {
+			this.l("Contem executor.");
+		} else {
+			e.oninput = e.oninput + ";mk.exeregra(this)";
+			this.l("Não tinha, agora tem executor: ", e.oninput);
+		}
+
+	}
+
+	// Função que executa as regras deste campo com base nos objetos salvos
+	static exeregra = (e) => {
+		//
+	}
+
 	// Eventos HTML5
 	// Bloqueio de teclas especificas onKeyDown
 	static mkOnlyFloatKeys = (ev: KeyboardEvent) => {
@@ -3994,6 +4014,7 @@ class mk {
 			mk.mkBotCheck();
 			// Itera sobre todos os Poppers para atualizar na mesma frequencia deste intervalo.
 			mk.poppers.forEach((o) => {
+				// AQUI seria bom só dar update em quem não ta oculto.
 				o.update();
 			});
 		}
