@@ -3669,7 +3669,7 @@ class mk {
     // Reloader (RECURSIVA TIMEROUT)
     //Constroi, Reconstroi novos, Reposiciona e Corrige elementos
     static mkRecargaExe = () => {
-        if (mk.mkRecargaTimerPause) {
+        if (!mk.mkRecargaTimerPause) {
             mk.mkSelRenderizar();
             mk.mkRecRenderizar();
             mk.mkBotCheck();
