@@ -1262,7 +1262,6 @@ class mk {
         // Limpeza (Elementos fora do DOM) (Tecnica do Invisivel)
         for (let r of mk.regras) {
             if (!r.e.offsetParent) {
-                this.l("Removeu: ", r);
                 mk.regras.splice(mk.regras.indexOf(r), 1);
             }
         }
@@ -1277,7 +1276,12 @@ class mk {
             regras.forEach(re => {
                 if (re.k == "charProibido") {
                     for (let c of re.v) {
+                        if (e.value.includes(c))
+                            e.classList.add("blinkRegra");
                         e.value = e.value.replaceAll(c, "");
+                        setTimeout(() => {
+                            e.classList.remove("blinkRegra");
+                        }, 500);
                     }
                 }
             });
