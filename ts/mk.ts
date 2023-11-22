@@ -1349,13 +1349,20 @@ class mk {
 			e.setAttribute("oninput", oninput + ";mk.exeregra(this)");
 		}
 		// Buscar Elemento e regra
-		let novaregra: any = { e: e, r: mk.mkMerge({}, ...obj) };
-		let posRegra = mk.regras.findIndex(o => o.e == e);
-		if (posRegra >= 0) {
+		let novaregra: any = { e: e, r: [...obj]) };
+		let posE = mk.regras.findIndex(o => o.e == e);
+		if (posE >= 0) {
 			// Elemento já encontrado, substituir a regra específica
-			for (let p in novaregra.r) {
-				mk.regras[posRegra].r[p] = novaregra.r[p];
-			}
+			novaregra.r.forEach(i => {
+				let posRe = mk.regras[posE].r.findIndex(o => o.k == i.k);
+				if (posRe >= 0) {
+					for (let p in novaregra.r) {
+						mk.regras[posE].r[posRe] = novaregra.r[p];
+					}
+				} else {
+					mk.regras[posE].r.push(i);
+				}
+			});
 		} else {
 			mk.regras.push(novaregra);
 		}
@@ -1363,8 +1370,16 @@ class mk {
 
 	// Função que executa as regras deste campo com base nos objetos salvos
 	static exeregra = (e) => {
-		this.l("Regras Atuais: ", mk.regras)
-		//
+		let regras = mk.regras.find(o => o.e == e)?.r;
+		if (regras) {
+			regras.forEach(re => {
+				if (re.k == "charProibido") {
+					for (let c of re.v) {
+						e.value = e.value.replaceAll(c, "");
+					}
+				}
+			});
+		}
 	}
 
 	// Eventos HTML5
