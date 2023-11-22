@@ -1277,10 +1277,10 @@ class mk {
                 if (re.k == "charProibido") {
                     for (let c of re.v) {
                         if (e.value.includes(c))
-                            e.classList.add("blinkRegra");
+                            e.classList.add("regraBlink");
                         e.value = e.value.replaceAll(c, "");
                         setTimeout(() => {
-                            e.classList.remove("blinkRegra");
+                            e.classList.remove("regraBlink");
                         }, 500);
                     }
                 }

@@ -2101,3 +2101,8 @@ ul.mkUlFase li.disabled a {
 .mkRecList.emFoco {
 	display: none;
 }
+
+.regraBlink {
+	background-color: red;
+	border-color: red;
+}
