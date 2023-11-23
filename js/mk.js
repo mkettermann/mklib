@@ -1187,8 +1187,8 @@ class mk {
         return url.slice(0, posIniQuery);
     };
     // Funcção que recebe os dados de um arquivo e executa um Download deste dados.
-    static gerarDownload = (conteudo, nomeArquivo = "Arquivo.zip") => {
-        const fileUrl = URL.createObjectURL(conteudo);
+    static gerarDownload = (blob, nomeArquivo = "Arquivo.zip") => {
+        const fileUrl = URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = fileUrl;
         link.download = nomeArquivo;

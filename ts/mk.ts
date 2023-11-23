@@ -1290,10 +1290,10 @@ class mk {
 
 	// Funcção que recebe os dados de um arquivo e executa um Download deste dados.
 	static gerarDownload = (
-		conteudo: any,
+		blob: any,
 		nomeArquivo: string = "Arquivo.zip"
 	) => {
-		const fileUrl = URL.createObjectURL(conteudo);
+		const fileUrl = URL.createObjectURL(blob);
 		const link = document.createElement("a");
 		link.href = fileUrl;
 		link.download = nomeArquivo;
