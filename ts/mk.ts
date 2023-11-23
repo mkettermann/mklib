@@ -2024,6 +2024,13 @@ class mk {
 			config.tipo = mk.t.H;
 			let retorno = await mk.request(config);
 			return retorno;
+		},
+		blob: async (config: any) => {
+			if (typeof config != "object") config = { url: config };
+			config.metodo = mk.t.G;
+			config.tipo = mk.t.B;
+			let retorno = await mk.request(config);
+			return retorno;
 		}
 	};
 
