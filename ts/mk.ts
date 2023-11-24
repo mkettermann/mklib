@@ -2719,12 +2719,12 @@ class mk {
 		} else {
 			mk.regras.push(novaregra);
 		}
-		// Limpeza (Elementos fora do DOM) (Tecnica do Invisivel)
-		for (let r of mk.regras) {
-			if (!r.e.offsetParent) {
-				mk.regras.splice(mk.regras.indexOf(r), 1)
-			}
-		};
+		// Limpeza (Elementos fora do DOM) (Tecnica do Invisivel) (Se limpar assim, ao ocultar, elimina/nem cria a regra)
+		// for (let r of mk.regras) {
+		// 	if (!r.e.offsetParent) {
+		// 		mk.regras.splice(mk.regras.indexOf(r), 1)
+		// 	}
+		// };
 		// Auto Executa
 		mk.exeregra(e);
 	}
