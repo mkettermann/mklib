@@ -2758,21 +2758,28 @@ class mk {
 		config.e = mk.Q(config.e);
 		let validou = false;
 
-		// Cruzar referencias,
-		// - Verificar se elementos de mk.regras.e que estão dentro de config.e.
-		let resultado = mk.exeregra(config.e, { sub: true });
-		this.l("Resultado: ", resultado)
-		validou = resultado.length <= 0;
+		// Cruzar referencias
+		let resultado: any = [];
+		mk.regras.forEach(regra => {
+			if (mk.isInside(regra.e, config.e)) {
+				resultado.push(mk.exeregra(regra.e));
+			}
+		});
+		validou = resultado.flat().length <= 0;
 
-		this.l("VALIDAR: ", validou);
+		this.gc("Validou? ", validou);
+		if (!validou) {
+			resultado.forEach(r => {
+				this.l("Regra >> " + r.k + " >> ", r.e);
+			})
+		}
+		this.ge();
+
 		return validou;
 	}
 
 	// Função que executa as regras deste campo com base nos objetos salvos
-	static exeregra = (e, cfg: any = null) => {
-		if (cfg?.sub) {
-			// Buscar todos sub de E.
-		}
+	static exeregra = (e: any) => {
 		let erros: any = [];
 		let regras = mk.regras.find(o => o.e == e)?.r;
 		if (regras) {
@@ -2780,6 +2787,8 @@ class mk {
 				if (!re.target) {
 					re.target = "value";
 				}
+				// O elemento entra na regra quando encontrou erro;
+				re.e = e;
 				// CHAR PROIBIDO
 				if (re.k == "charProibido") {
 					for (let c of re.v) {
