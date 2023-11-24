@@ -783,7 +783,7 @@ class mk {
 	};
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-	//	MASCARAS, REGEX E	VALIDADOR			\\
+	//	 MASCARAS, REGEX E	VALIDADOR		\\
 	//___________________________________\\
 	// Ex Regex: mk.util.cpf[1];
 	static util: object = {
