@@ -2743,7 +2743,7 @@ class mk {
 		let validou = false;
 
 		// Corrigir: Aqui deve dar um giro sobre todos dependentes
-		let resultado = mk.verregra(config.e);
+		let resultado = mk.exeregra(config.e);
 		this.l("Resultado: ", resultado)
 		validou = resultado.length <= 0;
 
@@ -2752,13 +2752,26 @@ class mk {
 	}
 
 	// Função que executa as regras deste campo com base nos objetos salvos
-	static verregra = (e) => {
+	static exeregra = (e) => {
 		let erros: any = [];
 		let regras = mk.regras.find(o => o.e == e)?.r;
 		if (regras) {
 			regras.forEach(re => {
-				if (re.k == "needValue" && re.v == "true") {
-					if (e.value == "") {
+				if (!re.target) {
+					re.target = "value";
+				}
+				// CHAR PROIBIDO
+				if (re.k == "charProibido") {
+					for (let c of re.v) {
+						if (e[re.target].includes(c)) {
+							erros.push(re);
+							e[re.target] = e[re.target].replaceAll(c, "");
+						}
+					}
+				}
+				// OBRIGATORIO (NEED)
+				if (re.k == "need" && re.v == "true") {
+					if (e[re.target] == "") {
 						erros.push(re);
 					}
 				}
@@ -2768,27 +2781,6 @@ class mk {
 			mk.regraBlink(e);
 		}
 		return erros;
-	}
-
-	// Função que executa as regras deste campo com base nos objetos salvos
-	static exeregra = (e) => {
-		let regras = mk.regras.find(o => o.e == e)?.r;
-		let blink = false;
-		if (regras) {
-			regras.forEach(re => {
-				if (re.k == "charProibido") {
-					for (let c of re.v) {
-						if (e.value.includes(c)) {
-							blink = true;
-							e.value = e.value.replaceAll(c, "");
-						}
-					}
-				}
-			});
-		}
-		if (blink) {
-			mk.regraBlink(e);
-		}
 	}
 
 	static regraBlink = (e) => {
