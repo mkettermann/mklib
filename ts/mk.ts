@@ -2812,9 +2812,10 @@ class mk {
 				}
 				// REGEX
 				if (re.k == "regex") {
-					if (new RegExp(re.v).test(e[re.target])) {
+					if (!(new RegExp(re.v).test(e[re.target]))) {
 						erros.push(re);
 					}
+					this.l("Valor Testado:", e[re.target], "Erro:", erros);
 				}
 			});
 		}
