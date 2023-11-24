@@ -778,11 +778,31 @@ class mk {
 	};
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-	//			MASCARAS E REGEX						\\
+	//	MASCARAS, REGEX E	VALIDADOR			\\
 	//___________________________________\\
 	// Ex Regex: mk.util.cpf[1];
 	static util: object = {
-		cpf: ["000.000.000-00", /^([0-9]{3}([\.]?[0-9]{3}){2}[-]?[0-9]{2})$/],
+		cpf: ["000.000.000-00", /^([0-9]{3}([\.]?[0-9]{3}){2}[-]?[0-9]{2})$/, (cpf: any) => {
+			let m1 = [10, 9, 8, 7, 6, 5, 4, 3, 2];
+			let m2 = [11, 10, 9, 8, 7, 6, 5, 4, 3, 2];
+			let resultado = false;
+			if (!cpf) { return resultado; }
+			cpf = mk.apenasNumeros(cpf);
+			if (cpf.length != 11) { return resultado; }
+			let temp = cpf.slice(0, 9);
+			let c = 0;
+			for (let i = 0; i < 9; i++) { c += Number(temp.charAt(i)) * m1[i]; }
+			let r = c % 11;
+			if (r < 2) r = 0;
+			else r = 11 - r;
+			temp += r.toString();
+			c = 0;
+			for (let i = 0; i < 10; i++) { c += Number(temp.charAt(i)) * m2[i]; }
+			r = c % 11;
+			if (r < 2) r = 0;
+			else r = 11 - r;
+			return cpf.charAt(10) == r.toString();
+		}],
 		cep: ["00000-000", /^([0-9]{5}[-]?[0-9]{3})$/],
 		cnpj: [
 			"00.000.000/0000-00",
