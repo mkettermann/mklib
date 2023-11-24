@@ -2623,16 +2623,15 @@ class mk {
         // precisa preencher o elemento de mensagem e remover o oculto.
         let val = mk.Q(".mkRegrar[data-valmsg-for='" + e.name + "']");
         if (erro) {
+            e.classList.remove("valid");
             e.classList.add("input-validation-error");
             val.classList.remove("oculto");
             val.classList.add("field-validation-error");
-            val.classList.remove("field-validation-valid");
         }
         else {
+            e.classList.add("valid");
             e.classList.remove("input-validation-error");
             val.classList.add("oculto");
-            val.classList.remove("field-validation-error");
-            val.classList.add("field-validation-valid");
         }
         val.innerHTML = mensagem;
     };
