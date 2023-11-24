@@ -2769,8 +2769,8 @@ class mk {
 						}
 					}
 				}
-				// OBRIGATORIO (NEED)
-				if (re.k == "need" && re.v == "true") {
+				// OBRIGATORIO
+				if (re.k == "obrigatorio" && re.v == "true") {
 					if (e[re.target] == "") {
 						erros.push(re);
 					}
