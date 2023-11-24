@@ -694,6 +694,11 @@ class mk {
         H: "text/html",
         F: "multipart/form-data", // ContentType FORM
     };
+    static m = {
+        po: "Preenchimento Obrigatório",
+        so: "Seleção Obrigatória",
+        fi: "Formato Inválido",
+    };
     static MESES = [
         "Janeiro",
         "Fevereiro",
@@ -2564,7 +2569,6 @@ class mk {
             }
         });
         validou = resultado.flat().length <= 0;
-        mkt = resultado;
         this.gc("Validou? ", validou);
         if (!validou) {
             resultado.flat().forEach(r => {
@@ -2605,7 +2609,8 @@ class mk {
             });
         }
         if (erros.length > 0) {
-            mk.regraDisplay(e, true);
+            let mensagens = erros.map(a => a.m).join("<br/>");
+            mk.regraDisplay(e, true, mensagens);
             mk.regraBlink(e);
         }
         else {
@@ -2613,13 +2618,21 @@ class mk {
         }
         return erros;
     };
-    static regraDisplay = (e, erro) => {
+    static regraDisplay = (e, erro, mensagem = "") => {
+        //Além do elemento do input receber ou perder a classe,
+        // precisa preencher o elemento de mensagem e remover o oculto.
+        let val = mk.Q(".mkRegrar[data-valmsg-for='" + e.name + "']");
         if (erro) {
             e.classList.add("input-validation-error");
+            val.classList.remove("oculto");
+            val.
+            ;
         }
         else {
             e.classList.remove("input-validation-error");
+            val.classList.add("oculto");
         }
+        val.innerHTML = mensagem;
     };
     static regraBlink = (e) => {
         if (typeof e == "string") {
