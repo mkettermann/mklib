@@ -2743,7 +2743,9 @@ class mk {
 		let validou = false;
 
 		// Corrigir: Aqui deve dar um giro sobre todos dependentes
-		validou = mk.verregra(config.e) != null;
+		let resultado = mk.verregra(config.e);
+		this.l("Resultado: ", resultado)
+		validou = resultado.length <= 0;
 
 		this.l("VALIDAR: ", validou);
 		return validou;
@@ -2755,16 +2757,15 @@ class mk {
 		let regras = mk.regras.find(o => o.e == e)?.r;
 		if (regras) {
 			regras.forEach(re => {
-				if (re.k == "charProibido") {
-					for (let c of re.v) {
-						if (e.value.includes(c)) e.classList.add("regraBlink");
-						erros.push(re.k);
-						setTimeout(() => {
-							e.classList.remove("regraBlink");
-						}, 300);
+				if (re.k == "needValue" && re.v == "true") {
+					if (e.value == "") {
+						erros.push(re);
 					}
 				}
 			});
+		}
+		if (erros.length > 0) {
+			mk.regraBlink(e);
 		}
 		return erros;
 	}
@@ -2772,21 +2773,33 @@ class mk {
 	// Função que executa as regras deste campo com base nos objetos salvos
 	static exeregra = (e) => {
 		let regras = mk.regras.find(o => o.e == e)?.r;
+		let blink = false;
 		if (regras) {
 			regras.forEach(re => {
 				if (re.k == "charProibido") {
 					for (let c of re.v) {
-						if (e.value.includes(c)) e.classList.add("regraBlink");
-						e.value = e.value.replaceAll(c, "");
-						setTimeout(() => {
-							e.classList.remove("regraBlink");
-						}, 300);
+						if (e.value.includes(c)) {
+							blink = true;
+							e.value = e.value.replaceAll(c, "");
+						}
 					}
 				}
 			});
 		}
+		if (blink) {
+			mk.regraBlink(e);
+		}
 	}
 
+	static regraBlink = (e) => {
+		if (typeof e == "string") {
+			e = mk.Q(e);
+		}
+		e.classList.add("regraBlink");
+		setTimeout(() => {
+			e.classList.remove("regraBlink");
+		}, 300);
+	}
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 	//			AREA FASEADO								\\
