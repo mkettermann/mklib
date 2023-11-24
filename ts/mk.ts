@@ -2829,10 +2829,13 @@ class mk {
 		if (erro) {
 			e.classList.add("input-validation-error");
 			val.classList.remove("oculto");
-			val.
+			val.classList.add("field-validation-error");
+			val.classList.remove("field-validation-valid");
 		} else {
 			e.classList.remove("input-validation-error");
 			val.classList.add("oculto");
+			val.classList.remove("field-validation-error");
+			val.classList.add("field-validation-valid");
 		}
 		val.innerHTML = mensagem;
 	}
