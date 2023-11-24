@@ -2770,8 +2770,7 @@ class mk {
 		this.gc("Validou? ", validou);
 		if (!validou) {
 			resultado.flat().forEach(r => {
-				this.l("Regra >> " + r.k);
-				this.gc("Campo: ");
+				this.gc("Regra >> " + r.k + " >> Campo:");
 				this.l(r.e);
 				this.ge();
 			})
