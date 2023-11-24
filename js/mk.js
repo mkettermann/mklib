@@ -1437,6 +1437,21 @@ class mk {
         }
         return eTr;
     };
+    // E - ESTA DENTRO DE - CONTAINER?
+    static isInside = (e, container) => {
+        let resultado = false;
+        let ePai = e;
+        let c = 0;
+        while (ePai != mk.Q("BODY") || c > 100) {
+            ePai = ePai.parentElement;
+            if (ePai == container) {
+                resultado = true;
+                break;
+            }
+            c++;
+        }
+        return resultado;
+    };
     // Sobe elementos pais até encontrar esta classe
     static getEClass = (e, classe) => {
         let eClass = e;
@@ -2541,15 +2556,19 @@ class mk {
         }
         config.e = mk.Q(config.e);
         let validou = false;
-        // Corrigir: Aqui deve dar um giro sobre todos dependentes
-        let resultado = mk.exeregra(config.e);
+        // Cruzar referencias,
+        // - Verificar se elementos de mk.regras.e que estão dentro de config.e.
+        let resultado = mk.exeregra(config.e, { sub: true });
         this.l("Resultado: ", resultado);
         validou = resultado.length <= 0;
         this.l("VALIDAR: ", validou);
         return validou;
     };
     // Função que executa as regras deste campo com base nos objetos salvos
-    static exeregra = (e) => {
+    static exeregra = (e, cfg = null) => {
+        if (cfg?.sub) {
+            // Buscar todos sub de E.
+        }
         let erros = [];
         let regras = mk.regras.find(o => o.e == e)?.r;
         if (regras) {
