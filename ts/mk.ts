@@ -743,6 +743,11 @@ class mk {
 		H: "text/html", // ContentType HTML
 		F: "multipart/form-data", // ContentType FORM
 	};
+	static m = {
+		po: "Preenchimento Obrigatório",
+		so: "Seleção Obrigatória",
+		fi: "Formato Inválido",
+	};
 	static MESES = [
 		"Janeiro",
 		"Fevereiro",
@@ -1358,62 +1363,6 @@ class mk {
 		mk.Q("body .offlineBlock")?.classList?.add("oculto");
 	};
 
-	// REGRAR (Gera uma regra para o campo)
-	static regras: any = [];
-	//mk.regrar(eParametro1, { k: "charProibido", v: "" });
-
-	static regrar = (e: any, ...obj: any) => {
-		// Incrementar Evento
-		let oninput = e.getAttribute("oninput");
-		if (!oninput || !oninput.includes(";mk.exeregra(this)")) {
-			e.setAttribute("oninput", oninput + ";mk.exeregra(this)");
-		}
-		// Buscar Elemento e regra
-		let novaregra: any = { e: e, r: [...obj]) };
-		let posE = mk.regras.findIndex(o => o.e == e);
-		if (posE >= 0) {
-			// Elemento já encontrado, substituir a regra específica
-			novaregra.r.forEach(i => {
-				let posRe = mk.regras[posE].r.findIndex(o => o.k == i.k);
-				if (posRe >= 0) {
-					for (let p in novaregra.r) {
-						mk.regras[posE].r[posRe] = novaregra.r[p];
-					}
-				} else {
-					mk.regras[posE].r.push(i);
-				}
-			});
-		} else {
-			mk.regras.push(novaregra);
-		}
-		// Limpeza (Elementos fora do DOM) (Tecnica do Invisivel)
-		for (let r of mk.regras) {
-			if (!r.e.offsetParent) {
-				mk.regras.splice(mk.regras.indexOf(r), 1)
-			}
-		};
-		// Auto Executa
-		mk.exeregra(e);
-	}
-
-	// Função que executa as regras deste campo com base nos objetos salvos
-	static exeregra = (e) => {
-		let regras = mk.regras.find(o => o.e == e)?.r;
-		if (regras) {
-			regras.forEach(re => {
-				if (re.k == "charProibido") {
-					for (let c of re.v) {
-						if (e.value.includes(c)) e.classList.add("regraBlink");
-						e.value = e.value.replaceAll(c, "");
-						setTimeout(() => {
-							e.classList.remove("regraBlink");
-						}, 300);
-					}
-				}
-			});
-		}
-	}
-
 	// Eventos HTML5
 	// Bloqueio de teclas especificas onKeyDown
 	static mkOnlyFloatKeys = (ev: KeyboardEvent) => {
@@ -1640,6 +1589,22 @@ class mk {
 			}
 		}
 		return eTr;
+	};
+
+	// E - ESTA DENTRO DE - CONTAINER?
+	static isInside = (e: any, container: any) => {
+		let resultado = false;
+		let ePai = e;
+		let c = 0;
+		while (ePai != mk.Q("BODY") || c > 100) {
+			ePai = ePai.parentElement;
+			if (ePai == container) {
+				resultado = true;
+				break;
+			}
+			c++;
+		}
+		return resultado;
 	};
 
 	// Sobe elementos pais até encontrar esta classe
@@ -2755,6 +2720,162 @@ class mk {
 	};
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+	//			REGRAR E VALIDAR						\\
+	//___________________________________\\
+
+	// A biblioteca precisa estar iniciada para a variavel regras estar presente.
+	// Falta:
+	// - Um verificador de regras em uma área, ou seja, todos elementos dependentes estão válidos?
+	// - Ao validar, executa apenas nos visiveis.
+
+	// REGRAR (Gera uma regra para o campo)
+	static regras: any = [];
+	//mk.regrar(eParametro1, { k: "charProibido", v: "" });
+
+
+	static regrar = (e: any, ...obj: any) => {
+		if (typeof e == "string") {
+			e = mk.Q(e);
+		}
+		// Incrementar Evento
+		let oninput = e.getAttribute("oninput");
+		if (!oninput || !oninput.includes(";mk.exeregra(this)")) {
+			e.setAttribute("oninput", oninput + ";mk.exeregra(this)");
+		}
+		// Buscar Elemento e regra
+		let novaregra: any = { e: e, r: [...obj] };
+		let posE = mk.regras.findIndex(o => o.e == e);
+		if (posE >= 0) {
+			// Elemento já encontrado, substituir a regra específica
+			novaregra.r.forEach(i => {
+				let posRe = mk.regras[posE].r.findIndex(o => o.k == i.k);
+				if (posRe >= 0) {
+					for (let p in novaregra.r) {
+						mk.regras[posE].r[posRe] = novaregra.r[p];
+					}
+				} else {
+					mk.regras[posE].r.push(i);
+				}
+			});
+		} else {
+			mk.regras.push(novaregra);
+		}
+		// Limpeza (Elementos fora do DOM) (Tecnica do Invisivel) (Se limpar assim, ao ocultar, elimina/nem cria a regra)
+		// for (let r of mk.regras) {
+		// 	if (!r.e.offsetParent) {
+		// 		mk.regras.splice(mk.regras.indexOf(r), 1)
+		// 	}
+		// };
+		// Auto Executa
+		mk.exeregra(e);
+	}
+
+
+	// Retorna um true se todos os elementos internos estão atualmente válidos pelas regras.
+	/**
+	 * e:		elemento do Query alvo da verificação onde irá iterar todos filhos.
+	 * @param config String do Query ou a Config
+	 */
+	static estaValido = async (config: any) => {
+		if (typeof config != "object") {
+			config = { e: config };
+		}
+		config.e = mk.Q(config.e);
+		let validou = false;
+
+		// Cruzar referencias
+		let resultado: any = [];
+		mk.regras.forEach(regra => {
+			if (mk.isInside(regra.e, config.e)) {
+				resultado.push(mk.exeregra(regra.e));
+			}
+		});
+		validou = resultado.flat().length <= 0;
+		this.gc("Validou? ", validou);
+		if (!validou) {
+			resultado.flat().forEach(r => {
+				this.gc("Regra >> " + r.k + " >> Campo:");
+				this.l(r.e);
+				this.ge();
+			});
+		}
+		this.ge();
+
+		return validou;
+	}
+
+	// Função que executa as regras deste campo com base nos objetos salvos
+	static exeregra = (e: any) => {
+		let erros: any = [];
+		let regras = mk.regras.find(o => o.e == e)?.r;
+		if (regras) {
+			regras.forEach(re => {
+				if (!re.target) {
+					re.target = "value";
+				}
+				// O elemento entra na regra quando encontrou erro;
+				re.e = e;
+				// CHAR PROIBIDO
+				if (re.k == "charProibido") {
+					for (let c of re.v) {
+						if (e[re.target].includes(c)) {
+							erros.push(re);
+							e[re.target] = e[re.target].replaceAll(c, "");
+						}
+					}
+				}
+				// OBRIGATORIO
+				if (re.k == "obrigatorio" && re.v == "true") {
+					if (e[re.target] == "") {
+						erros.push(re);
+					}
+				}
+				// REGEX
+				if (re.k == "regex") {
+					if (!(new RegExp(re.v).test(e[re.target]))) {
+						erros.push(re);
+					}
+					this.l("Valor Testado:", e[re.target], "Erro:", erros);
+				}
+			});
+		}
+		if (erros.length > 0) {
+			let mensagens = erros.map(a => a.m).join("<br/>");
+			mk.regraDisplay(e, true, mensagens);
+			mk.regraBlink(e);
+		} else {
+			mk.regraDisplay(e, false);
+		}
+		return erros;
+	}
+
+	static regraDisplay = (e: any, erro: boolean, mensagem: string = "") => {
+		// Reagindo similar ao Unobtrusive, mas usando oculto no span.
+		let val = mk.Q(".mkRegrar[data-valmsg-for='" + e.name + "']")
+		if (erro) {
+			e.classList.remove("valid");
+			e.classList.add("input-validation-error");
+			val.classList.remove("oculto");
+			val.classList.add("field-validation-error");
+		} else {
+			e.classList.add("valid");
+			e.classList.remove("input-validation-error");
+			val.classList.add("oculto");
+		}
+		val.innerHTML = mensagem;
+	}
+
+	static regraBlink = (e) => {
+		if (typeof e == "string") {
+			e = mk.Q(e);
+		}
+		e.classList.add("regraBlink");
+		setTimeout(() => {
+			e.classList.remove("regraBlink");
+		}, 300);
+	}
+
+	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 	//			AREA FASEADO								\\
 	//___________________________________\\
 
@@ -3714,7 +3835,7 @@ class mk {
 				eRef.offsetHeight +
 				2 +
 				"px";
-
+	
 			eList.style.left = eRef.offsetLeft + "px";
 			// Depois, verifica se saiu da tela
 			let posXCantoOpostoRef = eRef.offsetLeft + eRef.offsetWidth;

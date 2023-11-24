@@ -2102,6 +2102,11 @@ ul.mkUlFase li.disabled a {
 	display: none;
 }
 
+/* Blink em no geral e no seletor */
 .regraBlink {
+	outline: 2px dotted #F009 !important;
+}
+
+.mkSelBloco:has(.regraBlink) {
 	outline: 2px dotted #F009 !important;
 }
