@@ -2810,6 +2810,12 @@ class mk {
 						erros.push(re);
 					}
 				}
+				// REGEX
+				if (re.k == "regex") {
+					if (new RegExp(re.v).test(e[re.target])) {
+						erros.push(re);
+					}
+				}
 			});
 		}
 		if (erros.length > 0) {
