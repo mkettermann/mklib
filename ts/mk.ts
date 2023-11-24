@@ -2766,11 +2766,14 @@ class mk {
 			}
 		});
 		validou = resultado.flat().length <= 0;
-
+		mkt = resultado;
 		this.gc("Validou? ", validou);
 		if (!validou) {
-			resultado.forEach(r => {
-				this.l("Regra >> " + r.k + " >> ", r.e);
+			resultado.flat().forEach(r => {
+				this.l("Regra >> " + r.k);
+				this.gc("Campo: ");
+				this.l(r.e);
+				this.ge();
 			})
 		}
 		this.ge();
