@@ -2619,8 +2619,7 @@ class mk {
         return erros;
     };
     static regraDisplay = (e, erro, mensagem = "") => {
-        //Além do elemento do input receber ou perder a classe,
-        // precisa preencher o elemento de mensagem e remover o oculto.
+        // Reagindo similar ao Unobtrusive, mas usando oculto no span.
         let val = mk.Q(".mkRegrar[data-valmsg-for='" + e.name + "']");
         if (erro) {
             e.classList.remove("valid");
