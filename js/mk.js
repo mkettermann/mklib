@@ -2605,9 +2605,21 @@ class mk {
             });
         }
         if (erros.length > 0) {
+            mk.regraDisplay(e, true);
             mk.regraBlink(e);
         }
+        else {
+            mk.regraDisplay(e, false);
+        }
         return erros;
+    };
+    static regraDisplay = (e, erro) => {
+        if (erro) {
+            e.classList.add("input-validation-error");
+        }
+        else {
+            e.classList.remove("input-validation-error");
+        }
     };
     static regraBlink = (e) => {
         if (typeof e == "string") {

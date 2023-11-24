@@ -2773,7 +2773,7 @@ class mk {
 				this.gc("Regra >> " + r.k + " >> Campo:");
 				this.l(r.e);
 				this.ge();
-			})
+			});
 		}
 		this.ge();
 
@@ -2809,9 +2809,20 @@ class mk {
 			});
 		}
 		if (erros.length > 0) {
+			mk.regraDisplay(e, true);
 			mk.regraBlink(e);
+		} else {
+			mk.regraDisplay(e, false);
 		}
 		return erros;
+	}
+
+	static regraDisplay = (e: any, erro: boolean) => {
+		if (erro) {
+			e.classList.add("input-validation-error");
+		} else {
+			e.classList.remove("input-validation-error");
+		}
 	}
 
 	static regraBlink = (e) => {
