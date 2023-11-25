@@ -740,13 +740,12 @@ class mk {
         cpf: ["000.000.000-00", /^([0-9]{3}([\.]?[0-9]{3}){2}[-]?[0-9]{2})$/, (cpf) => {
                 let m1 = [10, 9, 8, 7, 6, 5, 4, 3, 2];
                 let m2 = [11, 10, 9, 8, 7, 6, 5, 4, 3, 2];
-                let resultado = false;
                 if (!cpf) {
-                    return resultado;
+                    return false;
                 }
                 cpf = mk.apenasNumeros(cpf);
                 if (cpf.length != 11) {
-                    return resultado;
+                    return false;
                 }
                 let temp = cpf.slice(0, 9);
                 let c = 0;
@@ -754,26 +753,45 @@ class mk {
                     c += Number(temp.charAt(i)) * m1[i];
                 }
                 let r = c % 11;
-                if (r < 2)
-                    r = 0;
-                else
-                    r = 11 - r;
+                (r < 2) ? r = 0 : r = 11 - r;
                 temp += r.toString();
                 c = 0;
                 for (let i = 0; i < 10; i++) {
                     c += Number(temp.charAt(i)) * m2[i];
                 }
                 r = c % 11;
-                if (r < 2)
-                    r = 0;
-                else
-                    r = 11 - r;
+                (r < 2) ? r = 0 : r = 11 - r;
                 return cpf.charAt(10) == r.toString();
             }],
         cep: ["00000-000", /^([0-9]{5}[-]?[0-9]{3})$/],
         cnpj: [
             "00.000.000/0000-00",
-            /^([0-9]{2}([\.]?[0-9]{3}){2}[\/]?[0-9]{4}[-]?[0-9]{2})$/,
+            /^([0-9]{2}([\.]?[0-9]{3}){2}[\/]?[0-9]{4}[-]?[0-9]{2})$/, (cnpj) => {
+                let m1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+                let m2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+                if (!cnpj) {
+                    return false;
+                }
+                cnpj = mk.apenasNumeros(cnpj);
+                if (cnpj.length != 14) {
+                    return false;
+                }
+                let temp = cnpj.slice(0, 12);
+                let c = 0;
+                for (let i = 0; i < 12; i++) {
+                    c += Number(temp.charAt(i)) * m1[i];
+                }
+                let r = (c % 11);
+                (r < 2) ? r = 0 : r = 11 - r;
+                temp += r.toString();
+                c = 0;
+                for (let i = 0; i < 13; i++) {
+                    c += Number(temp.charAt(i)) * m2[i];
+                }
+                r = (c % 11);
+                (r < 2) ? r = 0 : r = 11 - r;
+                return cnpj.charAt(13) == r.toString();
+            }
         ],
         cpf_cnpj: [
             "00.000.000/0000-00",
