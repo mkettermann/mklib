@@ -2609,7 +2609,7 @@ class mk {
         this.gc("Validou? ", validou);
         if (!validou) {
             resultado.flat().forEach(r => {
-                this.gc("Regra: " + r.k.toUpperCase() + " >> Campo: " + e.name);
+                this.gc("Regra: " + r.k.toUpperCase() + " >> Campo: " + r.e.name);
                 this.l(r.e);
                 this.ge();
             });
