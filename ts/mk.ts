@@ -805,7 +805,12 @@ class mk {
 			(r < 2) ? r = 0 : r = 11 - r;
 			return cpf.charAt(10) == r.toString();
 		}],
-		cep: ["00000-000", /^([0-9]{5}[-]?[0-9]{3})$/],
+		cep: ["00.000-000", /^([0-9]{2}[\.]?[0-9]{3}[-]?[0-9]{3})$/, (cep: any) => {
+			if (!cep) { return false; }
+			cep = mk.apenasNumeros(cep);
+			if (cep.length != 8) { return false; }
+			return true;
+		}],
 		cnpj: [
 			"00.000.000/0000-00",
 			/^([0-9]{2}([\.]?[0-9]{3}){2}[\/]?[0-9]{4}[-]?[0-9]{2})$/, (cnpj: any) => {
