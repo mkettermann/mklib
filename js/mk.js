@@ -2704,7 +2704,9 @@ class mk {
             val.classList.add("field-validation-error");
         }
         else {
-            e.classList.add("valid");
+            if (e.offsetParent && !e.classList.contains("disabled")) { // Não setar valido nos desativados/invisiveis
+                e.classList.add("valid");
+            }
             e.classList.remove("input-validation-error");
             val.classList.add("oculto");
         }
