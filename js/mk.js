@@ -2623,7 +2623,9 @@ class mk {
     // Função que executa as regras deste campo com base nos objetos salvos
     static exeregra = (e) => {
         let erros = [];
-        let regras = mk.regras.find(o => o.e == e)?.r;
+        let regrador = mk.regras.find(o => o.e == e);
+        let eDisplay = regrador.c.querySelector(".mkRegrar[data-valmsg-for='" + regrador.n + "']");
+        let regras = regrador?.r;
         if (regras) {
             regras.forEach(re => {
                 if (!re.target) {
@@ -2693,34 +2695,35 @@ class mk {
         }
         if (erros.length > 0) {
             let mensagens = erros.map(a => a.m).join("<br/>");
-            mk.regraDisplay(e, true, mensagens);
+            mk.regraDisplay(e, true, eDisplay, mensagens);
             mk.regraBlink(e);
         }
         else {
-            mk.regraDisplay(e, false, "");
+            mk.regraDisplay(e, false, eDisplay, "");
         }
         return erros;
     };
-    static regraDisplay = (e, erro, mensagem = "") => {
+    static regraDisplay = (e, erro, eDisplay, mensagem = "") => {
         // Reagindo similar ao Unobtrusive, mas usando oculto no span.
-        let val = mk.Q(".mkRegrar[data-valmsg-for='" + e.name + "']");
+        // let val = mk.Q(".mkRegrar[data-valmsg-for='" + e.name + "']");
         // FALTA:
+        // - passar 1 regra por parametro
         // - Colocar o elemento de display deste elemento E na variavel VAL.
         // - Para isso tem que buscar esse elemento nas regras, e quando encontrar a regra deste elemento, terá o container e o nome.
         if (erro) {
             e.classList.remove("valid");
             e.classList.add("input-validation-error");
-            val.classList.remove("oculto");
-            val.classList.add("field-validation-error");
+            eDisplay.classList.remove("oculto");
+            eDisplay.classList.add("field-validation-error");
         }
         else {
             if (e.offsetParent && !e.classList.contains("disabled")) { // Não setar valido nos desativados/invisiveis
                 e.classList.add("valid");
             }
             e.classList.remove("input-validation-error");
-            val.classList.add("oculto");
+            eDisplay.classList.add("oculto");
         }
-        val.innerHTML = mensagem;
+        eDisplay.innerHTML = mensagem;
     };
     static regraBlink = (e) => {
         if (typeof e == "string") {
