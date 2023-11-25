@@ -2737,8 +2737,8 @@ class mk {
 	 * v: 	atributo da regra escolhida
 	 * m: 	mensagem de exibição caso esteja em estado falso.
 	 * a: 	auto executar essa regra assim que regrar (true/false)
-	 * i:		validar mesmo se estiver invidivel (true/false)
-	 * Regras:		obrigatorio		|		regex		|		fn		|		charproibido
+	 * f:		força validar mesmo se estiver invisivel / desativado (true/false)
+	 * Regras:		obrigatorio		|		regex		|		fn		|		charproibido		|		datamaioque		|  	datamenorque
 	 */
 	static regrar = (e: any, ...obj: any) => {
 		if (typeof e == "string") {
@@ -2817,8 +2817,15 @@ class mk {
 				if (!re.target) {
 					re.target = "value";
 				}
-				// Validar apenas quando Visivel OU Quando i estiver true na regra.
-				if (e.offsetParent || re.i) {
+				let podeValidar = true;
+				if (!e.offsetParent) { // Invisivel, padrão sem validar
+					podeValidar = false;
+				}
+				if (e.classList.contains("disabled")) { // Desativado, padrão sem validar
+					podeValidar = false;
+				}
+				// Validar apenas quando i estiver true na regra OU  Visível e Não bloqueado
+				if (podeValidar || re.f) {
 					// O elemento entra na regra quando encontrou erro;
 					re.e = e;
 					// CHAR PROIBIDO
