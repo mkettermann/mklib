@@ -2791,7 +2791,7 @@ class mk {
 		let resultado: any = [];
 		mk.regras.forEach(regra => {
 			if (mk.isInside(regra.e, config.e)) {
-				resultado.push(mk.exeregra(regra.e));
+				resultado.push(mk.exeregra(regra.e, config.e));
 			}
 		});
 		validou = resultado.flat().length <= 0;
@@ -2809,7 +2809,7 @@ class mk {
 	}
 
 	// Função que executa as regras deste campo com base nos objetos salvos
-	static exeregra = (e: any) => {
+	static exeregra = (e: any, container: any = null) => {
 		let erros: any = [];
 		let regras = mk.regras.find(o => o.e == e)?.r;
 		if (regras) {
@@ -2853,17 +2853,22 @@ class mk {
 		}
 		if (erros.length > 0) {
 			let mensagens = erros.map(a => a.m).join("<br/>");
-			mk.regraDisplay(e, true, mensagens);
+			mk.regraDisplay(e, true, mensagens, container);
 			mk.regraBlink(e);
 		} else {
-			mk.regraDisplay(e, false);
+			mk.regraDisplay(e, false, "", container);
 		}
 		return erros;
 	}
 
-	static regraDisplay = (e: any, erro: boolean, mensagem: string = "") => {
+	static regraDisplay = (e: any, erro: boolean, mensagem: string = "", container: any = null) => {
 		// Reagindo similar ao Unobtrusive, mas usando oculto no span.
 		let val = mk.Q(".mkRegrar[data-valmsg-for='" + e.name + "']")
+		if (container) {// Quando há container, informa se o elemento de info está no container
+			if (!mk.isInside(val, container)) {
+				mk.w("Cuidado: Span de Validation está fora do container. regraDisplay()");
+			}
+		}
 		if (erro) {
 			e.classList.remove("valid");
 			e.classList.add("input-validation-error");
