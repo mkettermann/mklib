@@ -2657,6 +2657,18 @@ class mk {
                             erros.push(re);
                         }
                     }
+                    // Data Maior Que
+                    if (re.k.toLowerCase() == "datamaioque") {
+                        if (mk.getMs(e[re.target]) <= mk.getMs(re.v)) {
+                            erros.push(re);
+                        }
+                    }
+                    // Data Menor Que
+                    if (re.k.toLowerCase() == "datamenorque") {
+                        if (mk.getMs(e[re.target]) >= mk.getMs(re.v)) {
+                            erros.push(re);
+                        }
+                    }
                 } //<= fim offsetParent
             });
         }
