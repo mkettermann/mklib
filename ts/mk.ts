@@ -2725,14 +2725,21 @@ class mk {
 
 	// A biblioteca precisa estar iniciada para a variavel regras estar presente.
 	// Falta:
-	// - Um verificador de regras em uma área, ou seja, todos elementos dependentes estão válidos?
 	// - Ao validar, executa apenas nos visiveis.
 
 	// REGRAR (Gera uma regra para o campo)
 	static regras: any = [];
 	//mk.regrar(eParametro1, { k: "charProibido", v: "" });
 
-
+	/**
+	 * Atributos do Objeto
+	 * k:		nome da regra a ser utilizada
+	 * v: 	atributo da regra escolhida
+	 * m: 	mensagem de exibição caso esteja em estado falso.
+	 * a: 	auto executar essa regra assim que regrar (true/false)
+	 * i:		validar mesmo se estiver invidivel (true/false)
+	 * Regras:		obrigatorio		|		regex		|		fn		|		charproibido
+	 */
 	static regrar = (e: any, ...obj: any) => {
 		if (typeof e == "string") {
 			e = mk.Q(e);
@@ -2743,6 +2750,7 @@ class mk {
 			e.setAttribute("oninput", oninput + ";mk.exeregra(this)");
 		}
 		// Buscar Elemento e regra
+		let auto = false;
 		let novaregra: any = { e: e, r: [...obj] };
 		let posE = mk.regras.findIndex(o => o.e == e);
 		if (posE >= 0) {
@@ -2760,14 +2768,10 @@ class mk {
 		} else {
 			mk.regras.push(novaregra);
 		}
-		// Limpeza (Elementos fora do DOM) (Tecnica do Invisivel) (Se limpar assim, ao ocultar, elimina/nem cria a regra)
-		// for (let r of mk.regras) {
-		// 	if (!r.e.offsetParent) {
-		// 		mk.regras.splice(mk.regras.indexOf(r), 1)
-		// 	}
-		// };
 		// Auto Executa
-		mk.exeregra(e);
+		if (auto) {
+			mk.exeregra(e);
+		}
 	}
 
 
@@ -2813,30 +2817,38 @@ class mk {
 				if (!re.target) {
 					re.target = "value";
 				}
-				// O elemento entra na regra quando encontrou erro;
-				re.e = e;
-				// CHAR PROIBIDO
-				if (re.k == "charProibido") {
-					for (let c of re.v) {
-						if (e[re.target].includes(c)) {
-							erros.push(re);
-							e[re.target] = e[re.target].replaceAll(c, "");
+				// Validar apenas quando Visivel OU Quando i estiver true na regra.
+				if (e.offsetParent || re.i) {
+					// O elemento entra na regra quando encontrou erro;
+					re.e = e;
+					// CHAR PROIBIDO
+					if (re.k.toLowerCase() == "charproibido") {
+						for (let c of re.v) {
+							if (e[re.target].includes(c)) {
+								erros.push(re);
+								e[re.target] = e[re.target].replaceAll(c, "");
+							}
 						}
 					}
-				}
-				// OBRIGATORIO
-				if (re.k == "obrigatorio" && re.v == "true") {
-					if (e[re.target] == "") {
-						erros.push(re);
+					// OBRIGATORIO
+					if (re.k.toLowerCase() == "obrigatorio" && re.v == "true") {
+						if (e[re.target] == "") {
+							erros.push(re);
+						}
 					}
-				}
-				// REGEX
-				if (re.k == "regex") {
-					if (!(new RegExp(re.v).test(e[re.target]))) {
-						erros.push(re);
+					// REGEX
+					if (re.k.toLowerCase() == "regex") {
+						if (!(new RegExp(re.v).test(e[re.target]))) {
+							erros.push(re);
+						}
 					}
-					this.l("Valor Testado:", e[re.target], "Erro:", erros);
-				}
+					// FN
+					if (re.k.toLowerCase() == "fn") {
+						if (!(re.v(e[re.target]))) {
+							erros.push(re);
+						}
+					}
+				} //<= fim offsetParent
 			});
 		}
 		if (erros.length > 0) {
