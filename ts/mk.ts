@@ -2798,7 +2798,7 @@ class mk {
 		this.gc("Validou? ", validou);
 		if (!validou) {
 			resultado.flat().forEach(r => {
-				this.gc("Regra >> " + r.k + " >> Campo:");
+				this.gc("Regra: " + r.k.toUpperCase() + " >> Campo: " + e.name);
 				this.l(r.e);
 				this.ge();
 			});
@@ -2828,6 +2828,7 @@ class mk {
 				if (podeValidar || re.f) {
 					// O elemento entra na regra quando encontrou erro;
 					re.e = e;
+					// --- EXECUTORES ---
 					// CHAR PROIBIDO
 					if (re.k.toLowerCase() == "charproibido") {
 						for (let c of re.v) {
@@ -2837,6 +2838,14 @@ class mk {
 							}
 						}
 					}
+					// Data Máxima
+					if (re.k.toLowerCase() == "datamax") {
+						if (mk.getMs(e[re.target]) >= mk.getMs(re.v)) {
+							e[re.target] = re.v;
+							erros.push(re);
+						}
+					}
+					// --- INFORMADORES ---
 					// OBRIGATORIO
 					if (re.k.toLowerCase() == "obrigatorio" && re.v == "true") {
 						if (e[re.target] == "") {
