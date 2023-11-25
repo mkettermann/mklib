@@ -2560,7 +2560,7 @@ class mk {
             mk.w("regrar() - Elemento necessário: ", e);
         }
         // Incrementar Evento
-        let oninput = e.getAttribute("oninput");
+        let oninput = e?.getAttribute("oninput");
         if (!oninput || !oninput.includes(";mk.exeregra(this)")) {
             e.setAttribute("oninput", oninput + ";mk.exeregra(this)");
         }
