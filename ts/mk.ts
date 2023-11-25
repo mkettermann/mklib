@@ -2744,6 +2744,7 @@ class mk {
 		if (typeof e == "string") {
 			e = mk.Q(e);
 		}
+		if (!e) { mk.w("regrar() - Elemento necessário: ", e) }
 		// Incrementar Evento
 		let oninput = e.getAttribute("oninput");
 		if (!oninput || !oninput.includes(";mk.exeregra(this)")) {
