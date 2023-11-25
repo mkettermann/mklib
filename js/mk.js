@@ -808,7 +808,16 @@ class mk {
                 return mk.util.cpf[2](cpf_cnpj) || mk.util.cnpj[2](cpf_cnpj);
             }
         ],
-        cnh: ["00000000000", /^([0-9]{11})$/],
+        cnh: ["00000000000", /^([0-9]{11})$/, (cnh) => {
+                if (!cnh) {
+                    return false;
+                }
+                cnh = mk.apenasNumeros(cnh);
+                if (cnh.length != 11) {
+                    return false;
+                }
+                return true;
+            }],
         placa: ["SSS-0A00", /^([A-Za-z]{3}[-]?[0-9]{1}[A-Za-z0-9]{1}[0-9]{2})$/],
         placaAntesMercosul: ["AAA-0000", /^([A-Za-z]{3}[-]?[0-9]{4})$/],
         placaMercosul: [

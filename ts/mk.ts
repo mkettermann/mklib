@@ -786,7 +786,7 @@ class mk {
 	//	 MASCARAS, REGEX E	VALIDADOR		\\
 	//___________________________________\\
 	// Ex Regex: mk.util.cpf[1];
-	static util: object = {
+	static util: any = {
 		cpf: ["000.000.000-00", /^([0-9]{3}([\.]?[0-9]{3}){2}[-]?[0-9]{2})$/, (cpf: any) => {
 			let m1 = [10, 9, 8, 7, 6, 5, 4, 3, 2];
 			let m2 = [11, 10, 9, 8, 7, 6, 5, 4, 3, 2];
@@ -838,7 +838,12 @@ class mk {
 				return mk.util.cpf[2](cpf_cnpj) || mk.util.cnpj[2](cpf_cnpj);
 			}
 		],
-		cnh: ["00000000000", /^([0-9]{11})$/],
+		cnh: ["00000000000", /^([0-9]{11})$/, (cnh: any) => {
+			if (!cnh) { return false; }
+			cnh = mk.apenasNumeros(cnh);
+			if (cnh.length != 11) { return false; }
+			return true;
+		}],
 		placa: ["SSS-0A00", /^([A-Za-z]{3}[-]?[0-9]{1}[A-Za-z0-9]{1}[0-9]{2})$/],
 		placaAntesMercosul: ["AAA-0000", /^([A-Za-z]{3}[-]?[0-9]{4})$/],
 		placaMercosul: [
