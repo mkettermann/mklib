@@ -1479,7 +1479,7 @@ class mk {
         let resultado = false;
         let ePai = e;
         let c = 0;
-        while (ePai != mk.Q("BODY") || c > 100) {
+        while (ePai != mk.Q("BODY") && c < 100) {
             ePai = ePai.parentElement;
             if (ePai == container) {
                 resultado = true;
@@ -2544,6 +2544,7 @@ class mk {
     static regras = [];
     //mk.regrar(eParametro1, { k: "charProibido", v: "" });
     /**
+     * Informar o C (Container), N (Nome do input) e OBJ (Regra)
      * Atributos do Objeto
      * k:		nome da regra a ser utilizada
      * v: 	atributo da regra escolhida
@@ -2552,12 +2553,14 @@ class mk {
      * f:		força validar mesmo se estiver invisivel / desativado (true/false)
      * Regras:		obrigatorio		|		regex		|		fn		|		charproibido		|		datamaioque		|  	datamenorque
      */
-    static regrar = (e, ...obj) => {
-        if (typeof e == "string") {
-            e = mk.Q(e);
+    static regrar = (container, nome, ...obj) => {
+        if (typeof nome != "string") {
+            return mk.w("Regrar() precisa receber o nome do input como string");
         }
+        container = mk.Q(container);
+        let e = container?.querySelector("input[name='" + nome + "']");
         if (!e) {
-            mk.w("regrar() - Elemento necessário: ", e);
+            mk.w("Regrar() - Requer Elemento (" + nome + "): ", e, " Container: ", container);
         }
         // Incrementar Evento
         let oninput = e?.getAttribute("oninput");
@@ -2566,7 +2569,7 @@ class mk {
         }
         // Buscar Elemento e regra
         let auto = false;
-        let novaregra = { e: e, r: [...obj] };
+        let novaregra = { c: container, n: nome, e: e, r: [...obj] };
         let posE = mk.regras.findIndex(o => o.e == e);
         if (posE >= 0) {
             // Elemento já encontrado, substituir a regra específica
@@ -2595,17 +2598,14 @@ class mk {
      * e:		elemento do Query alvo da verificação onde irá iterar todos filhos.
      * @param config String do Query ou a Config
      */
-    static estaValido = async (config) => {
-        if (typeof config != "object") {
-            config = { e: config };
-        }
-        config.e = mk.Q(config.e);
+    static estaValido = async (container) => {
+        container = mk.Q(container);
         let validou = false;
-        // Cruzar referencias
+        // Informando um container qualquer, executa apenas as regras dentro deles.
         let resultado = [];
         mk.regras.forEach(regra => {
-            if (mk.isInside(regra.e, config.e)) {
-                resultado.push(mk.exeregra(regra.e, config.e));
+            if (mk.isInside(regra.e, container)) {
+                resultado.push(mk.exeregra(regra.e));
             }
         });
         validou = resultado.flat().length <= 0;
@@ -2621,7 +2621,7 @@ class mk {
         return validou;
     };
     // Função que executa as regras deste campo com base nos objetos salvos
-    static exeregra = (e, container = null) => {
+    static exeregra = (e) => {
         let erros = [];
         let regras = mk.regras.find(o => o.e == e)?.r;
         if (regras) {
@@ -2693,22 +2693,20 @@ class mk {
         }
         if (erros.length > 0) {
             let mensagens = erros.map(a => a.m).join("<br/>");
-            mk.regraDisplay(e, true, mensagens, container);
+            mk.regraDisplay(e, true, mensagens);
             mk.regraBlink(e);
         }
         else {
-            mk.regraDisplay(e, false, "", container);
+            mk.regraDisplay(e, false, "");
         }
         return erros;
     };
-    static regraDisplay = (e, erro, mensagem = "", container = null) => {
+    static regraDisplay = (e, erro, mensagem = "") => {
         // Reagindo similar ao Unobtrusive, mas usando oculto no span.
         let val = mk.Q(".mkRegrar[data-valmsg-for='" + e.name + "']");
-        if (container) { // Quando há container, informa se o elemento de info está no container
-            if (!mk.isInside(val, container)) {
-                mk.w("Cuidado: Span de Validation está fora do container. regraDisplay()");
-            }
-        }
+        // FALTA:
+        // - Colocar o elemento de display deste elemento E na variavel VAL.
+        // - Para isso tem que buscar esse elemento nas regras, e quando encontrar a regra deste elemento, terá o container e o nome.
         if (erro) {
             e.classList.remove("valid");
             e.classList.add("input-validation-error");
