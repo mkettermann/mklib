@@ -3954,16 +3954,25 @@ class mk {
     };
     // IMPORTAR - Classe - Coleta o html externo
     static importar = async (tagBuscar = ".divListagemContainer") => {
-        return new Promise((r) => {
-            mk.QAll(tagBuscar + " *").forEach(async (e) => {
+        return new Promise((r, x) => {
+            let ps = [];
+            mk.QAll(tagBuscar + " *").forEach((e) => {
                 let destino = e.getAttribute("mkImportar");
                 if (destino != null) {
-                    let p = await mk.get.html({ url: destino, quiet: true });
-                    if (p.retorno != null) {
-                        e.removeAttribute("mkImportar");
-                        e.innerHTML = p.retorno;
+                    ps.push({ p: mk.get.html({ url: destino, quiet: false }), e: e });
+                }
+            });
+            mk.gc("Lista de Promises em curso: ");
+            mk.l(ps);
+            mk.ge();
+            Promise.all(ps.map(x => { return x.p; })).then(ret => {
+                ps.forEach(async (o) => {
+                    let re = await o.p;
+                    if (re.retorno != null) {
+                        o.e.removeAttribute("mkImportar");
+                        o.e.innerHTML = re.retorno;
                         try {
-                            mk.mkNodeToScript(e);
+                            mk.mkNodeToScript(o.e);
                         }
                         catch (error) {
                             mk.gc("Auto Import por TAG lancou erros:");
@@ -3972,11 +3981,32 @@ class mk {
                         }
                     }
                     else {
+                        x(false);
                         mk.l("Falhou ao coletar dados");
                     }
-                }
+                });
+                r(true);
             });
-            r(true);
+            // mk.QAll(tagBuscar + " *").forEach(async (e) => {
+            // 	let destino = e.getAttribute("mkImportar");
+            // 	if (destino != null) {
+            // 		let p = await mk.get.html({ url: destino, quiet: true });
+            // 		if (p.retorno != null) {
+            // 			e.removeAttribute("mkImportar");
+            // 			e.innerHTML = p.retorno;
+            // 			try {
+            // 				mk.mkNodeToScript(e);
+            // 			} catch (error) {
+            // 				mk.gc("Auto Import por TAG lancou erros:");
+            // 				console.error("ERRO: ", error);
+            // 				mk.ge();
+            // 			}
+            // 		} else {
+            // 			mk.l("Falhou ao coletar dados");
+            // 		}
+            // 		r(p);
+            // 	}
+            // });
         });
     };
     // Variavel de recarga que permite modificar a frequencia de atualizacao
