@@ -2292,7 +2292,7 @@ class mk {
 		}
 		if (metodo == mk.t.P) {
 			mk.gc(">> Objeto Enviado (Body)");
-			console.group(">> Dados transmitidos");
+			mk.gc(">> Dados transmitidos");
 			mk.l(dados);
 			mk.ge();
 			mk.gc(">> JSON String");
@@ -4258,16 +4258,16 @@ class mk {
 						try {
 							mk.mkNodeToScript(e);
 						} catch (error) {
-							console.group("Auto Import por TAG lancou erros:");
+							mk.gc("Auto Import por TAG lancou erros:");
 							console.error("ERRO: ", error);
 							mk.ge();
 						}
 					} else {
 						mk.l("Falhou ao coletar dados");
 					}
-					r(p.retorno);
 				}
 			});
+			r(true);
 		});
 	};
 
