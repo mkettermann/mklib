@@ -2698,6 +2698,14 @@ class mk {
                             erros.push(re);
                         }
                     }
+                    // Número Máximo
+                    if (re.k.toLowerCase() == "nummax") {
+                        let valor = mk.mkFloat(e[re.target]);
+                        if (valor > Number(re.v)) {
+                            e[re.target] = re.v;
+                            erros.push(re);
+                        }
+                    }
                     // --- INFORMADORES ---
                     // OBRIGATORIO
                     if (re.k.toLowerCase() == "obrigatorio" && re.v == "true") {
