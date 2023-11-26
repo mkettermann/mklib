@@ -3954,7 +3954,7 @@ class mk {
     };
     static contaImportados = 0;
     // IMPORTAR - Classe - Coleta o html externo
-    static importar = async (tagBuscar = ".divListagemContainer") => {
+    static importar = async (tagBuscar = ".divListagemContainer", tipo = "all") => {
         return new Promise((r, x) => {
             let num = mk.contaImportados++;
             let ps = [];
@@ -3967,7 +3967,7 @@ class mk {
             mk.gc("(" + num + ") Gerenciador Importar em curso: ");
             mk.l(ps);
             mk.ge();
-            Promise.all(ps.map(x => { return x.p; })).then(ret => {
+            Promise[tipo](ps.map(x => { return x.p; })).then(ret => {
                 ps.forEach(async (o) => {
                     let re = await o.p;
                     if (re.retorno != null) {
