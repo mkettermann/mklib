@@ -4257,7 +4257,7 @@ class mk {
 					ps.push({ p: mk.get.html({ url: destino, quiet: true, carregador: false }), e: e, n: num });
 				}
 			});
-			mk.gc("(" + num + ") Gerenciador Importar em curso: ")
+			mk.gc("(" + num + ") Executando Importador no modo: ", tipo)
 			mk.l(ps);
 			mk.ge();
 			Promise[tipo](ps.map(x => { return x.p })).then(ret => {
