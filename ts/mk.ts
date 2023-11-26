@@ -4247,9 +4247,10 @@ class mk {
 
 	static contaImportados = 0;
 	// IMPORTAR - Classe - Coleta o html externo
-	static importar = async (tagBuscar = ".divListagemContainer", tipo: any = "all") => {
+	static importar = async (tagBuscar = ".divListagemContainer", tipo: any = "race") => {
 		return new Promise((r, x) => {
 			let num = mk.contaImportados++;
+			mk.gc("\t(" + num + ") Executando Importador no modo: ", tipo)
 			let ps: any = [];
 			mk.QAll(tagBuscar + " *").forEach((e) => {
 				let destino = e.getAttribute("mkImportar");
@@ -4257,7 +4258,6 @@ class mk {
 					ps.push({ p: mk.get.html({ url: destino, quiet: true, carregador: false }), e: e, n: num });
 				}
 			});
-			mk.gc("(" + num + ") Executando Importador no modo: ", tipo)
 			mk.l(ps);
 			mk.ge();
 			Promise[tipo](ps.map(x => { return x.p })).then(ret => {
@@ -4279,34 +4279,9 @@ class mk {
 						mk.l("Falhou ao coletar dados");
 					}
 				});
-				mk.l("(" + num + ") Gerenciador Importar finalizado.")
+				//mk.l("(" + num + ") Gerenciador Importar finalizado.")
 				r(true);
 			});
-
-
-			// mk.QAll(tagBuscar + " *").forEach(async (e) => {
-			// 	let destino = e.getAttribute("mkImportar");
-			// 	if (destino != null) {
-
-			// 		let p = await mk.get.html({ url: destino, quiet: true });
-			// 		if (p.retorno != null) {
-			// 			e.removeAttribute("mkImportar");
-			// 			e.innerHTML = p.retorno;
-			// 			try {
-			// 				mk.mkNodeToScript(e);
-			// 			} catch (error) {
-			// 				mk.gc("Auto Import por TAG lancou erros:");
-			// 				console.error("ERRO: ", error);
-			// 				mk.ge();
-			// 			}
-			// 		} else {
-			// 			mk.l("Falhou ao coletar dados");
-			// 		}
-			// 		r(p);
-
-			// 	}
-			// });
-
 		});
 	};
 
