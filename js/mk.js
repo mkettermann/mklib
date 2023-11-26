@@ -2693,7 +2693,7 @@ class mk {
                     }
                     // Data Máxima
                     if (re.k.toLowerCase() == "datamax") {
-                        if (mk.getMs(e[re.target]) >= mk.getMs(re.v)) {
+                        if (mk.getMs(e[re.target]) > mk.getMs(re.v)) {
                             e[re.target] = re.v;
                             erros.push(re);
                         }
@@ -2727,13 +2727,13 @@ class mk {
                     }
                     // Data Maior Que
                     if (re.k.toLowerCase() == "datamaioque") {
-                        if (mk.getMs(e[re.target]) <= mk.getMs(re.v)) {
+                        if (mk.getMs(e[re.target]) < mk.getMs(re.v)) {
                             erros.push(re);
                         }
                     }
                     // Data Menor Que
                     if (re.k.toLowerCase() == "datamenorque") {
-                        if (mk.getMs(e[re.target]) >= mk.getMs(re.v)) {
+                        if (mk.getMs(e[re.target]) > mk.getMs(re.v)) {
                             erros.push(re);
                         }
                     }
