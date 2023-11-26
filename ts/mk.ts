@@ -4245,17 +4245,19 @@ class mk {
 		}
 	};
 
+	static contaImportados = 0;
 	// IMPORTAR - Classe - Coleta o html externo
 	static importar = async (tagBuscar = ".divListagemContainer") => {
 		return new Promise((r, x) => {
+			let num = mk.contaImportados++;
 			let ps: any = [];
 			mk.QAll(tagBuscar + " *").forEach((e) => {
 				let destino = e.getAttribute("mkImportar");
 				if (destino != null) {
-					ps.push({ p: mk.get.html({ url: destino, quiet: false }), e: e });
+					ps.push({ p: mk.get.html({ url: destino, quiet: false }), e: e, n: num });
 				}
 			});
-			mk.gc("Lista de Promises em curso: ")
+			mk.gc("(" + num + ") Gerenciador Importar em curso: ")
 			mk.l(ps);
 			mk.ge();
 			Promise.all(ps.map(x => { return x.p })).then(ret => {
@@ -4277,6 +4279,7 @@ class mk {
 						mk.l("Falhou ao coletar dados");
 					}
 				});
+				mk.l("(" + num + ") Gerenciador Importar finalizado.")
 				r(true);
 			});
 
