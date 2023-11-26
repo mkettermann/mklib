@@ -3961,7 +3961,7 @@ class mk {
             mk.QAll(tagBuscar + " *").forEach((e) => {
                 let destino = e.getAttribute("mkImportar");
                 if (destino != null) {
-                    ps.push({ p: mk.get.html({ url: destino, quiet: false }), e: e, n: num });
+                    ps.push({ p: mk.get.html({ url: destino, quiet: true, carregador: false }), e: e, n: num });
                 }
             });
             mk.gc("(" + num + ") Gerenciador Importar em curso: ");
