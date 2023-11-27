@@ -2017,6 +2017,12 @@ ul.mkUlFase li.disabled a {
 	flex-direction: column !important;
 }
 
+*.lr,
+*.flr {
+	display: flex !important;
+	flex-direction: row !important;
+}
+
 .mkCem {
 	width: 100%;
 	height: 100%;
