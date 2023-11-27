@@ -783,21 +783,67 @@ class mk {
 	};
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-	//			MASCARAS E REGEX						\\
+	//	 MASCARAS, REGEX E	VALIDADOR		\\
 	//___________________________________\\
 	// Ex Regex: mk.util.cpf[1];
-	static util: object = {
-		cpf: ["000.000.000-00", /^([0-9]{3}([\.]?[0-9]{3}){2}[-]?[0-9]{2})$/],
-		cep: ["00000-000", /^([0-9]{5}[-]?[0-9]{3})$/],
+	static util: any = {
+		cpf: ["000.000.000-00", /^([0-9]{3}([\.]?[0-9]{3}){2}[-]?[0-9]{2})$/, (cpf: any) => {
+			let m1 = [10, 9, 8, 7, 6, 5, 4, 3, 2];
+			let m2 = [11, 10, 9, 8, 7, 6, 5, 4, 3, 2];
+			if (!cpf) { return false; }
+			cpf = mk.apenasNumeros(cpf);
+			if (cpf.length != 11) { return false; }
+			let temp = cpf.slice(0, 9);
+			let c = 0;
+			for (let i = 0; i < 9; i++) { c += Number(temp.charAt(i)) * m1[i]; }
+			let r = c % 11;
+			(r < 2) ? r = 0 : r = 11 - r;
+			temp += r.toString();
+			c = 0;
+			for (let i = 0; i < 10; i++) { c += Number(temp.charAt(i)) * m2[i]; }
+			r = c % 11;
+			(r < 2) ? r = 0 : r = 11 - r;
+			return cpf.charAt(10) == r.toString();
+		}],
+		cep: ["00.000-000", /^([0-9]{2}[\.]?[0-9]{3}[-]?[0-9]{3})$/, (cep: any) => {
+			if (!cep) { return false; }
+			cep = mk.apenasNumeros(cep);
+			if (cep.length != 8) { return false; }
+			return true;
+		}],
 		cnpj: [
 			"00.000.000/0000-00",
-			/^([0-9]{2}([\.]?[0-9]{3}){2}[\/]?[0-9]{4}[-]?[0-9]{2})$/,
+			/^([0-9]{2}([\.]?[0-9]{3}){2}[\/]?[0-9]{4}[-]?[0-9]{2})$/, (cnpj: any) => {
+				let m1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+				let m2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+				if (!cnpj) { return false; }
+				cnpj = mk.apenasNumeros(cnpj);
+				if (cnpj.length != 14) { return false; }
+				let temp = cnpj.slice(0, 12);
+				let c = 0;
+				for (let i = 0; i < 12; i++) { c += Number(temp.charAt(i)) * m1[i]; }
+				let r = (c % 11);
+				(r < 2) ? r = 0 : r = 11 - r;
+				temp += r.toString();
+				c = 0;
+				for (let i = 0; i < 13; i++) { c += Number(temp.charAt(i)) * m2[i]; }
+				r = (c % 11);
+				(r < 2) ? r = 0 : r = 11 - r;
+				return cnpj.charAt(13) == r.toString();
+			}
 		],
 		cpf_cnpj: [
 			"00.000.000/0000-00",
-			/^([0-9]{2}([\.]?[0-9]{3}){2}[\/]?[0-9]{4}[-]?[0-9]{2})|([0-9]{3}([\.]?[0-9]{3}){2}[-]?[0-9]{2})$/,
+			/^([0-9]{2}([\.]?[0-9]{3}){2}[\/]?[0-9]{4}[-]?[0-9]{2})|([0-9]{3}([\.]?[0-9]{3}){2}[-]?[0-9]{2})$/, (cpf_cnpj: any) => {
+				return mk.util.cpf[2](cpf_cnpj) || mk.util.cnpj[2](cpf_cnpj);
+			}
 		],
-		cnh: ["00000000000", /^([0-9]{11})$/],
+		cnh: ["00000000000", /^([0-9]{11})$/, (cnh: any) => {
+			if (!cnh) { return false; }
+			cnh = mk.apenasNumeros(cnh);
+			if (cnh.length != 11) { return false; }
+			return true;
+		}],
 		placa: ["SSS-0A00", /^([A-Za-z]{3}[-]?[0-9]{1}[A-Za-z0-9]{1}[0-9]{2})$/],
 		placaAntesMercosul: ["AAA-0000", /^([A-Za-z]{3}[-]?[0-9]{4})$/],
 		placaMercosul: [
@@ -812,7 +858,8 @@ class mk {
 		dia: ["00", /^([0-3]?[0-9])$/],
 		mes: ["00", /^([0-1]?[0-9])$/],
 		ano: ["0000", /^([0-2]?([0-9]){3})$/],
-		ip: ["000.000.000.000", /^([0-9]?[0-9]?[0-9]([\.]?[0-9]?[0-9]?[0-9]){3})$/],
+		anoRecente: ["0000", /^(1[8-9]([0-9]){2})|(20([0-9]){2})$/],
+		ip: ["000.000.000.000", /^([0-2]?[0-9]?[0-9]([\.][0-2]?[0-9]?[0-9]){3})$/],
 		data: ["0000-00-00", /^([0-9]{4}(-[0-9]{2}){2})$/],
 		dataIso8601: [
 			"0000-00-00T00:00:00.000Z",
@@ -1576,7 +1623,7 @@ class mk {
 		let resultado = false;
 		let ePai = e;
 		let c = 0;
-		while (ePai != mk.Q("BODY") || c > 100) {
+		while (ePai != mk.Q("BODY") && c < 100) {
 			ePai = ePai.parentElement;
 			if (ePai == container) {
 				resultado = true;
@@ -2245,7 +2292,7 @@ class mk {
 		}
 		if (metodo == mk.t.P) {
 			mk.gc(">> Objeto Enviado (Body)");
-			console.group(">> Dados transmitidos");
+			mk.gc(">> Dados transmitidos");
 			mk.l(dados);
 			mk.ge();
 			mk.gc(">> JSON String");
@@ -2705,25 +2752,37 @@ class mk {
 
 	// A biblioteca precisa estar iniciada para a variavel regras estar presente.
 	// Falta:
-	// - Um verificador de regras em uma área, ou seja, todos elementos dependentes estão válidos?
 	// - Ao validar, executa apenas nos visiveis.
 
 	// REGRAR (Gera uma regra para o campo)
 	static regras: any = [];
 	//mk.regrar(eParametro1, { k: "charProibido", v: "" });
 
-
-	static regrar = (e: any, ...obj: any) => {
-		if (typeof e == "string") {
-			e = mk.Q(e);
+	/**
+	 * Informar o C (Container), N (Nome do input) e OBJ (Regra)
+	 * Atributos do Objeto
+	 * k:		nome da regra a ser utilizada
+	 * v: 	atributo da regra escolhida
+	 * m: 	mensagem de exibição caso esteja em estado falso.
+	 * a: 	auto executar essa regra assim que regrar (true/false)
+	 * f:		força validar mesmo se estiver invisivel / desativado (true/false)
+	 * Regras:		obrigatorio		|		regex		|		fn		|		charproibido		|		datamaioque		|  	datamenorque
+	 */
+	static regrar = (container: any, nome: string, ...obj: any) => {
+		if (typeof nome != "string") {
+			return mk.w("Regrar() precisa receber o nome do input como string");
 		}
+		container = mk.Q(container);
+		let e = container?.querySelector("input[name='" + nome + "']");
+		if (!e) { mk.w("Regrar() - Requer Elemento (" + nome + "): ", e, " Container: ", container) }
 		// Incrementar Evento
-		let oninput = e.getAttribute("oninput");
+		let oninput = e?.getAttribute("oninput");
 		if (!oninput || !oninput.includes(";mk.exeregra(this)")) {
 			e.setAttribute("oninput", oninput + ";mk.exeregra(this)");
 		}
 		// Buscar Elemento e regra
-		let novaregra: any = { e: e, r: [...obj] };
+		let auto = false;
+		let novaregra: any = { c: container, n: nome, e: e, r: [...obj] };
 		let posE = mk.regras.findIndex(o => o.e == e);
 		if (posE >= 0) {
 			// Elemento já encontrado, substituir a regra específica
@@ -2740,14 +2799,10 @@ class mk {
 		} else {
 			mk.regras.push(novaregra);
 		}
-		// Limpeza (Elementos fora do DOM) (Tecnica do Invisivel) (Se limpar assim, ao ocultar, elimina/nem cria a regra)
-		// for (let r of mk.regras) {
-		// 	if (!r.e.offsetParent) {
-		// 		mk.regras.splice(mk.regras.indexOf(r), 1)
-		// 	}
-		// };
 		// Auto Executa
-		mk.exeregra(e);
+		if (auto) {
+			mk.exeregra(e);
+		}
 	}
 
 
@@ -2756,17 +2811,14 @@ class mk {
 	 * e:		elemento do Query alvo da verificação onde irá iterar todos filhos.
 	 * @param config String do Query ou a Config
 	 */
-	static estaValido = async (config: any) => {
-		if (typeof config != "object") {
-			config = { e: config };
-		}
-		config.e = mk.Q(config.e);
+	static estaValido = async (container: any) => {
+		container = mk.Q(container);
 		let validou = false;
 
-		// Cruzar referencias
+		// Informando um container qualquer, executa apenas as regras dentro deles.
 		let resultado: any = [];
 		mk.regras.forEach(regra => {
-			if (mk.isInside(regra.e, config.e)) {
+			if (mk.isInside(regra.e, container)) {
 				resultado.push(mk.exeregra(regra.e));
 			}
 		});
@@ -2774,7 +2826,7 @@ class mk {
 		this.gc("Validou? ", validou);
 		if (!validou) {
 			resultado.flat().forEach(r => {
-				this.gc("Regra >> " + r.k + " >> Campo:");
+				this.gc("Regra: " + r.k.toUpperCase() + " >> Nome do campo: " + r.e.name);
 				this.l(r.e);
 				this.ge();
 			});
@@ -2787,62 +2839,116 @@ class mk {
 	// Função que executa as regras deste campo com base nos objetos salvos
 	static exeregra = (e: any) => {
 		let erros: any = [];
-		let regras = mk.regras.find(o => o.e == e)?.r;
+		let regrador = mk.regras.find(o => o.e == e);
+		let eDisplay = regrador.c.querySelector(".mkRegrar[data-valmsg-for='" + regrador.n + "']")
+		let regras = regrador?.r;
 		if (regras) {
 			regras.forEach(re => {
 				if (!re.target) {
 					re.target = "value";
 				}
-				// O elemento entra na regra quando encontrou erro;
-				re.e = e;
-				// CHAR PROIBIDO
-				if (re.k == "charProibido") {
-					for (let c of re.v) {
-						if (e[re.target].includes(c)) {
-							erros.push(re);
-							e[re.target] = e[re.target].replaceAll(c, "");
+				let podeValidar = true;
+				if (!e.offsetParent) { // Invisivel, padrão sem validar
+					podeValidar = false;
+				}
+				if (e.classList.contains("disabled")) { // Desativado, padrão sem validar
+					podeValidar = false;
+				}
+				// Validar apenas quando i estiver true na regra OU  Visível e Não bloqueado
+				if (podeValidar || re.f) {
+					// O elemento entra na regra quando encontrou erro;
+					re.e = e;
+					// --- EXECUTORES ---
+					// CHAR PROIBIDO
+					if (re.k.toLowerCase() == "charproibido") {
+						for (let c of re.v) {
+							if (e[re.target].includes(c)) {
+								erros.push(re);
+								e[re.target] = e[re.target].replaceAll(c, "");
+							}
 						}
 					}
-				}
-				// OBRIGATORIO
-				if (re.k == "obrigatorio" && re.v == "true") {
-					if (e[re.target] == "") {
-						erros.push(re);
+					// Data Máxima
+					if (re.k.toLowerCase() == "datamax") {
+						if (mk.getMs(e[re.target]) > mk.getMs(re.v)) {
+							e[re.target] = re.v;
+							erros.push(re);
+						}
 					}
-				}
-				// REGEX
-				if (re.k == "regex") {
-					if (!(new RegExp(re.v).test(e[re.target]))) {
-						erros.push(re);
+					// Número Máximo
+					if (re.k.toLowerCase() == "nummax") {
+						let valor = mk.mkFloat(e[re.target]);
+						if (valor > Number(re.v)) {
+							e[re.target] = re.v;
+							erros.push(re);
+						}
 					}
-					this.l("Valor Testado:", e[re.target], "Erro:", erros);
-				}
+					// --- INFORMADORES ---
+					// OBRIGATORIO
+					if (re.k.toLowerCase() == "obrigatorio" && re.v == "true") {
+						if (e[re.target] == "") {
+							erros.push(re);
+						}
+					}
+					// REGEX
+					if (re.k.toLowerCase() == "regex") {
+						if (!(new RegExp(re.v).test(e[re.target]))) {
+							erros.push(re);
+						}
+					}
+					// FN
+					if (re.k.toLowerCase() == "fn") {
+						if (!(re.v(e[re.target]))) {
+							erros.push(re);
+						}
+					}
+					// Data Maior Que
+					if (re.k.toLowerCase() == "datamaioque") {
+						if (mk.getMs(e[re.target]) < mk.getMs(re.v)) {
+							erros.push(re);
+						}
+					}
+					// Data Menor Que
+					if (re.k.toLowerCase() == "datamenorque") {
+						if (mk.getMs(e[re.target]) > mk.getMs(re.v)) {
+							erros.push(re);
+						}
+					}
+				} //<= fim offsetParent
 			});
 		}
 		if (erros.length > 0) {
 			let mensagens = erros.map(a => a.m).join("<br/>");
-			mk.regraDisplay(e, true, mensagens);
+			mk.regraDisplay(e, true, eDisplay, mensagens);
 			mk.regraBlink(e);
 		} else {
-			mk.regraDisplay(e, false);
+			mk.regraDisplay(e, false, eDisplay, "");
 		}
 		return erros;
 	}
 
-	static regraDisplay = (e: any, erro: boolean, mensagem: string = "") => {
+	static regraDisplay = (e: any, erro: boolean, eDisplay: any, mensagem: string = "") => {
 		// Reagindo similar ao Unobtrusive, mas usando oculto no span.
-		let val = mk.Q(".mkRegrar[data-valmsg-for='" + e.name + "']")
+		// let val = mk.Q(".mkRegrar[data-valmsg-for='" + e.name + "']");
+		// FALTA:
+		// - passar 1 regra por parametro
+		// - Colocar o elemento de display deste elemento E na variavel VAL.
+		// - Para isso tem que buscar esse elemento nas regras, e quando encontrar a regra deste elemento, terá o container e o nome.
+
+
 		if (erro) {
 			e.classList.remove("valid");
 			e.classList.add("input-validation-error");
-			val.classList.remove("oculto");
-			val.classList.add("field-validation-error");
+			eDisplay.classList.remove("oculto");
+			eDisplay.classList.add("field-validation-error");
 		} else {
-			e.classList.add("valid");
+			if (e.offsetParent && !e.classList.contains("disabled")) { // Não setar valido nos desativados/invisiveis
+				e.classList.add("valid");
+			}
 			e.classList.remove("input-validation-error");
-			val.classList.add("oculto");
+			eDisplay.classList.add("oculto");
 		}
-		val.innerHTML = mensagem;
+		eDisplay.innerHTML = mensagem;
 	}
 
 	static regraBlink = (e) => {
@@ -4139,28 +4245,42 @@ class mk {
 		}
 	};
 
+	static contaImportados = 0;
 	// IMPORTAR - Classe - Coleta o html externo
-	static importar = async (tagBuscar = ".divListagemContainer") => {
-		return new Promise((r) => {
-			mk.QAll(tagBuscar + " *").forEach(async (e) => {
+	static importar = async (tagBuscar = ".divListagemContainer", tipo: any = "race") => {
+		return new Promise((r, x) => {
+			let num = mk.contaImportados++;
+			mk.gc("\t(" + num + ") Executando Importador no modo: ", tipo)
+			let ps: any = [];
+			mk.QAll(tagBuscar + " *").forEach((e) => {
 				let destino = e.getAttribute("mkImportar");
 				if (destino != null) {
-					let p = await mk.get.html({ url: destino, quiet: true });
-					if (p.retorno != null) {
-						e.removeAttribute("mkImportar");
-						e.innerHTML = p.retorno;
+					ps.push({ p: mk.get.html({ url: destino, quiet: true, carregador: false }), e: e, n: num });
+				}
+			});
+			mk.l(ps);
+			mk.ge();
+			Promise[tipo](ps.map(x => { return x.p })).then(ret => {
+				ps.forEach(async (o) => {
+					let re = await o.p;
+
+					if (re.retorno != null) {
+						o.e.removeAttribute("mkImportar");
+						o.e.innerHTML = re.retorno;
 						try {
-							mk.mkNodeToScript(e);
+							mk.mkNodeToScript(o.e);
 						} catch (error) {
-							console.group("Auto Import por TAG lancou erros:");
+							mk.gc("Auto Import por TAG lancou erros:");
 							console.error("ERRO: ", error);
 							mk.ge();
 						}
 					} else {
+						x(false);
 						mk.l("Falhou ao coletar dados");
 					}
-					r(p.retorno);
-				}
+				});
+				//mk.l("(" + num + ") Gerenciador Importar finalizado.")
+				r(true);
 			});
 		});
 	};
