@@ -2974,16 +2974,23 @@ class mk {
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 	//			FASEADO	(OBJ)								\\
 	//___________________________________\\
-	// Interage com o botçao .btnVoltar, .btnAvancar, .btnConclusivo dentro da array de fases mk.fase.possiveis
-	static fase = (possiveis: number[]) => {
+	// Botões: .btnVoltar, .btnAvancar, .btnConclusivo.
+	// Telas: .modalFaseX (X é o numero da fase)
+	// Utiliza a array mk.fase.possiveis para possibilitar a rota
+	// config.classe (Classe do container que cerca todas as fases, botoes e navegadores)
+	static fase = (possiveis: number[], config: any) => {
 		class FasearMK {
 			possiveis: number[];
 			atual: number;
 			historico: number[];
-			constructor(possiveis: number[]) {
+			config: any;
+			constructor(possiveis: number[], config: any) {
 				this.possiveis = possiveis;
 				this.atual = possiveis[0];
 				this.historico = [this.atual];
+				if (typeof config != "object") { config = {}; }
+				if (!config.classe) { config.classe = ""; }
+				this.config = config;
 				this.update();
 			}
 
@@ -3025,7 +3032,7 @@ class mk {
 			}
 
 			update() {
-				mk.QAll("ul.mkUlFase li a").forEach((e) => {
+				mk.QAll(this.config.classe + " ul.mkUlFase li a").forEach((e) => {
 					e.parentElement?.classList.remove("mkFaseBack");
 					e.parentElement?.classList.remove("mkFaseAtivo");
 					e.parentElement?.classList.remove("disabled");
@@ -3041,22 +3048,26 @@ class mk {
 						e.parentElement?.classList.add("disabled");
 					}
 				});
-				mk.QverOff(".btnVoltar");
-				mk.QverOff(".btnAvancar");
-				mk.QverOff(".btnConclusivo");
+				for (let i = 1; i <= this.possiveis.length; i++) {
+					mk.Q(this.config.classe + " .modalFase" + i).classList.add("oculto");
+				}
+				mk.QverOff(this.config.classe + " .btnVoltar");
+				mk.QverOff(this.config.classe + " .btnAvancar");
+				mk.QverOff(this.config.classe + " .btnConclusivo");
 				if (Array.isArray(this.possiveis)) {
 					if (this.possiveis.length >= 0) {
 						if (this.possiveis.indexOf(this.atual) >= this.possiveis.length - 1) {
 							// Fase Atual é a última possível, Então não há como avançar
-							mk.QverOn(".btnConclusivo");
+							mk.QverOn(this.config.classe + " .btnConclusivo");
 						} else {
 							// Não está na última posição
-							mk.QverOn(".btnAvancar");
+							mk.QverOn(this.config.classe + " .btnAvancar");
 						};
 						if (this.possiveis.indexOf(this.atual) >= 1) {
 							// Não está na primeira posição possível
-							mk.QverOn(".btnVoltar");
+							mk.QverOn(this.config.classe + " .btnVoltar");
 						};
+						mk.QverOn(this.config.classe + " .modalFase" + this.atual);
 					} else {
 						mk.w("A array mk.fase.possiveis não contém opções para dar update.");
 					}
@@ -3064,6 +3075,15 @@ class mk {
 					mk.erro("mk.fase.possiveis Deve ser uma Array!");
 				}
 			}
+
+			has(x: number) {
+				return typeof x === "number" && this.possiveis.includes(x);
+			}
+
+			toString() {
+				return `[${this.possiveis.join()}]`;
+			}
+
 			// Iterator
 			[Symbol.iterator]() {
 				let next = 0;
@@ -3079,11 +3099,11 @@ class mk {
 				};
 			}
 		}
-		return new FasearMK(possiveis);
+		return new FasearMK(possiveis, config);
 	}
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-	//			AREA FASEADO								\\
+	//			AREA FASEADO (OLD)					\\
 	//___________________________________\\
 
 	// FUNCAO PARA ATUALIZAR OS LINKS DE FASES
