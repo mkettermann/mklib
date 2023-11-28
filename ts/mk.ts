@@ -875,6 +875,9 @@ class mk {
 	static w = (...s: any) => {
 		console.warn(...s);
 	};
+	static erro = (...s: any) => {
+		console.error(...s);
+	};
 	static l = (...s: any) => {
 		console.log(...s);
 	};
@@ -941,6 +944,10 @@ class mk {
 		}
 		return e;
 	};
+
+	static wait = (duracao: any) => {
+
+	}
 
 	static isJson = (s: any): boolean => {
 		try {
@@ -2443,6 +2450,9 @@ class mk {
 	 * FullFiltroFull - processoFiltragem
 	 * Executa a redução da listagem basedo no objFiltro.
 	 * Usando modificaFiltro(), pode-se filtrar o objeto da lista também.
+	 * Atributos:
+	 * 		data-mkfformato = "date"
+	 * 		data-mkfoperador = "<="
 	 */
 	static processoFiltragem = (aTotal: any, objFiltro: any, inst: any) => {
 		let aFiltrada = [];
