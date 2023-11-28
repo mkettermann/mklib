@@ -729,7 +729,7 @@ class mk {
 	static sendObjFull = {};
 	static mkFaseAtual = 1;
 	static faseado = {
-		nav: []
+		nav: [],
 		fasesDisponiveis: []
 	};
 	static mkCountValidate = 0;
