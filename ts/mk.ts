@@ -2974,86 +2974,113 @@ class mk {
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 	//			FASEADO	(OBJ)								\\
 	//___________________________________\\
-	// Interage com o botçao .btnVoltar, .btnAvancar dentro da array de fases mk.fase.possiveis
-	static fase: any = {
-		atual: 1,
-		historico: [],
-		possiveis: [],
-		avancar: async (novaFase: number | null = null) => {
-			return new Promise((r, err) => {
-				if (novaFase) {
-					mk.fase.atual = novaFase;
-					r(mk.fase.atual);
-				} else {
-					let proxFase = mk.fase.possiveis[mk.fase.possiveis.indexOf(mk.fase.atual) + 1];
-					if (proxFase) {
-						mk.fase.atual = proxFase;
-						mk.fase.historico.push(mk.fase.atual);
-						mk.fase.update();
-						r(mk.fase.atual);
-					} else {
-						err("Não é possível avançar mais.");
-					}
-				}
-			});
-		},
-		voltar: async () => {
-			return new Promise((r, err) => {
-				if (!(mk.fase.possiveis.indexOf(mk.fase.atual) <= mk.fase.possiveis[0])) {
-					mk.fase.historico.pop();
-					let novaFase = mk.fase.historico[mk.fase.historico.length - 1];
-					if (novaFase) {
-						mk.fase.atual = novaFase;
-						mk.fase.update();
-						r(mk.fase.atual);
-					} else {
-						err("Não há histórico de onde voltar.");
-					}
-				} else {
-					err("Já está na primeira fase possível.")
-				}
-			});
-		},
-		update: () => {
-			mk.QAll("ul.mkUlFase li a").forEach((e) => {
-				e.parentElement?.classList.remove("mkFaseBack");
-				e.parentElement?.classList.remove("mkFaseAtivo");
-				e.parentElement?.classList.remove("disabled");
-				let eNumPag = Number(e.getAttribute("data-pag"));
-				let bLibera = e.getAttribute("data-libera");
-				if (mk.fase.atual > eNumPag) {
-					e.parentElement?.classList.add("mkFaseBack");
-				}
-				if (mk.fase.atual == eNumPag) {
-					e.parentElement?.classList.add("mkFaseAtivo");
-				}
-				if (bLibera == "false") {
-					e.parentElement?.classList.add("disabled");
-				}
-			});
-			mk.QverOff(".btnVoltar");
-			mk.QverOff(".btnAvancar");
-			if (Array.isArray(mk.fase.possiveis)) {
-				if (mk.fase.possiveis.length >= 0) {
-					if (mk.fase.possiveis.indexOf(mk.fase.atual) >= mk.fase.possiveis.length - 1) {
-						// Fase Atual é a última possível, Então não há como avançar
-						mk.QverOn(".btnEnviar");
-					} else {
-						// Não está na última posição
-						mk.QverOn(".btnAvancar");
-					};
-					if (!(mk.fase.possiveis.indexOf(mk.fase.atual) <= mk.fase.possiveis[0])) {
-						// Não está na primeira posição possível
-						mk.QverOn(".btnVoltar");
-					};
-				} else {
-					mk.w("A array mk.fase.possiveis não contém opções para dar update.");
-				}
-			} else {
-				mk.erro("mk.fase.possiveis Deve ser uma Array!");
+	// Interage com o botçao .btnVoltar, .btnAvancar, .btnConclusivo dentro da array de fases mk.fase.possiveis
+	static fase = (possiveis: number[]) => {
+		class FasearMK {
+			possiveis: number[];
+			atual: number;
+			historico: number[];
+			constructor(possiveis: number[]) {
+				this.possiveis = possiveis;
+				this.atual = possiveis[0];
+				this.historico = [this.atual];
+				this.update();
 			}
-		},
-	};
+
+			async avancar(novaFase: number | null = null) {
+				return new Promise((r, err) => {
+					if (novaFase) {
+						this.atual = novaFase;
+						r(this.atual);
+					} else {
+						let proxFase = this.possiveis[this.possiveis.indexOf(this.atual) + 1];
+						if (proxFase) {
+							this.atual = proxFase;
+							this.historico.push(this.atual);
+							this.update();
+							r(this.atual);
+						} else {
+							err("Não é possível avançar mais.");
+						}
+					}
+				});
+			}
+
+			async voltar() {
+				return new Promise((r, err) => {
+					if (this.possiveis.indexOf(this.atual) >= 1) {
+						this.historico.pop();
+						let novaFase = this.historico[this.historico.length - 1];
+						if (novaFase) {
+							this.atual = novaFase;
+							this.update();
+							r(this.atual);
+						} else {
+							err("Não há histórico de onde voltar.");
+						}
+					} else {
+						err("Já está na primeira fase possível.")
+					}
+				});
+			}
+
+			update() {
+				mk.QAll("ul.mkUlFase li a").forEach((e) => {
+					e.parentElement?.classList.remove("mkFaseBack");
+					e.parentElement?.classList.remove("mkFaseAtivo");
+					e.parentElement?.classList.remove("disabled");
+					let eNumPag = Number(e.getAttribute("data-pag"));
+					let bLibera = e.getAttribute("data-libera");
+					if (this.atual > eNumPag) {
+						e.parentElement?.classList.add("mkFaseBack");
+					}
+					if (this.atual == eNumPag) {
+						e.parentElement?.classList.add("mkFaseAtivo");
+					}
+					if (bLibera == "false") {
+						e.parentElement?.classList.add("disabled");
+					}
+				});
+				mk.QverOff(".btnVoltar");
+				mk.QverOff(".btnAvancar");
+				mk.QverOff(".btnConclusivo");
+				if (Array.isArray(this.possiveis)) {
+					if (this.possiveis.length >= 0) {
+						if (this.possiveis.indexOf(this.atual) >= this.possiveis.length - 1) {
+							// Fase Atual é a última possível, Então não há como avançar
+							mk.QverOn(".btnConclusivo");
+						} else {
+							// Não está na última posição
+							mk.QverOn(".btnAvancar");
+						};
+						if (this.possiveis.indexOf(this.atual) >= 1) {
+							// Não está na primeira posição possível
+							mk.QverOn(".btnVoltar");
+						};
+					} else {
+						mk.w("A array mk.fase.possiveis não contém opções para dar update.");
+					}
+				} else {
+					mk.erro("mk.fase.possiveis Deve ser uma Array!");
+				}
+			}
+			// Iterator
+			[Symbol.iterator]() {
+				let next = 0;
+				let last = this.possiveis;
+				return {
+					next() {
+						// Só avança se não estiver no fim.
+						return next < last.length ? { value: last[next++] } : { done: true };
+					},
+					[Symbol.iterator]() {
+						return this;
+					},
+				};
+			}
+		}
+		return new FasearMK(possiveis);
+	}
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 	//			AREA FASEADO								\\
