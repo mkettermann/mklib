@@ -2978,6 +2978,7 @@ class mk {
 	// Telas: .modalFaseX (X é o numero da fase)
 	// Utiliza a array mk.fase.possiveis para possibilitar a rota
 	// config.classe (Classe do container que cerca todas as fases, botoes e navegadores)
+	// Faltando os Validadores no avancar e colocar o avancar específico no menu html.
 	static fase = (possiveis: number[], config: any) => {
 		class FasearMK {
 			possiveis: number[];
