@@ -730,6 +730,7 @@ class mk {
 	static mkFaseAtual = 1;
 	static faseado = {
 		nav: []
+		fasesDisponiveis: []
 	};
 	static mkCountValidate = 0;
 	static debug = 0; // 0 / 1
