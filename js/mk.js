@@ -2872,8 +2872,14 @@ class mk {
                         e.parentElement?.classList.add("disabled");
                     }
                 });
-                for (let i = 1; i <= this.possiveis.length; i++) {
-                    mk.Q(this.config.classe + " .modalFase" + i).classList.add("oculto");
+                for (let i = 0; i < this.possiveis.length; i++) {
+                    let elemento = mk.Q(this.config.classe + " .modalFase" + this.possiveis[i]);
+                    if (elemento) {
+                        elemento?.classList.add("oculto");
+                    }
+                    else {
+                        mk.w("Fase não encontrada: .modalFase" + i);
+                    }
                 }
                 mk.QverOff(this.config.classe + " .btnVoltar");
                 mk.QverOff(this.config.classe + " .btnAvancar");
