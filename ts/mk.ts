@@ -728,6 +728,7 @@ class mk {
 	static objetoSelecionado = {};
 	static sendObjFull = {};
 	static mkFaseAtual = 1;
+	static faseado = {};
 	static mkCountValidate = 0;
 	static debug = 0; // 0 / 1
 	static timers: any = []; // Array para guardar timers em andamento ou finalizados
