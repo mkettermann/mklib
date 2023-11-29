@@ -704,6 +704,13 @@ class mk {
 		this.atualizarListagem();
 	};
 
+	// mk.aoReceberDados e mk.ordenar Não se executam pra acelerar a inserção assincrona da listagem
+	addMany = (arrayDados: object[]) => {
+		this.dadosFull.push(...arrayDados);
+		//mk.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
+		this.atualizarListagem();
+	};
+
 	find = (k: string, v: any) => {
 		return this.dadosFull.find((o) => o[k] == v);
 	};

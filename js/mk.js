@@ -659,6 +659,12 @@ class mk {
         mk.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
         this.atualizarListagem();
     };
+    // mk.aoReceberDados e mk.ordenar Não se executam pra acelerar a inserção assincrona da listagem
+    addMany = (arrayDados) => {
+        this.dadosFull.push(...arrayDados);
+        //mk.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
+        this.atualizarListagem();
+    };
     find = (k, v) => {
         return this.dadosFull.find((o) => o[k] == v);
     };
