@@ -704,6 +704,13 @@ class mk {
 		this.atualizarListagem();
 	};
 
+	// mk.aoReceberDados e mk.ordenar Não se executam pra acelerar a inserção assincrona da listagem
+	addMany = (arrayDados: object[]) => {
+		this.dadosFull.push(...arrayDados);
+		//mk.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
+		this.atualizarListagem();
+	};
+
 	find = (k: string, v: any) => {
 		return this.dadosFull.find((o) => o[k] == v);
 	};
@@ -3044,15 +3051,17 @@ class mk {
 
 			update() {
 				mk.QAll(this.config.classe + " ul.mkUlFase li a").forEach((e) => {
+					// Limpar os Status
 					e.parentElement?.classList.remove("mkFaseBack");
 					e.parentElement?.classList.remove("mkFaseAtivo");
 					e.parentElement?.classList.remove("disabled");
 					let eNumPag = Number(e.getAttribute("data-pag"));
 					let bLibera = e.getAttribute("data-libera");
-					if (this.atual > eNumPag) {
+					// Tem-se a o elemento e o numero
+					if (this.possiveis.indexOf(this.atual) > this.possiveis.indexOf(eNumPag)) {
 						e.parentElement?.classList.add("mkFaseBack");
 					}
-					if (this.atual == eNumPag) {
+					if (this.possiveis.indexOf(this.atual) == this.possiveis.indexOf(eNumPag)) {
 						e.parentElement?.classList.add("mkFaseAtivo");
 					}
 					if (bLibera == "false") {
