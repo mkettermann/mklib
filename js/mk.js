@@ -82,7 +82,7 @@ class mk {
         return resultado;
     };
     aoCompletarExibicao = () => { };
-    aoConcluirDownload = () => { };
+    aoConcluirDownload = (dados) => { };
     antesDeOrdenar = () => { };
     // Por garantia a funcao async para o carregador da lista esperar a funcao concluir.
     antesDeOrdenarAsync = async () => {
@@ -210,9 +210,9 @@ class mk {
             mk.mkLimparOA(temosDados);
             // Executa funcao personalizada por página
             mk.mkExecutaNoObj(temosDados, this.aoReceberDados);
-            this.aoConcluirDownload();
             // Armazena em 1 array que está em 2 locais na memória
             this.dadosFull = this.dadosFiltrado = temosDados;
+            this.aoConcluirDownload(this.dadosFull);
             // Executa função antes de ordenar a tabela (Util para calcular coisas no conteudo recebido)
             await this.antesDeOrdenarAsync();
             // Ordena a lista geral com base na primeira propriedade.
@@ -2269,7 +2269,7 @@ class mk {
     };
     // Metodo que eh executado ao completar a exibicao (PODE SOBREESCREVER NA VIEW)
     static aoCompletarExibicao = () => { };
-    static aoConcluirDownload = () => { };
+    static aoConcluirDownload = (dados) => { };
     // Metodo que eh executado antes de exibir (PODE SOBREESCREVER NA VIEW)
     static antesDePopularTabela = () => { };
     // Torna ativo o botao que se refere ao paginationAtual
