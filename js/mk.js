@@ -2830,7 +2830,7 @@ class mk {
                                 this.atual = Number(novaFase.getAttribute("data-pag"));
                             }
                             else {
-                                mk.w("Avançar para fase específica negado. Requer Libera.");
+                                mk.w("Avançar para fase específica negado. Requer Libera!");
                             }
                         }
                         else {
