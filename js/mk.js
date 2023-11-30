@@ -2790,7 +2790,7 @@ class mk {
         }, 300);
     };
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-    //			FASEADO	(OBJ)								\\
+    //			FASEADOR / FasearMK (OBJ)		\\
     //___________________________________\\
     // Botões: .btnVoltar, .btnAvancar, .btnConclusivo.
     // Telas: .modalFaseX (X é o numero da fase)
@@ -2819,7 +2819,19 @@ class mk {
             async avancar(novaFase = null) {
                 return new Promise((r, err) => {
                     if (novaFase) {
-                        this.atual = novaFase;
+                        if (novaFase instanceof HTMLElement) {
+                            if (novaFase.getAttribute("data-libera")) {
+                                this.atual = Number(novaFase.getAttribute("data-pag"));
+                            }
+                            else {
+                                mk.w("Avançar para fase específica negado. Requer Libera.");
+                            }
+                        }
+                        else {
+                            this.atual = novaFase;
+                        }
+                        this.historico.push(this.atual);
+                        this.update();
                         r(this.atual);
                     }
                     else {
