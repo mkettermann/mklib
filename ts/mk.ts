@@ -66,6 +66,8 @@ class mk {
 			arg.antesDePopularTabela = mk.antesDePopularTabela;
 		if (arg.aoCompletarExibicao == null)
 			arg.aoCompletarExibicao = mk.aoCompletarExibicao;
+		if (arg.aoConcluirDownload == null)
+			arg.aoConcluirDownload = mk.aoConcluirDownload;
 		if (arg.keys == null) arg.keys = [];
 		// Setando Config
 		this.listagemConfigurar(urlOrigem, todaListagem, idModelo, filtro, arg);
@@ -73,6 +75,7 @@ class mk {
 		this.modicaFiltro = arg.modicaFiltro;
 		this.antesDePopularTabela = arg.antesDePopularTabela;
 		this.aoCompletarExibicao = arg.aoCompletarExibicao;
+		this.aoConcluirDownload = arg.aoConcluirDownload;
 		// Finaliza Contrutor chamando o método de coleta
 		this.getList(arg.importar);
 	}
@@ -89,6 +92,7 @@ class mk {
 		return resultado;
 	};
 	aoCompletarExibicao = () => { };
+	aoConcluirDownload = () => { };
 	antesDeOrdenar = () => { };
 
 	// Por garantia a funcao async para o carregador da lista esperar a funcao concluir.
@@ -225,6 +229,7 @@ class mk {
 			mk.mkLimparOA(temosDados);
 			// Executa funcao personalizada por página
 			mk.mkExecutaNoObj(temosDados, this.aoReceberDados);
+			this.aoConcluirDownload();
 			// Armazena em 1 array que está em 2 locais na memória
 			this.dadosFull = this.dadosFiltrado = temosDados;
 
@@ -2437,6 +2442,8 @@ class mk {
 
 	// Metodo que eh executado ao completar a exibicao (PODE SOBREESCREVER NA VIEW)
 	static aoCompletarExibicao = () => { };
+
+	static aoConcluirDownload = () => { };
 
 	// Metodo que eh executado antes de exibir (PODE SOBREESCREVER NA VIEW)
 	static antesDePopularTabela = () => { };
