@@ -23,6 +23,7 @@ class mk {
     dadosExibidos = []; // Clonado de dadosFiltrado, mas apenas os desta pagina.
     alvo = {}; // Guarda o objeto selecionado permitindo manupular outro dado com este de referencia.
     thisListNum = 0;
+    idContainer = 0;
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //			CONSTRUTOR (contrutor)			\\
     //___________________________________\\
