@@ -76,7 +76,7 @@ class mk {
     aoReceberDados = (objeto) => {
         return objeto;
     };
-    antesDePopularTabela = (dadosExibidos) => { };
+    antesDePopularTabela = (este) => { };
     modicaFiltro = (obj) => {
         let resultado = true;
         //if(obj.X == "Y") return false;
@@ -260,7 +260,7 @@ class mk {
                 this.dadosExibidos = this.dadosFiltrado;
             }
             mk.Q(this.c.tbody)?.removeAttribute("hidden");
-            this.antesDePopularTabela(this.dadosExibidos);
+            this.antesDePopularTabela(this);
             await mk.mkMoldeOA(this.dadosExibidos, this.c.idModelo, this.c.tbody);
             this.aoCompletarExibicao();
         }
@@ -2272,7 +2272,7 @@ class mk {
     static aoCompletarExibicao = () => { };
     static aoConcluirDownload = (dados) => { };
     // Metodo que eh executado antes de exibir (PODE SOBREESCREVER NA VIEW)
-    static antesDePopularTabela = (dadosExibidos) => { };
+    static antesDePopularTabela = (este) => { };
     // Torna ativo o botao que se refere ao paginationAtual
     static ativaPaginaAtual = () => {
         mk.QAll(".paginate_button").forEach((item) => {
