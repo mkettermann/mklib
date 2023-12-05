@@ -2826,8 +2826,13 @@ class mk {
                 if (!config.classe) {
                     config.classe = "";
                 }
+                if (!config.aoAvancar) {
+                    config.aoAvancar = this.aoAvancar;
+                }
                 this.config = config;
                 this.update();
+            }
+            async aoAvancar() {
             }
             async avancar(novaFase = null) {
                 return new Promise((r, err) => {
@@ -2835,6 +2840,7 @@ class mk {
                         if (novaFase instanceof HTMLElement) {
                             if (novaFase.getAttribute("data-libera")) {
                                 this.atual = Number(novaFase.getAttribute("data-pag"));
+                                this.config.aoAvancar();
                             }
                             else {
                                 mk.w("Avançar para fase específica negado. Requer Libera!");
