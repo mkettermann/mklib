@@ -148,10 +148,16 @@ class mk {
         else {
             this.c.pk = arg.pk;
         }
-        let sortBy = mk.Q(idModelo)?.getAttribute("ob");
+        let sortBy = arg.ob;
+        if (!sortBy) {
+            sortBy = mk.Q(idModelo)?.getAttribute("ob");
+        }
         if (!sortBy)
             sortBy = this.c.pk;
-        let sortDir = mk.Q(idModelo)?.getAttribute("od");
+        let sortDir = arg.od;
+        if (!sortDir) {
+            sortDir = mk.Q(idModelo)?.getAttribute("od");
+        }
         if (!sortDir)
             sortDir = 1;
         this.setDirSort(sortBy, Number(sortDir));
