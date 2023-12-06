@@ -1826,20 +1826,19 @@ class mk {
 		if (!config.limit) config.limit = 100;
 		if (!config.tipo) config.tipo = '2';
 		if (!config.ano) config.ano = true;
+		if (!config.anoCaracteres) config.anoCaracteres = 4;
 		if (!config.separador && config.separador != "") config.separador = "-";
 		let r = [];
 		let mesAtual = mk.getMes(config.ini);
 		let anoAtual = mk.getAno(config.ini);
 		let mesFim = mk.getMes(config.fim);
 		let anoFim = mk.getAno(config.fim);
-		this.l("DE: " + anoAtual + "-" + mesAtual + " ATE: " + anoFim + "-" + mesFim)
 		let c = 0;
 		while (((anoAtual < anoFim) || (anoAtual == anoFim && mesAtual <= mesFim)) && (c < config.limit)) {
 			let gerado = this.MESES[(mesAtual % 13) - 1]?.[config.tipo];
-			if (config.ano) gerado = gerado + config.separador + anoAtual;
+			let anoFormatado = anoAtual.toString().slice((4 - config.anoCaracteres), 4);
+			if (config.ano) gerado = gerado + config.separador + anoFormatado;
 			r.push(gerado);
-
-			//this.l(anoAtual + "-" + mesAtual + " (" + c + ")");
 			mesAtual++;
 			if (mesAtual > 12) {
 				mesAtual = 1;
