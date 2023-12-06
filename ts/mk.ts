@@ -766,18 +766,18 @@ class mk {
 		fi: "Formato Inválido",
 	};
 	static MESES = [
-		["Janeiro", "JAN", "01", 1],
-		["Fevereito", "FEV", "02", 2],
-		["Março", "MAR", "03", 3],
-		["Abril", "ABR", "04", 4],
-		["Maio", "MAI", "05", 5],
-		["Junho", "JUN", "06", 6],
-		["Julho", "JUL", "07", 7],
-		["Agosto", "AGO", "08", 8],
-		["Setembro", "SET", "09", 9],
-		["Outubro", "OUT", "10", 10],
-		["Novembro", "NOV", "11", 11],
-		["Dezembro", "DEZ", "12", 12],
+		[1, "Janeiro", "JAN", "01"],
+		[2, "Fevereito", "FEV", "02"],
+		[3, "Março", "MAR", "03"],
+		[4, "Abril", "ABR", "04"],
+		[5, "Maio", "MAI", "05"],
+		[6, "Junho", "JUN", "06"],
+		[7, "Julho", "JUL", "07"],
+		[8, "Agosto", "AGO", "08"],
+		[9, "Setembro", "SET", "09"],
+		[10, "Outubro", "OUT", "10"],
+		[11, "Novembro", "NOV", "11"],
+		[12, "Dezembro", "DEZ", "12"],
 	];
 	static CORES = {
 		VERMELHO: "#F00",
@@ -1794,22 +1794,15 @@ class mk {
 
 	// Retorna Data do cliente de Hoje em:  YYYY-MM-DD
 	static getFullData = (ms = null) => {
-		if (ms != null)
-			return (
-				new Date(ms).getFullYear() +
-				"-" +
-				(new Date(ms).getMonth() + 1) +
-				"-" +
-				new Date(ms).getDate()
-			);
-		else
-			return (
-				new Date().getFullYear() +
-				"-" +
-				(new Date().getMonth() + 1) +
-				"-" +
-				new Date().getDate()
-			);
+		let ano = new Date().getFullYear();
+		let mes = new Date().getMonth() + 1;
+		let dia = new Date().getDate();
+		if (ms != null) {
+			ano = new Date(ms).getFullYear();
+			mes = new Date(ms).getMonth() + 1;
+			dia = new Date(ms).getDate();
+		}
+		return ano.toString().padStart(4, "0") + "-" + mes.toString().padStart(2, "0") + "-" + dia.toString().padStart(2, "0");
 	};
 
 	static getDia = (ms = null) => {
@@ -1824,6 +1817,38 @@ class mk {
 		if (ms != null) return Number(mk.getFullData(ms).split("-")[0]);
 		else return Number(mk.getFullData().split("-")[0]);
 	};
+
+	// config: {ini: mk.getMs("2022-08-01"),fim:mk.getMs()}
+	static geraMeses = (config: any) => {
+		if (typeof config != "object") config = { ini: config };
+		if (!config.ini) config.ini = mk.getMs("2022-08-01"); // this.getMs();
+		if (!config.fim) config.fim = mk.getMs();
+		if (!config.limit) config.limit = 100;
+		if (!config.tipo) config.tipo = '2';
+		if (!config.ano) config.ano = true;
+		if (!config.separador) config.separador = "-";
+		let r = [];
+		let mesAtual = mk.getMes(config.ini);
+		let anoAtual = mk.getAno(config.ini);
+		let mesFim = mk.getMes(config.fim);
+		let anoFim = mk.getAno(config.fim);
+		this.l("DE: " + anoAtual + "-" + mesAtual + " ATE: " + anoFim + "-" + mesFim)
+		let c = 0;
+		while (((anoAtual < anoFim) || (anoAtual == anoFim && mesAtual <= mesFim)) && (c < config.limit)) {
+			let gerado = this.MESES[(mesAtual % 13) - 1]?.[config.tipo];
+			if (config.ano) gerado = gerado + config.separador + anoAtual;
+			r.push(gerado);
+
+			//this.l(anoAtual + "-" + mesAtual + " (" + c + ")");
+			mesAtual++;
+			if (mesAtual > 12) {
+				mesAtual = 1;
+				anoAtual++;
+			}
+			c++;
+		}
+		return r;
+	}
 
 	static getTempoDiferenca = (msOld: number, msNew: number | null = null) => {
 		let dias = mk.getDiasDiferenca(msOld, msNew);
@@ -4428,21 +4453,6 @@ class mk {
 			}
 		}
 	};
-
-	static meses = (config: any) => {
-		if (typeof config != "object") config = {};
-		if (!config.total) config.total = 12;
-		//var section = cfg.section;
-		let r = [];
-		//var i, value;
-
-		for (let i = 0; i < config.total; ++i) {
-			value = MONTHS[Math.ceil(i) % 12];
-			r.push(value.substring(0, section));
-		}
-
-		return r;
-	}
 
 	static contaImportados = 0;
 	// IMPORTAR - Classe - Coleta o html externo
