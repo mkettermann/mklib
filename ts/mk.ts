@@ -1826,7 +1826,7 @@ class mk {
 		if (!config.limit) config.limit = 100;
 		if (!config.tipo) config.tipo = '2';
 		if (!config.ano) config.ano = true;
-		if (!config.separador) config.separador = "-";
+		if (!config.separador && config.separador != "") config.separador = "-";
 		let r = [];
 		let mesAtual = mk.getMes(config.ini);
 		let anoAtual = mk.getAno(config.ini);
