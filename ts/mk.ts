@@ -767,7 +767,7 @@ class mk {
 	};
 	static MESES = [
 		[1, "Janeiro", "JAN", "01"],
-		[2, "Fevereito", "FEV", "02"],
+		[2, "Fevereiro", "FEV", "02"],
 		[3, "Março", "MAR", "03"],
 		[4, "Abril", "ABR", "04"],
 		[5, "Maio", "MAI", "05"],
