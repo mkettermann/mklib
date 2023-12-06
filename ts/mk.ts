@@ -4455,10 +4455,12 @@ class mk {
 
 	static contaImportados = 0;
 	// IMPORTAR - Classe - Coleta o html externo
-	static importar = async (tagBuscar = ".divListagemContainer", tipo: any = "race") => {
+	static importar = async (tagBuscar = ".divListagemContainer", tipo: any = "race", quiet: boolean = true) => {
 		return new Promise((r, x) => {
 			let num = mk.contaImportados++;
-			mk.gc("\t(" + num + ") Executando Importador no modo: ", tipo)
+			if (!quiet) {
+				mk.gc("\t(" + num + ") Executando Importador no modo: ", tipo)
+			}
 			let ps: any = [];
 			mk.QAll(tagBuscar + " *").forEach((e) => {
 				let destino = e.getAttribute("mkImportar");
@@ -4466,8 +4468,10 @@ class mk {
 					ps.push({ p: mk.get.html({ url: destino, quiet: true, carregador: false }), e: e, n: num });
 				}
 			});
-			mk.l(ps);
-			mk.ge();
+			if (!quiet) {
+				mk.l(ps);
+				mk.ge();
+			}
 			Promise[tipo](ps.map(x => { return x.p })).then(ret => {
 				ps.forEach(async (o) => {
 					let re = await o.p;
