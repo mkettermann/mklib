@@ -1707,7 +1707,7 @@ class mk {
         if (!config.ano)
             config.ano = true;
         if (!config.anoCaracteres)
-            config.anoCaracteres = 4;
+            config.anoCaracteres = 2;
         if (!config.separador && config.separador != "")
             config.separador = "-";
         let r = [];
