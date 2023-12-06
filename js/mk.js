@@ -718,18 +718,18 @@ class mk {
         fi: "Formato Inválido",
     };
     static MESES = [
-        "Janeiro",
-        "Fevereiro",
-        "Março",
-        "Abril",
-        "Maio",
-        "Junho",
-        "Julho",
-        "Agosto",
-        "Setembro",
-        "Outubro",
-        "Novembro",
-        "Dezembro",
+        ["Janeiro", "JAN", "01", 1],
+        ["Fevereito", "FEV", "02", 2],
+        ["Março", "MAR", "03", 3],
+        ["Abril", "ABR", "04", 4],
+        ["Maio", "MAI", "05", 5],
+        ["Junho", "JUN", "06", 6],
+        ["Julho", "JUL", "07", 7],
+        ["Agosto", "AGO", "08", 8],
+        ["Setembro", "SET", "09", 9],
+        ["Outubro", "OUT", "10", 10],
+        ["Novembro", "NOV", "11", 11],
+        ["Dezembro", "DEZ", "12", 12],
     ];
     static CORES = {
         VERMELHO: "#F00",
@@ -4142,6 +4142,20 @@ class mk {
                     "[" + KV.length + "] Selecionados";
             }
         }
+    };
+    static meses = (config) => {
+        if (typeof config != "object")
+            config = {};
+        if (!config.total)
+            config.total = 12;
+        //var section = cfg.section;
+        let r = [];
+        //var i, value;
+        for (let i = 0; i < config.total; ++i) {
+            value = MONTHS[Math.ceil(i) % 12];
+            r.push(value.substring(0, section));
+        }
+        return r;
     };
     static contaImportados = 0;
     // IMPORTAR - Classe - Coleta o html externo
