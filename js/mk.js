@@ -1662,15 +1662,15 @@ class mk {
         let mkFullData = mk.hojeMkData() + " " + mk.hojeMkHora();
         return mkFullData;
     };
-    // Retorna Data do cliente de Hoje em:  YYYY-MM-DD
+    // Retorna Data UTC de Hoje em:  YYYY-MM-DD
     static getFullData = (ms = null) => {
-        let ano = new Date().getFullYear();
-        let mes = new Date().getMonth() + 1;
-        let dia = new Date().getDate();
+        let ano = new Date().getUTCFullYear();
+        let mes = new Date().getUTCMonth() + 1;
+        let dia = new Date().getUTCDate();
         if (ms != null) {
-            ano = new Date(ms).getFullYear();
-            mes = new Date(ms).getMonth() + 1;
-            dia = new Date(ms).getDate();
+            ano = new Date(ms).getUTCFullYear();
+            mes = new Date(ms).getUTCMonth() + 1;
+            dia = new Date(ms).getUTCDate();
         }
         return ano.toString().padStart(4, "0") + "-" + mes.toString().padStart(2, "0") + "-" + dia.toString().padStart(2, "0");
     };
