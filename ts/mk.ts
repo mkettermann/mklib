@@ -1821,7 +1821,7 @@ class mk {
 	// config: {ini: mk.getMs("2022-08-01"),fim:mk.getMs()}
 	static geraMeses = (config: any) => {
 		if (typeof config != "object") config = { ini: config };
-		if (!config.ini) config.ini = mk.getMs("2022-08-01"); // this.getMs();
+		if (!config.ini) config.ini = mk.getMs();
 		if (!config.fim) config.fim = mk.getMs();
 		if (!config.limit) config.limit = 100;
 		if (!config.tipo) config.tipo = '2';
