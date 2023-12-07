@@ -2815,11 +2815,7 @@ class mk {
     };
     static regraDisplay = (e, erro, eDisplay, mensagem = "") => {
         // Reagindo similar ao Unobtrusive, mas usando oculto no span.
-        // let val = mk.Q(".mkRegrar[data-valmsg-for='" + e.name + "']");
-        // FALTA:
-        // - passar 1 regra por parametro
-        // - Colocar o elemento de display deste elemento E na variavel VAL.
-        // - Para isso tem que buscar esse elemento nas regras, e quando encontrar a regra deste elemento, terá o container e o nome.
+        // Falta um meio pra limpar o display da regra
         if (erro) {
             e.classList.remove("valid");
             e.classList.add("input-validation-error");
@@ -2844,6 +2840,14 @@ class mk {
             e.classList.remove("regraBlink");
         }, 300);
     };
+    static regraClear() {
+        // A cada elemento
+        mk.regras.forEach(r => {
+            let e = r.e;
+            let eDisplay = r.c.querySelector(".mkRegrar[data-valmsg-for='" + r.n + "']");
+            mk.regraDisplay(e, false, eDisplay);
+        });
+    }
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //			FASEADOR / FasearMK (OBJ)		\\
     //___________________________________\\
