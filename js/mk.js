@@ -716,6 +716,7 @@ class mk {
         po: "Preenchimento Obrigatório",
         so: "Seleção Obrigatória",
         fi: "Formato Inválido",
+        rec: "Recusado",
     };
     static MESES = [
         [1, "Janeiro", "JAN", "01"],
@@ -2723,13 +2724,13 @@ class mk {
         return validou;
     };
     // Função que executa as regras deste campo com base nos objetos salvos
-    static exeregra = (e) => {
+    static exeregra = async (e) => {
         let erros = [];
         let regrador = mk.regras.find(o => o.e == e);
         let eDisplay = regrador.c.querySelector(".mkRegrar[data-valmsg-for='" + regrador.n + "']");
         let regras = regrador?.r;
         if (regras) {
-            regras.forEach(re => {
+            regras.forEach(async (re) => {
                 if (!re.target) {
                     re.target = "value";
                 }
@@ -2770,13 +2771,13 @@ class mk {
                         }
                     }
                     // --- INFORMADORES ---
-                    // OBRIGATORIO
+                    // OBRIGATORIO (Necessidade)
                     if (re.k.toLowerCase() == "obrigatorio" && re.v == "true") {
                         if (e[re.target] == "") {
                             erros.push(re);
                         }
                     }
-                    // REGEX
+                    // REGEX (Formato)
                     if (re.k.toLowerCase() == "regex") {
                         if (!(new RegExp(re.v).test(e[re.target]))) {
                             erros.push(re);
@@ -2799,6 +2800,16 @@ class mk {
                         if (mk.getMs(e[re.target]) > mk.getMs(re.v)) {
                             erros.push(re);
                         }
+                    }
+                    // SERVER (Verificação remota, DB / API)
+                    if (re.k.toLowerCase() == "server") {
+                        let get = await mk.get.json({ url: re.v });
+                        this.l("Regrar Get: ", get);
+                        let ret = get.retorno;
+                        if (!(ret)) {
+                            erros.push(re);
+                        }
+                        this.l("Erros: ", erros);
                     }
                 } //<= fim offsetParent
             });
