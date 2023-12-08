@@ -3005,7 +3005,7 @@ class mk {
 										}
 									});
 								}
-								mk.get.json({ url: re.v + queryString }).then(ret => {
+								mk.get.json({ url: re.v + queryString, quiet: true }).then(ret => {
 									let retorno = ret.retorno;
 									if (retorno != true) {
 										if (typeof retorno == "string") {
