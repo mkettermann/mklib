@@ -2644,14 +2644,6 @@ class mk {
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //			REGRAR E VALIDAR						\\
     //___________________________________\\
-    static m = {
-        po: "Preenchimento Obrigatório",
-        so: "Seleção Obrigatória",
-        fi: "Formato Inválido",
-        in: "Indisponível",
-        maxc: "Muitos caracteres",
-        minc: "Poucos caracteres",
-    };
     // REGRAR (Gera uma regra para o campo)
     static regras = [];
     //mk.regrar(eParametro1, { k: "charProibido", v: "" });
@@ -2734,6 +2726,14 @@ class mk {
         this.ge();
         return validou;
     };
+    static m = {
+        po: "Preenchimento Obrigatório",
+        so: "Seleção Obrigatória",
+        fi: "Formato Inválido",
+        in: "Indisponível",
+        maxc: "Muitos caracteres",
+        minc: "Poucos caracteres",
+    };
     // Função que executa as regras deste campo com base nos objetos salvos
     static exeregra = async (e) => {
         return new Promise((resolver) => {
@@ -2791,6 +2791,8 @@ class mk {
                             // OBRIGATORIO (Necessidade)
                             if (re.k.toLowerCase() == "obrigatorio" && re.v == "true") {
                                 if (e[re.target] == "") {
+                                    if (!re.m)
+                                        re.m = mk.m.po;
                                     erros.push(re);
                                 }
                                 prom(re.k);
@@ -2798,20 +2800,28 @@ class mk {
                             // REGEX (Formato)
                             if (re.k.toLowerCase() == "regex") {
                                 if (!(new RegExp(re.v).test(e[re.target]))) {
+                                    if (!re.m)
+                                        re.m = mk.m.fi;
                                     erros.push(re);
                                 }
                                 prom(re.k);
                             }
                             // Min Chars (Caracteres)
                             if (re.k.toLowerCase() == "minchars") {
-                                if (!(e[re.target].length < re.v)) {
+                                if (e[re.target].length <= re.v) {
+                                    e.setAttribute("minlength", re.v);
+                                    if (!re.m)
+                                        re.m = mk.m.minc;
                                     erros.push(re);
                                 }
                                 prom(re.k);
                             }
                             // Max Chars (Caracteres)
                             if (re.k.toLowerCase() == "maxchars") {
-                                if (!(e[re.target].length > re.v)) {
+                                if (e[re.target].length >= re.v) {
+                                    e.setAttribute("maxlength", re.v);
+                                    if (!re.m)
+                                        re.m = mk.m.maxc;
                                     erros.push(re);
                                 }
                                 prom(re.k);
@@ -2840,6 +2850,8 @@ class mk {
                             // SERVER (Verificação remota, DB / API)
                             if (re.k.toLowerCase() == "server") {
                                 e.classList.add("pending");
+                                if (!re.m)
+                                    re.m = mk.m.in;
                                 let queryString = "?" + regrasDoE.n + "=" + e[re.target];
                                 // Anexar campos adicionais:
                                 if (re.a) {
