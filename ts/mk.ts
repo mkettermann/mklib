@@ -1646,15 +1646,23 @@ class mk {
 	// E - ESTA DENTRO DE - CONTAINER?
 	static isInside = (e: any, container: any) => {
 		let resultado = false;
-		let ePai = e;
-		let c = 0;
-		while (ePai != mk.Q("BODY") && c < 100) {
-			ePai = ePai.parentElement;
-			if (ePai == container) {
-				resultado = true;
-				break;
+		if (e) {
+			let ePai = e;
+			let c = 0;
+			while (ePai != mk.Q("BODY") && c < 100) {
+				if (ePai) {
+					ePai = ePai?.parentElement;
+					if (ePai == container) {
+						resultado = true;
+						break;
+					}
+				} else {
+					return false;
+				}
+				c++;
 			}
-			c++;
+		} else {
+			this.w("isInside: E: ", e, " Container: ", container);
 		}
 		return resultado;
 	};
@@ -2870,17 +2878,19 @@ class mk {
 		let validou = false;
 
 		// Informando um container qualquer, executa apenas as regras dentro deles.
-		let resultado: any = [];
+		let promises: any = [];
 		mk.regras.forEach(regra => {
 			if (mk.isInside(regra.e, container)) {
-				resultado.push(mk.exeregra(regra.e));
+				promises.push(mk.exeregra(regra.e));
 			}
 		});
+		let resultado: any = [];
+		resultado = await Promise.all(promises);
 		validou = resultado.flat().length <= 0;
 		this.gc("Validou? ", validou);
 		if (!validou) {
 			resultado.flat().forEach(r => {
-				this.gc("Regra: " + r.k.toUpperCase() + " >> Nome do campo: " + r.e.name);
+				this.gc("Regra: " + r.k?.toString().toUpperCase() + " >> Nome do campo: " + r.e?.name);
 				this.l(r.e);
 				this.ge();
 			});
@@ -2892,134 +2902,137 @@ class mk {
 
 	// Função que executa as regras deste campo com base nos objetos salvos
 	static exeregra = async (e: any) => {
-		let erros: any = [];
-		let regrasDoE = mk.regras.find(o => o.e == e);
-		let eDisplay = regrasDoE.c.querySelector(".mkRegrar[data-valmsg-for='" + regrasDoE.n + "']")
-		let regras = regrasDoE?.r;
-		let promises: any = []
-		if (regras) {
-			regras.forEach((re) => {
-				if (!re.target) {
-					re.target = "value";
-				}
-				let podeValidar = true;
-				if (!e.offsetParent) { // Invisivel, padrão sem validar
-					podeValidar = false;
-				}
-				if (e.classList.contains("disabled")) { // Desativado, padrão sem validar
-					podeValidar = false;
-				}
-				// Validar apenas quando i estiver true na regra OU  Visível e Não bloqueado
-				if (podeValidar || re.f) {
-					promises.push(new Promise((prom) => {
-						// O elemento entra na regra quando encontrou erro;
-						re.e = e;
-						// --- EXECUTORES ---
-						// CHAR PROIBIDO
-						if (re.k.toLowerCase() == "charproibido") {
-							for (let c of re.v) {
-								if (e[re.target].includes(c)) {
-									erros.push(re);
-									e[re.target] = e[re.target].replaceAll(c, "");
-								}
-							}
-							prom(re.k);
-						}
-						// Data Máxima
-						if (re.k.toLowerCase() == "datamax") {
-							if (mk.getMs(e[re.target]) > mk.getMs(re.v)) {
-								e[re.target] = re.v;
-								erros.push(re);
-							}
-							prom(re.k);
-						}
-						// Número Máximo
-						if (re.k.toLowerCase() == "nummax") {
-							let valor = mk.mkFloat(e[re.target]);
-							if (valor > Number(re.v)) {
-								e[re.target] = re.v;
-								erros.push(re);
-							}
-							prom(re.k);
-						}
-						// --- INFORMADORES ---
-						// OBRIGATORIO (Necessidade)
-						if (re.k.toLowerCase() == "obrigatorio" && re.v == "true") {
-							if (e[re.target] == "") {
-								erros.push(re);
-							}
-							prom(re.k);
-						}
-						// REGEX (Formato)
-						if (re.k.toLowerCase() == "regex") {
-							if (!(new RegExp(re.v).test(e[re.target]))) {
-								erros.push(re);
-							}
-							prom(re.k);
-						}
-						// FN
-						if (re.k.toLowerCase() == "fn") {
-							if (!(re.v(e[re.target]))) {
-								erros.push(re);
-							}
-							prom(re.k);
-						}
-						// Data Maior Que
-						if (re.k.toLowerCase() == "datamaioque") {
-							if (mk.getMs(e[re.target]) < mk.getMs(re.v)) {
-								erros.push(re);
-							}
-							prom(re.k);
-						}
-						// Data Menor Que
-						if (re.k.toLowerCase() == "datamenorque") {
-							if (mk.getMs(e[re.target]) > mk.getMs(re.v)) {
-								erros.push(re);
-							}
-							prom(re.k);
-						}
-						// SERVER (Verificação remota, DB / API)
-						if (re.k.toLowerCase() == "server") {
-							e.classList.add("pending");
-							let queryString = "?" + regrasDoE.n + "=" + e[re.target];
-							// Anexar campos adicionais:
-							if (re.a) {
-								let arrAdd = re.a.split(",");
-								arrAdd.forEach(s => {
-									let eAdd = regrasDoE.c.querySelector("*[name='" + s + "']");
-									if (eAdd) {
-										queryString += "&" + s + "=" + eAdd[re.target];
-									} else {
-										this.w("Regrar: Campo Adicional solicitado não encontrado: ", s);
+		return new Promise((resolver) => {
+			let erros: any = [];
+			let regrasDoE = mk.regras.find(o => o.e == e);
+			let eDisplay = regrasDoE.c.querySelector(".mkRegrar[data-valmsg-for='" + regrasDoE.n + "']")
+			let regras = regrasDoE?.r;
+			let promises: any = []
+			if (regras) {
+				regras.forEach((re) => {
+					if (!re.target) {
+						re.target = "value";
+					}
+					let podeValidar = true;
+					if (!e.offsetParent) { // Invisivel, padrão sem validar
+						podeValidar = false;
+					}
+					if (e.classList.contains("disabled")) { // Desativado, padrão sem validar
+						podeValidar = false;
+					}
+					// Validar apenas quando i estiver true na regra OU  Visível e Não bloqueado
+					if (podeValidar || re.f) {
+						promises.push(new Promise((prom) => {
+							// O elemento entra na regra quando encontrou erro;
+							re.e = e;
+							// --- EXECUTORES ---
+							// CHAR PROIBIDO
+							if (re.k.toLowerCase() == "charproibido") {
+								for (let c of re.v) {
+									if (e[re.target].includes(c)) {
+										erros.push(re);
+										e[re.target] = e[re.target].replaceAll(c, "");
 									}
-								});
-							}
-							mk.get.json({ url: re.v + queryString }).then(ret => {
-								let retorno = ret.retorno;
-								if (retorno != true) {
-									erros.push(re);
-									this.l("RETORNO: ", retorno);
-								}
-								if (retorno != null) {
-									e.classList.remove("pending");
 								}
 								prom(re.k);
-							});
-						}
-					}));
-				} //<= fim offsetParent
-			});
-		}
-		Promise.all(promises).then(ok => {
-			if (erros.length > 0) {
-				let mensagens = erros.map(a => a.m).join("<br/>");
-				this.l("Mensagens: ", mensagens);
-				mk.regraDisplay(e, true, eDisplay, mensagens);
-				mk.regraBlink(e);
-			} else {
-				mk.regraDisplay(e, false, eDisplay, "");
+							}
+							// Data Máxima
+							if (re.k.toLowerCase() == "datamax") {
+								if (mk.getMs(e[re.target]) > mk.getMs(re.v)) {
+									e[re.target] = re.v;
+									erros.push(re);
+								}
+								prom(re.k);
+							}
+							// Número Máximo
+							if (re.k.toLowerCase() == "nummax") {
+								let valor = mk.mkFloat(e[re.target]);
+								if (valor > Number(re.v)) {
+									e[re.target] = re.v;
+									erros.push(re);
+								}
+								prom(re.k);
+							}
+							// --- INFORMADORES ---
+							// OBRIGATORIO (Necessidade)
+							if (re.k.toLowerCase() == "obrigatorio" && re.v == "true") {
+								if (e[re.target] == "") {
+									erros.push(re);
+								}
+								prom(re.k);
+							}
+							// REGEX (Formato)
+							if (re.k.toLowerCase() == "regex") {
+								if (!(new RegExp(re.v).test(e[re.target]))) {
+									erros.push(re);
+								}
+								prom(re.k);
+							}
+							// FN
+							if (re.k.toLowerCase() == "fn") {
+								if (!(re.v(e[re.target]))) {
+									erros.push(re);
+								}
+								prom(re.k);
+							}
+							// Data Maior Que
+							if (re.k.toLowerCase() == "datamaioque") {
+								if (mk.getMs(e[re.target]) < mk.getMs(re.v)) {
+									erros.push(re);
+								}
+								prom(re.k);
+							}
+							// Data Menor Que
+							if (re.k.toLowerCase() == "datamenorque") {
+								if (mk.getMs(e[re.target]) > mk.getMs(re.v)) {
+									erros.push(re);
+								}
+								prom(re.k);
+							}
+							// SERVER (Verificação remota, DB / API)
+							if (re.k.toLowerCase() == "server") {
+								e.classList.add("pending");
+								let queryString = "?" + regrasDoE.n + "=" + e[re.target];
+								// Anexar campos adicionais:
+								if (re.a) {
+									let arrAdd = re.a.split(",");
+									arrAdd.forEach(s => {
+										let eAdd = regrasDoE.c.querySelector("*[name='" + s + "']");
+										if (eAdd) {
+											queryString += "&" + s + "=" + eAdd[re.target];
+										} else {
+											this.w("Regrar: Campo Adicional solicitado não encontrado: ", s);
+										}
+									});
+								}
+								mk.get.json({ url: re.v + queryString }).then(ret => {
+									let retorno = ret.retorno;
+									if (retorno != true) {
+										if (typeof retorno == "string") {
+											re.m = retorno;
+										}
+										erros.push(re);
+									}
+									if (retorno != null) {
+										e.classList.remove("pending");
+									}
+									prom(re.k);
+								});
+							}
+						}));
+					} //<= fim offsetParent
+				});
 			}
-			return erros;
+			Promise.all(promises).then(ok => {
+				if (erros.length > 0) {
+					let mensagens = erros.map(a => a.m).join("<br/>");
+					mk.regraDisplay(e, true, eDisplay, mensagens);
+					mk.regraBlink(e);
+				} else {
+					mk.regraDisplay(e, false, eDisplay, "");
+				}
+				resolver(erros);
+			});
 		});
 	}
 
