@@ -760,12 +760,6 @@ class mk {
 		H: "text/html", // ContentType HTML
 		F: "multipart/form-data", // ContentType FORM
 	};
-	static m = {
-		po: "Preenchimento Obrigatório",
-		so: "Seleção Obrigatória",
-		fi: "Formato Inválido",
-		in: "Indisponível",
-	};
 	static MESES = [
 		[1, "Janeiro", "JAN", "01"],
 		[2, "Fevereiro", "FEV", "02"],
@@ -2812,9 +2806,14 @@ class mk {
 	//			REGRAR E VALIDAR						\\
 	//___________________________________\\
 
-	// A biblioteca precisa estar iniciada para a variavel regras estar presente.
-	// Falta:
-	// - Ao validar, executa apenas nos visiveis.
+	static m = {
+		po: "Preenchimento Obrigatório",
+		so: "Seleção Obrigatória",
+		fi: "Formato Inválido",
+		in: "Indisponível",
+		maxc: "Muitos caracteres",
+		minc: "Poucos caracteres",
+	};
 
 	// REGRAR (Gera uma regra para o campo)
 	static regras: any = [];
