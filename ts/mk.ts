@@ -2893,9 +2893,9 @@ class mk {
 	// Função que executa as regras deste campo com base nos objetos salvos
 	static exeregra = async (e: any) => {
 		let erros: any = [];
-		let regrador = mk.regras.find(o => o.e == e);
-		let eDisplay = regrador.c.querySelector(".mkRegrar[data-valmsg-for='" + regrador.n + "']")
-		let regras = regrador?.r;
+		let regrasDoE = mk.regras.find(o => o.e == e);
+		let eDisplay = regrasDoE.c.querySelector(".mkRegrar[data-valmsg-for='" + regrasDoE.n + "']")
+		let regras = regrasDoE?.r;
 		if (regras) {
 			regras.forEach(async (re) => {
 				if (!re.target) {
@@ -2970,9 +2970,26 @@ class mk {
 					}
 					// SERVER (Verificação remota, DB / API)
 					if (re.k.toLowerCase() == "server") {
-						let get = await mk.get.json({ url: re.v });
+						this.l("Regra: ", re);
+						let queryString = "?" + regrasDoE.n + "=" + e[re.target];
+						// Anexar campos adicionais:
+						if (re.a) {
+							let arrAdd = re.a.split(",");
+							arrAdd.forEach(s => {
+								let eAdd = regrasDoE.c.querySelector("*[name='" + s + "']");
+								if (eAdd) {
+									queryString += "&" + s + "=" + eAdd[re.target];
+								} else {
+									this.w("Regrar: Campo Adicional solicitado não encontrado: ", s);
+								}
+							});
+						}
+						// A cada nome do split do adicional,
+						// coletar o re.target do elemento por query selector a partir do container
+						//regrasDoE.c
+						let get = await mk.get.json({ url: re.v + queryString });
 						this.l("Regrar Get: ", get);
-
+						this.l("Informado: ", e[re.target])
 						let ret = get.retorno;
 						if (!(ret)) {
 							erros.push(re);
