@@ -2896,8 +2896,9 @@ class mk {
 		let regrasDoE = mk.regras.find(o => o.e == e);
 		let eDisplay = regrasDoE.c.querySelector(".mkRegrar[data-valmsg-for='" + regrasDoE.n + "']")
 		let regras = regrasDoE?.r;
+		let promises: any = []
 		if (regras) {
-			regras.forEach(async (re) => {
+			regras.forEach((re) => {
 				if (!re.target) {
 					re.target = "value";
 				}
@@ -2910,99 +2911,116 @@ class mk {
 				}
 				// Validar apenas quando i estiver true na regra OU  Visível e Não bloqueado
 				if (podeValidar || re.f) {
-					// O elemento entra na regra quando encontrou erro;
-					re.e = e;
-					// --- EXECUTORES ---
-					// CHAR PROIBIDO
-					if (re.k.toLowerCase() == "charproibido") {
-						for (let c of re.v) {
-							if (e[re.target].includes(c)) {
-								erros.push(re);
-								e[re.target] = e[re.target].replaceAll(c, "");
-							}
-						}
-					}
-					// Data Máxima
-					if (re.k.toLowerCase() == "datamax") {
-						if (mk.getMs(e[re.target]) > mk.getMs(re.v)) {
-							e[re.target] = re.v;
-							erros.push(re);
-						}
-					}
-					// Número Máximo
-					if (re.k.toLowerCase() == "nummax") {
-						let valor = mk.mkFloat(e[re.target]);
-						if (valor > Number(re.v)) {
-							e[re.target] = re.v;
-							erros.push(re);
-						}
-					}
-					// --- INFORMADORES ---
-					// OBRIGATORIO (Necessidade)
-					if (re.k.toLowerCase() == "obrigatorio" && re.v == "true") {
-						if (e[re.target] == "") {
-							erros.push(re);
-						}
-					}
-					// REGEX (Formato)
-					if (re.k.toLowerCase() == "regex") {
-						if (!(new RegExp(re.v).test(e[re.target]))) {
-							erros.push(re);
-						}
-					}
-					// FN
-					if (re.k.toLowerCase() == "fn") {
-						if (!(re.v(e[re.target]))) {
-							erros.push(re);
-						}
-					}
-					// Data Maior Que
-					if (re.k.toLowerCase() == "datamaioque") {
-						if (mk.getMs(e[re.target]) < mk.getMs(re.v)) {
-							erros.push(re);
-						}
-					}
-					// Data Menor Que
-					if (re.k.toLowerCase() == "datamenorque") {
-						if (mk.getMs(e[re.target]) > mk.getMs(re.v)) {
-							erros.push(re);
-						}
-					}
-					// SERVER (Verificação remota, DB / API)
-					if (re.k.toLowerCase() == "server") {
-						let queryString = "?" + regrasDoE.n + "=" + e[re.target];
-						// Anexar campos adicionais:
-						if (re.a) {
-							let arrAdd = re.a.split(",");
-							arrAdd.forEach(s => {
-								let eAdd = regrasDoE.c.querySelector("*[name='" + s + "']");
-								if (eAdd) {
-									queryString += "&" + s + "=" + eAdd[re.target];
-								} else {
-									this.w("Regrar: Campo Adicional solicitado não encontrado: ", s);
+					promises.push(new Promise((prom) => {
+						// O elemento entra na regra quando encontrou erro;
+						re.e = e;
+						// --- EXECUTORES ---
+						// CHAR PROIBIDO
+						if (re.k.toLowerCase() == "charproibido") {
+							for (let c of re.v) {
+								if (e[re.target].includes(c)) {
+									erros.push(re);
+									e[re.target] = e[re.target].replaceAll(c, "");
 								}
+							}
+							prom(re.k);
+						}
+						// Data Máxima
+						if (re.k.toLowerCase() == "datamax") {
+							if (mk.getMs(e[re.target]) > mk.getMs(re.v)) {
+								e[re.target] = re.v;
+								erros.push(re);
+							}
+							prom(re.k);
+						}
+						// Número Máximo
+						if (re.k.toLowerCase() == "nummax") {
+							let valor = mk.mkFloat(e[re.target]);
+							if (valor > Number(re.v)) {
+								e[re.target] = re.v;
+								erros.push(re);
+							}
+							prom(re.k);
+						}
+						// --- INFORMADORES ---
+						// OBRIGATORIO (Necessidade)
+						if (re.k.toLowerCase() == "obrigatorio" && re.v == "true") {
+							if (e[re.target] == "") {
+								erros.push(re);
+							}
+							prom(re.k);
+						}
+						// REGEX (Formato)
+						if (re.k.toLowerCase() == "regex") {
+							if (!(new RegExp(re.v).test(e[re.target]))) {
+								erros.push(re);
+							}
+							prom(re.k);
+						}
+						// FN
+						if (re.k.toLowerCase() == "fn") {
+							if (!(re.v(e[re.target]))) {
+								erros.push(re);
+							}
+							prom(re.k);
+						}
+						// Data Maior Que
+						if (re.k.toLowerCase() == "datamaioque") {
+							if (mk.getMs(e[re.target]) < mk.getMs(re.v)) {
+								erros.push(re);
+							}
+							prom(re.k);
+						}
+						// Data Menor Que
+						if (re.k.toLowerCase() == "datamenorque") {
+							if (mk.getMs(e[re.target]) > mk.getMs(re.v)) {
+								erros.push(re);
+							}
+							prom(re.k);
+						}
+						// SERVER (Verificação remota, DB / API)
+						if (re.k.toLowerCase() == "server") {
+							e.classList.add("pending");
+							let queryString = "?" + regrasDoE.n + "=" + e[re.target];
+							// Anexar campos adicionais:
+							if (re.a) {
+								let arrAdd = re.a.split(",");
+								arrAdd.forEach(s => {
+									let eAdd = regrasDoE.c.querySelector("*[name='" + s + "']");
+									if (eAdd) {
+										queryString += "&" + s + "=" + eAdd[re.target];
+									} else {
+										this.w("Regrar: Campo Adicional solicitado não encontrado: ", s);
+									}
+								});
+							}
+							mk.get.json({ url: re.v + queryString }).then(ret => {
+								let retorno = ret.retorno;
+								if (retorno != true) {
+									erros.push(re);
+									this.l("RETORNO: ", retorno);
+								}
+								if (retorno != null) {
+									e.classList.remove("pending");
+								}
+								prom(re.k);
 							});
 						}
-						let get = await mk.get.json({ url: re.v + queryString });
-						this.l("Informado: ", e[re.target])
-						let ret = get.retorno;
-						this.l("RETORNO: ", ret);
-						if (ret != true) {
-							erros.push(re);
-						}
-						this.l("Erros: ", erros);
-					}
+					}));
 				} //<= fim offsetParent
 			});
 		}
-		if (erros.length > 0) {
-			let mensagens = erros.map(a => a.m).join("<br/>");
-			mk.regraDisplay(e, true, eDisplay, mensagens);
-			mk.regraBlink(e);
-		} else {
-			mk.regraDisplay(e, false, eDisplay, "");
-		}
-		return erros;
+		Promise.all(promises).then(ok => {
+			if (erros.length > 0) {
+				let mensagens = erros.map(a => a.m).join("<br/>");
+				this.l("Mensagens: ", mensagens);
+				mk.regraDisplay(e, true, eDisplay, mensagens);
+				mk.regraBlink(e);
+			} else {
+				mk.regraDisplay(e, false, eDisplay, "");
+			}
+			return erros;
+		});
 	}
 
 	static regraDisplay = (e: any, erro: boolean, eDisplay: any, mensagem: string = "") => {
