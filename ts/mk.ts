@@ -2970,7 +2970,6 @@ class mk {
 					}
 					// SERVER (Verificação remota, DB / API)
 					if (re.k.toLowerCase() == "server") {
-						this.l("Regra: ", re);
 						let queryString = "?" + regrasDoE.n + "=" + e[re.target];
 						// Anexar campos adicionais:
 						if (re.a) {
@@ -2984,14 +2983,11 @@ class mk {
 								}
 							});
 						}
-						// A cada nome do split do adicional,
-						// coletar o re.target do elemento por query selector a partir do container
-						//regrasDoE.c
 						let get = await mk.get.json({ url: re.v + queryString });
-						this.l("Regrar Get: ", get);
 						this.l("Informado: ", e[re.target])
 						let ret = get.retorno;
-						if (!(ret)) {
+						this.l("RETORNO: ", ret);
+						if (ret != true) {
 							erros.push(re);
 						}
 						this.l("Erros: ", erros);
