@@ -716,7 +716,7 @@ class mk {
         po: "Preenchimento Obrigatório",
         so: "Seleção Obrigatória",
         fi: "Formato Inválido",
-        rec: "Recusado",
+        in: "Indisponível",
     };
     static MESES = [
         [1, "Janeiro", "JAN", "01"],
