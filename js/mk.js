@@ -2803,6 +2803,20 @@ class mk {
                                 }
                                 prom(re.k);
                             }
+                            // Min Chars (Caracteres)
+                            if (re.k.toLowerCase() == "minchars") {
+                                if (!(e[re.target].length < re.v)) {
+                                    erros.push(re);
+                                }
+                                prom(re.k);
+                            }
+                            // Max Chars (Caracteres)
+                            if (re.k.toLowerCase() == "maxchars") {
+                                if (!(e[re.target].length > re.v)) {
+                                    erros.push(re);
+                                }
+                                prom(re.k);
+                            }
                             // FN
                             if (re.k.toLowerCase() == "fn") {
                                 if (!(re.v(e[re.target]))) {
