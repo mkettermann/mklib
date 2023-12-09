@@ -2791,7 +2791,7 @@ class mk {
                             // OBRIGATORIO (Necessidade)
                             if (re.k.toLowerCase() == "obrigatorio") {
                                 if (re.v == null)
-                                    re.v == "true";
+                                    re.v = "true";
                                 if (re.v == "true") {
                                     if (e[re.target] == "") {
                                         if (!re.m) {
