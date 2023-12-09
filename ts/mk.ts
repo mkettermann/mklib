@@ -2904,6 +2904,8 @@ class mk {
 		nummax: "Limite: ",
 		datamax: "Data maior que o esperado",
 		charproibido: "Caracter negado",
+		apenasnumeros: "Apenas Números",
+		apenasletras: "Apenas Letras",
 		datamaiorque: "Deve ser maior que hoje",
 		datamenorque: "Deve ser menor que hoje",
 	};
@@ -2942,6 +2944,26 @@ class mk {
 										erros.push(re);
 										e[re.target] = e[re.target].replaceAll(c, "");
 									}
+								}
+								prom(re.k);
+							}
+							// Apenas Numeros
+							if (re.k.toLowerCase() == "apenasnumeros") {
+								for (let c of re.v) {
+									if (!(mk.util.numeros[1].test(e[re.target]))) {
+										if (!re.m) re.m = mk.m.apenasnumeros;
+										erros.push(re);
+										e[re.target] = e[re.target].replaceAll(/((?![0-9]).)/g, "")
+									}
+								}
+								prom(re.k);
+							}
+							// Apenas Letras
+							if (re.k.toLowerCase() == "apenasletras") {
+								if (!(mk.util.letras[1].test(e[re.target]))) {
+									if (!re.m) re.m = mk.m.apenasletras;
+									erros.push(re);
+									e[re.target] = e[re.target].replaceAll(/((?![a-zA-Z]).)/g, "")
 								}
 								prom(re.k);
 							}
