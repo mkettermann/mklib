@@ -2903,7 +2903,7 @@ class mk {
 		minc: "Poucos caracteres",
 		nummax: "Limite: ",
 		datamax: "Data maior que o esperado",
-		charproibido: "Caracter negado",
+		charproibido: "Não utilize: ",
 		apenasnumeros: "Apenas Números",
 		apenasletras: "Apenas Letras",
 		datamaiorque: "Deve ser maior que hoje",
@@ -2940,7 +2940,7 @@ class mk {
 							if (re.k.toLowerCase() == "charproibido") {
 								for (let c of re.v) {
 									if (e[re.target].includes(c)) {
-										if (!re.m) re.m = mk.m.charproibido;
+										if (!re.m) re.m = mk.m.charproibido + c;
 										erros.push(re);
 										e[re.target] = e[re.target].replaceAll(c, "");
 									}
@@ -2949,12 +2949,10 @@ class mk {
 							}
 							// Apenas Numeros
 							if (re.k.toLowerCase() == "apenasnumeros") {
-								for (let c of re.v) {
-									if (!(mk.util.numeros[1].test(e[re.target]))) {
-										if (!re.m) re.m = mk.m.apenasnumeros;
-										erros.push(re);
-										e[re.target] = e[re.target].replaceAll(/((?![0-9]).)/g, "")
-									}
+								if (!(mk.util.numeros[1].test(e[re.target]))) {
+									if (!re.m) re.m = mk.m.apenasnumeros;
+									erros.push(re);
+									e[re.target] = e[re.target].replaceAll(/((?![0-9]).)/g, "")
 								}
 								prom(re.k);
 							}
