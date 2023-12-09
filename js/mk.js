@@ -2789,11 +2789,15 @@ class mk {
                             }
                             // --- INFORMADORES ---
                             // OBRIGATORIO (Necessidade)
-                            if (re.k.toLowerCase() == "obrigatorio" && re.v == "true") {
-                                if (e[re.target] == "") {
-                                    if (!re.m)
-                                        re.m = mk.m.po;
-                                    erros.push(re);
+                            if (re.k.toLowerCase() == "obrigatorio") {
+                                if (re.v == null)
+                                    re.v == "true";
+                                if (re.v == "true") {
+                                    if (e[re.target] == "") {
+                                        if (!re.m)
+                                            re.m = mk.m.po;
+                                        erros.push(re);
+                                    }
                                 }
                                 prom(re.k);
                             }
