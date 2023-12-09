@@ -2896,8 +2896,14 @@ class mk {
 		so: "Seleção Obrigatória",
 		fi: "Formato Inválido",
 		in: "Indisponível",
+		negado: "Negado",
 		maxc: "Muitos caracteres",
 		minc: "Poucos caracteres",
+		nummax: "Limite: ",
+		datamax: "Data maior que o esperado",
+		charproibido: "Caracter negado",
+		datamaiorque: "Deve ser maior que hoje",
+		datamenorque: "Deve ser menor que hoje",
 	};
 
 	// Função que executa as regras deste campo com base nos objetos salvos
@@ -2930,6 +2936,7 @@ class mk {
 							if (re.k.toLowerCase() == "charproibido") {
 								for (let c of re.v) {
 									if (e[re.target].includes(c)) {
+										if (!re.m) re.m = mk.m.charproibido;
 										erros.push(re);
 										e[re.target] = e[re.target].replaceAll(c, "");
 									}
@@ -2939,6 +2946,7 @@ class mk {
 							// Data Máxima
 							if (re.k.toLowerCase() == "datamax") {
 								if (mk.getMs(e[re.target]) > mk.getMs(re.v)) {
+									if (!re.m) re.m = mk.m.datamax;
 									e[re.target] = re.v;
 									erros.push(re);
 								}
@@ -2948,6 +2956,7 @@ class mk {
 							if (re.k.toLowerCase() == "nummax") {
 								let valor = mk.mkFloat(e[re.target]);
 								if (valor > Number(re.v)) {
+									if (!re.m) re.m = mk.m.nummax + re.v;
 									e[re.target] = re.v;
 									erros.push(re);
 								}
@@ -3000,13 +3009,15 @@ class mk {
 							// FN
 							if (re.k.toLowerCase() == "fn") {
 								if (!(re.v(e[re.target]))) {
+									if (!re.m) re.m = mk.m.negado;
 									erros.push(re);
 								}
 								prom(re.k);
 							}
 							// Data Maior Que
-							if (re.k.toLowerCase() == "datamaioque") {
+							if (re.k.toLowerCase() == "datamaiorque") {
 								if (mk.getMs(e[re.target]) < mk.getMs(re.v)) {
+									if (!re.m) re.m = mk.m.datamaiorque;
 									erros.push(re);
 								}
 								prom(re.k);
@@ -3014,6 +3025,7 @@ class mk {
 							// Data Menor Que
 							if (re.k.toLowerCase() == "datamenorque") {
 								if (mk.getMs(e[re.target]) > mk.getMs(re.v)) {
+									if (!re.m) re.m = mk.m.datamenorque;
 									erros.push(re);
 								}
 								prom(re.k);
