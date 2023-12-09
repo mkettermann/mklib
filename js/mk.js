@@ -2794,8 +2794,14 @@ class mk {
                                     re.v == "true";
                                 if (re.v == "true") {
                                     if (e[re.target] == "") {
-                                        if (!re.m)
-                                            re.m = mk.m.po;
+                                        if (!re.m) {
+                                            if (e.classList.contains("mkSel")) {
+                                                re.m = mk.m.so;
+                                            }
+                                            else {
+                                                re.m = mk.m.po;
+                                            }
+                                        }
                                         erros.push(re);
                                     }
                                 }
