@@ -2955,17 +2955,18 @@ class mk {
         if (erro) {
             e.classList.remove("valid");
             e.classList.add("input-validation-error");
-            eDisplay.classList.remove("oculto");
-            eDisplay.classList.add("field-validation-error");
+            eDisplay?.classList.remove("oculto");
+            eDisplay?.classList.add("field-validation-error");
         }
         else {
             if (e.offsetParent && !e.classList.contains("disabled")) { // Não setar valido nos desativados/invisiveis
                 e.classList.add("valid");
             }
             e.classList.remove("input-validation-error");
-            eDisplay.classList.add("oculto");
+            eDisplay?.classList.add("oculto");
         }
-        eDisplay.innerHTML = mensagem;
+        if (eDisplay)
+            eDisplay.innerHTML = mensagem;
     };
     static regraBlink = (e) => {
         if (typeof e == "string") {
