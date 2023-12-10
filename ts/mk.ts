@@ -2902,6 +2902,7 @@ class mk {
 		maxc: "Muitos caracteres",
 		minc: "Poucos caracteres",
 		nummax: "Limite: ",
+		some: "Requer: ",
 		datamax: "Data maior que o esperado",
 		charproibido: "Não utilize: ",
 		apenasnumeros: "Apenas Números",
@@ -3002,10 +3003,18 @@ class mk {
 								}
 								prom(re.k);
 							}
-							// REGEX (Formato)
+							// REGEX (Formato Exato)
 							if (re.k.toLowerCase() == "regex") {
 								if (!(new RegExp(re.v).test(e[re.target]))) {
 									if (!re.m) re.m = mk.m.fi;
+									erros.push(re);
+								}
+								prom(re.k);
+							}
+							// Regra Some (Ao menos 1 ocorrencia do regex informado)
+							if (re.k.toLowerCase() == "some") {
+								if (!([...e[re.target]].some(i => new RegExp(re.v).test(i)))) {
+									if (!re.m) re.m = mk.m.some;
 									erros.push(re);
 								}
 								prom(re.k);
