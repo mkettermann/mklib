@@ -927,7 +927,8 @@ class mk {
         }
         return e;
     };
-    static wait = (duracao) => {
+    static wait = (ms) => {
+        return new Promise(r => setTimeout(r, ms));
     };
     static isJson = (s) => {
         try {
