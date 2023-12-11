@@ -3199,31 +3199,35 @@ class mk {
 			}
 
 			async avancar(novaFase: any = null) {
-				return new Promise((r, err) => {
-					if (novaFase) {
-						if (novaFase instanceof HTMLElement) {
-							if (novaFase.getAttribute("data-libera")) {
-								this.atual = Number(novaFase.getAttribute("data-pag"))
-								this.config.aoAvancar();
+				return new Promise(async (r, err) => {
+					if (await mk.estaValido(".modalFase" + this.atual)) {
+						if (novaFase) {
+							if (novaFase instanceof HTMLElement) {
+								if (novaFase.getAttribute("data-libera")) {
+									this.atual = Number(novaFase.getAttribute("data-pag"))
+									this.config.aoAvancar();
+								} else {
+									mk.w("Avançar para fase específica negado. Requer Libera!")
+								}
 							} else {
-								mk.w("Avançar para fase específica negado. Requer Libera!")
+								this.atual = novaFase;
 							}
-						} else {
-							this.atual = novaFase;
-						}
-						this.historico.push(this.atual);
-						this.update();
-						r(this.atual);
-					} else {
-						let proxFase = this.possiveis[this.possiveis.indexOf(this.atual) + 1];
-						if (proxFase) {
-							this.atual = proxFase;
 							this.historico.push(this.atual);
 							this.update();
 							r(this.atual);
 						} else {
-							err("Não é possível avançar mais.");
+							let proxFase = this.possiveis[this.possiveis.indexOf(this.atual) + 1];
+							if (proxFase) {
+								this.atual = proxFase;
+								this.historico.push(this.atual);
+								this.update();
+								r(this.atual);
+							} else {
+								err("Não é possível avançar mais.");
+							}
 						}
+					} else {
+						err("Fase não passou no validador.");
 					}
 				});
 			}
