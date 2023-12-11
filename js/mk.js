@@ -2853,11 +2853,22 @@ class mk {
                                 }
                                 prom(re.k);
                             }
-                            // Regra Some (Ao menos 1 ocorrencia do regex informado)
+                            // Regra Some (Ao menos 1 ocorrencia do regex informado) (Pode gerar varios erros)
                             if (re.k.toLowerCase() == "some") {
-                                if (!([...e[re.target]].some(i => new RegExp(re.v).test(i)))) {
-                                    if (!re.m)
-                                        re.m = mk.m.some;
+                                let _vs;
+                                re.vmfail = [];
+                                let b = false;
+                                Array.isArray(re.v) ? _vs = re.v : _vs = [re.v];
+                                for (let i = 0; i < _vs.length; i++) {
+                                    if (!([...e[re.target]].some(le => new RegExp(_vs[i]).test(le)))) {
+                                        if (!re.m) {
+                                            re.m = mk.m.some;
+                                        }
+                                        re.vmfail.push(re.vm[i]);
+                                        b = true;
+                                    }
+                                }
+                                if (b) {
                                     erros.push(re);
                                 }
                                 prom(re.k);
@@ -2911,36 +2922,42 @@ class mk {
                             }
                             // SERVER (Verificação remota, DB / API)
                             if (re.k.toLowerCase() == "server") {
-                                e.classList.add("pending");
                                 if (!re.m)
                                     re.m = mk.m.in;
-                                let queryString = "?" + regrasDoE.n + "=" + e[re.target];
-                                // Anexar campos adicionais:
-                                if (re.a) {
-                                    let arrAdd = re.a.split(",");
-                                    arrAdd.forEach(s => {
-                                        let eAdd = regrasDoE.c.querySelector("*[name='" + s + "']");
-                                        if (eAdd) {
-                                            queryString += "&" + s + "=" + eAdd[re.target];
+                                if (e[re.target] != "") {
+                                    e.classList.add("pending");
+                                    let queryString = "?" + regrasDoE.n + "=" + e[re.target];
+                                    // Anexar campos adicionais:
+                                    if (re.a) {
+                                        let arrAdd = re.a.split(",");
+                                        arrAdd.forEach(s => {
+                                            let eAdd = regrasDoE.c.querySelector("*[name='" + s + "']");
+                                            if (eAdd) {
+                                                queryString += "&" + s + "=" + eAdd[re.target];
+                                            }
+                                            else {
+                                                this.w("Regrar: Campo Adicional solicitado não encontrado: ", s);
+                                            }
+                                        });
+                                    }
+                                    mk.get.json({ url: re.v + queryString, quiet: true }).then(ret => {
+                                        let retorno = ret.retorno;
+                                        if (retorno != true) {
+                                            if (typeof retorno == "string") {
+                                                re.m = retorno;
+                                            }
+                                            erros.push(re);
                                         }
-                                        else {
-                                            this.w("Regrar: Campo Adicional solicitado não encontrado: ", s);
+                                        if (retorno != null) {
+                                            e.classList.remove("pending");
                                         }
+                                        prom(re.k);
                                     });
                                 }
-                                mk.get.json({ url: re.v + queryString, quiet: true }).then(ret => {
-                                    let retorno = ret.retorno;
-                                    if (retorno != true) {
-                                        if (typeof retorno == "string") {
-                                            re.m = retorno;
-                                        }
-                                        erros.push(re);
-                                    }
-                                    if (retorno != null) {
-                                        e.classList.remove("pending");
-                                    }
+                                else {
+                                    erros.push(re);
                                     prom(re.k);
-                                });
+                                }
                             }
                         }));
                     } //<= fim offsetParent
@@ -2948,7 +2965,13 @@ class mk {
             }
             Promise.all(promises).then(ok => {
                 if (erros.length > 0) {
-                    let mensagens = erros.map(a => a.m).join("<br/>");
+                    let mensagens = erros.map(a => {
+                        if (Array.isArray(a.vmfail)) {
+                            // Aqui dá pra evoluir se houver um template nos padrões.
+                            a.m = mk.m.some + a.vmfail.join(", ");
+                        }
+                        return a.m;
+                    }).join("<br/>");
                     mk.regraDisplay(e, true, eDisplay, mensagens);
                     mk.regraBlink(e);
                 }
