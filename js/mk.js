@@ -749,6 +749,7 @@ class mk {
     //	 MASCARAS, REGEX E	VALIDADOR		\\
     //___________________________________\\
     // Ex Regex: mk.util.cpf[1];
+    // Mascaras: 0= Numero, A= Letra
     static util = {
         cpf: ["000.000.000-00", /^([0-9]{3}([\.]?[0-9]{3}){2}[-]?[0-9]{2})$/, (cpf) => {
                 let m1 = [10, 9, 8, 7, 6, 5, 4, 3, 2];
@@ -2658,7 +2659,6 @@ class mk {
      * m: 	mensagem de exibição caso esteja em estado falso.
      * a: 	auto executar essa regra assim que regrar (true/false)
      * f:		força validar mesmo se estiver invisivel / desativado (true/false)
-     * Regras:		obrigatorio		|		regex		|		fn		|		charproibido		|		datamaioque		|  	datamenorque
      */
     static regrar = (container, nome, ...obj) => {
         if (typeof nome != "string") {
@@ -2666,38 +2666,40 @@ class mk {
         }
         container = mk.Q(container);
         let e = container?.querySelector("input[name='" + nome + "']");
-        if (!e) {
-            mk.w("Regrar() - Requer Elemento (" + nome + "): ", e, " Container: ", container);
-        }
-        // Incrementar Evento
-        let oninput = e?.getAttribute("oninput");
-        if (!oninput || !oninput.includes(";mk.exeregra(this)")) {
-            e.setAttribute("oninput", oninput + ";mk.exeregra(this)");
-        }
-        // Buscar Elemento e regra
-        let auto = false;
-        let novaregra = { c: container, n: nome, e: e, r: [...obj] };
-        let posE = mk.regras.findIndex(o => o.e == e);
-        if (posE >= 0) {
-            // Elemento já encontrado, substituir a regra específica
-            novaregra.r.forEach(i => {
-                let posRe = mk.regras[posE].r.findIndex(o => o.k == i.k);
-                if (posRe >= 0) {
-                    for (let p in novaregra.r) {
-                        mk.regras[posE].r[posRe] = novaregra.r[p];
+        if (e) {
+            // Incrementar Evento
+            let oninput = e?.getAttribute("oninput");
+            if (!oninput || !oninput.includes(";mk.exeregra(this)")) {
+                e.setAttribute("oninput", oninput + ";mk.exeregra(this)");
+            }
+            // Buscar Elemento e regra
+            let auto = false;
+            let novaregra = { c: container, n: nome, e: e, r: [...obj] };
+            let posE = mk.regras.findIndex(o => o.e == e);
+            if (posE >= 0) {
+                // Elemento já encontrado, substituir a regra específica
+                novaregra.r.forEach(i => {
+                    let posRe = mk.regras[posE].r.findIndex(o => o.k == i.k);
+                    if (posRe >= 0) {
+                        for (let p in novaregra.r) {
+                            mk.regras[posE].r[posRe] = novaregra.r[p];
+                        }
                     }
-                }
-                else {
-                    mk.regras[posE].r.push(i);
-                }
-            });
+                    else {
+                        mk.regras[posE].r.push(i);
+                    }
+                });
+            }
+            else {
+                mk.regras.push(novaregra);
+            }
+            // Auto Executa
+            if (auto) {
+                mk.exeregra(e);
+            }
         }
         else {
-            mk.regras.push(novaregra);
-        }
-        // Auto Executa
-        if (auto) {
-            mk.exeregra(e);
+            mk.w("Regrar Requer Elemento (" + nome + "): ", e, " Container: ", container);
         }
     };
     // Retorna um true se todos os elementos internos estão atualmente válidos pelas regras.
