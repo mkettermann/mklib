@@ -749,7 +749,6 @@ class mk {
     //	 MASCARAS, REGEX E	VALIDADOR		\\
     //___________________________________\\
     // Ex Regex: mk.util.cpf[1];
-    // Mascaras: 0= Numero, A= Letra
     static util = {
         cpf: ["000.000.000-00", /^([0-9]{3}([\.]?[0-9]{3}){2}[-]?[0-9]{2})$/, (cpf) => {
                 let m1 = [10, 9, 8, 7, 6, 5, 4, 3, 2];
@@ -855,6 +854,58 @@ class mk {
         ],
         numeros: [0, /^[0-9]*$/],
         letras: [0, /^[A-Za-z]*$/]
+    };
+    // Mascaras: 0=Numero, A=Letra, Outros repete.
+    static mascarar = (texto, mascara) => {
+        console.clear();
+        if (texto && mascara) {
+            if (typeof texto != "string")
+                texto = texto?.toString();
+            if (typeof mascara != "string")
+                mascara = mascara?.toString();
+            this.l("TT: ", [...mk.clonar(texto)]);
+            let ms = [...mk.clonar(mascara)];
+            let ss = [...mk.clonar(texto)];
+            this.l("ms: ", ms);
+            //this.l("ss: ", ss);
+            let ts = [];
+            let pm = 0;
+            ss.forEach(s => {
+                let t = null;
+                if (/[0-9]/.test(s)) {
+                    t = "0";
+                }
+                else if (/[a-zA-Z]/.test(s)) {
+                    t = "A";
+                }
+                else {
+                    t = " ";
+                }
+                ts.push(t);
+                pm++;
+            });
+            this.l("ts: ", ts);
+            let r = [];
+            for (let tp = 0, mp = 0; (tp < ts.length) && (mp < ms.length); tp++, mp++) {
+                if ((ms[mp] === "0" || ms[mp] === "A") && (ms[mp] == ts[tp])) {
+                    r.push(ss[tp]);
+                }
+                else {
+                    if (ms[mp] != "0" && ms[mp] != "A") {
+                        r.push(ms[mp]);
+                        tp--;
+                    }
+                    else {
+                        mp--;
+                    }
+                }
+            }
+            this.l(" r: ", r);
+            //return r.join("");
+        }
+        else {
+            this.l("Mascarar Requer Texto: ", texto, " e Mascara: ", mascara);
+        }
     };
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //			MK FUNCOES UTIL							\\
@@ -4049,7 +4100,7 @@ class mk {
                 eRef.offsetHeight +
                 2 +
                 "px";
-    
+        
             eList.style.left = eRef.offsetLeft + "px";
             // Depois, verifica se saiu da tela
             let posXCantoOpostoRef = eRef.offsetLeft + eRef.offsetWidth;
