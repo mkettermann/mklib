@@ -831,10 +831,10 @@ class mk {
                 }
                 return true;
             }],
-        placa: ["SSS-0A00", /^([A-Za-z]{3}[-]?[0-9]{1}[A-Za-z0-9]{1}[0-9]{2})$/],
+        placa: ["AAA-0S00", /^([A-Za-z]{3}[-]?[0-9]{1}[A-Za-z0-9]{1}[0-9]{2})$/],
         placaAntesMercosul: ["AAA-0000", /^([A-Za-z]{3}[-]?[0-9]{4})$/],
         placaMercosul: [
-            "SSS-0S00",
+            "AAA-0A00",
             /^([A-Za-z]{3}[-]?[0-9]{1}[A-Za-z]{1}[0-9]{2})$/,
         ],
         pis: [
@@ -852,21 +852,18 @@ class mk {
             "0000-00-00T00:00:00.000Z",
             /^([0-9]{4}(-[0-9]{2}){2}T[0-9]{2}(:[0-9]{2})\.[0-9]{3}Z)$/,
         ],
-        numeros: [0, /^[0-9]*$/],
-        letras: [0, /^[A-Za-z]*$/]
+        numeros: ["0", /^[0-9]*$/],
+        letras: ["A", /^[A-Za-z]*$/]
     };
     // Mascaras: 0=Numero, A=Letra, Outros repete.
     static mascarar = (texto, mascara) => {
-        console.clear();
         if (texto && mascara) {
             if (typeof texto != "string")
                 texto = texto?.toString();
             if (typeof mascara != "string")
                 mascara = mascara?.toString();
-            this.l("TT: ", [...mk.clonar(texto)]);
             let ms = [...mk.clonar(mascara)];
             let ss = [...mk.clonar(texto)];
-            this.l("ms: ", ms);
             //this.l("ss: ", ss);
             let ts = [];
             let pm = 0;
@@ -884,14 +881,13 @@ class mk {
                 ts.push(t);
                 pm++;
             });
-            this.l("ts: ", ts);
             let r = [];
             for (let tp = 0, mp = 0; (tp < ts.length) && (mp < ms.length); tp++, mp++) {
-                if ((ms[mp] === "0" || ms[mp] === "A") && (ms[mp] == ts[tp])) {
+                if (((ms[mp] === "0" || ms[mp] === "A") && (ms[mp] == ts[tp])) || (ms[mp] === "S" && (ts[tp] === "A" || ts[tp] === "0"))) {
                     r.push(ss[tp]);
                 }
                 else {
-                    if (ms[mp] != "0" && ms[mp] != "A") {
+                    if (ms[mp] != "0" && ms[mp] != "A" && ms[mp] != "S") {
                         r.push(ms[mp]);
                         tp--;
                     }
@@ -900,8 +896,7 @@ class mk {
                     }
                 }
             }
-            this.l(" r: ", r);
-            //return r.join("");
+            return r.join("");
         }
         else {
             this.l("Mascarar Requer Texto: ", texto, " e Mascara: ", mascara);
