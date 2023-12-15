@@ -856,10 +856,10 @@ class mk {
 			if (cnh.length != 11) { return false; }
 			return true;
 		}],
-		placa: ["SSS-0A00", /^([A-Za-z]{3}[-]?[0-9]{1}[A-Za-z0-9]{1}[0-9]{2})$/],
+		placa: ["AAA-0S00", /^([A-Za-z]{3}[-]?[0-9]{1}[A-Za-z0-9]{1}[0-9]{2})$/],
 		placaAntesMercosul: ["AAA-0000", /^([A-Za-z]{3}[-]?[0-9]{4})$/],
 		placaMercosul: [
-			"SSS-0S00",
+			"AAA-0A00",
 			/^([A-Za-z]{3}[-]?[0-9]{1}[A-Za-z]{1}[0-9]{2})$/,
 		],
 		pis: [
@@ -877,9 +877,50 @@ class mk {
 			"0000-00-00T00:00:00.000Z",
 			/^([0-9]{4}(-[0-9]{2}){2}T[0-9]{2}(:[0-9]{2})\.[0-9]{3}Z)$/,
 		],
-		numeros: [0, /^[0-9]*$/],
-		letras: [0, /^[A-Za-z]*$/]
+		numeros: ["0", /^[0-9]*$/],
+		letras: ["A", /^[A-Za-z]*$/]
 	};
+
+	// Mascaras: 0=Numero, A=Letra, Outros repete.
+	static mascarar = (texto: any, mascara: any) => {
+		if (texto && mascara) {
+			if (typeof texto != "string") texto = texto?.toString();
+			if (typeof mascara != "string") mascara = mascara?.toString();
+			let ms = [...mk.clonar(mascara)];
+			let ss = [...mk.clonar(texto)];
+			//this.l("ss: ", ss);
+			let ts: any = [];
+			let pm = 0;
+			ss.forEach(s => {
+				let t = null;
+				if (/[0-9]/.test(s)) {
+					t = "0";
+				} else if (/[a-zA-Z]/.test(s)) {
+					t = "A";
+				} else {
+					t = " ";
+				}
+				ts.push(t);
+				pm++;
+			});
+			let r: any = [];
+			for (let tp = 0, mp = 0; (tp < ts.length) && (mp < ms.length); tp++, mp++) {
+				if (((ms[mp] === "0" || ms[mp] === "A") && (ms[mp] == ts[tp])) || (ms[mp] === "S" && (ts[tp] === "A" || ts[tp] === "0"))) {
+					r.push(ss[tp]);
+				} else {
+					if (ms[mp] != "0" && ms[mp] != "A" && ms[mp] != "S") {
+						r.push(ms[mp]);
+						tp--;
+					} else {
+						mp--;
+					}
+				}
+			}
+			return r.join("");
+		} else {
+			this.l("Mascarar Requer Texto: ", texto, " e Mascara: ", mascara);
+		}
+	}
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 	//			MK FUNCOES UTIL							\\
@@ -2820,7 +2861,6 @@ class mk {
 	 * m: 	mensagem de exibição caso esteja em estado falso.
 	 * a: 	auto executar essa regra assim que regrar (true/false)
 	 * f:		força validar mesmo se estiver invisivel / desativado (true/false)
-	 * Regras:		obrigatorio		|		regex		|		fn		|		charproibido		|		datamaioque		|  	datamenorque
 	 */
 	static regrar = (container: any, nome: string, ...obj: any) => {
 		if (typeof nome != "string") {
@@ -2828,35 +2868,39 @@ class mk {
 		}
 		container = mk.Q(container);
 		let e = container?.querySelector("input[name='" + nome + "']");
-		if (!e) { mk.w("Regrar() - Requer Elemento (" + nome + "): ", e, " Container: ", container) }
-		// Incrementar Evento
-		let oninput = e?.getAttribute("oninput");
-		if (!oninput || !oninput.includes(";mk.exeregra(this)")) {
-			e.setAttribute("oninput", oninput + ";mk.exeregra(this)");
-		}
-		// Buscar Elemento e regra
-		let auto = false;
-		let novaregra: any = { c: container, n: nome, e: e, r: [...obj] };
-		let posE = mk.regras.findIndex(o => o.e == e);
-		if (posE >= 0) {
-			// Elemento já encontrado, substituir a regra específica
-			novaregra.r.forEach(i => {
-				let posRe = mk.regras[posE].r.findIndex(o => o.k == i.k);
-				if (posRe >= 0) {
-					for (let p in novaregra.r) {
-						mk.regras[posE].r[posRe] = novaregra.r[p];
+		if (e) {
+			// Incrementar Evento
+			let oninput = e?.getAttribute("oninput");
+			if (!oninput || !oninput.includes(";mk.exeregra(this)")) {
+				e.setAttribute("oninput", oninput + ";mk.exeregra(this)");
+			}
+			// Buscar Elemento e regra
+			let auto = false;
+			let novaregra: any = { c: container, n: nome, e: e, r: [...obj] };
+			let posE = mk.regras.findIndex(o => o.e == e);
+			if (posE >= 0) {
+				// Elemento já encontrado, substituir a regra específica
+				novaregra.r.forEach(i => {
+					let posRe = mk.regras[posE].r.findIndex(o => o.k == i.k);
+					if (posRe >= 0) {
+						for (let p in novaregra.r) {
+							mk.regras[posE].r[posRe] = novaregra.r[p];
+						}
+					} else {
+						mk.regras[posE].r.push(i);
 					}
-				} else {
-					mk.regras[posE].r.push(i);
-				}
-			});
+				});
+			} else {
+				mk.regras.push(novaregra);
+			}
+			// Auto Executa
+			if (auto) {
+				mk.exeregra(e);
+			}
 		} else {
-			mk.regras.push(novaregra);
+			mk.w("Regrar Requer Elemento (" + nome + "): ", e, " Container: ", container)
 		}
-		// Auto Executa
-		if (auto) {
-			mk.exeregra(e);
-		}
+
 	}
 
 
@@ -4288,7 +4332,7 @@ class mk {
 				eRef.offsetHeight +
 				2 +
 				"px";
-	
+		
 			eList.style.left = eRef.offsetLeft + "px";
 			// Depois, verifica se saiu da tela
 			let posXCantoOpostoRef = eRef.offsetLeft + eRef.offsetWidth;
