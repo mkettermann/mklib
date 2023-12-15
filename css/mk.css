@@ -1995,7 +1995,7 @@ ul.mkUlFase li.disabled a {
 	gap: 10px;
 }
 
-@media (max-width: 499px) {
+@media (max-width: 770px) {
 	.i {
 		flex-direction: column;
 	}
