@@ -2718,7 +2718,7 @@ class mk {
             let onblur = e?.getAttribute("onblur");
             if (!(oninput) || !(onblur)) {
                 e.setAttribute("oninput", "mk.exeregra(this)");
-                e.setAttribute("onblur", "mk.exeregra(this)");
+                e.setAttribute("onblur", "mk.exeregra(this,event)");
             }
             else {
                 if (!oninput.includes("mk.exeregra(this)")) {
