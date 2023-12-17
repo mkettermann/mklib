@@ -2770,7 +2770,7 @@ class mk {
         let promises = [];
         mk.regras.forEach(regra => {
             if (mk.isInside(regra.e, container)) {
-                promises.push(mk.exeregra(regra.e));
+                promises.push(mk.exeregra(regra.e, "full"));
             }
         });
         let resultado = [];
