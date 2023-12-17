@@ -2751,7 +2751,7 @@ class mk {
             }
             // Auto Executa
             if (auto) {
-                mk.exeregra(e);
+                mk.exeregra(e, "inicial");
             }
         }
         else {

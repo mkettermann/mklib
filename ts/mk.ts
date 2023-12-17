@@ -2906,7 +2906,7 @@ class mk {
 			}
 			// Auto Executa
 			if (auto) {
-				mk.exeregra(e);
+				mk.exeregra(e, "inicial");
 			}
 		} else {
 			mk.w("Regrar Requer Elemento (" + nome + "): ", e, " Container: ", container)
