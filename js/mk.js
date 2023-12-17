@@ -3009,7 +3009,7 @@ class mk {
                             }
                             // SERVER (Verificação remota, DB / API)
                             if (re.k.toLowerCase() == "server") {
-                                if (!ev) {
+                                if (ev) {
                                     if (!re.m)
                                         re.m = mk.m.in;
                                     if (e[re.target] != "") {
