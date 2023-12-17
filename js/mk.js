@@ -2715,12 +2715,18 @@ class mk {
         if (e) {
             // Incrementar Evento
             let oninput = e?.getAttribute("oninput");
-            if (!oninput || !oninput.includes(";mk.exeregra(this)")) {
-                e.setAttribute("oninput", oninput + ";mk.exeregra(this)");
+            let onblur = e?.getAttribute("onblur");
+            if (!(oninput) || !(onblur)) {
+                e.setAttribute("oninput", "mk.exeregra(this)");
+                e.setAttribute("onblur", "mk.exeregra(this)");
             }
-            let onchange = e?.getAttribute("onchange");
-            if (!onchange || !onchange.includes(";mk.exeregra(this)")) {
-                e.setAttribute("onchange", onchange + ";mk.exeregra(this)");
+            else {
+                if (!oninput.includes("mk.exeregra(this)")) {
+                    e.setAttribute("oninput", oninput + ";mk.exeregra(this)");
+                }
+                if (!onblur.includes("mk.exeregra(this)")) {
+                    e.setAttribute("onblur", onblur + ";mk.exeregra(this)");
+                }
             }
             // Buscar Elemento e regra
             let auto = false;
