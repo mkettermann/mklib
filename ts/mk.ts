@@ -3029,12 +3029,6 @@ class mk {
 								}
 								prom(re.k);
 							}
-							if (re.k.toLowerCase() == "limitchars") {
-								if (e[re.target].length >= re.v) {
-									e.setAttribute("maxlength", re.v);
-								}
-								prom(re.k);
-							}
 							// --- INFORMADORES ---
 							// OBRIGATORIO (Necessidade)
 							if (re.k.toLowerCase() == "obrigatorio") {
@@ -3083,8 +3077,8 @@ class mk {
 							}
 							// Min Chars (Caracteres)
 							if (re.k.toLowerCase() == "minchars") {
-								if (e[re.target].length <= re.v) {
-									e.setAttribute("minlength", re.v);
+								e.setAttribute("minlength", re.v);
+								if (e[re.target].length < Number(re.v)) {
 									if (!re.m) re.m = mk.m.minc;
 									erros.push(re);
 								}
@@ -3092,8 +3086,8 @@ class mk {
 							}
 							// Max Chars (Caracteres)
 							if (re.k.toLowerCase() == "maxchars") {
-								if (e[re.target].length >= re.v) {
-									e.setAttribute("maxlength", re.v);
+								e.setAttribute("maxlength", re.v);
+								if (e[re.target].length > Number(re.v)) {
 									if (!re.m) re.m = mk.m.maxc;
 									erros.push(re);
 								}
