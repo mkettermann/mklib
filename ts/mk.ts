@@ -2874,6 +2874,10 @@ class mk {
 			if (!oninput || !oninput.includes(";mk.exeregra(this)")) {
 				e.setAttribute("oninput", oninput + ";mk.exeregra(this)");
 			}
+			let onchange = e?.getAttribute("onchange");
+			if (!onchange || !onchange.includes(";mk.exeregra(this)")) {
+				e.setAttribute("onchange", onchange + ";mk.exeregra(this)");
+			}
 			// Buscar Elemento e regra
 			let auto = false;
 			let novaregra: any = { c: container, n: nome, e: e, r: [...obj] };
@@ -2944,7 +2948,7 @@ class mk {
 		in: "Indisponível",
 		negado: "Negado",
 		maxc: "Limite de caracteres atingido",
-		minc: "Mínimo de caracteres requerido",
+		minc: "Mínimo de caracteres: ",
 		nummax: "Limite: ",
 		some: "Requer: ",
 		datamax: "Data maior que o esperado",
@@ -3025,7 +3029,7 @@ class mk {
 							if (re.k.toLowerCase() == "minchars") {
 								e.setAttribute("minlength", re.v);
 								if (e[re.target].length < Number(re.v)) {
-									if (!re.m) re.m = mk.m.minc;
+									if (!re.m) re.m = mk.m.minc + re.v;
 									erros.push(re);
 									let _a = [...e[re.target]];
 									if (!re.fill) re.fill = "0";
@@ -3040,8 +3044,8 @@ class mk {
 							if (re.k.toLowerCase() == "datamax") {
 								if (mk.getMs(e[re.target]) > mk.getMs(re.v)) {
 									if (!re.m) re.m = mk.m.datamax;
-									e[re.target] = re.v;
 									erros.push(re);
+									e[re.target] = re.v;
 								}
 								prom(re.k);
 							}
@@ -3050,8 +3054,8 @@ class mk {
 								let valor = mk.mkFloat(e[re.target]);
 								if (valor > Number(re.v)) {
 									if (!re.m) re.m = mk.m.nummax + re.v;
-									e[re.target] = re.v;
 									erros.push(re);
+									e[re.target] = re.v;
 								}
 								prom(re.k);
 							}
