@@ -3029,6 +3029,12 @@ class mk {
 								}
 								prom(re.k);
 							}
+							if (re.k.toLowerCase() == "limitchars") {
+								if (e[re.target].length >= re.v) {
+									e.setAttribute("maxlength", re.v);
+								}
+								prom(re.k);
+							}
 							// --- INFORMADORES ---
 							// OBRIGATORIO (Necessidade)
 							if (re.k.toLowerCase() == "obrigatorio") {
