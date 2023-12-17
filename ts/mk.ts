@@ -2880,7 +2880,7 @@ class mk {
 					e.setAttribute("oninput", oninput + ";mk.exeregra(this)");
 				}
 				if (!onblur.includes("mk.exeregra(this)")) {
-					e.setAttribute("onblur", onblur + ";mk.exeregra(this)");
+					e.setAttribute("onblur", onblur + ";mk.exeregra(this,event)");
 				}
 			}
 
@@ -2968,7 +2968,7 @@ class mk {
 
 	// Função que executa as regras deste campo com base nos objetos salvos
 	// Quando concluir (onChange), executar novamentepra remover erros já corrigidos (justamente no último caracter).
-	static exeregra = async (e: any) => {
+	static exeregra = async (e: any, ev: any = null) => {
 		return new Promise((resolver) => {
 			let erros: any = [];
 			let regrasDoE = mk.regras.find(o => o.e == e);
@@ -3155,37 +3155,42 @@ class mk {
 							}
 							// SERVER (Verificação remota, DB / API)
 							if (re.k.toLowerCase() == "server") {
-								if (!re.m) re.m = mk.m.in;
-								if (e[re.target] != "") {
-									e.classList.add("pending");
-									let queryString = "?" + regrasDoE.n + "=" + e[re.target];
-									// Anexar campos adicionais:
-									if (re.a) {
-										let arrAdd = re.a.split(",");
-										arrAdd.forEach(s => {
-											let eAdd = regrasDoE.c.querySelector("*[name='" + s + "']");
-											if (eAdd) {
-												queryString += "&" + s + "=" + eAdd[re.target];
-											} else {
-												this.w("Regrar: Campo Adicional solicitado não encontrado: ", s);
+								if (!ev) {
+									if (!re.m) re.m = mk.m.in;
+									if (e[re.target] != "") {
+										e.classList.add("pending");
+										let queryString = "?" + regrasDoE.n + "=" + e[re.target];
+										// Anexar campos adicionais:
+										if (re.a) {
+											let arrAdd = re.a.split(",");
+											arrAdd.forEach(s => {
+												let eAdd = regrasDoE.c.querySelector("*[name='" + s + "']");
+												if (eAdd) {
+													queryString += "&" + s + "=" + eAdd[re.target];
+												} else {
+													this.w("Regrar: Campo Adicional solicitado não encontrado: ", s);
+												}
+											});
+										}
+										mk.get.json({ url: re.v + queryString, quiet: true }).then(ret => {
+											let retorno = ret.retorno;
+											if (retorno != true) {
+												if (typeof retorno == "string") {
+													re.m = retorno;
+												}
+												erros.push(re);
 											}
+											if (retorno != null) {
+												e.classList.remove("pending");
+											}
+											prom(re.k);
 										});
-									}
-									mk.get.json({ url: re.v + queryString, quiet: true }).then(ret => {
-										let retorno = ret.retorno;
-										if (retorno != true) {
-											if (typeof retorno == "string") {
-												re.m = retorno;
-											}
-											erros.push(re);
-										}
-										if (retorno != null) {
-											e.classList.remove("pending");
-										}
+									} else {
+										erros.push(re);
 										prom(re.k);
-									});
+									}
 								} else {
-									erros.push(re);
+									// Apenas executa quando não tem evento
 									prom(re.k);
 								}
 							}
