@@ -2855,13 +2855,7 @@ class mk {
                             // Max Chars (Caracteres)
                             if (re.k.toLowerCase() == "maxchars") {
                                 e.setAttribute("maxlength", re.v);
-                                if (e[re.target].length > Number(re.v)) {
-                                    //this.l("Length: ", e[re.target].length, " Regra: ", re.v);
-                                    e[re.target] = e[re.target].slice(0, Number(re.v));
-                                    if (!re.m)
-                                        re.m = mk.m.maxc;
-                                    erros.push(re);
-                                }
+                                e[re.target] = e[re.target].slice(0, Number(re.v));
                                 prom(re.k);
                             }
                             // Data Máxima
@@ -2935,11 +2929,21 @@ class mk {
                                 prom(re.k);
                             }
                             // Min Chars (Caracteres)
-                            if (re.k.toLowerCase() == "minchars") {
+                            if (re.k.toLowerCase() == "mincharsinfo") {
                                 e.setAttribute("minlength", re.v);
                                 if (e[re.target].length < Number(re.v)) {
                                     if (!re.m)
                                         re.m = mk.m.minc;
+                                    erros.push(re);
+                                }
+                                prom(re.k);
+                            }
+                            // Max Chars (Caracteres)
+                            if (re.k.toLowerCase() == "maxcharsinfo") {
+                                if (e[re.target].length > Number(re.v)) {
+                                    //this.l("Length: ", e[re.target].length, " Regra: ", re.v);
+                                    if (!re.m)
+                                        re.m = mk.m.maxc;
                                     erros.push(re);
                                 }
                                 prom(re.k);
