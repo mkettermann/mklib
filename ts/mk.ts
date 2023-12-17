@@ -2943,8 +2943,8 @@ class mk {
 		fi: "Formato Inválido",
 		in: "Indisponível",
 		negado: "Negado",
-		maxc: "Muitos caracteres",
-		minc: "Poucos caracteres",
+		maxc: "Limite de caracteres atingido",
+		minc: "Mínimo de caracteres requerido",
 		nummax: "Limite: ",
 		some: "Requer: ",
 		datamax: "Data maior que o esperado",
@@ -2956,6 +2956,7 @@ class mk {
 	};
 
 	// Função que executa as regras deste campo com base nos objetos salvos
+	// Quando concluir (onChange), executar novamentepra remover erros já corrigidos (justamente no último caracter).
 	static exeregra = async (e: any) => {
 		return new Promise((resolver) => {
 			let erros: any = [];
@@ -3013,7 +3014,26 @@ class mk {
 							// Max Chars (Caracteres)
 							if (re.k.toLowerCase() == "maxchars") {
 								e.setAttribute("maxlength", re.v);
-								e[re.target] = e[re.target].slice(0, Number(re.v));
+								if (e[re.target].length > Number(re.v)) {
+									if (!re.m) re.m = mk.m.maxc;
+									erros.push(re);
+									e[re.target] = e[re.target].slice(0, Number(re.v));
+								}
+								prom(re.k);
+							}
+							// Min Chars (Caracteres)
+							if (re.k.toLowerCase() == "minchars") {
+								e.setAttribute("minlength", re.v);
+								if (e[re.target].length < Number(re.v)) {
+									if (!re.m) re.m = mk.m.minc;
+									erros.push(re);
+									let _a = [...e[re.target]];
+									if (!re.fill) re.fill = "0";
+									while (_a.length <= Number(re.v)) {
+										_a.unshift(re.fill.charAt(0));
+									}
+									e[re.target] = _a.join("");
+								}
 								prom(re.k);
 							}
 							// Data Máxima
@@ -3093,7 +3113,6 @@ class mk {
 							// Max Chars (Caracteres)
 							if (re.k.toLowerCase() == "maxcharsinfo") {
 								if (e[re.target].length > Number(re.v)) {
-									//this.l("Length: ", e[re.target].length, " Regra: ", re.v);
 									if (!re.m) re.m = mk.m.maxc;
 									erros.push(re);
 								}
