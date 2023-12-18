@@ -1974,6 +1974,8 @@ ul.mkUlFase li.disabled a {
 .i {
 	display: flex;
 	flex-direction: row;
+	/* max aqui impede que a linha gere overflow */
+	max-width: 100%;
 }
 
 .j {
