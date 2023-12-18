@@ -1,11 +1,9 @@
 "use strict";
 // Transformar para uma unidade / modulado. Dependencias diretas/indiretas:
 // - $ JQuery Framework JS
-// - $ Mask
 // - $ Print
-// - $ Unobtrutive Validate (Está vinculado ao Data Annotation do C#)
 // - Bootstrap Toast
-// - Bootstrap Dropdown (quase)
+// - Bootstrap Dropdown
 // - Bootstrap Modal
 // - Poper
 var mkt; // Variavel de Testes;
@@ -2587,111 +2585,6 @@ class mk {
         return array;
     };
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-    //			VALIDADOR										\\
-    //___________________________________\\
-    // Efeito de terremoto em campos com erros no formulario informado
-    static TerremotoErros = (form) => {
-        mk.QAll(form + " input.input-validation-error").forEach((e) => {
-            e.nextElementSibling?.classList.add("mkTerremoto");
-            setTimeout(() => {
-                e.nextElementSibling?.classList.remove("mkTerremoto");
-            }, 500);
-        });
-    };
-    // Funcao tipo isPendente para validacao para mkValida. Aqui valida Pendente apenas.
-    static mkAindaPendente = (form) => {
-        let temPendencia = false;
-        mk.QAll(form + " input").forEach((e) => {
-            if (mk.isVisible(e)) {
-                if (e.classList.contains("pending")) {
-                    temPendencia = true;
-                    e.classList.remove("valid");
-                    e.classList.add("input-validation-error");
-                }
-            }
-        });
-        return temPendencia;
-    };
-    // Limpar Validates adicionados anteriormente e fazer novamente com os atuais.
-    static FixValidate = (form) => {
-        // Parse + Remove
-        $.validator.unobtrusive.parse($(form).removeData("validator").removeData("unobtrusiveValidation"));
-        // Para modificar campos setados:
-        // $(form).data('unobtrusiveValidation').options.rules
-    };
-    // $ Unobtrusive: id do form
-    static verificarCampos = (form) => {
-        // Fast Parse Call all forms
-        $.validator.unobtrusive.parse(document);
-        if (mk.Q(form) == null)
-            mk.w("Formulário não encontrado:", form);
-        // Buscando validador
-        let validador = $.data($(form)[0], "validator");
-        if (!validador) {
-            mk.w("Validador inicialmente NULO. Provavelmente nenhum campo estava como requerido.", validador);
-            if (!validador) {
-                mk.w("Parse fail", validador);
-                return true;
-            }
-        }
-        // Ignorara os campos com classe ignore
-        if (validador)
-            validador.settings.ignore = ":hidden";
-        // Conversor de validadores
-        $.validator.unobtrusive.parse(document);
-        // Buscando Unobtrusive Validador da microsoft
-        let unobtrusiveValidation = $(form).data("unobtrusiveValidation");
-        if (!unobtrusiveValidation)
-            mk.w("Unobtrusive nulo", unobtrusiveValidation);
-        // Executa validador se ele estiver presente
-        var resultado = unobtrusiveValidation?.validate();
-        mk.l("ModelState é Valido? " + resultado);
-        resultado ? null : mk.TerremotoErros(form);
-        return resultado;
-    };
-    // mk.mkValidaFull("#formNovo_model", CallbackFunction, { f: "#formNovo_model" });
-    // Funcao Recursiva: Executa mkAindaPendente ate a resposta do HTTP retornar.
-    // Parametro(formulario)        Formulario para validar
-    // Parametro(fUIValidou)        Funcao a ser executada apos a validacao ser aprovada e recebida
-    // Parametro(varRepassaA)       Variavel/Objeto que pode ser passada da solicitacao ate a resposta.
-    static mkValidaFull = (form, fUIValidou, varRepassaA = null) => {
-        mk.mkCountValidate++;
-        if (mk.verificarCampos(form)) {
-            let liberado = false;
-            if (mk.mkAindaPendente(form)) {
-                if (mk.mkCountValidate < 250) {
-                    mk.CarregarON();
-                    setTimeout(() => {
-                        mk.mkValidaFull(form, fUIValidou, varRepassaA);
-                    }, 10);
-                }
-                else {
-                    mk.CarregarOFF();
-                    console.error("&nbsp; Um ou mais campos do formul&aacute;rio n&atilde;o puderam ser validados por falta de resposta do servidor.");
-                }
-                return false;
-            }
-            else {
-                liberado = true;
-            }
-            if (liberado) {
-                mk.CarregarOFF();
-                fUIValidou(varRepassaA);
-                mk.mkCountValidate = 0;
-            }
-        }
-        else {
-            if (mk.mkCountValidate < 2) {
-                //Auto reexecutar pois o parse do unobtrutive se perde de primeira
-                setTimeout(() => {
-                    // Validacaes assincronas exigem timer
-                    mk.mkValidaFull(form, fUIValidou, varRepassaA);
-                }, 10);
-            }
-            mk.CarregarOFF(); // Loop infinito
-        }
-    };
-    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //			REGRAR E VALIDAR						\\
     //___________________________________\\
     // REGRAR (Gera uma regra para o campo)
@@ -3111,6 +3004,15 @@ class mk {
             mk.regraDisplay(e, false, eDisplay);
         });
     }
+    // Efeito de terremoto em campos com erros no formulario informado
+    static TerremotoErros = (form) => {
+        mk.QAll(form + " input.input-validation-error").forEach((e) => {
+            e.nextElementSibling?.classList.add("mkTerremoto");
+            setTimeout(() => {
+                e.nextElementSibling?.classList.remove("mkTerremoto");
+            }, 500);
+        });
+    };
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //			FASEADOR / FasearMK (OBJ)		\\
     //___________________________________\\
@@ -4516,6 +4418,8 @@ class mk {
         setTimeout(mk.mkRecargaExe, mk.mkRecargaTimer);
     };
 } // <<< FIM MK Class.
+// Configs
+Object.defineProperty(mk, "http", { enumerable: false });
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //		AO INICIAR										\\
 //___________________________________\\
