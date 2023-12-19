@@ -176,20 +176,6 @@ class mk {
 		this.setDirSort(sortBy, Number(sortDir));
 	};
 
-	// Iterator
-	[Symbol.iterator]() {
-		let iteratorArray = this.dadosFull[Symbol.iterator]();
-		// Iteration result
-		return {
-			next() {
-				return iteratorArray.next();
-			},
-			// Iterable
-			[Symbol.iterator]() {
-				return this;
-			},
-		};
-	}
 
 	// Criar eventos para UI permitindo o usuario interagir com a tabela.
 	configurarUI = () => {
@@ -2724,6 +2710,33 @@ class mk {
 		}
 		return array;
 	};
+
+	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+	//			CONFIG CLASSE								\\
+	//___________________________________\\
+
+	//Nome
+	get [Symbol.toStringTag]() { return "Mk"; }
+
+	// Iterator
+	[Symbol.iterator]() {
+		let iteratorArray = this.dadosFull[Symbol.iterator]();
+		// Iteration result
+		return {
+			next() {
+				return iteratorArray.next();
+			},
+			// Iterable
+			[Symbol.iterator]() {
+				return this;
+			},
+		};
+	}
+
+	// Get do InstanceOf
+	static classof(o: any) {
+		return Object.prototype.toString.call(o).slice(8, -1);
+	}
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 	//			REGRAR E VALIDAR						\\
