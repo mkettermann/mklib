@@ -1324,6 +1324,14 @@ class mk {
         URL.revokeObjectURL(fileUrl);
         return nomeArquivo;
     };
+    // Função que recebe um Base64 e solicita pra download.
+    static downloadData = (base64, nomeArquivo = "Arquivo") => {
+        const link = document.createElement("a");
+        link.href = base64;
+        link.download = nomeArquivo;
+        link.click();
+        return nomeArquivo;
+    };
     // Get Server On
     static getServerOn = async (url = "/Login/GetServerOn") => {
         let pac = await mk.get.json({ url: url, quiet: true });

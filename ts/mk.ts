@@ -1400,6 +1400,18 @@ class mk {
 		return nomeArquivo;
 	};
 
+	// Função que recebe um Base64 e solicita pra download.
+	static downloadData = (
+		base64: any,
+		nomeArquivo: string = "Arquivo"
+	) => {
+		const link = document.createElement("a");
+		link.href = base64;
+		link.download = nomeArquivo;
+		link.click();
+		return nomeArquivo;
+	};
+
 	// Get Server On
 	static getServerOn = async (url: string = "/Login/GetServerOn") => {
 		let pac = await mk.get.json({ url: url, quiet: true });
