@@ -2760,7 +2760,7 @@ class mk {
 			return mk.w("Regrar() precisa receber o nome do input como string");
 		}
 		container = mk.Q(container);
-		let e = container?.querySelector("input[name='" + nome + "']");
+		let e = container?.querySelector("*[name='" + nome + "']");
 		if (e) {
 			// Incrementar Evento
 			let oninput = e?.getAttribute("oninput");
@@ -3768,6 +3768,7 @@ class mk {
 				mk.mkRecUpdate(e);
 			} else {
 				if (!e.getAttribute("data-selarray") && e.getAttribute("data-refill")) {
+					// REC não foi implementado refill
 					//await mk.mkRecDelRefillProcesso(e as HTMLElement);
 				}
 				let geraEvento = false;
@@ -3999,21 +4000,26 @@ class mk {
 		return new Promise(async (r) => {
 			let e = mk.Q(eName);
 			if (e) {
-				let url = appPath + e.getAttribute("data-refill");
-				cod != null ? (url += cod) : null;
-				let p = await mk.get.json(url);
-				if (p.retorno != null) {
-					let kv = p.retorno;
-					if (typeof p.retorno == "object") {
-						kv = JSON.stringify(p.retorno);
+				// Se há o elemento, e para evitar puxar várias veses a mesma lista, adiciona-se uma classe no inicio e tira-se quando concluiu. Se já tem, não refaz.
+				if (!e.classList.contains("refilling")) {
+					e.classList.add("refilling");
+					let url = appPath + e.getAttribute("data-refill");
+					cod != null ? (url += cod) : null;
+					let p = await mk.get.json(url);
+					if (p.retorno != null) {
+						let kv = p.retorno;
+						if (typeof p.retorno == "object") {
+							kv = JSON.stringify(p.retorno);
+						}
+						if (mk.isJson(kv)) {
+							e.setAttribute("data-selarray", kv);
+							e.classList.remove("refilling");
+							r(e);
+						} else {
+							console.error("Resultado não é um JSON. (mkSelDlRefill)");
+						}
 					}
-					if (mk.isJson(kv)) {
-						e.setAttribute("data-selarray", kv);
-						r(e);
-					} else {
-						console.error("Resultado não é um JSON. (mkSelDlRefill)");
-					}
-				}
+				} // Apenas 1 rewfill por vez
 			} else {
 				mk.w(
 					"Função (mkSelDlRefill) solicitou Refill em um campo inexistente (JS)"
