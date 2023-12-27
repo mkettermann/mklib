@@ -1914,13 +1914,21 @@ class mk {
         }
         return stringRetorno;
     };
+    // '2023-12-27T12:01:16.158' => '22/12/2023, 11:18:33'
+    static toLocale = (data) => {
+        return new Date(data).toLocaleString();
+    };
     // Converter (OBJ / ARRAY) Formato Booleano em Sim/Não
     static mkFormatarDataOA = (oa) => {
         function mkFormatarDataOA_Execute(o) {
             let busca = new RegExp("^[0-2][0-9]{3}[-][0-1][0-9][-][0-3][0-9]$"); // Entre 0000-00-00 a 2999-19-39
+            let busca2 = new RegExp("^[0-2][0-9]{3}[-][0-1][0-9][-][0-3][0-9]T[0-2][0-9]:[0-5][0-9]:[0-5][0-9]"); // Entre 0000-00-00T00:00:00 a 2999-19-39T29:59:59 (Se iniciar nesse formato de ISO)
             for (var propName in o) {
                 if (busca.test(o[propName])) {
                     o[propName] = mk.mkYYYYMMDDtoDDMMYYYY(o[propName]);
+                }
+                if (busca2.test(o[propName])) {
+                    o[propName] = mk.toLocale(o[propName]);
                 }
             }
             return o;
