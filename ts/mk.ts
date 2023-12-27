@@ -2786,13 +2786,13 @@ class mk {
 			// Incrementar Evento
 			let oninput = e?.getAttribute("oninput");
 			let onblur = e?.getAttribute("onblur");
-			if (!(oninput)) e.setAttribute("oninput", "mk.exeregra(this)");
-			if (!(onblur)) e.setAttribute("onblur", "mk.exeregra(this,event)");
+			if (!(oninput)) e?.setAttribute("oninput", "mk.exeregra(this)");
+			if (!(onblur)) e?.setAttribute("onblur", "mk.exeregra(this,event)");
 			if (!oninput.includes("mk.exeregra")) {
-				e.setAttribute("oninput", oninput + ";mk.exeregra(this)");
+				e?.setAttribute("oninput", oninput + ";mk.exeregra(this)");
 			}
 			if (!onblur.includes("mk.exeregra")) {
-				e.setAttribute("onblur", onblur + ";mk.exeregra(this,event)");
+				e?.setAttribute("onblur", onblur + ";mk.exeregra(this,event)");
 			}
 
 
