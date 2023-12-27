@@ -950,6 +950,28 @@ class mk {
             });
         });
     };
+    // Incrementa no ATRIBUTO do elemento E o texto do GATILHO.
+    static atribuir = (e, gatilho, atributo = "oninput") => {
+        if (e) {
+            if (atributo) {
+                let attr = e?.getAttribute(atributo);
+                if (attr) {
+                    if (!attr.includes(gatilho)) {
+                        e?.setAttribute(atributo, attr + ";" + gatilho);
+                    }
+                }
+                else {
+                    e?.setAttribute(atributo, gatilho);
+                }
+            }
+            else {
+                this.w("mk.atribuir() - Precisa de um gatilho: ", gatilho);
+            }
+        }
+        else {
+            this.w("mk.atribuir() - Precisa de um elemento: ", e);
+        }
+    };
     // Atalho para innerHTML que retorna apenas o primeiro elemento da query.
     static html = (query, conteudo) => {
         let e = mk.Q(query);
@@ -2631,19 +2653,8 @@ class mk {
         container = mk.Q(container);
         let e = container?.querySelector("*[name='" + nome + "']");
         if (e) {
-            // Incrementar Evento
-            let oninput = e?.getAttribute("oninput");
-            let onblur = e?.getAttribute("onblur");
-            if (!(oninput))
-                e?.setAttribute("oninput", "mk.exeregra(this)");
-            if (!(onblur))
-                e?.setAttribute("onblur", "mk.exeregra(this,event)");
-            if (!oninput.includes("mk.exeregra")) {
-                e?.setAttribute("oninput", oninput + ";mk.exeregra(this)");
-            }
-            if (!onblur.includes("mk.exeregra")) {
-                e?.setAttribute("onblur", onblur + ";mk.exeregra(this,event)");
-            }
+            mk.atribuir(e, "mk.exeregra(this)", "oninput");
+            mk.atribuir(e, "mk.exeregra(this,event)", "onblur");
             // Buscar Elemento e regra
             let auto = false;
             let novaregra = { c: container, n: nome, e: e, r: [...obj] };
