@@ -862,7 +862,8 @@ class mk {
 			/^([0-9]{4}(-[0-9]{2}){2}T[0-9]{2}(:[0-9]{2})\.[0-9]{3}Z)$/,
 		],
 		numeros: ["0", /^[0-9]*$/],
-		letras: ["A", /^[A-Za-z]*$/]
+		letras: ["A", /^[A-Za-z]*$/],
+		telefone_ddd: ["(00) 000000000", /^[0-9]{11}$/],
 	};
 
 	// Mascaras: 0=Numero, A=Letra, Outros repete.
