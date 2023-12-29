@@ -2910,6 +2910,15 @@ class mk {
 						promises.push(new Promise((prom) => {
 							// O elemento entra na regra quando encontrou erro;
 							re.e = e;
+							// MASCARAR
+							if (re.k.toLowerCase() == "mascarar") {
+								if (e[re.target]) {
+									let mascarado = mk.mascarar(e[re.target], re.v)
+									if (mascarado) e[re.target] = mascarado;
+								}
+								prom(re.k);
+							}
+
 							// --- EXECUTORES ---
 							// CHAR PROIBIDO
 							if (re.k.toLowerCase() == "charproibido") {
