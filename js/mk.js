@@ -899,6 +899,22 @@ class mk {
             this.l("Mascarar Requer Texto: ", texto, " e Mascara: ", mascara);
         }
     };
+    // Texto / Número convertido em Reais
+    static toMoeda = (texto) => {
+        if (texto != null) {
+            let d = [...texto.toString()].filter(a => { return mk.util.numeros[1].test(a); }).join("").padStart(3, "0");
+            return new Intl.NumberFormat("pt-BR", { style: 'currency', currency: 'BRL' }).format(Number(d.slice(0, -2) + "." + d.slice(-2)));
+        }
+        return "";
+    };
+    // Retorna um float de duas casas / 0 a partir de um valor monetario 
+    static fromMoeda = (texto) => {
+        if (texto) {
+            let d = [...texto.toString()].filter(a => { return mk.util.numeros[1].test(a); }).join("").padStart(3, "0");
+            return Number(d.slice(0, -2) + "." + d.slice(-2));
+        }
+        return 0;
+    };
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //			MK FUNCOES UTIL							\\
     //___________________________________\\
@@ -2773,7 +2789,7 @@ class mk {
                             if (re.k.toLowerCase() == "mascarar") {
                                 if (e[re.target]) {
                                     let mascarado = mk.mascarar(e[re.target], re.v);
-                                    if (mascarado !== undefined)
+                                    if (mascarado != null)
                                         e[re.target] = mascarado;
                                 }
                                 prom(re.k);
@@ -2781,8 +2797,7 @@ class mk {
                             // MOEDA
                             if (re.k.toLowerCase() == "moeda") {
                                 if (e[re.target]) {
-                                    let d = [...e[re.target]].filter(a => { return mk.util.numeros[1].test(a); }).join("").padStart(3, "0");
-                                    e[re.target] = new Intl.NumberFormat("pt-BR", { style: 'currency', currency: 'BRL' }).format(Number(d.slice(0, -2) + "." + d.slice(-2)));
+                                    e[re.target] = mk.toMoeda(e[re.target]);
                                 }
                                 prom(re.k);
                             }
