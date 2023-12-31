@@ -2933,13 +2933,8 @@ class mk {
 							// MOEDA
 							if (re.k.toLowerCase() == "moeda") {
 								if (e[re.target]) {
-									let alvo = [...e[re.target]];
-									let filtrado = alvo.filter(a => { return mk.util.numeros[1].test(a) });
-									let d = filtrado.join("").padStart(3, "0");
-									this.l("D: ", d);
-									let float = Number(d.slice(0, -2) + "." + d.slice(-2));
-									this.l("F: ", float)
-									e[re.target] = new Intl.NumberFormat("pt-BR", { style: 'currency', currency: 'BRL' }).format(float);
+									let d = [...e[re.target]].filter(a => { return mk.util.numeros[1].test(a) }).join("").padStart(3, "0");
+									e[re.target] = new Intl.NumberFormat("pt-BR", { style: 'currency', currency: 'BRL' }).format(Number(d.slice(0, -2) + "." + d.slice(-2)));
 								}
 								prom(re.k);
 							}
