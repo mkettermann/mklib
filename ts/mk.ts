@@ -873,7 +873,7 @@ class mk {
 			if (typeof mascara != "string") mascara = mascara?.toString();
 			let ms = [...mk.clonar(mascara)];
 			let ss = [...mk.clonar(texto)];
-			//this.l("ss: ", ss);
+			// this.l("ss: ", ss);
 			let ts: any = [];
 			let pm = 0;
 			ss.forEach(s => {
@@ -888,16 +888,27 @@ class mk {
 				ts.push(t);
 				pm++;
 			});
+			// this.l("ts: ", ts);
+			// this.l("ms: ", ms);
 			let r: any = [];
 			for (let tp = 0, mp = 0; (tp < ts.length) && (mp < ms.length); tp++, mp++) {
-				if (((ms[mp] === "0" || ms[mp] === "A") && (ms[mp] == ts[tp])) || (ms[mp] === "S" && (ts[tp] === "A" || ts[tp] === "0"))) {
+				if (((ms[mp] === "0" || ms[mp] === "A") && (ms[mp] == ts[tp]))
+					|| (ms[mp] === "S" && (ts[tp] === "A" || ts[tp] === "0"))) {
+					// FORMATO IGUAL.
 					r.push(ss[tp]);
 				} else {
-					if (ms[mp] != "0" && ms[mp] != "A" && ms[mp] != "S") {
-						r.push(ms[mp]);
-						tp--;
+					// MESMO CARACTER
+					if (ss[tp] === ms[mp]) {
+						r.push(ss[tp]);
 					} else {
-						mp--;
+						// this.l("> ", ss[tp], " vs ", ms[mp])
+						// Mágica: Coloca o especial que o usuário não colocou.
+						if (ms[mp] != "0" && ms[mp] != "A" && ms[mp] != "S") {
+							r.push(ms[mp]);
+							tp--;
+						} else {
+							mp--;
+						}
 					}
 				}
 			}
@@ -2914,7 +2925,7 @@ class mk {
 							if (re.k.toLowerCase() == "mascarar") {
 								if (e[re.target]) {
 									let mascarado = mk.mascarar(e[re.target], re.v)
-									if (mascarado) e[re.target] = mascarado;
+									if (mascarado !== undefined) e[re.target] = mascarado;
 								}
 								prom(re.k);
 							}
