@@ -2768,7 +2768,6 @@ class mk {
                     // Validar apenas quando i estiver true na regra OU  Visível e Não bloqueado
                     if (podeValidar || re.f) {
                         promises.push(new Promise((prom) => {
-                            // O elemento entra na regra quando encontrou erro;
                             re.e = e;
                             // MASCARAR
                             if (re.k.toLowerCase() == "mascarar") {
@@ -2776,6 +2775,15 @@ class mk {
                                     let mascarado = mk.mascarar(e[re.target], re.v);
                                     if (mascarado !== undefined)
                                         e[re.target] = mascarado;
+                                }
+                                prom(re.k);
+                            }
+                            // MOEDA
+                            if (re.k.toLowerCase() == "moeda") {
+                                if (e[re.target]) {
+                                    let d = e[re.target].split("").filter(a => { /\d/.test(a); }).join("").padStart(3, "0");
+                                    let float = Number(d.slice(0, -2) + "." + d.slice(-2));
+                                    e[re.target] = new Intl.NumberFormat("pt-BR", { style: 'currency', currency: 'BRL' }).format(float);
                                 }
                                 prom(re.k);
                             }
