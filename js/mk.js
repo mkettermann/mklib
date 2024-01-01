@@ -900,9 +900,12 @@ class mk {
         }
     };
     // Texto / Número convertido em Reais
-    static toMoeda = (texto) => {
-        if (texto != null) {
-            let d = [...texto.toString()].filter(a => { return mk.util.numeros[1].test(a); }).join("").padStart(3, "0");
+    static toMoeda = (valor) => {
+        if (valor != null) {
+            if (typeof valor == "number") {
+                valor = valor.toFixed(2);
+            }
+            let d = [...valor.toString()].filter(a => { return mk.util.numeros[1].test(a); }).join("").padStart(3, "0");
             return new Intl.NumberFormat("pt-BR", { style: 'currency', currency: 'BRL' }).format(Number(d.slice(0, -2) + "." + d.slice(-2)));
         }
         return "";
@@ -1444,7 +1447,6 @@ class mk {
         ev.key == "Tab" ? (isNegado = false) : null; // Liberar Deletar
         if (isNegado) {
             ev.preventDefault();
-            mk.w("Negado");
         }
     };
     // Bloqueios de eventos especificos (varios, exemplo: onContextMenu)
