@@ -1100,6 +1100,14 @@ class mk {
 		return new Range(from, to);
 	};
 
+	// Move o cursor para o fim assim que executar a funcao
+	static cursorFim = (e: any) => {
+		let len = e.value.length;
+		setTimeout(() => {
+			e.setSelectionRange(len, len);
+		}, 1)
+	}
+
 	// Comparardor de string LIKE
 	static like = (
 		strMenor: string,
