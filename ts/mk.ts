@@ -3030,8 +3030,20 @@ class mk {
 								}
 								prom(re.k);
 							}
+							// Número Mínimo
+							if (re.k.toLowerCase() == "nummin") {
+								e.setAttribute("min", re.v);
+								let valor = mk.mkFloat(e[re.target]);
+								if (valor < Number(re.v)) {
+									if (!re.m) re.m = mk.m.nummax + re.v;
+									erros.push(re);
+									e[re.target] = re.v;
+								}
+								prom(re.k);
+							}
 							// Número Máximo
 							if (re.k.toLowerCase() == "nummax") {
+								e.setAttribute("max", re.v);
 								let valor = mk.mkFloat(e[re.target]);
 								if (valor > Number(re.v)) {
 									if (!re.m) re.m = mk.m.nummax + re.v;
