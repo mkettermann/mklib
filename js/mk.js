@@ -2760,7 +2760,8 @@ class mk {
         negado: "Negado",
         maxc: "Limite de caracteres atingido",
         minc: "Mínimo de caracteres: ",
-        nummax: "Limite: ",
+        nummax: "Máximo: ",
+        nummin: "Mínimo: ",
         some: "Requer: ",
         datamax: "Data maior que o esperado",
         charproibido: "Não utilize: ",
@@ -2887,7 +2888,7 @@ class mk {
                                 let valor = mk.mkFloat(e[re.target]);
                                 if (valor < Number(re.v)) {
                                     if (!re.m)
-                                        re.m = mk.m.nummax + re.v;
+                                        re.m = mk.m.nummin + re.v;
                                     erros.push(re);
                                     e[re.target] = re.v;
                                 }
