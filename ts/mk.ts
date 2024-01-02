@@ -1519,7 +1519,7 @@ class mk {
 		let permitido = "0123456789,-";
 		let isNegado = true;
 		for (var i = 0; i < permitido.length; i++) {
-			if (permitido[i] == ev.key.toString()) {
+			if (permitido[i] == ev.key?.toString()) {
 				//mk.l(permitido[i] + " == " + ev.key.toString());
 				isNegado = false;
 			}
