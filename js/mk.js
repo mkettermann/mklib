@@ -2795,261 +2795,246 @@ class mk {
                     if (podeValidar || re.f) {
                         promises.push(new Promise((prom) => {
                             re.e = e;
-                            // MASCARAR
-                            if (re.k.toLowerCase() == "mascarar") {
-                                if (e[re.target]) {
-                                    let mascarado = mk.mascarar(e[re.target], re.v);
-                                    if (mascarado != null)
-                                        e[re.target] = mascarado;
-                                }
-                                prom(re.k);
-                            }
-                            // MOEDA
-                            if (re.k.toLowerCase() == "moeda") {
-                                if (e[re.target]) {
-                                    e[re.target] = mk.toMoeda(e[re.target]);
-                                }
-                                prom(re.k);
-                            }
-                            // --- EXECUTORES ---
-                            // CHAR PROIBIDO
-                            if (re.k.toLowerCase() == "charproibido") {
-                                for (let c of re.v) {
-                                    if (e[re.target].includes(c)) {
+                            let regraK = re.k?.toLowerCase();
+                            switch (regraK) {
+                                case "mascarar": // EXE
+                                    if (e[re.target]) {
+                                        let mascarado = mk.mascarar(e[re.target], re.v);
+                                        if (mascarado != null)
+                                            e[re.target] = mascarado;
+                                    }
+                                    prom(re.k);
+                                    break;
+                                case "moeda": // EXE
+                                    if (e[re.target]) {
+                                        e[re.target] = mk.toMoeda(e[re.target]);
+                                    }
+                                    prom(re.k);
+                                    break;
+                                case "charproibido": // EXE
+                                    for (let c of re.v) {
+                                        if (e[re.target].includes(c)) {
+                                            if (!re.m)
+                                                re.m = mk.m.charproibido + c;
+                                            erros.push(re);
+                                            e[re.target] = e[re.target].replaceAll(c, "");
+                                        }
+                                    }
+                                    prom(re.k);
+                                    break;
+                                case "apenasnumeros": // EXE
+                                    if (!(mk.util.numeros[1].test(e[re.target]))) {
                                         if (!re.m)
-                                            re.m = mk.m.charproibido + c;
+                                            re.m = mk.m.apenasnumeros;
                                         erros.push(re);
-                                        e[re.target] = e[re.target].replaceAll(c, "");
+                                        e[re.target] = e[re.target].replaceAll(/((?![0-9]).)/g, "");
                                     }
-                                }
-                                prom(re.k);
-                            }
-                            // Apenas Numeros
-                            if (re.k.toLowerCase() == "apenasnumeros") {
-                                if (!(mk.util.numeros[1].test(e[re.target]))) {
-                                    if (!re.m)
-                                        re.m = mk.m.apenasnumeros;
-                                    erros.push(re);
-                                    e[re.target] = e[re.target].replaceAll(/((?![0-9]).)/g, "");
-                                }
-                                prom(re.k);
-                            }
-                            // Apenas Letras
-                            if (re.k.toLowerCase() == "apenasletras") {
-                                if (!(mk.util.letras[1].test(e[re.target]))) {
-                                    if (!re.m)
-                                        re.m = mk.m.apenasletras;
-                                    erros.push(re);
-                                    e[re.target] = e[re.target].replaceAll(/((?![a-zA-Z]).)/g, "");
-                                }
-                                prom(re.k);
-                            }
-                            // Max Chars (Caracteres)
-                            if (re.k.toLowerCase() == "maxchars") {
-                                e.setAttribute("maxlength", re.v);
-                                if (e[re.target].length > Number(re.v)) {
-                                    if (!re.m)
-                                        re.m = mk.m.maxc;
-                                    erros.push(re);
-                                    e[re.target] = e[re.target].slice(0, Number(re.v));
-                                }
-                                prom(re.k);
-                            }
-                            // Min Chars (Caracteres)
-                            if (re.k.toLowerCase() == "minchars") {
-                                e.setAttribute("minlength", re.v);
-                                if (e[re.target].length < Number(re.v)) {
-                                    if (!re.m)
-                                        re.m = mk.m.minc + re.v;
-                                    erros.push(re);
-                                    let _a = [...e[re.target]];
-                                    if (!re.fill)
-                                        re.fill = "0";
-                                    while (_a.length <= Number(re.v)) {
-                                        _a.unshift(re.fill.charAt(0));
-                                    }
-                                    e[re.target] = _a.join("");
-                                }
-                                prom(re.k);
-                            }
-                            // Data Máxima
-                            if (re.k.toLowerCase() == "datamax") {
-                                if (mk.getMs(e[re.target]) > mk.getMs(re.v)) {
-                                    if (!re.m)
-                                        re.m = mk.m.datamax;
-                                    erros.push(re);
-                                    e[re.target] = re.v;
-                                }
-                                prom(re.k);
-                            }
-                            // Número Mínimo
-                            if (re.k.toLowerCase() == "nummin") {
-                                e.setAttribute("min", re.v);
-                                let valor = mk.mkFloat(e[re.target]);
-                                if (valor < Number(re.v)) {
-                                    if (!re.m)
-                                        re.m = mk.m.nummin + re.v;
-                                    erros.push(re);
-                                    e[re.target] = re.v;
-                                }
-                                prom(re.k);
-                            }
-                            // Número Máximo
-                            if (re.k.toLowerCase() == "nummax") {
-                                e.setAttribute("max", re.v);
-                                let valor = mk.mkFloat(e[re.target]);
-                                if (valor > Number(re.v)) {
-                                    if (!re.m)
-                                        re.m = mk.m.nummax + re.v;
-                                    erros.push(re);
-                                    e[re.target] = re.v;
-                                }
-                                prom(re.k);
-                            }
-                            // --- INFORMADORES ---
-                            // OBRIGATORIO (Necessidade)
-                            if (re.k.toLowerCase() == "obrigatorio") {
-                                if (re.v == null)
-                                    re.v = "true";
-                                if (re.v == "true") {
-                                    if (e[re.target] == "") {
-                                        if (!re.m) {
-                                            if (e.classList.contains("mkSel")) {
-                                                re.m = mk.m.so;
-                                            }
-                                            else {
-                                                re.m = mk.m.po;
-                                            }
-                                        }
+                                    prom(re.k);
+                                    break;
+                                case "apenasletras": // EXE
+                                    if (!(mk.util.letras[1].test(e[re.target]))) {
+                                        if (!re.m)
+                                            re.m = mk.m.apenasletras;
                                         erros.push(re);
+                                        e[re.target] = e[re.target].replaceAll(/((?![a-zA-Z]).)/g, "");
                                     }
-                                }
-                                prom(re.k);
-                            }
-                            // REGEX (Formato Exato)
-                            if (re.k.toLowerCase() == "regex") {
-                                if (!(new RegExp(re.v).test(e[re.target]))) {
-                                    if (!re.m)
-                                        re.m = mk.m.fi;
-                                    erros.push(re);
-                                }
-                                prom(re.k);
-                            }
-                            // Regra Some (Ao menos 1 ocorrencia do regex informado) (Pode gerar varios erros)
-                            if (re.k.toLowerCase() == "some") {
-                                let _vs;
-                                re.vmfail = [];
-                                let b = false;
-                                Array.isArray(re.v) ? _vs = re.v : _vs = [re.v];
-                                for (let i = 0; i < _vs.length; i++) {
-                                    if (!([...e[re.target]].some(le => new RegExp(_vs[i]).test(le)))) {
-                                        if (!re.m) {
-                                            re.m = mk.m.some;
+                                    prom(re.k);
+                                    break;
+                                case "maxchars": // EXE
+                                    e.setAttribute("maxlength", re.v);
+                                    if (e[re.target].length > Number(re.v)) {
+                                        if (!re.m)
+                                            re.m = mk.m.maxc;
+                                        erros.push(re);
+                                        e[re.target] = e[re.target].slice(0, Number(re.v));
+                                    }
+                                    prom(re.k);
+                                    break;
+                                case "minchars": // EXE
+                                    e.setAttribute("minlength", re.v);
+                                    if (e[re.target].length < Number(re.v)) {
+                                        if (!re.m)
+                                            re.m = mk.m.minc + re.v;
+                                        erros.push(re);
+                                        let _a = [...e[re.target]];
+                                        if (!re.fill)
+                                            re.fill = "0";
+                                        while (_a.length <= Number(re.v)) {
+                                            _a.unshift(re.fill.charAt(0));
                                         }
-                                        re.vmfail.push(re.vm[i]);
-                                        b = true;
+                                        e[re.target] = _a.join("");
                                     }
-                                }
-                                if (b) {
-                                    erros.push(re);
-                                }
-                                prom(re.k);
-                            }
-                            // Min Chars (Caracteres)
-                            if (re.k.toLowerCase() == "mincharsinfo") {
-                                e.setAttribute("minlength", re.v);
-                                if (e[re.target].length < Number(re.v)) {
-                                    if (!re.m)
-                                        re.m = mk.m.minc;
-                                    erros.push(re);
-                                }
-                                prom(re.k);
-                            }
-                            // Max Chars (Caracteres)
-                            if (re.k.toLowerCase() == "maxcharsinfo") {
-                                if (e[re.target].length > Number(re.v)) {
-                                    if (!re.m)
-                                        re.m = mk.m.maxc;
-                                    erros.push(re);
-                                }
-                                prom(re.k);
-                            }
-                            // FN
-                            if (re.k.toLowerCase() == "fn") {
-                                if (!(re.v(e[re.target]))) {
-                                    if (!re.m)
-                                        re.m = mk.m.negado;
-                                    erros.push(re);
-                                }
-                                prom(re.k);
-                            }
-                            // Data Maior Que
-                            if (re.k.toLowerCase() == "datamaiorque") {
-                                if (mk.getMs(e[re.target]) < mk.getMs(re.v)) {
-                                    if (!re.m)
-                                        re.m = mk.m.datamaiorque;
-                                    erros.push(re);
-                                }
-                                prom(re.k);
-                            }
-                            // Data Menor Que
-                            if (re.k.toLowerCase() == "datamenorque") {
-                                if (mk.getMs(e[re.target]) > mk.getMs(re.v)) {
-                                    if (!re.m)
-                                        re.m = mk.m.datamenorque;
-                                    erros.push(re);
-                                }
-                                prom(re.k);
-                            }
-                            // SERVER (Verificação remota, DB / API)
-                            if (re.k.toLowerCase() == "server") {
-                                if (ev) {
-                                    if (!re.m)
-                                        re.m = mk.m.in;
-                                    if (e[re.target] != "") {
-                                        e.classList.add("pending");
-                                        let queryString = "?" + regrasDoE.n + "=" + e[re.target];
-                                        // Anexar campos adicionais:
-                                        if (re.a) {
-                                            let arrAdd = re.a.split(",");
-                                            arrAdd.forEach(s => {
-                                                let eAdd = regrasDoE.c.querySelector("*[name='" + s + "']");
-                                                if (eAdd) {
-                                                    queryString += "&" + s + "=" + eAdd[re.target];
+                                    prom(re.k);
+                                    break;
+                                case "datamax": // EXE
+                                    if (mk.getMs(e[re.target]) > mk.getMs(re.v)) {
+                                        if (!re.m)
+                                            re.m = mk.m.datamax;
+                                        erros.push(re);
+                                        e[re.target] = re.v;
+                                    }
+                                    prom(re.k);
+                                    break;
+                                case "nummin": // EXE
+                                    e.setAttribute("min", re.v);
+                                    if (mk.mkFloat(e[re.target]) < Number(re.v)) {
+                                        if (!re.m)
+                                            re.m = mk.m.nummin + re.v;
+                                        erros.push(re);
+                                        e[re.target] = re.v;
+                                    }
+                                    prom(re.k);
+                                    break;
+                                case "nummax": // EXE
+                                    e.setAttribute("max", re.v);
+                                    if (mk.mkFloat(e[re.target]) > Number(re.v)) {
+                                        if (!re.m)
+                                            re.m = mk.m.nummax + re.v;
+                                        erros.push(re);
+                                        e[re.target] = re.v;
+                                    }
+                                    prom(re.k);
+                                    break;
+                                case "obrigatorio": // INFO
+                                    if (re.v == null)
+                                        re.v = "true";
+                                    if (re.v == "true") {
+                                        if (e[re.target] == "") {
+                                            if (!re.m) {
+                                                if (e.classList.contains("mkSel")) {
+                                                    re.m = mk.m.so;
                                                 }
                                                 else {
-                                                    this.w("Regrar: Campo Adicional solicitado não encontrado: ", s);
+                                                    re.m = mk.m.po;
                                                 }
+                                            }
+                                            erros.push(re);
+                                        }
+                                    }
+                                    prom(re.k);
+                                    break;
+                                case "regex": // INFO
+                                    if (!(new RegExp(re.v).test(e[re.target]))) {
+                                        if (!re.m)
+                                            re.m = mk.m.fi;
+                                        erros.push(re);
+                                    }
+                                    prom(re.k);
+                                    break;
+                                case "some": // INFO 
+                                    // (Ao menos 1 ocorrencia do regex informado) (Pode gerar varios erros)
+                                    let _vs;
+                                    re.vmfail = [];
+                                    let b = false;
+                                    Array.isArray(re.v) ? _vs = re.v : _vs = [re.v];
+                                    for (let i = 0; i < _vs.length; i++) {
+                                        if (!([...e[re.target]].some(le => new RegExp(_vs[i]).test(le)))) {
+                                            if (!re.m) {
+                                                re.m = mk.m.some;
+                                            }
+                                            re.vmfail.push(re.vm[i]);
+                                            b = true;
+                                        }
+                                    }
+                                    if (b) {
+                                        erros.push(re);
+                                    }
+                                    prom(re.k);
+                                    break;
+                                case "mincharsinfo": // INFO
+                                    e.setAttribute("minlength", re.v);
+                                    if (e[re.target].length < Number(re.v)) {
+                                        if (!re.m)
+                                            re.m = mk.m.minc;
+                                        erros.push(re);
+                                    }
+                                    prom(re.k);
+                                    break;
+                                case "maxcharsinfo": // INFO
+                                    if (e[re.target].length > Number(re.v)) {
+                                        if (!re.m)
+                                            re.m = mk.m.maxc;
+                                        erros.push(re);
+                                    }
+                                    prom(re.k);
+                                    break;
+                                case "fn": // INFO
+                                    if (!(re.v(e[re.target]))) {
+                                        if (!re.m)
+                                            re.m = mk.m.negado;
+                                        erros.push(re);
+                                    }
+                                    prom(re.k);
+                                    break;
+                                case "datamaiorque": // INFO
+                                    if (mk.getMs(e[re.target]) < mk.getMs(re.v)) {
+                                        if (!re.m)
+                                            re.m = mk.m.datamaiorque;
+                                        erros.push(re);
+                                    }
+                                    prom(re.k);
+                                    break;
+                                case "datamenorque": // INFO
+                                    if (mk.getMs(e[re.target]) > mk.getMs(re.v)) {
+                                        if (!re.m)
+                                            re.m = mk.m.datamenorque;
+                                        erros.push(re);
+                                    }
+                                    prom(re.k);
+                                    break;
+                                case "server": // INFO - ASYNC EVENT
+                                    //(Verificação remota, DB / API)
+                                    if (ev) {
+                                        if (!re.m)
+                                            re.m = mk.m.in;
+                                        if (e[re.target] != "") {
+                                            e.classList.add("pending");
+                                            let queryString = "?" + regrasDoE.n + "=" + e[re.target];
+                                            // Anexar campos adicionais:
+                                            if (re.a) {
+                                                let arrAdd = re.a.split(",");
+                                                arrAdd.forEach(s => {
+                                                    let eAdd = regrasDoE.c.querySelector("*[name='" + s + "']");
+                                                    if (eAdd) {
+                                                        queryString += "&" + s + "=" + eAdd[re.target];
+                                                    }
+                                                    else {
+                                                        this.w("Regrar: Campo Adicional solicitado não encontrado: ", s);
+                                                    }
+                                                });
+                                            }
+                                            mk.get.json({ url: re.v + queryString, quiet: true }).then(ret => {
+                                                let retorno = ret.retorno;
+                                                if (retorno != true) {
+                                                    if (typeof retorno == "string") {
+                                                        re.m = retorno;
+                                                    }
+                                                    erros.push(re);
+                                                }
+                                                if (retorno != null) {
+                                                    e.classList.remove("pending");
+                                                }
+                                                prom(re.k);
                                             });
                                         }
-                                        mk.get.json({ url: re.v + queryString, quiet: true }).then(ret => {
-                                            let retorno = ret.retorno;
-                                            if (retorno != true) {
-                                                if (typeof retorno == "string") {
-                                                    re.m = retorno;
-                                                }
-                                                erros.push(re);
-                                            }
-                                            if (retorno != null) {
-                                                e.classList.remove("pending");
-                                            }
+                                        else {
+                                            erros.push(re);
                                             prom(re.k);
-                                        });
+                                        }
                                     }
                                     else {
-                                        erros.push(re);
+                                        // Apenas executa quando não tem evento
                                         prom(re.k);
                                     }
-                                }
-                                else {
-                                    // Apenas executa quando não tem evento
-                                    prom(re.k);
-                                }
-                            }
-                        }));
-                    } //<= fim offsetParent
-                });
-            }
+                                    break;
+                                default:
+                                    mk.w("Regrar() - Regra não encontrada: ", regraK);
+                                    prom(null);
+                            } // fim switch regras possíveis
+                        })); // <= Promessas push
+                    } // <= Fim do PodeValidar
+                }); // <= A cada regra
+            } // Possui regra
             Promise.all(promises).then(ok => {
                 if (erros.length > 0) {
                     let mensagens = erros.map(a => {
