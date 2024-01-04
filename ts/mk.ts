@@ -919,18 +919,19 @@ class mk {
 	}
 
 	// Valor em Texto / Número, convertido para Float de no máximo 2 casas.
-	static toFloat = (valor: any, c: any = {}): number => {
+	static toNumber = (valor: any, c: any = {}): number => {
 		if (!c.casas) c.casas = 2; // Limite de casas apenas para o valor retornado.
 		if (valor != null) {
 			if (typeof valor == "string") {
-				// Se Vier uma String "123,123" primeiro vira: "123,12".
+				// Possiveis separadores
 				let us = [".", ","].reduce((x, y) => (valor.lastIndexOf(x) > valor.lastIndexOf(y)) ? x : y);
 				let posPonto = valor.lastIndexOf(us)
 				if (posPonto >= 0) {
-					valor = valor.slice(0, posPonto + c.casas + 1);
+					valor = valor.slice(0, posPonto) + "." + valor.slice(posPonto + 1).slice(0, 2).padEnd(2, "0");
+				} else {
+					valor = [...valor.toString()].filter(a => { return mk.util.numeros[1].test(a) }).join("").padStart(3, "0")
+					valor = valor.slice(0, -(c.casas)) + "." + valor.slice(-(c.casas));
 				}
-				valor = [...valor.toString()].filter(a => { return mk.util.numeros[1].test(a) }).join("").padStart(3, "0")
-				valor = valor.slice(0, -(c.casas)) + "." + valor.slice(-(c.casas));
 			} else if (typeof valor == "number") {
 				valor = valor.toFixed(c.casas);
 			} else {
@@ -942,7 +943,7 @@ class mk {
 	}
 
 	// Retorna um string de duas casas "0,00" a partir de um valor numerico
-	static fromFloat = (valor: any, c: any = {}): string => {
+	static fromNumber = (valor: any, c: any = {}): string => {
 		if (!c.s) c.s = ","; // OUTPUT SEPARADOR de decimal numérico do país atual para dados.
 		if (valor != null) {
 			let d = [...valor.toString()].filter(a => { return mk.util.numeros[1].test(a) }).join("").padStart(3, "0");
