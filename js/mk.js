@@ -2850,7 +2850,7 @@ class mk {
                                     break;
                                 case "numero": // EXE
                                     if (e[re.target]) {
-                                        e[re.target] = mk.toFloat(e[re.target]);
+                                        e[re.target] = mk.fromNumber(e[re.target]);
                                     }
                                     prom(re.k);
                                     break;
