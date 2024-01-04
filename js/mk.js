@@ -899,6 +899,39 @@ class mk {
             this.l("Mascarar Requer Texto: ", texto, " e Mascara: ", mascara);
         }
     };
+    // Valor em Texto / Número, convertido para Float de no máximo 2 casas.
+    static toFloat = (valor, c = {}) => {
+        if (!c.casas)
+            c.casas = 2; // Limite de casas apenas para o valor retornado.
+        if (!c.inputSeparador)
+            c.inputSeparador = ","; // Separador de decimal numérico do país atual para dados de entrada. Só funciona em strings.
+        if (valor != null) {
+            if (typeof valor == "string") {
+                // Se Vier uma String "123,123" primeiro vira: "123,12". 
+                if (valor.includes(c.inputSeparador)) {
+                    valor = valor.slice(0, valor.lastIndexOf(c.inputSeparador) + c.casas + 1);
+                }
+                valor = [...valor.toString()].filter(a => { return mk.util.numeros[1].test(a); }).join("").padStart(3, "0");
+                valor = valor.slice(0, -(c.casas)) + "." + valor.slice(-(c.casas));
+            }
+            else if (typeof valor == "number") {
+                valor = valor.toFixed(c.casas);
+            }
+            else {
+                mk.w("toFloat() - Formato não implementado: ", typeof valor);
+            }
+            return Number(valor);
+        }
+        return 0;
+    };
+    // Retorna um string de duas casas "0,00" a partir de um valor numerico
+    static fromFloat = (valor, c = {}) => {
+        if (valor) {
+            let d = [...valor.toString()].filter(a => { return mk.util.numeros[1].test(a); }).join("").padStart(3, "0");
+            return d.slice(0, -2) + "." + d.slice(-2);
+        }
+        return "0,00";
+    };
     // Texto / Número convertido em Reais
     static toMoeda = (valor) => {
         if (valor != null) {
@@ -2808,6 +2841,12 @@ class mk {
                                 case "moeda": // EXE
                                     if (e[re.target]) {
                                         e[re.target] = mk.toMoeda(e[re.target]);
+                                    }
+                                    prom(re.k);
+                                    break;
+                                case "numero": // EXE
+                                    if (e[re.target]) {
+                                        e[re.target] = mk.toFloat(e[re.target]);
                                     }
                                     prom(re.k);
                                     break;
