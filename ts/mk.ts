@@ -921,7 +921,7 @@ class mk {
 	// Valor em Texto / Número, convertido para Float de no máximo 2 casas.
 	static toFloat = (valor: any, c: any = {}): number => {
 		if (!c.casas) c.casas = 2; // Limite de casas apenas para o valor retornado.
-		if (!c.inputSeparador) c.inputSeparador = ","; // Separador de decimal numérico do país atual para dados de entrada. Só funciona em strings.
+		if (!c.inputSeparador) c.inputSeparador = ","; // INPUT SEPARADOR de decimal numérico do país atual para dados. Só funciona em strings.
 		if (valor != null) {
 			if (typeof valor == "string") {
 				// Se Vier uma String "123,123" primeiro vira: "123,12". 
@@ -942,11 +942,12 @@ class mk {
 
 	// Retorna um string de duas casas "0,00" a partir de um valor numerico
 	static fromFloat = (valor: any, c: any = {}): string => {
-		if (valor) {
+		if (!c.s) c.s = ","; // OUTPUT SEPARADOR de decimal numérico do país atual para dados.
+		if (valor != null) {
 			let d = [...valor.toString()].filter(a => { return mk.util.numeros[1].test(a) }).join("").padStart(3, "0");
-			return d.slice(0, -2) + "." + d.slice(-2);
+			return d.slice(0, -2) + c.s + d.slice(-2);
 		}
-		return "0,00";
+		return "0" + c.s + "00";
 	}
 
 	// Texto / Número convertido em Reais
