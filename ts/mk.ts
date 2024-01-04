@@ -947,7 +947,8 @@ class mk {
 		if (!c.s) c.s = ","; // OUTPUT SEPARADOR de decimal numérico do país atual para dados.
 		if (valor != null) {
 			let d = [...valor.toString()].filter(a => { return mk.util.numeros[1].test(a) }).join("").padStart(3, "0");
-			return Number(d.slice(0, -2) + c.s + d.slice(-2)).toFixed(2);
+			valor = Number(d.slice(0, -2) + "." + d.slice(-2)).toFixed(2);
+			return valor.replaceAll(".", c.s);
 		}
 		return "0" + c.s + "00";
 	}
