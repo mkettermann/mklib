@@ -944,13 +944,15 @@ class mk {
 
 	// Retorna um string de duas casas "0,00" a partir de um valor numerico
 	static fromNumber = (valor: any, c: any = {}): string => {
-		if (!c.s) c.s = ","; // OUTPUT SEPARADOR de decimal numérico do país atual para dados.
+		//if (!c.s) c.s = ","; // OUTPUT SEPARADOR de decimal numérico do país atual para dados.
+		if (!c.locale) c.locale = "pt-BR";
 		if (valor != null) {
 			let d = [...valor.toString()].filter(a => { return mk.util.numeros[1].test(a) }).join("").padStart(3, "0");
-			valor = Number(d.slice(0, -2) + "." + d.slice(-2)).toFixed(2);
-			return valor.replaceAll(".", c.s);
+			valor = Number(d.slice(0, -2) + "." + d.slice(-2));
+		} else {
+			valor = 0;
 		}
-		return "0" + c.s + "00";
+		return new Intl.NumberFormat(c.locale, { minimumFractionDigits: 2, maximumSignificantDigits: 2 }).format(valor);
 	}
 
 	// Texto / Número convertido em Reais
