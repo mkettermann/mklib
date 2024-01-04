@@ -938,7 +938,7 @@ class mk {
         else {
             valor = 0;
         }
-        return new Intl.NumberFormat(c.locale, { minimumFractionDigits: 2, maximumSignificantDigits: 2 }).format(valor);
+        return new Intl.NumberFormat(c.locale, { minimumFractionDigits: 2 }).format(valor);
     };
     // Texto / Número convertido em Reais
     static toMoeda = (valor) => {
