@@ -927,7 +927,11 @@ class mk {
 				let us = [".", ","].reduce((x, y) => (valor.lastIndexOf(x) > valor.lastIndexOf(y)) ? x : y);
 				let posPonto = valor.lastIndexOf(us)
 				if (posPonto >= 0) {
-					valor = valor.slice(0, posPonto) + "." + valor.slice(posPonto + 1).slice(0, 2).padEnd(2, "0");
+					let i = valor.slice(0, posPonto);
+					let d = valor.slice(posPonto + 1).slice(0, 2).padEnd(2, "0");
+					i = [...i.toString()].filter(a => { return mk.util.numeros[1].test(a) }).join("");
+					d = [...d.toString()].filter(a => { return mk.util.numeros[1].test(a) }).join("");
+					valor = i + "." + d;
 				} else {
 					valor = [...valor.toString()].filter(a => { return mk.util.numeros[1].test(a) }).join("").padStart(3, "0")
 					valor = valor.slice(0, -(c.casas)) + "." + valor.slice(-(c.casas));
