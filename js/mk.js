@@ -903,13 +903,13 @@ class mk {
     static toFloat = (valor, c = {}) => {
         if (!c.casas)
             c.casas = 2; // Limite de casas apenas para o valor retornado.
-        if (!c.inputSeparador)
-            c.inputSeparador = ","; // INPUT SEPARADOR de decimal numérico do país atual para dados. Só funciona em strings.
         if (valor != null) {
             if (typeof valor == "string") {
-                // Se Vier uma String "123,123" primeiro vira: "123,12". 
-                if (valor.includes(c.inputSeparador)) {
-                    valor = valor.slice(0, valor.lastIndexOf(c.inputSeparador) + c.casas + 1);
+                // Se Vier uma String "123,123" primeiro vira: "123,12".
+                let us = [".", ","].reduce((x, y) => (valor.lastIndexOf(x) > valor.lastIndexOf(y)) ? x : y);
+                let posPonto = valor.lastIndexOf(us);
+                if (posPonto >= 0) {
+                    valor = valor.slice(0, posPonto + c.casas + 1);
                 }
                 valor = [...valor.toString()].filter(a => { return mk.util.numeros[1].test(a); }).join("").padStart(3, "0");
                 valor = valor.slice(0, -(c.casas)) + "." + valor.slice(-(c.casas));
@@ -1122,7 +1122,7 @@ class mk {
     // Comparardor de string LIKE
     static like = (strMenor, strMaior) => {
         let result = false;
-        // Se utilizar match, não pode ter os reservados do regex.
+        // Se utilizar match, não pode ter os reservados do reg-ex.
         strMaior = mk.apenasNumerosLetras(strMaior).toLowerCase().trim();
         strMenor = mk.apenasNumerosLetras(strMenor).toLowerCase().trim();
         let rmMaior = strMaior.toLowerCase().trim();
