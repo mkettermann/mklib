@@ -1,7 +1,5 @@
 "use strict";
 // Transformar para uma unidade / modulado. Dependencias diretas/indiretas:
-// - $ JQuery Framework JS
-// - $ Print
 // - Bootstrap Toast
 // - Bootstrap Dropdown
 // - Bootstrap Modal
