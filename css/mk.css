@@ -2100,10 +2100,14 @@ input.input-validation-error {
 	font-size: 0.7rem;
 }
 
+.mkRegrar {
+	display: flex;
+}
+
 .mkRegrar.field-validation-error {
 	display: flex;
-	color: black !important;
-	background-color: #fcc !important;
+	color: black;
+	background-color: #fcc;
 	border: 1px solid red;
 	margin-top: -1px;
 	border-radius: 5px;
