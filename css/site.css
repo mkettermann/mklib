@@ -2,10 +2,12 @@
 body * {
 	font-family: Consolas;
 }
+
 body {
 	background-color: var(--fundoPrincipal);
 	color: var(--corPrincipal);
 }
+
 textarea {
 	font-family: monospace;
 	resize: none;
@@ -44,27 +46,32 @@ header {
 	max-height: 2.5rem;
 	margin-top: -2rem;
 }
+
 .tituloMk {
 	animation: sombraTitulo 5s ease-in-out infinite alternate;
 	letter-spacing: 0.7rem;
 	font-size: 2rem;
 	color: var(--corHead);
 }
+
 @keyframes sombraTitulo {
 	to {
 		text-shadow: 0px 0px 5px var(--corHeadEfeito);
 	}
 }
+
 .tituloMk span.m,
 .tituloMk span.k {
 	animation: sombraTitulo2 1s linear infinite alternate;
 	position: relative;
 }
+
 @keyframes sombraTitulo2 {
 	to {
 		text-shadow: 0px 0px 10px var(--corHeadEfeito);
 	}
 }
+
 .tituloMk span.m::before,
 .tituloMk span.k::before {
 	content: "";
@@ -77,48 +84,60 @@ header {
 	border-radius: 50%;
 	animation: girarBrilho 2s infinite cubic-bezier(0, 0.7, 1, 0.24);
 }
+
 .tituloMk span.k::before {
 	animation-direction: reverse;
 }
+
 @keyframes girarBrilho {
 	0% {
 		box-shadow: 0px 0px 0px 0px var(--bordaMaster);
 	}
+
 	50% {
 		box-shadow: 0px 0px 0px 0px var(--bordaMaster);
 	}
+
 	80% {
 		box-shadow: 0px 0px 5px 0px var(--bordaMaster);
 	}
+
 	100% {
 		transform: rotate(360deg);
 		border-left-color: var(--corHead);
 		box-shadow: 0px 0px 15px 0px white;
 	}
 }
+
 .tituloMk span.s {
 	animation: esbranquecer 4s infinite alternate cubic-bezier(0, 0.7, 1, 0.24);
 }
+
 @keyframes esbranquecer {
 	0% {
 		text-shadow: 5px -5px 10px var(--corHeadEfeito);
 	}
+
 	25% {
 		text-shadow: 0px 5px 10px var(--corHeadEfeito);
 	}
+
 	50% {
 		text-shadow: -5px -5px 10px var(--corHeadEfeito);
 	}
+
 	100% {
 		text-shadow: 5px 5px 10px var(--corHeadEfeito);
 	}
 }
+
 .tituloMk span.t {
 	animation: cair 3s forwards cubic-bezier(0, 0.7, 1, 0.24) 5s;
 }
+
 @keyframes cair {
-	0% {
-	}
+	0% {}
+
 	100% {
 		transform: translate(0%, 50%) rotate(45deg);
 	}
@@ -128,12 +147,14 @@ div.Corpo {
 	display: flex;
 	flex-direction: row;
 }
+
 nav {
 	z-index: 90;
 	border: 0px solid transparent;
 	width: 100px;
 	/* border: 1px solid blue; */
 }
+
 main {
 	flex: 0 1 100%;
 	margin-top: 2.1rem;
@@ -141,6 +162,7 @@ main {
 	border-radius: 15px;
 	padding: 0px 5px 5px 5px;
 }
+
 footer {
 	position: fixed;
 	bottom: 0;
@@ -148,6 +170,7 @@ footer {
 	color: var(--corPrincipal33);
 	font-size: 0.7rem;
 }
+
 nav .Menu {
 	transform: translateX(calc(-100% + 85px));
 	position: fixed;
@@ -171,10 +194,12 @@ nav .Menu {
 	flex-direction: column;
 	row-gap: 20px;
 }
+
 nav .Menu:hover {
 	transition: 0.2s ease-in-out;
 	transform: translateX(0%);
 }
+
 .Menu .MenuLink {
 	font-size: 2rem;
 	cursor: pointer;
@@ -182,6 +207,7 @@ nav .Menu:hover {
 	justify-content: space-between;
 	transition: 0.3s;
 }
+
 .Menu .MenuLink:hover {
 	color: var(--corLinkHover);
 	text-shadow: 0px 0px 10px var(--corLinkEfeito);
@@ -192,22 +218,27 @@ nav .Menu:hover {
 	stroke-dashoffset: 100;
 	animation: percorre 4s linear forwards;
 }
+
 .Menu .MenuLink:hover svg {
 	color: var(--corLinkHover);
 	animation: fill 1s ease-in-out infinite alternate;
 }
+
 @keyframes percorre {
 	to {
 		stroke-dashoffset: 0;
 	}
 }
+
 @keyframes fill {
 	0% {
 		fill: var(--corLink);
 	}
+
 	50% {
 		fill: var(--fundoMenu);
 	}
+
 	100% {
 		fill: var(--corLinkEfeito);
 	}
@@ -217,6 +248,7 @@ nav .Menu:hover {
 .MenuLink span:nth-child(1) {
 	padding-right: 5rem;
 }
+
 .MenuLink span:nth-child(2) {
 	padding: 0px 2rem 0.5rem 2rem;
 	transform: scale(2);
@@ -261,10 +293,11 @@ h2 {
 /* Outros */
 input {
 	width: 100%;
-	background-color: var(--fundoPrincipal) !important;
-	color: var(--corPrincipal) !important;
-	border: 1px outset var(--bordaInput) !important;
+	background-color: var(--fundoPrincipal);
+	color: var(--corPrincipal);
+	border: 1px outset var(--bordaInput);
 	border-radius: 4px;
+	outline: 0px;
 }
 
 /* Personalizando tabela */
@@ -272,16 +305,19 @@ input {
 	box-shadow: 0px 0px 5px 1px var(--corPrincipal33);
 	border: 1px solid var(--bordaMaster);
 }
+
 .tableListagem thead {
 	background: var(--fundoHead);
 	color: var(--corHead);
 	border: 1px solid var(--bordaMaster);
 }
+
 .tableListagem th {
 	border: 1px solid var(--fundoMenu);
 	vertical-align: middle;
 	height: 25px;
 }
+
 .listBody td {
 	text-align: center;
 	vertical-align: middle;
@@ -292,15 +328,18 @@ input {
 	border: 1px solid var(--bordaMaster);
 	padding: 3px 6px;
 }
+
 .listBody tr:has(td.sort-mStatus.False) td {
 	background-color: #ff000015;
 }
+
 .listBody td.True {
 	background-image: url("data:image/svg+xml,<svg width='16' height='16' fill='rgba(0,150,0)' viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg'><path d='M2.5 8a5.5 5.5 0 0 1 8.25-4.764.5.5 0 0 0 .5-.866A6.5 6.5 0 1 0 14.5 8a.5.5 0 0 0-1 0 5.5 5.5 0 1 1-11 0z'/><path d='M15.354 3.354a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l7-7z'/></svg>");
 	background-repeat: no-repeat;
 	background-position: 50% 50%;
 	background-size: auto 1.2em;
 }
+
 .listBody td.False {
 	background-image: url("data:image/svg+xml,<svg width='16' height='16' fill='rgba(150,0,0)' viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg'><path d='M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z'/></svg>");
 	background-repeat: no-repeat;
@@ -311,14 +350,17 @@ input {
 .paginate_button {
 	border: 1px solid var(--bordaMaster);
 }
+
 .paginate_button.pagBack {
 	border-bottom-left-radius: 20px;
 	border-top-left-radius: 0px;
 }
+
 .paginate_button.pagNext {
 	border-bottom-right-radius: 20px;
 	border-top-right-radius: 0px;
 }
+
 .paginate_button.active,
 .paginate_button:hover {
 	background-color: var(--fundoHead);
@@ -328,20 +370,25 @@ input {
 ul.tabela {
 	border: 1px solid var(--bordaMaster);
 }
+
 ul.tabela li {
 	display: flex;
 	flex-direction: row;
 }
+
 ul.tabela li div.quebra {
 	padding: 5px;
 	border-bottom: 1px solid var(--tTextoHigh);
 }
+
 ul.tabela li div.quebra:nth-child(1) {
 	flex: 0 0 60%;
 }
+
 ul.tabela li div.quebra:nth-child(2) {
 	flex: 0 0 40%;
 }
+
 ul.tabela li:nth-child(1) div.quebra {
 	font-weight: bold;
 	border: 1px solid var(--bordaMaster);
@@ -355,15 +402,18 @@ ul.tabela li:nth-child(1) div.quebra {
 	width: 100%;
 	padding: 3px;
 }
+
 .operacaoContainer div {
 	padding: 5px;
 }
+
 .operacaoTitulo {
 	width: 100%;
 	border-radius: inherit;
 	background-color: var(--fundoHead);
 	text-align: center;
 }
+
 .operacaoAcao {
 	width: 70%;
 	border-radius: 8px;
@@ -381,6 +431,7 @@ ul.tabela li:nth-child(1) div.quebra {
 	color: var(--corHeadEfeito);
 	background-color: var(--fundoMenu);
 }
+
 .codigo {
 	padding-left: 10px;
 	text-align: left;
@@ -389,12 +440,14 @@ ul.tabela li:nth-child(1) div.quebra {
 	width: 100%;
 	overflow: hidden;
 }
+
 textarea {
 	color: var(--corMenu);
 	background-color: var(--corSecundaria);
 	outline: 0px;
 	border: 0px;
 }
+
 .codigoContainer {
 	margin: auto;
 	border: 1px solid transparent;
@@ -403,6 +456,7 @@ textarea {
 	width: fit-content;
 	position: relative;
 }
+
 .titulo {
 	position: absolute;
 	top: -23px;

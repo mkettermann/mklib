@@ -1,0 +1,74 @@
+<h1 class="microPos2 h1">Regrar</h1>
+<form id="regrarTeste">
+	<div class="i">
+		<div class="j exemploRegrar">
+			<label>Obrigatorio preenchimento:</label>
+			<input name="nomPessoa" type="text" />
+			<span class="text-danger mkRegrar" data-valmsg-for="nomPessoa"></span>
+		</div>
+	</div>
+	<button class="btnTestarValidar" type="button">Validar</button>
+</form>
+<br /><br />
+<div class="fullCodigoContainer microPos5">
+	<div class="i codigoContainer">
+		<div class="titulo">Modo de uso - HTML</div>
+		<textarea class="regua" rows="4" cols="1" readonly>
+1
+2
+3
+4</textarea>
+		<textarea class="codigo" rows="2" cols="100" onfocus="mk.mkSelecionarInner(this)" readonly>
+<div class="exemploRegrar">
+	<input name="nomPessoa" type="text" />
+	<span class="text-danger mkRegrar" data-valmsg-for="nomPessoa"></span>
+</div>
+</textarea>
+	</div>
+</div>
+<br /><br />
+<div class="fullCodigoContainer microPos5">
+	<div class="i codigoContainer">
+		<div class="titulo">Modo de uso - JS</div>
+		<textarea class="regua" rows="2" cols="1" readonly>
+1
+2</textarea>
+		<textarea class="codigo" rows="2" cols="100" onfocus="mk.mkSelecionarInner(this)" readonly>
+mk.regrar(".exemploRegrar", "nomPessoa", { k: "obrigatorio" });
+</textarea>
+	</div>
+</div>
+
+<br />
+<ul class="tabela">
+	<li>
+		<div class="quebra">Funcionalidades</div>
+		<div class="quebra">Modo de uso</div>
+	</li>
+	<li>
+		<u><br />1. Sobre o básico/padrão:</u>
+	</li>
+	<li>
+		<div class="quebra">
+			&nbsp; O regrar é executado ao modificar ou sair de um campo.
+			Várias regras estão disponíveis para o campo, inclusive regrar de mascarar o campo.
+			Para melhor entender, o regrar só associa a regra ao elemento e pode ser verificado pelo mk.estaValido
+			<br />
+			<br />
+			&nbsp; A lista de recomendações é baseada na lista informada no
+			atributo data-selarray. Trata-se de um array de objetos contendo k e v
+			de propriedades e estão em formato JSON.
+			<br />
+		</div>
+		<div class="quebra">
+			&nbsp; <u>Pré-Requisitos:</u>
+			<br />
+			&raquo; Precisa de um input com um name, um elemento com atributo data-valmsg-for contendo o name do input e um
+			container de ambos.
+			<br />&raquo; A biblioteca precisa estar iniciada.
+			<br />
+		</div>
+	</li>
+</ul>
+
+<script src="./js/regrar.js"></script>

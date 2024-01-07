@@ -1,6 +1,4 @@
-// Transformar para uma unidade / modulado. Dependencias diretas/indiretas:
-// - Bootstrap Toast
-// - Bootstrap Dropdown
+// Dependencias diretas/indiretas:
 // - Bootstrap Modal
 // - Poper
 
