@@ -2967,7 +2967,7 @@ class mk {
 		return new Promise((resolver) => {
 			let erros: any = [];
 			let regrasDoE = mk.regras.find(o => o.e == e);
-			let eDisplay = regrasDoE.c.querySelector(".mkRegrar[data-valmsg-for='" + regrasDoE.n + "']")
+			let eDisplay = regrasDoE?.c.querySelector(".mkRegrar[data-valmsg-for='" + regrasDoE.n + "']")
 			let regras = regrasDoE?.r;
 			let promises: any = []
 			if (regras) {
@@ -3274,10 +3274,11 @@ class mk {
 		if (typeof e == "string") {
 			e = mk.Q(e);
 		}
-		e.classList.add("regraBlink");
-		setTimeout(() => {
-			e.classList.remove("regraBlink");
-		}, 300);
+		mk.TerremotoErros("");
+		// e.classList.add("regraBlink");
+		// setTimeout(() => {
+		// 	e.classList.remove("regraBlink");
+		// }, 300);
 	}
 
 	static regraClear() {
@@ -3289,8 +3290,21 @@ class mk {
 		})
 	}
 
+	// Remove as regras de um determinado container
+	static desregrar = async (container: any) => {
+		container = mk.Q(container);
+
+		mk.regras.forEach(regra => {
+			if (mk.isInside(regra.e, container)) {
+				this.l(regra);
+				mk.regras.splice(mk.regras.indexOf(regra), 1);
+			}
+		});
+	}
+
 	// Efeito de terremoto em campos com erros no formulario informado
 	static TerremotoErros = (form: string): void => {
+		if (!form) form = "";
 		mk.QAll(form + " input.input-validation-error").forEach((e) => {
 			e.nextElementSibling?.classList.add("mkTerremoto");
 			setTimeout(() => {
