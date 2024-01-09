@@ -1,8 +1,5 @@
 "use strict";
 
-// mk.aoReceberDados = (data) => {
-// 	console.log("oi");
-// };
 var lista = new mk("/GetList", "#tabela1", "", "", { importar: true });
 var lista2 = new mk("/GetList2", "#tabela2", "#modelo2", ".fTabela2", {
 	importar: true,
@@ -16,11 +13,11 @@ var lista3 = new mk("/GetList3", "#tabela3", "#modelo3", ".fTabela3");
 var listas = [lista, lista2, lista3]; //(Lista 3 está na posicao 2)
 
 // Aqui modificamos a exibicao de um campo por outro formato
-lista.antesDePopularTabela = () => {
+lista.antesDePopularTabela = (l) => {
 	// Aplicar em Dados Exibidos,
 	// pois esta array é apenas a que o usuário vê,
 	// então preserva os dados originais.
-	lista.dadosExibidos.forEach((o) => {
+	l.dadosExibidos.forEach((o) => {
 		if (o.mDataUltimoAcesso) {
 			o.mDataUltimoAcesso = mk.mkYYYYMMDDtoDDMMYYYY(o.mDataUltimoAcesso);
 		}

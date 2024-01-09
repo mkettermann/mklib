@@ -4806,6 +4806,43 @@ class mk {
 		});
 	};
 
+	// LOGGER (Meta programming)
+	static log: any = (o: any, name: any) => {
+		// Função para debugar determinado objeto.
+		const h = {
+			get(t, p, r) {
+				mk.l(`~ get(${name},${p.toString()})`);
+				let v = Reflect.get(t, p, r);
+				if (Reflect.ownKeys(t).includes(p) &&
+					(typeof v === "object" || typeof v === "function")) {
+					return mk.log(v, `${name}.${p.toString()}`);
+				}
+				return v;
+			},
+			set(t, p, v, r) {
+				mk.l(`~ set(${name},${p.toString()},${v})`);
+				return Reflect.set(t, p, v, r);
+			},
+			apply(t, r, a) {
+				mk.l(`~ ${name}(${a})`);
+				return Reflect.apply(t, r, a);
+			},
+			construct(t, a, r) {
+				mk.l(`~ ${name}(${a})`);
+				return Reflect.construct(t, a, r);
+			}
+		}
+		Reflect.ownKeys(Reflect).forEach(hn => {
+			if (!(hn in h)) {
+				h[hn] = function (t, ...args) {
+					mk.l(`~ ${hn}(${name},${args})`);
+					return Reflect[hn](t, ...args);
+				}
+			}
+		});
+		return new Proxy(o, h);
+	}
+
 	// Variavel de recarga que permite modificar a frequencia de atualizacao
 	// em casos de telas sobrecarregadas.
 	static mkRecargaTimer = 500;
