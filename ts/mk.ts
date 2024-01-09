@@ -716,6 +716,11 @@ class mk {
 	valueOf = () => {
 		return this.dadosFull;
 	};
+
+	static toString = () => {
+		return 'class mk() { /* classe gerenciadora de listagens */ }';
+	};
+
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 	//			ATRIBUTOS	ESTATICOS					\\
 	//___________________________________\\
@@ -4843,6 +4848,8 @@ class mk {
 		return new Proxy(o, h);
 	}
 
+
+
 	// Variavel de recarga que permite modificar a frequencia de atualizacao
 	// em casos de telas sobrecarregadas.
 	static mkRecargaTimer = 500;
@@ -4869,6 +4876,8 @@ class mk {
 
 // Configs
 Object.defineProperty(mk, "http", { enumerable: false });
+
+//onerror = () => { mk.l("ERRO") };
 
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //		AO INICIAR										\\

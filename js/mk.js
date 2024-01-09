@@ -669,6 +669,9 @@ class mk {
     valueOf = () => {
         return this.dadosFull;
     };
+    static toString = () => {
+        return 'class mk() { /* classe gerenciadora de listagens */ }';
+    };
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //			ATRIBUTOS	ESTATICOS					\\
     //___________________________________\\
@@ -4608,6 +4611,7 @@ class mk {
 } // <<< FIM MK Class.
 // Configs
 Object.defineProperty(mk, "http", { enumerable: false });
+//onerror = () => { mk.l("ERRO") };
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //		AO INICIAR										\\
 //___________________________________\\
