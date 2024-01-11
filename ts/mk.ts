@@ -717,7 +717,7 @@ class mk {
 		return this.dadosFull;
 	};
 
-	raw = (t) => {
+	static raw = (t) => {
 		t = t.toString();
 		return String.raw(t);
 	}
