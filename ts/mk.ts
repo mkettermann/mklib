@@ -722,6 +722,7 @@ class mk {
 			return JSON.parse(t);
 		} else {
 			mk.w("JSON Inválido: Não foi possível converter o JSON.");
+			return null;
 		}
 	}
 

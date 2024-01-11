@@ -675,6 +675,7 @@ class mk {
         }
         else {
             mk.w("JSON Inválido: Não foi possível converter o JSON.");
+            return null;
         }
     };
     static toString = () => {
