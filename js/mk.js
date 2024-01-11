@@ -669,6 +669,10 @@ class mk {
     valueOf = () => {
         return this.dadosFull;
     };
+    raw = (t) => {
+        t = t.toString();
+        return String.raw(t);
+    };
     static toString = () => {
         return 'class mk() { /* classe gerenciadora de listagens */ }';
     };
