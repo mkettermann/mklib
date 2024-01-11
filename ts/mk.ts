@@ -717,11 +717,6 @@ class mk {
 		return this.dadosFull;
 	};
 
-	static raw = (t) => {
-		t = t.toString();
-		return String.raw(t);
-	}
-
 	static toString = () => {
 		return 'class mk() { /* classe gerenciadora de listagens */ }';
 	};
