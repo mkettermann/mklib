@@ -64,7 +64,7 @@ class mk {
         this.aoCompletarExibicao = arg.aoCompletarExibicao;
         this.aoConcluirDownload = arg.aoConcluirDownload;
         // Finaliza Contrutor chamando o método de coleta
-        this.getList(arg.importar);
+        this.getList(arg);
     }
     // Fn Individuais da Listagem.
     aoReceberDados = (objeto) => {
@@ -129,6 +129,9 @@ class mk {
         this.c.tableInicioFim = this.c.divTabela + " .tableInicioFim";
         this.c.pag = this.c.pagBotoes + " .pag";
         this.c.pagBotao = this.c.pagBotoes + " .pagBotao";
+        this.c.tipoHead = "sort"; // menu / sort
+        if (arg.tipoHead)
+            this.c.tipoHead = arg.tipoHead;
         this.c.m = arg.keys;
         // Primary Key
         if (!arg.pk) {
@@ -171,13 +174,13 @@ class mk {
                     this.atualizaNaPaginaUm();
                 });
             }
-            this.ativarSort();
+            this.headAtivar();
         }
     };
     // Metodo que prepara a listagem e inicia a coleta.
-    getList = async (importar = false) => {
+    getList = async (arg = {}) => {
         // Verifica e importa resumo da tabela se necessario.
-        if (importar)
+        if (arg?.importar)
             await mk.importar(this.c.divTabela);
         this.configurarUI();
         // Caso o receba uma array na url, os dados já estão aqui.
@@ -414,22 +417,30 @@ class mk {
             });
         });
     };
+    headMenuAbrir = (colName, e) => {
+        mk.l("Menu Abrir");
+    };
     // Gera Listeners na THEAD da tabela (Requer classe: "sort-campo")
-    ativarSort = () => {
+    headAtivar = () => {
         let eTrHeadPai = mk.Q(this.c.divTabela + " thead tr");
         Array.from(eTrHeadPai.children).forEach((th) => {
-            let ordenar = false;
+            let possui = false;
             th.classList.forEach((classe) => {
                 // Verifica se contém sort- no inicio da class
                 if (classe.indexOf("sort-") == 0) {
-                    ordenar = classe;
+                    possui = classe;
                 }
             });
-            if (ordenar != false) {
-                let campo = ordenar.replace("sort-", "");
-                if (campo != "") {
-                    mk.Ao("click", this.c.divTabela + " thead .sort-" + campo, () => {
-                        this.orderBy(campo);
+            if (possui != false) {
+                let colName = possui.replace("sort-", "");
+                if (colName != "") {
+                    mk.Ao("click", this.c.divTabela + " thead .sort-" + colName, (e) => {
+                        if (this.c.tipoHead == "menu") {
+                            this.headMenuAbrir(colName, e);
+                        }
+                        else {
+                            this.orderBy(colName);
+                        }
                     });
                 }
             }
