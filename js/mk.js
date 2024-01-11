@@ -669,6 +669,14 @@ class mk {
     valueOf = () => {
         return this.dadosFull;
     };
+    static parseJSON = (t) => {
+        if (mk.isJson(t)) {
+            return JSON.parse(t);
+        }
+        else {
+            mk.w("JSON Inválido: Não foi possível converter o JSON.");
+        }
+    };
     static toString = () => {
         return 'class mk() { /* classe gerenciadora de listagens */ }';
     };
