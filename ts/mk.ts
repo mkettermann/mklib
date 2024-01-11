@@ -717,15 +717,6 @@ class mk {
 		return this.dadosFull;
 	};
 
-	static parseJSON = (t: any) => {
-		if (mk.isJson(t)) {
-			return JSON.parse(t);
-		} else {
-			mk.w("JSON Inválido: Não foi possível converter o JSON.");
-			return null;
-		}
-	}
-
 	static toString = () => {
 		return 'class mk() { /* classe gerenciadora de listagens */ }';
 	};
@@ -1096,6 +1087,15 @@ class mk {
 		}
 		return true;
 	};
+
+	static parseJSON = (t: any) => {
+		if (mk.isJson(t)) {
+			return JSON.parse(t);
+		} else {
+			mk.w("JSON Inválido: Não foi possível converter o JSON.");
+			return null;
+		}
+	}
 
 	static removeEspecias = (s: string) => {
 		let r = "";
@@ -1705,7 +1705,7 @@ class mk {
 	};
 
 	static clonar = (i: any) => {
-		return JSON.parse(JSON.stringify(i));
+		return mk.parseJSON(JSON.stringify(i));
 	};
 
 	static getModelo = (array) => {
@@ -2690,7 +2690,7 @@ class mk {
 							let filtroInvertido = false;
 							if (this.isJson(k.conteudo)) {
 								let arrayM = m.toString().split(","); // String de Numeros em Array de Strings
-								let mayBeArrayK = JSON.parse(k.conteudo); // << No objFiltro
+								let mayBeArrayK = mk.parseJSON(k.conteudo); // << No objFiltro
 								if (Array.isArray(mayBeArrayK)) {
 									mayBeArrayK.forEach((numeroK: any) => {
 										// A cada numero encontrado pos split na string do item verificado
@@ -3969,7 +3969,7 @@ class mk {
 			let array = e.dataset.selarray;
 			eList.innerHTML = "";
 			if (mk.isJson(array)) {
-				let kvList = JSON.parse(array);
+				let kvList = mk.parseJSON(array);
 				let c = 0;
 				/* ITENS */
 				kvList.forEach((o: any) => {
@@ -4342,7 +4342,7 @@ class mk {
 			let eList = e.nextElementSibling.nextElementSibling;
 			eList.innerHTML = "";
 			try {
-				let seletorArray = JSON.parse(e.getAttribute("data-selarray"));
+				let seletorArray = mk.parseJSON(e.getAttribute("data-selarray"));
 				if (seletorArray != null) {
 					let c = 0;
 					/* ITENS */
@@ -4684,7 +4684,7 @@ class mk {
 		let kvs = e.dataset.selarray;
 		let map: any[] = [];
 		if (mk.isJson(kvs)) {
-			let kv = JSON.parse(kvs);
+			let kv = mk.parseJSON(kvs);
 			kv.forEach((o: any) => {
 				map.push([o.k, o.v]);
 			});
@@ -4696,7 +4696,7 @@ class mk {
 	static mkSelArrayGetKV = (e: any): any[] => {
 		let kv = e.dataset.selarray;
 		if (mk.isJson(kv)) {
-			kv = JSON.parse(kv);
+			kv = mk.parseJSON(kv);
 		}
 		return kv;
 	};
@@ -4718,19 +4718,19 @@ class mk {
 		let kOpcoes: any;
 		// Lista de Selecoes vira K do KV
 		if (mk.isJson(e.value)) {
-			kSels = JSON.parse(e.value);
+			kSels = mk.parseJSON(e.value);
 			if (!Array.isArray(kSels)) {
 				kSels = [{ k: kSels }];
 			} else {
 				kSels = [];
-				JSON.parse(e.value).forEach((kSel: any) => {
+				mk.parseJSON(e.value).forEach((kSel: any) => {
 					kSels.push({ k: kSel });
 				});
 			}
 		} else kSels = [{ k: e.value }];
 		// Prepara lista de Opções para iterar
 		if (mk.isJson(e.dataset.selarray)) {
-			kOpcoes = JSON.parse(e.dataset.selarray);
+			kOpcoes = mk.parseJSON(e.dataset.selarray);
 			if (!Array.isArray(kOpcoes)) {
 				kOpcoes = [{ k: kOpcoes, v: "\u{2209} Opções" }];
 			}
