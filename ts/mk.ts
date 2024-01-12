@@ -493,22 +493,31 @@ class mk {
 			mk.Q(".mkHeadMenu input[name='filtrarCampo']").value = "";
 		}
 		mk.Q(".mkHeadMenu input[name='filtrarPossibilidades']").value = "";
+		this.exclusivos = mk.getExclusivos(this.dadosFull)[colName];
 		mk.headMenuFiltraExclusivo = (v: any) => {
-			this.exclusivos = mk.getExclusivos(this.dadosFull)[colName];
 			let exFiltrado = this.exclusivos?.filter(f => {
 				return mk.removeEspecias(f).toString().toLowerCase().includes(mk.removeEspecias(v).toString().toLowerCase().trim())
 			});
 			let htmlPossiveis = "<ul class='filtravel'>";
 			if (exFiltrado.length > 0) {
-				htmlPossiveis += "<li class='nosel botao sel' id='headMenuTodos' onclick='mk.headMenuMarcarExclusivos()'>" + svgSquare + "Selecionar Todos";
+				let fullsel = "sel";
+				if (mk.Q("body .mkHeadMenu .possibilidades").classList.contains("st")) {
+					fullsel = "";
+				}
+				htmlPossiveis += "<li class='nosel botao " + fullsel + "' id='headMenuTodos' onclick='mk.headMenuMarcarExclusivos()'>" + svgSquare + "Selecionar Todos";
 				if (v != "") {
 					htmlPossiveis += " Pesquisados";
 				}
 				htmlPossiveis += "</li>";
 				exFiltrado.forEach(v => {
-					htmlPossiveis += "<li name='" + v + "' class='nosel botao sel' onclick='mk.headMenuMarcarExclusivos(this)'>" + svgSquare + v + "</li>";
+					let sel = "sel";
+					this.hmunsel.forEach(hm => {
+						if (mk.removeEspecias(hm).toString().toLowerCase().trim() == mk.removeEspecias(v).toString().toLowerCase().trim()) {
+							sel = "";
+						}
+					});
+					htmlPossiveis += "<li name='" + v + "' class='nosel botao " + sel + "' onclick='mk.headMenuMarcarExclusivos(this)'>" + svgSquare + v + "</li>";
 				})
-
 			}
 			htmlPossiveis += "</ul>"
 			mk.Q("body .mkHeadMenu .possibilidades").innerHTML = htmlPossiveis;
@@ -516,7 +525,6 @@ class mk {
 		mk.headMenuFiltraExclusivo("");
 		// Marca de Desmarca
 		mk.headMenuMarcarExclusivos = (e) => {
-
 			if (e) {
 				let name = e.getAttribute("name");
 				mk.l(name);
@@ -531,9 +539,14 @@ class mk {
 					}
 				} else {
 					e.classList.remove("sel");
-					if (name != null) this.hmunsel.push(name);
+					if (name != null) {
+						this.hmunsel.push(name);
+						if (this.hmunsel.length == this.exclusivos.length) {
+							mk.Q("#headMenuTodos").classList.remove("sel");
+							mk.Q("body .mkHeadMenu .possibilidades").classList.toggle("st");
+						}
+					}
 				}
-
 			} else {
 				mk.Q("body .mkHeadMenu .possibilidades").classList.toggle("st");
 				if (mk.Q("body .mkHeadMenu .possibilidades").classList.contains("st")) {
@@ -555,14 +568,20 @@ class mk {
 						}
 					})
 				}
-
 			}
+			this.c.objFiltro[colName] = {
+				formato: "mkHeadMenuSel",
+				operador: "",
+				conteudo: this.hmunsel,
+			};
+			this.atualizaNaPaginaUm();
 		};
 
 		mk.headMenuCrescente = () => { this.orderBy(colName, 0); };
 		mk.headMenuDecrescente = () => { this.orderBy(colName, 1); };
 		mk.headMenuLimpar = () => {
 			mk.Q(".mkHeadMenu input[name='filtrarCampo']").value = "";
+			mk.headMenuFiltraExclusivo("");
 			this.clearFiltro(colName);
 			this.atualizarListagem();
 		};
@@ -2862,6 +2881,12 @@ class mk {
 							if (!mk.contem(m, k.conteudo)) {
 								podeExibir = false;
 							}
+						} else if (k.formato === "mkHeadMenuSel") {
+							k.conteudo.forEach((hm) => {
+								if (mk.removeEspecias(hm).toString().toLowerCase().trim() == mk.removeEspecias(m).toString().toLowerCase().trim()) {
+									podeExibir = false;
+								}
+							})
 						} else if (k.formato === "stringNumerosVirgula") {
 							// Filtro por numero exado. Provavelmente sejam duas arrays (MultiSelect), O filtro precisa encontrar tudo no objeto.
 							let filtroInvertido = false;
