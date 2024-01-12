@@ -455,8 +455,16 @@ class mk {
 		});
 	};
 
+	// HM (MK HEAD MENU)
 	headMenuAbrir = (colName: any, e: any) => {
-		mk.l("Menu Abrir");
+		if (mk.Q("body .mkHeadMenu") == null) {
+			let ehm = document.createElement("div");
+			ehm.className = "mkHeadMenu oculto";
+			ehm.innerHTML = "<div class='hmin'><ul><li>AZ Classificar Crescente</li><li class='fimsecao'>ZA Classificar Decrescente</li><li><input type='text' name='filtrarCampo' placeholder='Contém...'></li><li class='fimsecao'>Limpar Filtro de <span class='nomeCampo'>Teste</span></li><li><input type='search' name='filtrarPossibilidades' placeholder='Pesquisar'></li><li><div class='possibilidades'></div></li></ul></div>";
+			document.body.appendChild(ehm);
+		}
+		mk.Q("body .mkHeadMenu").classList.remove("oculto");
+
 	}
 
 	// Gera Listeners na THEAD da tabela (Requer classe: "sort-campo")
