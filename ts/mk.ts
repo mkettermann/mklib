@@ -3099,7 +3099,7 @@ class mk {
 					if (!re.target) {
 						re.target = "value";
 					}
-					if (!re.on) {
+					if (re.on == null) {
 						re.on = true;
 					}
 					let podeValidar = re.on; // Padrão validar, mas se regra estiver com o on=false, já inicia o giro sem validar;
