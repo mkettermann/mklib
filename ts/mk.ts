@@ -460,11 +460,20 @@ class mk {
 		if (mk.Q("body .mkHeadMenu") == null) {
 			let ehm = document.createElement("div");
 			ehm.className = "mkHeadMenu oculto";
-			ehm.innerHTML = "<div class='hmin'><ul><li>AZ Classificar Crescente</li><li class='fimsecao'>ZA Classificar Decrescente</li><li><input type='text' name='filtrarCampo' placeholder='Contém...'></li><li class='fimsecao'>Limpar Filtro de <span class='nomeCampo'>Teste</span></li><li><input type='search' name='filtrarPossibilidades' placeholder='Pesquisar'></li><li><div class='possibilidades'></div></li></ul></div>";
+			ehm.innerHTML = "<div class='hmin'><ul><li>AZ Classificar Crescente</li><li class='fimsecao'>ZA Classificar Decrescente</li><li><input type='text' name='filtrarCampo' placeholder='Contém...'></li><li class='fimsecao'>Limpar Filtro de <span class='nomeCampo'></span></li><li><input type='search' name='filtrarPossibilidades' placeholder='Pesquisar'></li><li><div class='possibilidades'></div></li></ul></div>";
 			document.body.appendChild(ehm);
 		}
+		let exclusivos = mk.getExclusivos(this.dadosFull);
+		if (exclusivos[colName]) {
+			let htmlPossiveis = "<ul class='filtravel'><li>Selecionar Todos</li>";
+			exclusivos[colName].forEach(v => {
+				htmlPossiveis += "<li>" + v + "</li>"
+			})
+			htmlPossiveis += "</ul>"
+			mk.Q("body .mkHeadMenu .possibilidades").innerHTML = htmlPossiveis;
+		}
+		mk.Q("body .mkHeadMenu .nomeCampo").innerHTML = colName;
 		mk.Q("body .mkHeadMenu").classList.remove("oculto");
-
 	}
 
 	// Gera Listeners na THEAD da tabela (Requer classe: "sort-campo")
@@ -1728,7 +1737,7 @@ class mk {
 		return mk.parseJSON(JSON.stringify(i));
 	};
 
-	static getModelo = (array) => {
+	static getModelo = (array: any) => {
 		let chaves = new Set();
 		array.forEach((o) => {
 			Object.keys(o).forEach((p) => {
@@ -1744,6 +1753,34 @@ class mk {
 			});
 		});
 		return modelo;
+	};
+
+	static getExclusivos = (array: any) => {
+		let chaves = new Set();
+		let a = mk.clonar(array);
+		a.forEach((o) => {
+			Object.keys(o).forEach((p) => {
+				chaves.add(p);
+			});
+		});
+		let campos: any = {};
+		chaves.forEach((k: any) => {
+			let tempSet = new Set();
+			a.forEach((o: any) => {
+				let temp = o[k];
+				let tipo = mk.classof(o[k])
+				if (tipo == "String") {
+					temp = temp.trim();
+					if (mk.util.data[1].test(temp) || mk.util.dataIso8601[1].test(temp)) {
+						temp = mk.toLocale(temp)
+					}
+				}
+				if (tipo == "Object") { temp = JSON.stringify(temp).slice(1).slice(0, -1).replaceAll("\"", "") }
+				if (temp) tempSet.add(temp);
+			});
+			campos[k] = [...tempSet];
+		});
+		return campos;
 	};
 
 	static mkMerge = (o: any, ...fontes: any): object => {
