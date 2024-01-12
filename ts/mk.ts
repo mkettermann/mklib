@@ -2991,6 +2991,7 @@ class mk {
 	 * m: 	mensagem de exibição caso esteja em estado falso.
 	 * a: 	auto executar essa regra assim que regrar (true/false)
 	 * f:		força validar mesmo se estiver invisivel / desativado (true/false)
+	 * on: 	padrão true. define se vai executar a regra ou não.
 	 */
 	static regrar = (container: any, nome: string, ...obj: any) => {
 		if (typeof nome != "string") {
@@ -3098,7 +3099,10 @@ class mk {
 					if (!re.target) {
 						re.target = "value";
 					}
-					let podeValidar = true;
+					if (!re.on) {
+						re.on = true;
+					}
+					let podeValidar = re.on; // Padrão validar, mas se regra estiver com o on=false, já inicia o giro sem validar;
 					if (!e.offsetParent) { // Invisivel, padrão sem validar
 						podeValidar = false;
 					}
