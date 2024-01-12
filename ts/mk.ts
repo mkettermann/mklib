@@ -473,6 +473,8 @@ class mk {
 	static headMenuContemInput = (v: any) => { };
 	static headMenuFiltraExclusivo = (v: any) => { };
 	static headMenuMarcarExclusivos = (t) => { };
+	exclusivos = [];
+	hmunsel = [];
 
 	// HM (MK HEAD MENU)
 	headMenuAbrir = (colName: any, e: any) => {
@@ -492,18 +494,19 @@ class mk {
 		}
 		mk.Q(".mkHeadMenu input[name='filtrarPossibilidades']").value = "";
 		mk.headMenuFiltraExclusivo = (v: any) => {
-			let exclusivos = mk.getExclusivos(this.dadosFull)[colName]?.filter(f => {
+			this.exclusivos = mk.getExclusivos(this.dadosFull)[colName];
+			let exFiltrado = this.exclusivos?.filter(f => {
 				return mk.removeEspecias(f).toString().toLowerCase().includes(mk.removeEspecias(v).toString().toLowerCase().trim())
 			});
 			let htmlPossiveis = "<ul class='filtravel'>";
-			if (exclusivos.length > 0) {
-				htmlPossiveis += "<li class='nosel botao sel' onclick='mk.headMenuMarcarExclusivos()'>" + svgSquare + "Selecionar Todos";
+			if (exFiltrado.length > 0) {
+				htmlPossiveis += "<li class='nosel botao sel' id='headMenuTodos' onclick='mk.headMenuMarcarExclusivos()'>" + svgSquare + "Selecionar Todos";
 				if (v != "") {
 					htmlPossiveis += " Pesquisados";
 				}
 				htmlPossiveis += "</li>";
-				exclusivos.forEach(v => {
-					htmlPossiveis += "<li class='nosel botao sel' onclick='mk.headMenuMarcarExclusivos(\"" + v + "\")'>" + svgSquare + v + "</li>";
+				exFiltrado.forEach(v => {
+					htmlPossiveis += "<li name='" + v + "' class='nosel botao sel' onclick='mk.headMenuMarcarExclusivos(this)'>" + svgSquare + v + "</li>";
 				})
 
 			}
@@ -512,14 +515,47 @@ class mk {
 		};
 		mk.headMenuFiltraExclusivo("");
 		// Marca de Desmarca
-		mk.headMenuMarcarExclusivos = (t) => {
-			mk.l(t);
-			if (t) {
+		mk.headMenuMarcarExclusivos = (e) => {
+
+			if (e) {
+				let name = e.getAttribute("name");
+				mk.l(name);
+				if (this.hmunsel.includes(name)) {
+					e.classList.add("sel");
+					if (name != null) {
+						this.hmunsel.splice(this.hmunsel.indexOf(name), 1);
+						if (this.hmunsel.length == 0) {
+							mk.Q("#headMenuTodos").classList.add("sel");
+							mk.Q("body .mkHeadMenu .possibilidades").classList.toggle("st");
+						}
+					}
+				} else {
+					e.classList.remove("sel");
+					if (name != null) this.hmunsel.push(name);
+				}
 
 			} else {
-				mk.QAll(".mkHeadMenu .possibilidades .filtravel li").forEach(el => {
-					el.classList.remove("sel");
-				})
+				mk.Q("body .mkHeadMenu .possibilidades").classList.toggle("st");
+				if (mk.Q("body .mkHeadMenu .possibilidades").classList.contains("st")) {
+					mk.QAll(".mkHeadMenu .possibilidades li").forEach(el => {
+						let name = el.getAttribute("name");
+						el.classList.remove("sel");
+						if (name != null) {
+							if (!this.hmunsel.includes(name)) {
+								this.hmunsel.push(name);
+							}
+						}
+					})
+				} else {
+					mk.QAll(".mkHeadMenu .possibilidades li").forEach(el => {
+						let name = el.getAttribute("name");
+						el.classList.add("sel");
+						if (name != null) {
+							this.hmunsel.splice(this.hmunsel.indexOf(name), 1);
+						}
+					})
+				}
+
 			}
 		};
 
