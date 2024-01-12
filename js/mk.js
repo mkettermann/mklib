@@ -417,8 +417,25 @@ class mk {
             });
         });
     };
+    static headMenuHide = (ev) => {
+        mk.l("ET: ", ev.target);
+        let ehm = mk.Q("body .mkHeadMenu");
+        if (ehm?.classList.contains("lock")) {
+            ehm.classList.remove("lock");
+        }
+        else {
+            let ethm = mk.getEClass(ev.target, "mkHeadMenu");
+            mk.l("ET HM: ", ethm);
+            if (ethm) {
+            }
+            else {
+                ehm?.classList.add("oculto");
+            }
+        }
+    };
     // HM (MK HEAD MENU)
     headMenuAbrir = (colName, e) => {
+        e.classList.add("headMenuTarget");
         if (mk.Q("body .mkHeadMenu") == null) {
             let ehm = document.createElement("div");
             ehm.className = "mkHeadMenu oculto";
@@ -434,8 +451,10 @@ class mk {
             htmlPossiveis += "</ul>";
             mk.Q("body .mkHeadMenu .possibilidades").innerHTML = htmlPossiveis;
         }
+        mk.atribuir(mk.Q("body"), "mk.headMenuHide(event)", "onclick");
         mk.Q("body .mkHeadMenu .nomeCampo").innerHTML = colName;
         mk.Q("body .mkHeadMenu").classList.remove("oculto");
+        mk.Q("body .mkHeadMenu").classList.add("lock");
     };
     // Gera Listeners na THEAD da tabela (Requer classe: "sort-campo")
     headAtivar = () => {
@@ -1775,7 +1794,11 @@ class mk {
         while (!eClass.classList.contains(classe)) {
             eClass = eClass.parentElement;
             if (eClass == null) {
-                console.error("Não foi possível encontrar o elemento com esta classe. getEClass.", classe);
+                // Desativei pois comecei a usar invertido
+                // mk.w(
+                // 	"Não foi possível encontrar o elemento com esta classe. getEClass.",
+                // 	classe
+                // );
                 eClass = null;
                 break;
             }
