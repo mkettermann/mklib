@@ -42,21 +42,18 @@
 </style>
 
 <body class="flr fsb">
-	<div class="mkHeadMenu">
-		<div class="hmin">
-			<ul>
-				<li>AZ Classificar Crescente</li>
-				<li class="fimsecao">ZA Classificar Decrescente</li>
-				<li><input type="text" name="filtrarCampo" placeholder="Contém..."></li>
-				<li class="fimsecao">Limpar Filtro de <span class="nomeCampo">Teste</span></li>
-				<li><input type="search" name="filtrarPossibilidades" placeholder="Pesquisar"></li>
-				<li>
-					<div class="possibilidades">
-
-					</div>
-				</li>
-			</ul>
-		</div>
+	<div class='hmin'>
+		<ul>
+			<li onclick='mk.headMenuCrescente()' class='botao nosel'>AZ Classificar Crescente</li>
+			<li onclick='mk.headMenuDecrescente()' class='botao nosel fimsecao'>ZA Classificar Decrescente</li>
+			<li><input class='nosel' type='text' name='filtrarCampo' placeholder='Contém...'></li>
+			<li onclick='mk.headMenuLimpar()' class='botao nosel fimsecao'>Limpar Filtro de <span class='nomeCampo'></span>
+			</li>
+			<li><input type='search' name='filtrarPossibilidades' placeholder='Pesquisar'></li>
+			<li>
+				<div class='possibilidades'></div>
+			</li>
+		</ul>
 	</div>
 
 	<br>

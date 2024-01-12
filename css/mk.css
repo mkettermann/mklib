@@ -1922,12 +1922,29 @@ ul.mkUlFase li.disabled a {
 	padding: 5px;
 }
 
+.mkHeadMenu .botao {
+	cursor: pointer;
+}
+
+.mkHeadMenu .nosel {
+	user-select: none;
+}
+
+.mkHeadMenu ul {
+	margin-bottom: 0px;
+}
+
 .mkHeadMenu li {
 	padding: 2px;
 }
 
 .mkHeadMenu li.fimsecao {
 	border-bottom: 2px inset #0002;
+}
+
+.mkHeadMenu li .possibilidades {
+	max-height: 200px;
+	overflow: auto;
 }
 
 /* =======================

@@ -418,30 +418,32 @@ class mk {
         });
     };
     static headMenuHide = (ev) => {
-        mk.l("ET: ", ev.target);
         let ehm = mk.Q("body .mkHeadMenu");
         if (ehm?.classList.contains("lock")) {
             ehm.classList.remove("lock");
         }
         else {
             let ethm = mk.getEClass(ev.target, "mkHeadMenu");
-            mk.l("ET HM: ", ethm);
-            if (ethm) {
-            }
-            else {
+            if (!ethm) {
                 ehm?.classList.add("oculto");
             }
         }
     };
+    static headMenuCrescente = () => { };
+    static headMenuDecrescente = () => { };
+    static headMenuLimpar = () => { };
+    static headMenuContemInput = (v) => { };
     // HM (MK HEAD MENU)
     headMenuAbrir = (colName, e) => {
         e.classList.add("headMenuTarget");
         if (mk.Q("body .mkHeadMenu") == null) {
             let ehm = document.createElement("div");
             ehm.className = "mkHeadMenu oculto";
-            ehm.innerHTML = "<div class='hmin'><ul><li>AZ Classificar Crescente</li><li class='fimsecao'>ZA Classificar Decrescente</li><li><input type='text' name='filtrarCampo' placeholder='Contém...'></li><li class='fimsecao'>Limpar Filtro de <span class='nomeCampo'></span></li><li><input type='search' name='filtrarPossibilidades' placeholder='Pesquisar'></li><li><div class='possibilidades'></div></li></ul></div>";
+            ehm.innerHTML = "<div class='hmin'><ul><li onclick='mk.headMenuCrescente()' class='botao nosel'><svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M10.082 5.629 9.664 7H8.598l1.789-5.332h1.234L13.402 7h-1.12l-.419-1.371zm1.57-.785L11 2.687h-.047l-.652 2.157z'/><path d='M12.96 14H9.028v-.691l2.579-3.72v-.054H9.098v-.867h3.785v.691l-2.567 3.72v.054h2.645zM4.5 2.5a.5.5 0 0 0-1 0v9.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L4.5 12.293z'/></svg> Classificar Crescente</li><li onclick='mk.headMenuDecrescente()' class='botao nosel fimsecao'><svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M10.082 5.629 9.664 7H8.598l1.789-5.332h1.234L13.402 7h-1.12l-.419-1.371zm1.57-.785L11 2.687h-.047l-.652 2.157z'/><path d='M12.96 14H9.028v-.691l2.579-3.72v-.054H9.098v-.867h3.785v.691l-2.567 3.72v.054h2.645zm-8.46-.5a.5.5 0 0 1-1 0V3.707L2.354 4.854a.5.5 0 1 1-.708-.708l2-1.999.007-.007a.5.5 0 0 1 .7.006l2 2a.5.5 0 1 1-.707.708L4.5 3.707z'/></svg> Classificar Decrescente</li><li><input class='nosel' type='text' name='filtrarCampo' oninput='mk.headMenuContemInput(this.value)' placeholder='Contém...'></li><li  onclick='mk.headMenuLimpar()' class='botao nosel fimsecao'><svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path d='M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708'/></svg> Limpar Filtro de <span class='nomeCampo'></span></li><li><input type='search' name='filtrarPossibilidades' placeholder='Pesquisar'></li><li><div class='possibilidades'></div></li></ul></div>";
             document.body.appendChild(ehm);
         }
+        if (this.c.objFiltro[colName])
+            mk.Q(".mkHeadMenu input[name='filtrarCampo']").value = this.c.objFiltro[colName]?.conteudo;
         let exclusivos = mk.getExclusivos(this.dadosFull);
         if (exclusivos[colName]) {
             let htmlPossiveis = "<ul class='filtravel'><li>Selecionar Todos</li>";
@@ -451,6 +453,21 @@ class mk {
             htmlPossiveis += "</ul>";
             mk.Q("body .mkHeadMenu .possibilidades").innerHTML = htmlPossiveis;
         }
+        mk.headMenuCrescente = () => { this.orderBy(colName, 0); };
+        mk.headMenuDecrescente = () => { this.orderBy(colName, 1); };
+        mk.headMenuLimpar = () => {
+            mk.Q(".mkHeadMenu input[name='filtrarCampo']").value = "";
+            this.clearFiltro(colName);
+            this.atualizarListagem();
+        };
+        mk.headMenuContemInput = (v) => {
+            this.c.objFiltro[colName] = {
+                formato: "string",
+                operador: "",
+                conteudo: v,
+            };
+            this.atualizaNaPaginaUm();
+        };
         mk.atribuir(mk.Q("body"), "mk.headMenuHide(event)", "onclick");
         mk.Q("body .mkHeadMenu .nomeCampo").innerHTML = colName;
         mk.Q("body .mkHeadMenu").classList.remove("oculto");
@@ -505,7 +522,7 @@ class mk {
         }
         //mk.l("By: ", this.c.sortBy, " | Dir: ", this.c.sortDir);
     };
-    // Ordena a lista e atualiza (Direcao: 0,1,2(toogle))
+    // Ordena a lista e atualiza (Direcao: 0(Cre),1(Dec),2(toogle))
     orderBy = (propriedade, direcao = 2) => {
         // Atualiza atual Sort
         this.setDirSort(propriedade, Number(direcao));
@@ -537,17 +554,32 @@ class mk {
             });
         }
     };
-    // LIMPAR FILTRO  LimparFiltro("#consulta_form"); //Passar o form que contem os SELECT/INPUT de filtro (search).
-    clearFiltro = () => {
-        this.c.objFiltro = {};
-        // RESET Form (Limpar seria "0" / "") (Set e.defaultValue)
-        mk.QAll(this.c.filtro).forEach((e) => {
-            e.value = "";
-        });
-        // Solicita Atualizacao de todos mkSel
-        mk.QAll(this.c.filtro + ".mkSel").forEach((mkSel) => {
-            mkSel.classList.add("atualizar");
-        });
+    // LIMPAR FILTRO
+    clearFiltro = (campoEspecifico = null) => {
+        if (campoEspecifico) {
+            // LIMPAR APENAS ESTE
+            if (this.c.objFiltro[campoEspecifico]) {
+                delete this.c.objFiltro[campoEspecifico];
+            }
+            mk.QAll(this.c.filtro + "[name='" + campoEspecifico + "']").forEach((e) => {
+                e.value = "";
+            });
+            mk.QAll(this.c.filtro + ".mkSel[name='" + campoEspecifico + "']").forEach((mkSel) => {
+                mkSel.classList.add("atualizar");
+            });
+        }
+        else {
+            // LIMPAR TUDO
+            this.c.objFiltro = {};
+            // RESET Form (Limpar seria "0" / "") (Set e.defaultValue)
+            mk.QAll(this.c.filtro).forEach((e) => {
+                e.value = "";
+            });
+            // Solicita Atualizacao de todos mkSel
+            mk.QAll(this.c.filtro + ".mkSel").forEach((mkSel) => {
+                mkSel.classList.add("atualizar");
+            });
+        }
     };
     // LIMPAR FILTRO  LimparFiltro("#consulta_form"); //Passar o form que contem os SELECT/INPUT de filtro (search).
     clearFiltroUpdate = () => {
@@ -3085,7 +3117,7 @@ class mk {
                                     e.setAttribute("minlength", re.v);
                                     if (e[re.target].length < Number(re.v)) {
                                         if (!re.m)
-                                            re.m = mk.m.minc;
+                                            re.m = mk.m.minc + re.v;
                                         erros.push(re);
                                     }
                                     prom(re.k);
@@ -3093,7 +3125,7 @@ class mk {
                                 case "maxcharsinfo": // INFO
                                     if (e[re.target].length > Number(re.v)) {
                                         if (!re.m)
-                                            re.m = mk.m.maxc;
+                                            re.m = mk.m.maxc + re.v;
                                         erros.push(re);
                                     }
                                     prom(re.k);
