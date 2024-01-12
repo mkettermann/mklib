@@ -434,14 +434,16 @@ class mk {
     static headMenuLimpar = () => { };
     static headMenuContemInput = (v) => { };
     static headMenuFiltraExclusivo = (v) => { };
-    static headMenuMarcarExclusivos = () => { };
+    static headMenuMarcarExclusivos = (t) => { };
     // HM (MK HEAD MENU)
     headMenuAbrir = (colName, e) => {
+        let svgSquare = "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path d='M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z'/></svg>&nbsp;";
+        let svgX = "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path d='M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708'/></svg>";
         e.classList.add("headMenuTarget");
         if (mk.Q("body .mkHeadMenu") == null) {
             let ehm = document.createElement("div");
             ehm.className = "mkHeadMenu oculto";
-            ehm.innerHTML = "<div class='hmin'><ul><li onclick='mk.headMenuCrescente()' class='botao nosel'><svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M10.082 5.629 9.664 7H8.598l1.789-5.332h1.234L13.402 7h-1.12l-.419-1.371zm1.57-.785L11 2.687h-.047l-.652 2.157z'/><path d='M12.96 14H9.028v-.691l2.579-3.72v-.054H9.098v-.867h3.785v.691l-2.567 3.72v.054h2.645zM4.5 2.5a.5.5 0 0 0-1 0v9.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L4.5 12.293z'/></svg> Classificar Crescente</li><li onclick='mk.headMenuDecrescente()' class='botao nosel fimsecao'><svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M10.082 5.629 9.664 7H8.598l1.789-5.332h1.234L13.402 7h-1.12l-.419-1.371zm1.57-.785L11 2.687h-.047l-.652 2.157z'/><path d='M12.96 14H9.028v-.691l2.579-3.72v-.054H9.098v-.867h3.785v.691l-2.567 3.72v.054h2.645zm-8.46-.5a.5.5 0 0 1-1 0V3.707L2.354 4.854a.5.5 0 1 1-.708-.708l2-1.999.007-.007a.5.5 0 0 1 .7.006l2 2a.5.5 0 1 1-.707.708L4.5 3.707z'/></svg> Classificar Decrescente</li><li><input class='nosel' type='text' name='filtrarCampo' oninput='mk.headMenuContemInput(this.value)' placeholder='Contém...'></li><li  onclick='mk.headMenuLimpar()' class='botao nosel fimsecao'><svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path d='M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708'/></svg> Limpar Filtro de <span class='nomeCampo'></span></li><li><input type='search' oninput='mk.headMenuFiltraExclusivo(this.value)' name='filtrarPossibilidades' placeholder='Pesquisar'></li><li><div class='possibilidades'></div></li></ul></div>";
+            ehm.innerHTML = "<div class='hmin'><ul><li onclick='mk.headMenuCrescente()' class='botao nosel'><svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M10.082 5.629 9.664 7H8.598l1.789-5.332h1.234L13.402 7h-1.12l-.419-1.371zm1.57-.785L11 2.687h-.047l-.652 2.157z'/><path d='M12.96 14H9.028v-.691l2.579-3.72v-.054H9.098v-.867h3.785v.691l-2.567 3.72v.054h2.645zM4.5 2.5a.5.5 0 0 0-1 0v9.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L4.5 12.293z'/></svg> Classificar Crescente</li><li onclick='mk.headMenuDecrescente()' class='botao nosel fimsecao'><svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M10.082 5.629 9.664 7H8.598l1.789-5.332h1.234L13.402 7h-1.12l-.419-1.371zm1.57-.785L11 2.687h-.047l-.652 2.157z'/><path d='M12.96 14H9.028v-.691l2.579-3.72v-.054H9.098v-.867h3.785v.691l-2.567 3.72v.054h2.645zm-8.46-.5a.5.5 0 0 1-1 0V3.707L2.354 4.854a.5.5 0 1 1-.708-.708l2-1.999.007-.007a.5.5 0 0 1 .7.006l2 2a.5.5 0 1 1-.707.708L4.5 3.707z'/></svg> Classificar Decrescente</li><li><input class='nosel' type='text' name='filtrarCampo' oninput='mk.headMenuContemInput(this.value)' placeholder='Contém...'></li><li  onclick='mk.headMenuLimpar()' class='botao nosel fimsecao'>" + svgX + " Limpar Filtro de <span class='nomeCampo'></span></li><li><input type='search' oninput='mk.headMenuFiltraExclusivo(this.value)' name='filtrarPossibilidades' placeholder='Pesquisar'></li><li><div class='possibilidades'></div></li></ul></div>";
             document.body.appendChild(ehm);
         }
         if (this.c.objFiltro[colName] != null) {
@@ -457,19 +459,30 @@ class mk {
             });
             let htmlPossiveis = "<ul class='filtravel'>";
             if (exclusivos.length > 0) {
-                htmlPossiveis += "<li class='nosel botao' onclick='mk.headMenuMarcarExclusivos()'>Selecionar Todos";
+                htmlPossiveis += "<li class='nosel botao sel' onclick='mk.headMenuMarcarExclusivos()'>" + svgSquare + "Selecionar Todos";
                 if (v != "") {
                     htmlPossiveis += " Pesquisados";
                 }
                 htmlPossiveis += "</li>";
                 exclusivos.forEach(v => {
-                    htmlPossiveis += "<li>" + v + "</li>";
+                    htmlPossiveis += "<li class='nosel botao sel' onclick='mk.headMenuMarcarExclusivos(\"" + v + "\")'>" + svgSquare + v + "</li>";
                 });
             }
             htmlPossiveis += "</ul>";
             mk.Q("body .mkHeadMenu .possibilidades").innerHTML = htmlPossiveis;
         };
         mk.headMenuFiltraExclusivo("");
+        // Marca de Desmarca
+        mk.headMenuMarcarExclusivos = (t) => {
+            mk.l(t);
+            if (t) {
+            }
+            else {
+                mk.QAll(".mkHeadMenu .possibilidades .filtravel li").forEach(el => {
+                    el.classList.remove("sel");
+                });
+            }
+        };
         mk.headMenuCrescente = () => { this.orderBy(colName, 0); };
         mk.headMenuDecrescente = () => { this.orderBy(colName, 1); };
         mk.headMenuLimpar = () => {
