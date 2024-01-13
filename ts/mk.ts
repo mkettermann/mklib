@@ -1242,19 +1242,26 @@ class mk {
 	};
 
 	// Incrementa no ATRIBUTO do elemento E o texto do GATILHO.
-	static atribuir = (e: any, gatilho: string, atributo: string = "oninput") => {
+	static atribuir = (e: any, gatilho: any, atributo: string = "oninput") => {
 		if (e) {
 			if (atributo) {
-				let attr = e?.getAttribute(atributo);
-				if (attr) {
-					if (!attr.includes(gatilho)) {
-						e?.setAttribute(atributo, attr + ";" + gatilho);
+				let classof = mk.classof(gatilho);
+				if (classof == "Function") {
+					e[atributo] = gatilho;
+				} else if (classof == "String") {
+					let attr = e?.getAttribute(atributo);
+					if (attr) {
+						if (!attr.includes(gatilho)) {
+							e?.setAttribute(atributo, attr + ";" + gatilho);
+						}
+					} else {
+						e?.setAttribute(atributo, gatilho);
 					}
 				} else {
-					e?.setAttribute(atributo, gatilho);
+					mk.w("mk.atribuir() - Formato não implementado: ", classof);
 				}
-			} else { this.w("mk.atribuir() - Precisa de um gatilho: ", gatilho) }
-		} else { this.w("mk.atribuir() - Precisa de um elemento: ", e) }
+			} else { mk.w("mk.atribuir() - Precisa de um gatilho: ", gatilho) }
+		} else { mk.w("mk.atribuir() - Precisa de um elemento: ", e) }
 	}
 
 	// Atalho para innerHTML que retorna apenas o primeiro elemento da query.
@@ -3117,8 +3124,8 @@ class mk {
 		container = mk.Q(container);
 		let e = container?.querySelector("*[name='" + nome + "']");
 		if (e) {
-			mk.atribuir(e, "mk.exeregra(this)", "oninput");
-			mk.atribuir(e, "mk.exeregra(this,event)", "onblur");
+			mk.atribuir(e, () => { mk.exeregra(e) }, "oninput");
+			mk.atribuir(e, () => { mk.exeregra(e, event}, "onblur");
 
 			// Buscar Elemento e regra
 			let auto = false;
