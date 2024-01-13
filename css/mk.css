@@ -1940,6 +1940,7 @@ ul.mkUlFase li.disabled a {
 .mkHeadMenu .htit .fechar {
 	border: 1px outset #0003;
 	border-radius: 4px;
+	line-height: normal;
 }
 
 .mkHeadMenu .htit .fechar svg {

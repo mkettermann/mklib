@@ -492,7 +492,7 @@ class mk {
 			ehm.innerHTML = "<div class='hmin fimsecao'><div class='i htit'><div class='col90'>Filtro</div><div class='col10 fechar botao nosel' onclick='mk.headMenuHideX()'>" + svgX + "</div></div><ul><li onclick='mk.headMenuCrescente()' class='botao nosel'>" + svgAB + " Classificar Crescente</li><li onclick='mk.headMenuDecrescente()' class='botao nosel fimsecao'>" + svgBA + " Classificar Decrescente</li><li><input class='nosel' type='text' name='filtrarCampo' oninput='mk.headMenuContemInput(this.value)' placeholder='Contém...'></li><li  onclick='mk.headMenuLimpar()' class='botao nosel fimsecao'>" + svgX + " Limpar Filtro de <span class='nomeCampo'></span></li><li><input type='search' oninput='mk.headMenuFiltraExclusivo(this.value)' name='filtrarPossibilidades' placeholder='Pesquisar'></li><li><div class='possibilidades'></div></li></ul></div>";
 			document.body.appendChild(ehm);
 		}
-		if (this.c.objFiltro[colName] != null) {
+		if (this.c.objFiltro[colName]?.formato == "string") {
 			mk.Q(".mkHeadMenu input[name='filtrarCampo']").value = this.c.objFiltro[colName]?.conteudo;
 		} else {
 			mk.Q(".mkHeadMenu input[name='filtrarCampo']").value = "";
@@ -595,6 +595,7 @@ class mk {
 		mk.headMenuDecrescente = () => { this.orderBy(colName, 1); };
 		mk.headMenuLimpar = () => {
 			mk.Q(".mkHeadMenu input[name='filtrarCampo']").value = "";
+			this.hmunsel = [];
 			mk.headMenuFiltraExclusivo("");
 			this.clearFiltro(colName);
 			this.atualizarListagem();
