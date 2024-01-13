@@ -612,7 +612,7 @@ class mk {
 			mk.headMenuFiltraExclusivo("");
 		};
 
-		mk.atribuir(mk.Q("body"), "mk.headMenuHide(event)", "onclick");
+		mk.atribuir(mk.Q("body"), () => { mk.headMenuHide(event) }, "onclick");
 		mk.Q("body .mkHeadMenu .nomeCampo").innerHTML = colName;
 		mk.Q("body .mkHeadMenu").classList.remove("oculto");
 		mk.Q("body .mkHeadMenu").classList.add("lock");
@@ -3125,7 +3125,7 @@ class mk {
 		let e = container?.querySelector("*[name='" + nome + "']");
 		if (e) {
 			mk.atribuir(e, () => { mk.exeregra(e) }, "oninput");
-			mk.atribuir(e, () => { mk.exeregra(e, event}, "onblur");
+			mk.atribuir(e, () => { mk.exeregra(e, event) }, "onblur");
 
 			// Buscar Elemento e regra
 			let auto = false;

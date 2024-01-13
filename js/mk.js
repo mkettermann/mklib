@@ -576,7 +576,7 @@ class mk {
             this.hmunsel = [];
             mk.headMenuFiltraExclusivo("");
         };
-        mk.atribuir(mk.Q("body"), "mk.headMenuHide(event)", "onclick");
+        mk.atribuir(mk.Q("body"), () => { mk.headMenuHide(event); }, "onclick");
         mk.Q("body .mkHeadMenu .nomeCampo").innerHTML = colName;
         mk.Q("body .mkHeadMenu").classList.remove("oculto");
         mk.Q("body .mkHeadMenu").classList.add("lock");
