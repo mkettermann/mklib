@@ -1204,13 +1204,18 @@ class mk {
     static QAll = (query = "body") => {
         return Array.from(document.querySelectorAll(query));
     };
+    static AoConfig = {
+        capture: false,
+        once: false,
+        passive: true,
+    };
     // Atalho para AddEventListener
     static Ao = (tipoEvento = "click", query, executar) => {
-        // CONVERTER PARA QUERY SELECTALL pois, tem o Pesquisar que pega todos os .iConsultas
+        // Em QAll, pois o Filtro pega todos os .iConsultas
         mk.QAll(query).forEach((e) => {
             e.addEventListener(tipoEvento, () => {
                 executar(e);
-            });
+            }, mk.AoConfig);
         });
     };
     // Incrementa no ATRIBUTO do elemento E o texto do GATILHO.
