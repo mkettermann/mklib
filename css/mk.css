@@ -1915,11 +1915,35 @@ ul.mkUlFase li.disabled a {
 }
 
 .mkHeadMenu .hmin {
+	display: flex;
+	flex-direction: column;
 	background-color: white;
 	border: 1px outset #0005;
 	border-radius: 5px;
 	box-shadow: -1px 2px 5px #0004;
-	padding: 5px;
+	padding: 0px;
+}
+
+.mkHeadMenu .hmin .htit {
+	display: flex;
+	margin: auto;
+	text-align: center;
+	background-color: #ccc;
+	border-top-right-radius: 5px;
+	border-top-left-radius: 5px;
+}
+
+.mkHeadMenu .hmin .htit div:nth-child(1) {
+	padding: 1px;
+}
+
+.mkHeadMenu .htit .fechar {
+	border: 1px outset #0003;
+	border-radius: 4px;
+}
+
+.mkHeadMenu .htit .fechar svg {
+	margin-bottom: -2px;
 }
 
 .mkHeadMenu .botao {
@@ -1945,7 +1969,11 @@ ul.mkUlFase li.disabled a {
 	padding: 2px;
 }
 
-.mkHeadMenu li.fimsecao {
+.mkHeadMenu li svg {
+	margin-bottom: -2px;
+}
+
+.mkHeadMenu .fimsecao {
 	border-bottom: 2px inset #0002;
 }
 
