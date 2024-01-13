@@ -1940,11 +1940,6 @@ ul.mkUlFase li.disabled a {
 .mkHeadMenu .htit .fechar {
 	border: 1px outset #0003;
 	border-radius: 4px;
-	line-height: normal;
-}
-
-.mkHeadMenu .htit .fechar svg {
-	margin-bottom: -2px;
 }
 
 .mkHeadMenu .botao {
@@ -1968,10 +1963,11 @@ ul.mkUlFase li.disabled a {
 
 .mkHeadMenu li {
 	padding: 2px;
+	line-height: normal;
 }
 
 .mkHeadMenu li svg {
-	margin-bottom: -2px;
+	margin-bottom: 1px;
 }
 
 .mkHeadMenu .fimsecao {
@@ -2239,4 +2235,14 @@ input.input-validation-error {
 
 .mkSelBloco:has(.regraBlink) {
 	outline: 2px dotted #F009 !important;
+}
+
+/* Corretores */
+svg {
+	vertical-align: middle;
+}
+
+/*Corretor*/
+.mkHeadMenu li svg {
+	margin-bottom: 1px;
 }
