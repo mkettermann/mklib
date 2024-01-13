@@ -410,11 +410,9 @@ class mk {
     };
     // Gerar Gatilhos de FILTRO
     setFiltroListener = () => {
-        mk.QAll(this.c.filtro).forEach((e) => {
-            e.addEventListener("input", () => {
-                this.gerarFiltro(e);
-                this.atualizaNaPaginaUm();
-            });
+        mk.Ao("input", this.c.filtro, (e) => {
+            this.gerarFiltro(e);
+            this.atualizaNaPaginaUm();
         });
     };
     static headMenuHide = (ev) => {
@@ -1209,7 +1207,7 @@ class mk {
         once: false,
         passive: true,
     };
-    // Atalho para AddEventListener
+    // Adiciona evento em todos elementos encontrados
     static Ao = (tipoEvento = "click", query, executar) => {
         // Em QAll, pois o Filtro pega todos os .iConsultas
         mk.QAll(query).forEach((e) => {
