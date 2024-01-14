@@ -12,12 +12,12 @@ const menuAbrir = async (t) => {
 	} else {
 		console.log("Destino Nulo");
 	}
-	setCookie("ultima", t);
+	setCookie("ultima", t, 30);
 };
 let ultima = getCookie("ultima");
 if (ultima == "") {
 	ultima = "zone"
-	setCookie("ultima", ultima);
+	setCookie("ultima", ultima, 30);
 }
 menuAbrir(ultima);
 
