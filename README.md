@@ -1,6 +1,9 @@
 # MasterKey
-> MasterKey é uma biblioteca JS com ferramentas de suporte ao desenvolvimento front end.
-> Com UI, funções, controladores, gerenciadores...
+> MasterKey é uma biblioteca JS (em JavaScript) com ferramentas de suporte ao desenvolvimento front end.
+> Esta biblioteca foi desenvolvida pra criação de objetos a partir de uma classe onde seu principal propósito é a exibição e manipulação de listas pelo usuário.
+> Muitos métodos foram adicionados para comunicação com backend, iteração com o DOM, cálculos, filtros de sobre a listagem de muitas colunas para muitos filtros simultâneos...
+> Alguns métodos evoluiram com o tempo e foram removidos após inserção de seus substitutos mais performáticos e flexíveis.
+> A partir da construção da classe, é possível receber dados a partir de uma URL ou informar os dados dela diretamente. Nesse processo, informa-se um modelo de como esses dados serão exibidos e um container contendo onde eles serão depositados dinamicamente. Se configurados adequadamente, filtros individuais já presentes na página serão associados aos dados da tabela, uma ordenação inicial já será feita e também será possível a iteração com cada linha a partir de comandos da sua interface (UI).
 
 <br>
 
