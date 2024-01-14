@@ -293,7 +293,7 @@
 	width: 50%;
 }
 
-.mkSelArrowSelLeft:hover::before {
+/* .mkSelArrowSelLeft:hover::before {
 	transform: translateX(-4px) rotate(55deg) scale(1.2) skew(-35deg);
 	transition: 1s cubic-bezier(0.1, 0, 0, 1);
 }
@@ -301,7 +301,7 @@
 .mkSelArrowSelRight:hover::before {
 	transform: translateX(4px) rotate(55deg) scale(1.2) skew(-35deg);
 	transition: 1s cubic-bezier(0.1, 0, 0, 1);
-}
+} */
 
 .mkSelBloco:has(input.mkSelInputExibe:focus) .mkSelInputExibeArrow {
 	transform: rotate(-225deg);
