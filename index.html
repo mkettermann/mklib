@@ -3,7 +3,13 @@
 
 <head>
 	<meta charset="UTF-8" />
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta http-equiv="cache-control" content="no-cache" />
+	<meta http-equiv="content-language" content="pt-br" />
+	<meta name="copyright" content="© MK Desenvolvimento - Marcos Kettermann" />
+	<meta http-equiv="expires" content="0" />
+	<meta http-equiv="pragma" content="no-cache" />
 	<title>Funcionalidades MK</title>
 	<link rel="icon" type="image/x-icon" href="./img/mkico.jpg" />
 	<link rel="stylesheet" href="./css/reset.css" />
@@ -22,14 +28,14 @@
 	<div class="Corpo">
 		<nav>
 			<div class="Menu">
-				<div class="MenuLink" onclick="menuAbrir(this)" data-go="Zone.html">
+				<div id="zone" class="MenuLink" onclick="menuAbrir(this.id)" data-go="Zone.html">
 					<span>Zone</span>
 					<span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
 							<path fill-rule="evenodd"
 								d="M1.114 8.063V7.9c1.005-.102 1.497-.615 1.497-1.6V4.503c0-1.094.39-1.538 1.354-1.538h.273V2h-.376C2.25 2 1.49 2.759 1.49 4.352v1.524c0 1.094-.376 1.456-1.49 1.456v1.299c1.114 0 1.49.362 1.49 1.456v1.524c0 1.593.759 2.352 2.372 2.352h.376v-.964h-.273c-.964 0-1.354-.444-1.354-1.538V9.663c0-.984-.492-1.497-1.497-1.6ZM14.886 7.9v.164c-1.005.103-1.497.616-1.497 1.6v1.798c0 1.094-.39 1.538-1.354 1.538h-.273v.964h.376c1.613 0 2.372-.759 2.372-2.352v-1.524c0-1.094.376-1.456 1.49-1.456v-1.3c-1.114 0-1.49-.362-1.49-1.456V4.352C14.51 2.759 13.75 2 12.138 2h-.376v.964h.273c.964 0 1.354.444 1.354 1.538V6.3c0 .984.492 1.497 1.497 1.6ZM7.5 11.5V9.207l-1.621 1.621-.707-.707L6.792 8.5H4.5v-1h2.293L5.172 5.879l.707-.707L7.5 6.792V4.5h1v2.293l1.621-1.621.707.707L9.208 7.5H11.5v1H9.207l1.621 1.621-.707.707L8.5 9.208V11.5h-1Z" />
 						</svg></span>
 				</div>
-				<div class="MenuLink" onclick="menuAbrir(this)" data-go="molde.html">
+				<div id="molde" class="MenuLink" onclick="menuAbrir(this.id)" data-go="molde.html">
 					<span>Molde</span>
 					<span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
 							<path
@@ -37,14 +43,14 @@
 						</svg></span>
 				</div>
 
-				<div class="MenuLink inicio" onclick="menuAbrir(this)" data-go="listagemMk.html">
+				<div id="listagem" class="MenuLink" onclick="menuAbrir(this.id)" data-go="listagemMk.html">
 					<span>Listagem Instanciável</span>
 					<span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
 							<path
 								d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm15 2h-4v3h4V4zm0 4h-4v3h4V8zm0 4h-4v3h3a1 1 0 0 0 1-1v-2zm-5 3v-3H6v3h4zm-5 0v-3H1v2a1 1 0 0 0 1 1h3zm-4-4h4V8H1v3zm0-4h4V4H1v3zm5-3v3h4V4H6zm4 4H6v3h4V8z" />
 						</svg></span>
 				</div>
-				<div class="MenuLink" onclick="menuAbrir(this)" data-go="Seletor.html">
+				<div id="seletor" class="MenuLink" onclick="menuAbrir(this.id)" data-go="Seletor.html">
 					<span>Seletor</span>
 					<span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
 							<path d="M3.626 6.832A.5.5 0 0 1 4 6h8a.5.5 0 0 1 .374.832l-4 4.5a.5.5 0 0 1-.748 0l-4-4.5z" />
@@ -52,7 +58,7 @@
 								d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm15 0a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2z" />
 						</svg></span>
 				</div>
-				<div class="MenuLink" onclick="menuAbrir(this)" data-go="Recomendador.html">
+				<div id="recomendados" class="MenuLink" onclick="menuAbrir(this.id)" data-go="Recomendador.html">
 					<span>Recomendador</span>
 					<span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
 							<path fill-rule="evenodd"
@@ -61,7 +67,7 @@
 								d="M11 10.5a.5.5 0 0 1-.5.5h-5a.5.5 0 0 1 0-1h3.793L1.146 1.854a.5.5 0 1 1 .708-.708L10 9.293V5.5a.5.5 0 0 1 1 0v5z" />
 						</svg></span>
 				</div>
-				<div class="MenuLink" onclick="menuAbrir(this)" data-go="Confirmar.html">
+				<div id="confirmar" class="MenuLink" onclick="menuAbrir(this.id)" data-go="Confirmar.html">
 					<span>Confirmar</span>
 					<span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
 							<path
@@ -70,7 +76,7 @@
 								d="M10.97 4.97a.75.75 0 0 1 1.071 1.05l-3.992 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.235.235 0 0 1 .02-.022z" />
 						</svg></span>
 				</div>
-				<div class="MenuLink" onclick="menuAbrir(this)" data-go="Regrar.html">
+				<div id="regrar" class="MenuLink" onclick="menuAbrir(this.id)" data-go="Regrar.html">
 					<span>Regrar</span>
 					<span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
 							<path
@@ -79,7 +85,7 @@
 								d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z" />
 						</svg></span>
 				</div>
-				<div class="MenuLink" onclick="menuAbrir(this)" data-go="BotaoValue.html">
+				<div id="botaovalue" class="MenuLink" onclick="menuAbrir(this.id)" data-go="BotaoValue.html">
 					<span>Botão Value Objeto</span>
 					<span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
 							<path
