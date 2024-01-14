@@ -4706,7 +4706,7 @@ class mk {
     };
 } // <<< FIM MK Class.
 // Configs
-Object.defineProperty(mk, "http", { enumerable: false });
+//Object.defineProperty(mk, "request", { enumerable: false });
 //onerror = () => { mk.l("ERRO") };
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //		AO INICIAR										\\
