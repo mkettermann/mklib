@@ -1,4 +1,7 @@
 const menuAbrir = async (t) => {
+	if (!t) {
+		t = "zone";
+	}
 	let e = mk.Q("#" + t);
 	let destino = mk.QdataGet(e, "go");
 	if (destino != null) {
@@ -14,12 +17,7 @@ const menuAbrir = async (t) => {
 	}
 	setCookie("ultima", t, 30);
 };
-let ultima = getCookie("ultima");
-if (ultima == "") {
-	ultima = "zone"
-	setCookie("ultima", ultima, 30);
-}
-menuAbrir(ultima);
+menuAbrir(getCookie("ultima"));
 
 /**Confirmar */
 const aoIncrementar = async (e) => {
