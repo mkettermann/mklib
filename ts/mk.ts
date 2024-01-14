@@ -458,7 +458,7 @@ class mk {
 		if (ehm?.classList.contains("lock")) {
 			ehm.classList.remove("lock");
 		} else {
-			let ethm = mk.getEClass(ev.target, "mkHeadMenu");
+			let ethm = ev.target.closest('.mkHeadMenu');
 			if (!ethm) {
 				ehm?.classList.add("oculto");
 			}
@@ -1961,52 +1961,6 @@ class mk {
 		return o;
 	};
 
-	// Sobe os elementos até encontrar o form pertencente a este elemento. (Se limita ao BODY)
-	static getFormFrom = (e: any) => {
-		let eForm = e;
-		while (eForm.tagName != "FORM") {
-			eForm = eForm.parentElement;
-			if (eForm.tagName == "BODY") {
-				console.error(
-					"Não foi possível encontrar o elemento FORM na busca getFormFrom()"
-				);
-				break;
-			}
-		}
-		return eForm;
-	};
-
-	static getTr = (e: any) => {
-		let eTr = e;
-		while (eTr.tagName != "TR") {
-			eTr = eTr.parentElement;
-			if (eTr.tagName == "BODY") {
-				console.error(
-					"Não foi possível encontrar o elemento TR na busca getTr()"
-				);
-				eTr = null;
-				break;
-			}
-		}
-		return eTr;
-	};
-
-	// Sobe elementos pais até encontrar este elemento
-	static getETag = (e: any, tag: string) => {
-		let eTr = e;
-		while (eTr.tagName != tag) {
-			eTr = eTr.parentElement;
-			if (eTr.tagName == "BODY") {
-				console.error(
-					"Não foi possível encontrar o elemento " + tag + " na busca getETag()"
-				);
-				eTr = null;
-				break;
-			}
-		}
-		return eTr;
-	};
-
 	// E - ESTA DENTRO DE - CONTAINER?
 	static isInside = (e: any, container: any) => {
 		let resultado = false;
@@ -2029,24 +1983,6 @@ class mk {
 			this.w("isInside: E: ", e, " Container: ", container);
 		}
 		return resultado;
-	};
-
-	// Sobe elementos pais até encontrar esta classe
-	static getEClass = (e: any, classe: string) => {
-		let eClass = e;
-		while (!eClass.classList.contains(classe)) {
-			eClass = eClass.parentElement;
-			if (eClass == null) {
-				// Desativei pois comecei a usar invertido
-				// mk.w(
-				// 	"Não foi possível encontrar o elemento com esta classe. getEClass.",
-				// 	classe
-				// );
-				eClass = null;
-				break;
-			}
-		}
-		return eClass;
 	};
 
 	// Retorna uma array utilizando um template do que deve ser preenchido.
