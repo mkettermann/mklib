@@ -8,8 +8,8 @@
 	<link rel="icon" type="image/x-icon" href="./img/mkico.jpg" />
 	<link rel="stylesheet" href="./css/reset.css" />
 	<link rel="stylesheet" href="./css/tema.css" />
-	<link rel="stylesheet" href="./css/site.css?1" />
-	<link rel="stylesheet" href="./css/mk.css?1" />
+	<link class="versao" rel="stylesheet" href="./css/site.css?" />
+	<link class="versao" rel="stylesheet" href="./css/mk.css?" />
 </head>
 
 <body>
@@ -95,9 +95,21 @@
 		</main>
 	</div>
 	<footer>By Marcos Kettermann - MK Desenvolvimento</footer>
-	<script src="./js/popperv2.js?1"></script>
-	<script src="./js/mk.js?1"></script>
-	<script src="./js/site.js?1"></script>
+	<script src="./js/popperv2.js" defer></script>
+	<script class="versao" src="./js/mk.js?" defer></script>
+	<script class="versao" src="./js/site.js?" defer></script>
+	<script>
+		"use strict"
+		var versao = (Math.random() * (Math.pow(10, 10))).toFixed().padStart(10, "0");
+		[...document.querySelectorAll(".versao")].forEach(s => {
+			let onde = "src";
+			if (s.tagName == "LINK") {
+				onde = "href";
+			}
+			let a = s.getAttribute(onde);
+			s.setAttribute(onde, a + versao);
+		});
+	</script>
 </body>
 
 </html>

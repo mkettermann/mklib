@@ -1,13 +1,13 @@
 "use strict";
 
-var lista = new mk("/GetList", "#tabela1", "", "", {
+var lista = new mk("./GetList", "#tabela1", "", "", {
 	importar: true,
 });
-var lista2 = new mk("/GetList2", "#tabela2", "#modelo2", ".fTabela2", {
+var lista2 = new mk("./GetList2", "#tabela2", "#modelo2", ".fTabela2", {
 	importar: true,
 	tipoHead: "menu"
 });
-var lista3 = new mk("/GetList3", "#tabela3", "#modelo3", ".fTabela3");
+var lista3 = new mk("./GetList3", "#tabela3", "#modelo3", ".fTabela3");
 
 //var lista = new Mk("/data/usersExemplo.json", ".tabela1", "#modelo");
 
