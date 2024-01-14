@@ -1,0 +1,33 @@
+:root {
+	--g5AzulEscuro: #292562;
+	--g5AzulEscuroCC: #292562cc;
+	--g5AzulEscuro99: #29256299;
+	--g5AzulEscuro66: #29256266;
+	--g5AzulEscuro33: #29256233;
+	--g5AzulClaro: #00d1c3;
+	--g5AzulClaroCC: #00d1c3cc;
+	--g5AzulClaro99: #00d1c399;
+	--g5AzulClaro66: #00d1c366;
+	--g5AzulClaro33: #00d1c333;
+	--g5BrancoElevado: #f7f7f7;
+	--g5BrancoElevadoCC: #f7f7f7cc;
+	--g5BrancoElevado99: #f7f7f799;
+	--g5BrancoElevado66: #f7f7f766;
+	--g5BrancoElevado33: #f7f7f733;
+	--g5BrancoSujo: #e0e0e0;
+	--g5BrancoSujoCC: #e0e0e0cc;
+	--g5BrancoSujo99: #e0e0e099;
+	--g5BrancoSujo66: #e0e0e066;
+	--g5BrancoSujo33: #e0e0e033;
+	--g5VerdeLima: #c1e300;
+	--g5VerdeLimaCC: #c1e300cc;
+	--g5VerdeLima99: #c1e30099;
+	--g5VerdeLima66: #c1e30066;
+	--g5VerdeLima33: #c1e30033;
+	--g5CinzaEscuro: #494951;
+	--g5CinzaEscuro99: #49495199;
+	--g5CinzaEscuro66: #49495166;
+	--g5CinzaEscuro33: #49495133;
+	--menuSize: 270px;
+	--botaoMenu: 60px;
+}
