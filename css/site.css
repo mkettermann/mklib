@@ -201,7 +201,6 @@ nav .Menu:hover {
 }
 
 .Menu .MenuLink {
-	font-size: 2rem;
 	cursor: pointer;
 	display: flex;
 	justify-content: space-between;
