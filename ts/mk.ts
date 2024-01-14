@@ -25,6 +25,7 @@ class mk {
 	alvo: any = {}; // Guarda o objeto selecionado permitindo manupular outro dado com este de referencia.
 	thisListNum = 0;
 	idContainer: any = 0;
+	static infolog = true;
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 	//			CONSTRUTOR (contrutor)			\\
@@ -1170,22 +1171,32 @@ class mk {
 
 	// Classes do Console.
 	static w = (...s: any) => {
-		console.warn(...s);
+		if (mk.infolog) {
+			console.warn(...s);
+		}
 	};
 	static erro = (...s: any) => {
-		console.error(...s);
+		if (mk.infolog) {
+			console.error(...s);
+		}
 	};
 	static l = (...s: any) => {
-		console.log(...s);
+		if (mk.infolog) {
+			console.log(...s);
+		}
 	};
 	static cls = () => {
 		console.clear();
 	};
 	static gc = (...s: any) => {
-		console.groupCollapsed(...s);
+		if (mk.infolog) {
+			console.groupCollapsed(...s);
+		}
 	};
 	static ge = () => {
-		console.groupEnd();
+		if (mk.infolog) {
+			console.groupEnd();
+		}
 	};
 	static ct = (s: any) => {
 		let t = mk.timers.find((t: any) => t.name == s);
@@ -1196,7 +1207,6 @@ class mk {
 				fim: 0,
 				tempo: -1,
 			});
-			// console.time(s);
 		}
 	};
 	static cte = (s: any, quietMode: any = false) => {
@@ -1208,8 +1218,6 @@ class mk {
 		if (!quietMode) {
 			mk.l(s + " \t-> " + t.tempo + " ms");
 		}
-
-		// console.timeEnd(s);
 	};
 
 	// Atalho para QuerySelector que retorna apenas o primeiro elemento da query.
@@ -1884,7 +1892,7 @@ class mk {
 				r(arq);
 			};
 			leitor.onerror = () => {
-				console.error("Erro ao ler arquivo: " + arq);
+				mk.erro("Erro ao ler arquivo: " + arq);
 			};
 			if (arq) {
 				if (arq.name != "") {
@@ -1995,25 +2003,25 @@ class mk {
 		if (Array.isArray(arrTemplate)) {
 			if (arrTemplate.length > 0) {
 				if (arrTemplate.length < inicio) {
-					console.error(
+					mk.erro(
 						"O arrTemplate tem menos itens do que o informado para o inicio"
 					);
 					return novaArray;
 				}
 			} else {
-				console.error(
+				mk.erro(
 					"Função encheArray precisa receber ao menos 1 item em arrTemplate."
 				);
 				return novaArray;
 			}
 		} else {
-			console.error(
+			mk.erro(
 				"Função encheArray precisa receber uma array com dados em arrTemplate."
 			);
 			return novaArray;
 		}
 		if (inicio <= 0) {
-			console.error("O inicio precisa ser maior que zero.");
+			mk.erro("O inicio precisa ser maior que zero.");
 			return novaArray;
 		}
 		if (total == null) total = arrTemplate.length;
@@ -2038,25 +2046,25 @@ class mk {
 		if (Array.isArray(arrTemplate)) {
 			if (arrTemplate.length > 0) {
 				if (arrTemplate.length < fim) {
-					console.error(
+					mk.erro(
 						"O arrTemplate tem menos itens do que o informado para o fim."
 					);
 					return novaArray;
 				}
 			} else {
-				console.error(
+				mk.erro(
 					"Função encheArrayUltimos precisa receber ao menos 1 item em arrTemplate."
 				);
 				return novaArray;
 			}
 		} else {
-			console.error(
+			mk.erro(
 				"Função encheArrayUltimos precisa receber uma array com dados em arrTemplate."
 			);
 			return novaArray;
 		}
 		if (fim <= 0) {
-			console.error("O fim precisa ser maior que zero.");
+			mk.erro("O fim precisa ser maior que zero.");
 			return novaArray;
 		}
 		if (total == null) total = arrTemplate.length;
@@ -2512,7 +2520,7 @@ class mk {
 			}
 		}
 		// config.dev = true;
-		// INFO CONSOLE
+		// INFO
 		if (!config.quiet) {
 			mk.gc(nomeRequest);
 			if (config.dev) {
@@ -2557,7 +2565,7 @@ class mk {
 				mk.gc(
 					"HTTP RETURNO: " + config.pacote.status + " " + config.pacote.statusText
 				);
-				mk.l(await config.pacote.text()); // Exibir o erro no console;
+				mk.l(await config.pacote.text());
 				mk.ge();
 			} else {
 				config.conectou = true;
@@ -2597,7 +2605,7 @@ class mk {
 			// Se bateu no catch, expoem trace error do JS
 			if (config.catch && !config.quiet) {
 				mk.l("Config: " + config);
-				console.error("Erro: ", config.catch);
+				mk.erro("Erro: ", config.catch);
 			}
 			// Executa funcao de erro externa.
 			if (config.error) { config.error(config); }
@@ -2684,8 +2692,8 @@ class mk {
 				mk.gc(
 					"HTTP RETURNO: " + pacoteHttp.status + " " + pacoteHttp.statusText
 				);
-				console.error("HTTP RETURNO: Não retornou 200.");
-				mk.l(await pacoteHttp.text()); // Exibir o erro no console;
+				mk.erro("HTTP RETURNO: Não retornou 200.");
+				mk.l(await pacoteHttp.text());
 				mk.ge();
 				if (carregador) {
 					this.CarregarOFF();
@@ -2722,7 +2730,7 @@ class mk {
 			}
 			if (error) {
 				mk.gc("HTTP ERRO: ");
-				console.error("Erro: ", error);
+				mk.erro("Erro: ", error);
 				mk.ge();
 			}
 
@@ -3848,14 +3856,14 @@ class mk {
 		return new Promise((r) => {
 			let eModelo = mk.Q(modelo);
 			if (eModelo == null) {
-				console.error(
+				mk.erro(
 					"Modelo (Template) informado (" + modelo + ") não encontrado."
 				);
 				return r(null);
 			}
 			let eRepositorio = mk.Q(repositorio);
 			if (eRepositorio == null) {
-				console.error(
+				mk.erro(
 					"Repositório informado (" + repositorio + ") não encontrado."
 				);
 				return r(null);
@@ -4357,7 +4365,7 @@ class mk {
 							e.classList.remove("refilling");
 							r(e);
 						} else {
-							console.error("Resultado não é um JSON. (mkSelDlRefill)");
+							mk.erro("Resultado não é um JSON. (mkSelDlRefill)");
 						}
 					}
 				} // Apenas 1 rewfill por vez
@@ -4447,7 +4455,7 @@ class mk {
 				let string = JSON.stringify(arraySelecionado);
 				if (ePrincipal.type == "text") ePrincipal.value = string;
 				else
-					console.error(
+					mk.erro(
 						"Erro durante o Set/Conversão do campo. É necessário que este campo seja tipo string."
 					);
 			}
@@ -4561,7 +4569,7 @@ class mk {
 					}
 				}
 			} catch {
-				console.error(
+				mk.erro(
 					"Erro durante conversao para Json:" + e.getAttribute("data-selarray")
 				);
 			}
@@ -4720,14 +4728,6 @@ class mk {
 				let alvoOffsetTop = eListItem?.offsetTop || 0;
 				eList.scrollTop =
 					alvoOffsetTop - 120 - (eList.clientHeight - eList.offsetHeight) / 2;
-
-				// console.table({
-				// 	Resultado: eList.scrollTop,
-				// 	eListItem: eListItem.offsetTop,
-				// 	eListOffsetTop (120): eList.offsetTop,
-				// 	eListOffSetHeight: eList.offsetHeight,
-				// 	eListClientHeight: eList.clientHeight,
-				// });
 			}
 		}
 		if (isNegado) {
@@ -4977,7 +4977,7 @@ class mk {
 							mk.mkNodeToScript(o.e);
 						} catch (error) {
 							mk.gc("Auto Import por TAG lancou erros:");
-							console.error("ERRO: ", error);
+							mk.erro("ERRO: ", error);
 							mk.ge();
 						}
 					} else {
