@@ -514,22 +514,49 @@ class mk {
     static headMenuCrescente = () => { };
     static headMenuDecrescente = () => { };
     static headMenuLimpar = () => { };
+    static headMenuLimparTodos = () => { };
     static headMenuContemInput = (v) => { };
     static headMenuFiltraExclusivo = (v) => { };
     static headMenuMarcarExclusivos = (e) => { };
     exclusivos = [];
     hmunsel = [];
+    static hmCfg = {
+        svgSquare: "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path d='M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z'/></svg>&nbsp;",
+        svgX: "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path d='M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708'/></svg>",
+        svgAB: "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M10.082 5.629 9.664 7H8.598l1.789-5.332h1.234L13.402 7h-1.12l-.419-1.371zm1.57-.785L11 2.687h-.047l-.652 2.157z'/><path d='M12.96 14H9.028v-.691l2.579-3.72v-.054H9.098v-.867h3.785v.691l-2.567 3.72v.054h2.645zM4.5 2.5a.5.5 0 0 0-1 0v9.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L4.5 12.293z'/></svg>",
+        svgBA: "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M10.082 5.629 9.664 7H8.598l1.789-5.332h1.234L13.402 7h-1.12l-.419-1.371zm1.57-.785L11 2.687h-.047l-.652 2.157z'/><path d='M12.96 14H9.028v-.691l2.579-3.72v-.054H9.098v-.867h3.785v.691l-2.567 3.72v.054h2.645zm-8.46-.5a.5.5 0 0 1-1 0V3.707L2.354 4.854a.5.5 0 1 1-.708-.708l2-1.999.007-.007a.5.5 0 0 1 .7.006l2 2a.5.5 0 1 1-.707.708L4.5 3.707z'/></svg>",
+        clacre: "Classificar Crescente",
+        cladec: "Classificar Decrescente",
+        contem: "Contém...",
+        limparIndivisual: "Limpar",
+        limparTodos: "Limpar Todos Filtros",
+    };
     // HM (MK HEAD MENU)
     headMenuAbrir = (colName, e) => {
-        let svgSquare = "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path d='M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z'/></svg>&nbsp;";
-        let svgX = "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path d='M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708'/></svg>";
-        let svgAB = "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M10.082 5.629 9.664 7H8.598l1.789-5.332h1.234L13.402 7h-1.12l-.419-1.371zm1.57-.785L11 2.687h-.047l-.652 2.157z'/><path d='M12.96 14H9.028v-.691l2.579-3.72v-.054H9.098v-.867h3.785v.691l-2.567 3.72v.054h2.645zM4.5 2.5a.5.5 0 0 0-1 0v9.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L4.5 12.293z'/></svg>";
-        let svgBA = "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M10.082 5.629 9.664 7H8.598l1.789-5.332h1.234L13.402 7h-1.12l-.419-1.371zm1.57-.785L11 2.687h-.047l-.652 2.157z'/><path d='M12.96 14H9.028v-.691l2.579-3.72v-.054H9.098v-.867h3.785v.691l-2.567 3.72v.054h2.645zm-8.46-.5a.5.5 0 0 1-1 0V3.707L2.354 4.854a.5.5 0 1 1-.708-.708l2-1.999.007-.007a.5.5 0 0 1 .7.006l2 2a.5.5 0 1 1-.707.708L4.5 3.707z'/></svg>";
         e.classList.add("headMenuTarget");
         if (mk.Q("body .mkHeadMenu") == null) {
             let ehm = document.createElement("div");
             ehm.className = "mkHeadMenu oculto";
-            ehm.innerHTML = "<div class='hmin fimsecao'><div class='i htit'><div class='col90'>Filtro</div><div class='col10 fechar botao nosel' onclick='mk.headMenuHideX()'>" + svgX + "</div></div><ul><li onclick='mk.headMenuCrescente()' class='botao nosel'>" + svgAB + " Classificar Crescente</li><li onclick='mk.headMenuDecrescente()' class='botao nosel fimsecao'>" + svgBA + " Classificar Decrescente</li><li><input class='nosel' type='text' name='filtrarCampo' oninput='mk.headMenuContemInput(this.value)' placeholder='Contém...'></li><li  onclick='mk.headMenuLimpar()' class='botao nosel fimsecao'>" + svgX + " Limpar Filtro de <span class='nomeCampo'></span></li><li><input type='search' oninput='mk.headMenuFiltraExclusivo(this.value)' name='filtrarPossibilidades' placeholder='Pesquisar'></li><li><div class='possibilidades'></div></li></ul></div>";
+            ehm.innerHTML = `
+			<div class='hmin fimsecao'>
+				<div class='i htit'>
+					<div class='col90'>
+						Filtro
+					</div>
+					<div class='col10 fechar botao nosel' onclick='mk.headMenuHideX()'>
+						${mk.hmCfg.svgX}
+					</div>
+				</div>
+				<ul>
+					<li onclick='mk.headMenuCrescente()' class='botao nosel'>${mk.hmCfg.svgAB} ${mk.hmCfg.clacre}</li>
+					<li onclick='mk.headMenuDecrescente()' class='botao nosel fimsecao'>${mk.hmCfg.svgBA} ${mk.hmCfg.cladec}</li>
+					<li><input class='nosel' type='text' name='filtrarCampo' oninput='mk.headMenuContemInput(this.value)' placeholder='${mk.hmCfg.contem}'></li>
+					<li onclick='mk.headMenuLimparTodos()' class='botao nosel'>${mk.hmCfg.svgX} ${mk.hmCfg.limparTodos}</li>
+					<li onclick='mk.headMenuLimpar()' class='botao nosel fimsecao'>${mk.hmCfg.svgX} ${mk.hmCfg.limparIndivisual} <span class='nomeCampo'></span></li>
+					<li><input type='search' oninput='mk.headMenuFiltraExclusivo(this.value)' name='filtrarPossibilidades' placeholder='Pesquisar'></li>
+					<li><div class='possibilidades'></div></li>
+				</ul>
+			</div>`;
             document.body.appendChild(ehm);
         }
         if (this.c.objFiltro[colName]?.formato == "string") {
@@ -559,7 +586,7 @@ class mk {
                 if (mk.Q("body .mkHeadMenu .possibilidades").classList.contains("st")) {
                     fullsel = "";
                 }
-                htmlPossiveis += "<li class='nosel botao " + fullsel + "' id='headMenuTodos' onclick='mk.headMenuMarcarExclusivos()'>" + svgSquare + "Selecionar Todos";
+                htmlPossiveis += "<li class='nosel botao " + fullsel + "' id='headMenuTodos' onclick='mk.headMenuMarcarExclusivos()'>" + mk.hmCfg.svgSquare + "Selecionar Todos";
                 if (v != "") {
                     htmlPossiveis += " Pesquisados";
                 }
@@ -571,7 +598,7 @@ class mk {
                             sel = "";
                         }
                     });
-                    htmlPossiveis += "<li name='" + v + "' class='nosel botao " + sel + "' onclick='mk.headMenuMarcarExclusivos(this)'>" + svgSquare + v + "</li>";
+                    htmlPossiveis += "<li name='" + v + "' class='nosel botao " + sel + "' onclick='mk.headMenuMarcarExclusivos(this)'>" + mk.hmCfg.svgSquare + v + "</li>";
                 });
             }
             htmlPossiveis += "</ul>";
@@ -644,6 +671,13 @@ class mk {
             this.clearFiltro(colName);
             this.atualizarListagem();
         };
+        mk.headMenuLimparTodos = () => {
+            mk.Q(".mkHeadMenu input[name='filtrarCampo']").value = "";
+            this.hmunsel = [];
+            mk.headMenuFiltraExclusivo("");
+            this.clearFiltro();
+            this.atualizarListagem();
+        };
         mk.headMenuContemInput = (v) => {
             this.c.objFiltro[colName] = {
                 formato: "string",
@@ -659,6 +693,7 @@ class mk {
         mk.Q("body .mkHeadMenu .nomeCampo").innerHTML = colName;
         mk.Q("body .mkHeadMenu").classList.remove("oculto");
         mk.Q("body .mkHeadMenu").classList.add("lock");
+        mk.Q(".mkHeadMenu input[name='filtrarCampo']").focus();
     };
     // Gera Listeners na THEAD da tabela (Requer classe: "sort-campo")
     headAtivar = () => {
@@ -3666,17 +3701,17 @@ class mk {
         return null;
     };
     // Conversor de "${obj.key}" em valor.
-    static mkToValue = (mk, o) => {
+    static mkToValue = (m, o) => {
         let ret = "";
-        if (mk.indexOf("${") >= 0) {
-            let ini = mk.split("${");
+        if (m.indexOf("${") >= 0) {
+            let ini = m.split("${");
             ret = ini[0];
             for (let i in ini) {
                 if (i == "0")
                     continue;
                 let end = ini[i].indexOf("}");
-                let key = ini[i].slice(0, end);
-                if (typeof o == "object" && o != null) {
+                let key = ini[i].slice(0, end).trim();
+                if (mk.classof(o) == "Object" && o != null) {
                     let v = this.removerAspasDuplas(this.getV(key, o));
                     if (v != null) {
                         ret += v;
@@ -3686,7 +3721,7 @@ class mk {
             }
         }
         else {
-            ret = mk;
+            ret = m;
         }
         return ret;
     };
