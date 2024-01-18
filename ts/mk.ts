@@ -135,7 +135,7 @@ class mk {
 	) => {
 		this.c.urlOrigem = urlOrigem;
 		this.c.filtro = fTag;
-		this.c.nomeTabela = todaListagem;
+		this.c.divTabela = todaListagem;
 		this.c.idModelo = idModelo;
 		this.c.tbody = todaListagem + " tbody";
 		this.c.ths = todaListagem + " th";
@@ -143,16 +143,17 @@ class mk {
 		this.c.tableResultado = todaListagem + " .tableResultado";
 		this.c.tablePorPagina = todaListagem + " input[name='tablePorPagina']";
 		this.c.tableExibePorPagina = todaListagem + " .tableExibePorPagina";
-		this.c.tableTotal = this.c.nomeTabela + " .tableTotal";
-		this.c.tableFiltrado = this.c.nomeTabela + " .tableFiltrado";
-		this.c.tableIni = this.c.nomeTabela + " .tableIni";
-		this.c.tableFim = this.c.nomeTabela + " .tableFim";
-		this.c.tableInicioFim = this.c.nomeTabela + " .tableInicioFim";
+		this.c.tableTotal = this.c.divTabela + " .tableTotal";
+		this.c.tableFiltrado = this.c.divTabela + " .tableFiltrado";
+		this.c.tableIni = this.c.divTabela + " .tableIni";
+		this.c.tableFim = this.c.divTabela + " .tableFim";
+		this.c.tableInicioFim = this.c.divTabela + " .tableInicioFim";
 		this.c.pag = this.c.pagBotoes + " .pag";
 		this.c.pagBotao = this.c.pagBotoes + " .pagBotao";
 		this.c.tipoHead = "sort"; // menu / sort
 		if (arg.tipoHead) this.c.tipoHead = arg.tipoHead;
 		if (arg.versaoDb != null) this.c.versaoDb = arg.versaoDb;
+		if (arg.tabela) this.c.nomeTabela = arg.tabela;
 		// Gerando Design de Modelo Aceitável
 		if (mk.classof(arg.m) != "Array") arg.m = [];
 		if (arg.m.length > 0) {
@@ -203,7 +204,7 @@ class mk {
 
 	// Criar eventos para UI permitindo o usuario interagir com a tabela.
 	configurarUI = () => {
-		if (mk.Q(this.c.nomeTabela)) {
+		if (mk.Q(this.c.divTabela)) {
 			// Seta Gatilho dos botoes de paginacao.
 			mk.QAll(this.c.pagBotao).forEach((li) => {
 				li.addEventListener("click", (ev) => {
@@ -225,11 +226,13 @@ class mk {
 	// Metodo que prepara a listagem e inicia a coleta.
 	getList = async (arg: any = {}) => {
 		// Verifica e importa resumo da tabela se necessario.
-		if (arg?.importar) { await mk.importar(this.c.nomeTabela); }
+		if (arg?.importar) { await mk.importar(this.c.divTabela); }
 		this.configurarUI();
 
 		// DB CON
-		this.db = await this.dbCon();
+		if (this.c.nomeTabela) {
+			this.db = await this.dbCon();
+		}
 
 		// Caso o receba uma array na url, os dados já estão aqui.
 		let temosDados = null;
@@ -249,15 +252,17 @@ class mk {
 			// Executa funcao personalizada por página
 			mk.mkExecutaNoObj(temosDados, this.aoReceberDados);
 
-			// DB FILL
-			let tx = this.db?.transaction(this.c.nomeTabela, "readwrite");
-			let store = tx?.objectStore(this.c.nomeTabela);
-			temosDados.forEach(o => {
-				store?.put(o);
-			});
-			if (tx) tx.oncomplete = () => {
-				// All requests have succeeded and the transaction has committed.
-			};
+			if (this.c.nomeTabela) {
+				// DB FILL
+				let tx = this.db?.transaction(this.c.nomeTabela, "readwrite");
+				let store = tx?.objectStore(this.c.nomeTabela);
+				temosDados.forEach(o => {
+					store?.put(o);
+				});
+				if (tx) tx.oncomplete = () => {
+					// All requests have succeeded and the transaction has committed.
+				};
+			}
 
 			// Armazena em 1 array que está em 2 locais na memória
 			this.dadosFull = this.dadosFiltrado = temosDados;
@@ -695,7 +700,7 @@ class mk {
 
 	// Gera Listeners na THEAD da tabela (Requer classe: "sort-campo")
 	headAtivar = () => {
-		let eTrHeadPai = mk.Q(this.c.nomeTabela + " thead tr");
+		let eTrHeadPai = mk.Q(this.c.divTabela + " thead tr");
 		Array.from(eTrHeadPai.children).forEach((th) => {
 			let possui: any = false;
 			th.classList.forEach((classe) => {
@@ -707,7 +712,7 @@ class mk {
 			if (possui != false) {
 				let colName = possui.replace("sort-", "");
 				if (colName != "") {
-					mk.Ao("click", this.c.nomeTabela + " thead .sort-" + colName, (e) => {
+					mk.Ao("click", this.c.divTabela + " thead .sort-" + colName, (e) => {
 						if (this.c.tipoHead == "menu") {
 							this.headMenuAbrir(colName, e);
 						} else {
@@ -943,7 +948,7 @@ class mk {
 	};
 
 	getAllTr = () => {
-		return Array.from(mk.QAll(this.c.nomeTabela + " tbody tr"));
+		return Array.from(mk.QAll(this.c.divTabela + " tbody tr"));
 	};
 
 	// USER INTERFACE - UI - INDIVIDUAL

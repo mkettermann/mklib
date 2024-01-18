@@ -2,6 +2,7 @@
 
 var lista = new mk("./GetList", "#tabela1", "", "", {
 	importar: true,
+	tabela: "Listagem1",
 	m: [
 		{
 			pk: true,
