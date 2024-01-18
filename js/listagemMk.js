@@ -2,7 +2,53 @@
 
 var lista = new mk("./GetList", "#tabela1", "", "", {
 	importar: true,
+	m: [
+		{
+			pk: true,
+			k: "mId",
+			l: "ID",
+			tag: "input",
+			atr: "",
+			cla: "",
+		},
+		{
+			k: "mNome",
+			l: "Usuário",
+			tag: "input",
+			atr: "",
+			cla: "",
+		},
+		{
+			k: "mDataCadastro",
+			l: "Data de Cadastro",
+			tag: "input",
+			atr: "type='date'",
+			cla: "",
+		},
+		{
+			k: "mDataUltimoAcesso",
+			l: "Último Acesso",
+			tag: "input",
+			atr: "type='date'",
+			cla: "",
+		},
+		{
+			k: "mTotalAcessos",
+			l: "Total de Acessos",
+			tag: "input",
+			atr: "type='number'",
+			cla: "",
+		},
+		{
+			k: "mStatus",
+			l: "Status",
+			tag: "input",
+			atr: "",
+			cla: "",
+		},
+	]
 });
+
 var lista2 = new mk("./GetList2", "#tabela2", "#modelo2", ".fTabela2", {
 	importar: true,
 	tipoHead: "menu"

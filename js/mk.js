@@ -12,6 +12,7 @@ class mk {
     //			PROPRIEDADES								\\
     //___________________________________\\
     // Armazenadores
+    db = null;
     dadosFull = []; // Todos os dados sem filtro, mas ordenaveis.
     dadosFiltrado = []; // Mesmos dadosFull, mas após filtro.
     dadosExibidos = []; // Clonado de dadosFiltrado, mas apenas os desta pagina.
@@ -55,8 +56,6 @@ class mk {
             arg.aoCompletarExibicao = mk.aoCompletarExibicao;
         if (arg.aoConcluirDownload == null)
             arg.aoConcluirDownload = mk.aoConcluirDownload;
-        if (arg.keys == null)
-            arg.keys = [];
         // Setando Config
         this.listagemConfigurar(urlOrigem, todaListagem, idModelo, filtro, arg);
         this.aoReceberDados = arg.aoReceberDados;
@@ -106,6 +105,7 @@ class mk {
         pagItensIni: 0,
         pagItensFim: 0,
         totPags: 0,
+        versaoDb: 1,
         pk: null, // Possivel setar o nome do campo que é primary key já na construcao
     };
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
@@ -115,7 +115,7 @@ class mk {
     listagemConfigurar = (urlOrigem, todaListagem, idModelo, fTag, arg) => {
         this.c.urlOrigem = urlOrigem;
         this.c.filtro = fTag;
-        this.c.divTabela = todaListagem;
+        this.c.nomeTabela = todaListagem;
         this.c.idModelo = idModelo;
         this.c.tbody = todaListagem + " tbody";
         this.c.ths = todaListagem + " th";
@@ -123,17 +123,44 @@ class mk {
         this.c.tableResultado = todaListagem + " .tableResultado";
         this.c.tablePorPagina = todaListagem + " input[name='tablePorPagina']";
         this.c.tableExibePorPagina = todaListagem + " .tableExibePorPagina";
-        this.c.tableTotal = this.c.divTabela + " .tableTotal";
-        this.c.tableFiltrado = this.c.divTabela + " .tableFiltrado";
-        this.c.tableIni = this.c.divTabela + " .tableIni";
-        this.c.tableFim = this.c.divTabela + " .tableFim";
-        this.c.tableInicioFim = this.c.divTabela + " .tableInicioFim";
+        this.c.tableTotal = this.c.nomeTabela + " .tableTotal";
+        this.c.tableFiltrado = this.c.nomeTabela + " .tableFiltrado";
+        this.c.tableIni = this.c.nomeTabela + " .tableIni";
+        this.c.tableFim = this.c.nomeTabela + " .tableFim";
+        this.c.tableInicioFim = this.c.nomeTabela + " .tableInicioFim";
         this.c.pag = this.c.pagBotoes + " .pag";
         this.c.pagBotao = this.c.pagBotoes + " .pagBotao";
         this.c.tipoHead = "sort"; // menu / sort
         if (arg.tipoHead)
             this.c.tipoHead = arg.tipoHead;
-        this.c.m = arg.keys;
+        if (arg.versaoDb != null)
+            this.c.versaoDb = arg.versaoDb;
+        // Gerando Design de Modelo Aceitável
+        if (mk.classof(arg.m) != "Array")
+            arg.m = [];
+        if (arg.m.length > 0) {
+            arg.m.forEach(o => {
+                if (mk.classof(o) != "Object") {
+                    o = { k: null, tar: "value" };
+                }
+                else {
+                    if (o.pk) {
+                        arg.pk = o.k;
+                    }
+                    // Valores de Modelo padrão
+                    if (mk.classof(o.tag) != "String") {
+                        o.tag = "input";
+                    }
+                    if (mk.classof(o.tar) != "String") {
+                        o.tar = "value";
+                    }
+                    if (mk.classof(o.cla) != "String" || o.cla == "") {
+                        o.cla = "mkCampo";
+                    }
+                }
+            });
+        }
+        this.c.m = arg.m;
         // Primary Key
         if (!arg.pk) {
             // PrimaryKey do Parametro tem preferência sobre Modelo.
@@ -162,7 +189,7 @@ class mk {
     };
     // Criar eventos para UI permitindo o usuario interagir com a tabela.
     configurarUI = () => {
-        if (mk.Q(this.c.divTabela)) {
+        if (mk.Q(this.c.nomeTabela)) {
             // Seta Gatilho dos botoes de paginacao.
             mk.QAll(this.c.pagBotao).forEach((li) => {
                 li.addEventListener("click", (ev) => {
@@ -181,13 +208,16 @@ class mk {
     // Metodo que prepara a listagem e inicia a coleta.
     getList = async (arg = {}) => {
         // Verifica e importa resumo da tabela se necessario.
-        if (arg?.importar)
-            await mk.importar(this.c.divTabela);
+        if (arg?.importar) {
+            await mk.importar(this.c.nomeTabela);
+        }
         this.configurarUI();
+        // DB CON
+        this.db = await this.dbCon();
         // Caso o receba uma array na url, os dados já estão aqui.
         let temosDados = null;
-        if (Array.isArray(this.c.urlOrigem)) {
-            temosDados = mk.clonar(this.c.urlOrigem);
+        if (mk.classof(this.c.urlOrigem) == "Array") {
+            temosDados = this.c.urlOrigem;
         }
         else {
             // Inicia o Coleta de dados
@@ -201,6 +231,16 @@ class mk {
             mk.mkLimparOA(temosDados);
             // Executa funcao personalizada por página
             mk.mkExecutaNoObj(temosDados, this.aoReceberDados);
+            // DB FILL
+            let tx = this.db?.transaction(this.c.nomeTabela, "readwrite");
+            let store = tx?.objectStore(this.c.nomeTabela);
+            temosDados.forEach(o => {
+                store?.put(o);
+            });
+            if (tx)
+                tx.oncomplete = () => {
+                    // All requests have succeeded and the transaction has committed.
+                };
             // Armazena em 1 array que está em 2 locais na memória
             this.dadosFull = this.dadosFiltrado = temosDados;
             this.aoConcluirDownload(this.dadosFull);
@@ -217,6 +257,40 @@ class mk {
             if (mk.Q(this.c.tableResultado))
                 mk.Q(this.c.tableResultado).classList.remove("oculto");
         }
+    };
+    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+    //			MK DB Client-Side						\\
+    //___________________________________\\
+    dbCon = async () => {
+        return new Promise((r) => {
+            let dbConOpen = indexedDB.open(this.c.nomeTabela, this.c.versaoDb);
+            dbConOpen.onerror = (...args) => { mk.erro(args); r(null); };
+            dbConOpen.onsuccess = () => {
+                r(dbConOpen.result);
+            };
+            dbConOpen.onupgradeneeded = () => {
+                // Aqui da pra melhorar com o getModel() 
+                // Pré criar a tabela com os K do getModel();
+                let conParametros = {};
+                if (this.c.pk != null && this.c.pk != "" && this.c.pk != "pk") {
+                    conParametros.keyPath = this.c.pk;
+                }
+                // CREATE TABLE
+                let store = dbConOpen.result.createObjectStore(this.c.nomeTabela, conParametros);
+                if (mk.classof(this.c.Initializer) == "Function") {
+                    this.c.Initializer(store);
+                }
+                // INDEX
+                // store.createIndex("porNome", "mNome", { unique: true });
+                // DADOS INICIAIS
+                // store.put({
+                //  	"mId": 2,
+                //		"mNome": "Fulano Sem Dados",
+                //		"mStatus": null
+                // });
+                r(dbConOpen.result);
+            };
+        });
     };
     /**
      * ATUALIZA a listagem com os dados ja ordenados.
@@ -582,7 +656,7 @@ class mk {
     };
     // Gera Listeners na THEAD da tabela (Requer classe: "sort-campo")
     headAtivar = () => {
-        let eTrHeadPai = mk.Q(this.c.divTabela + " thead tr");
+        let eTrHeadPai = mk.Q(this.c.nomeTabela + " thead tr");
         Array.from(eTrHeadPai.children).forEach((th) => {
             let possui = false;
             th.classList.forEach((classe) => {
@@ -594,7 +668,7 @@ class mk {
             if (possui != false) {
                 let colName = possui.replace("sort-", "");
                 if (colName != "") {
-                    mk.Ao("click", this.c.divTabela + " thead .sort-" + colName, (e) => {
+                    mk.Ao("click", this.c.nomeTabela + " thead .sort-" + colName, (e) => {
                         if (this.c.tipoHead == "menu") {
                             this.headMenuAbrir(colName, e);
                         }
@@ -753,14 +827,25 @@ class mk {
         return temp;
     };
     // Modelo de Chaves e Propriedades do Modelo, podendo conter todo o design e estrutura dos dados da lista
-    // Formato K V L R (Chave, Valor, Label, Regex) V é vazio/nulo, pois não recebe objeto nessa função.
+    // Formato M K V L R (Chave, Valor, Label, Regex) V é vazio/nulo, pois não recebe objeto nessa função.
+    // m		Mascara do valor da coluna
+    // k		Key (Nome chave da Coluna)
+    // v		Valor (Conteudo da coluna)
+    // l		Label (Descrição Curta do campo)
+    // r		Regex (Para validar os valores)
+    // tag	Tag (Nome do campo)
+    // atr	Attributos (Atributos associados a essa tag)
+    // tar	Target JS (Método para modificar o campo value/innerHTML)
+    // cla	Classes
+    // pk		Primary Key
     getModel = () => {
+        // LISTA DE CHAVES , CADA CHAVE(OBJ) TEM SUAS 
         return this.c.m;
     };
     // KVLR (E mais...)
-    // K (Chave)	- V (Valor) - L (Label) - R (REGEX)	- T (TAG Html) - A (Attributos Tag) - I (Value no Inner)
-    // keys.push({ k: "mDat", v: "", l: "Data", r: mk.util.data[1], t: "input", a: "type='text'" });
-    // keys.push({ k: "mDes", v: "", l: "Descrição", r: "", t: "textarea", a: "cols='50' rows='10'", i: true });
+    // K (Chave)	- V (Valor) - L (Label) - R (REGEX)	- TAG (TAG Html) - ATR (Attributos Tag) - target (Value no Inner)
+    // keys.push({ k: "mDat", v: "", l: "Data", r: mk.util.data[1], tag: "input", atr: "type='text'" });
+    // keys.push({ k: "mDes", v: "", l: "Descrição", r: "", tag: "textarea", atr: "cols='50' rows='10'", i: true });
     // Recebendo o objeto da lista, traz o getUsedKeys juntamente aos Values deste objeto;
     getKVLR = (obj) => {
         let models = this.getModel();
@@ -818,7 +903,7 @@ class mk {
         return Number(maior) + 1;
     };
     getAllTr = () => {
-        return Array.from(mk.QAll(this.c.divTabela + " tbody tr"));
+        return Array.from(mk.QAll(this.c.nomeTabela + " tbody tr"));
     };
     // USER INTERFACE - UI - INDIVIDUAL
     add = (objDados) => {
@@ -4688,6 +4773,9 @@ class mk {
         });
         return new Proxy(o, h);
     };
+    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+    //			RECARGAS										\\
+    //___________________________________\\
     // Variavel de recarga que permite modificar a frequencia de atualizacao
     // em casos de telas sobrecarregadas.
     static mkRecargaTimer = 500;
