@@ -644,7 +644,13 @@ class mk {
 							sel = "";
 						}
 					});
-					htmlPossiveis += "<li name='" + v + "' class='nosel botao " + sel + "' onclick='mk.headMenuMarcarExclusivos(this)'>" + mk.hmCfg.svgSquare + v + "</li>";
+					let vOut: any = v;
+					if (mk.util.data[1].test(vOut)) {
+						vOut = mk.toLocale(vOut);
+					} else if (mk.util.dataIso8601[1].test(vOut)) {
+						vOut = mk.toLocale(vOut);
+					}
+					htmlPossiveis += "<li name='" + v + "' class='nosel botao " + sel + "' onclick='mk.headMenuMarcarExclusivos(this)'>" + mk.hmCfg.svgSquare + vOut + "</li>";
 				})
 			}
 			htmlPossiveis += "</ul>"
@@ -2099,15 +2105,12 @@ class mk {
 				let tipo = mk.classof(o[k])
 				if (tipo == "String") {
 					temp = temp.trim();
-					if (mk.util.data[1].test(temp) || mk.util.dataIso8601[1].test(temp)) {
-						temp = mk.toLocale(temp)
-					}
 				}
 				if (tipo == "Object") {
 					temp = JSON.stringify(temp);
 					if (tempJson) tempJson.add(k);
 				}
-				if (temp) tempSet.add(temp);
+				if (temp) tempSet.add(temp.toString());
 			});
 			campos[k] = [...tempSet];
 			virouJson[k] = [...tempJson];
