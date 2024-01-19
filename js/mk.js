@@ -698,10 +698,9 @@ class mk {
         };
         mk.atribuir(mk.Q("body"), () => { mk.headMenuHide(event); }, "onclick");
         let colNameLabel = colName;
-        let esteModel = this.getModel().filter((f) => { return f.k == colName; });
-        mk.l(esteModel);
-        if (esteModel?.[0]?.l) {
-            colNameLabel = esteModel[0].l;
+        let esteLabel = this.getModel()?.filter((f) => { return f.k == colName; })?.[0]?.l;
+        if (esteLabel) {
+            colNameLabel = esteLabel;
         }
         mk.QAll("body .mkHeadMenu .hmTitulo").forEach(e => {
             e.innerHTML = colNameLabel;
@@ -724,7 +723,6 @@ class mk {
             if (possui != false) {
                 let colName = possui.replace("sort-", "");
                 if (colName != "") {
-                    mk.l(colName);
                     mk.Ao("click", th, (e) => {
                         if (this.c.tipoHead == "menu") {
                             this.headMenuAbrir(colName, e);
