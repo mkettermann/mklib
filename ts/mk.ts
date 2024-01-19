@@ -644,6 +644,7 @@ class mk {
 							sel = "";
 						}
 					});
+					// Tratamento das possíveis saída de dados diferentes.
 					let vOut: any = v;
 					if (mk.util.data[1].test(vOut)) {
 						vOut = mk.toLocale(vOut);
