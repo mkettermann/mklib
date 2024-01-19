@@ -1971,7 +1971,16 @@ ul.mkUlFase li.disabled a {
 }
 
 .mkHeadMenu .fimsecao {
-	border-bottom: 2px inset #0002;
+	border-bottom: 2px inset #0003;
+}
+
+.mkHeadMenu input {
+	background-color: transparent;
+	padding: 2px;
+}
+
+.mkHeadMenu li:has(input) {
+	padding: 7px;
 }
 
 .mkHeadMenu li .possibilidades {
@@ -1979,6 +1988,7 @@ ul.mkUlFase li.disabled a {
 	overflow: auto;
 }
 
+.mkHeadMenu li.limpar,
 .mkHeadMenu .possibilidades li {
 	display: flex;
 	position: relative;
@@ -1990,6 +2000,18 @@ ul.mkUlFase li.disabled a {
 	position: absolute;
 	pointer-events: none;
 }
+
+.mkHeadMenu .claico svg path:first-child {
+	fill: #007;
+}
+
+.mkHeadMenu li.limpar svg {
+	color: transparent;
+	stroke: #000A;
+	fill: #F002;
+	transform: scale(0.8);
+}
+
 
 /* =======================
 	Paginação Padrao

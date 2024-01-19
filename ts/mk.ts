@@ -560,14 +560,16 @@ class mk {
 	exclusivos: any = [];
 	hmunsel = [];
 	static hmCfg = {
-		svgSquare: "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path d='M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z'/></svg>&nbsp;",
+		svgSquare: "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path d='M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z'/></svg>",
 		svgX: "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path d='M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708'/></svg>",
 		svgAB: "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M10.082 5.629 9.664 7H8.598l1.789-5.332h1.234L13.402 7h-1.12l-.419-1.371zm1.57-.785L11 2.687h-.047l-.652 2.157z'/><path d='M12.96 14H9.028v-.691l2.579-3.72v-.054H9.098v-.867h3.785v.691l-2.567 3.72v.054h2.645zM4.5 2.5a.5.5 0 0 0-1 0v9.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L4.5 12.293z'/></svg>",
 		svgBA: "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M10.082 5.629 9.664 7H8.598l1.789-5.332h1.234L13.402 7h-1.12l-.419-1.371zm1.57-.785L11 2.687h-.047l-.652 2.157z'/><path d='M12.96 14H9.028v-.691l2.579-3.72v-.054H9.098v-.867h3.785v.691l-2.567 3.72v.054h2.645zm-8.46-.5a.5.5 0 0 1-1 0V3.707L2.354 4.854a.5.5 0 1 1-.708-.708l2-1.999.007-.007a.5.5 0 0 1 .7.006l2 2a.5.5 0 1 1-.707.708L4.5 3.707z'/></svg>",
+		svgF: "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path d='M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5z'/></svg>",
 		clacre: "Classificar Crescente",
 		cladec: "Classificar Decrescente",
 		contem: "Contém...",
-		limparIndivisual: "Limpar esta coluna",
+		espaco: "&nbsp;";
+		limparIndivisual: "Limpar filtros de",
 		limparTodos: "Limpar todos filtros",
 		selectAll: "Selecionar Todos",
 	}
@@ -590,11 +592,11 @@ class mk {
 					</div>
 				</div>
 				<ul>
-					<li onclick='mk.headMenuCrescente()' class='botao nosel'>${mk.hmCfg.svgAB} ${mk.hmCfg.clacre}</li>
-					<li onclick='mk.headMenuDecrescente()' class='botao nosel fimsecao'>${mk.hmCfg.svgBA} ${mk.hmCfg.cladec}</li>
+					<li onclick='mk.headMenuCrescente()' class='claico botao nosel'>${mk.hmCfg.svgAB}${mk.hmCfg.espaco}${mk.hmCfg.clacre}</li>
+					<li onclick='mk.headMenuDecrescente()' class='claico botao nosel fimsecao'>${mk.hmCfg.svgBA}${mk.hmCfg.espaco}${mk.hmCfg.cladec}</li>
 					<li><input class='nosel' type='text' name='filtrarCampo' oninput='mk.headMenuContemInput(this.value)' placeholder='${mk.hmCfg.contem}'></li>
-					<li onclick='mk.headMenuLimpar()' class='botao nosel'>${mk.hmCfg.svgX} ${mk.hmCfg.limparIndivisual}</li>
-					<li onclick='mk.headMenuLimparTodos()' class='botao nosel fimsecao'>${mk.hmCfg.svgX} ${mk.hmCfg.limparTodos}</li>
+					<li onclick='mk.headMenuLimpar()' class='limpar botao nosel'>${mk.hmCfg.svgF}${mk.hmCfg.espaco}${mk.hmCfg.limparIndivisual}${mk.hmCfg.espaco}<span class='hmTitulo'></span></li>
+					<li onclick='mk.headMenuLimparTodos()' class='limpar botao nosel fimsecao'>${mk.hmCfg.svgF}${mk.hmCfg.espaco}${mk.hmCfg.limparTodos}</li>
 					<li><input type='search' oninput='mk.headMenuFiltraExclusivo(this.value)' name='filtrarPossibilidades' placeholder='Pesquisar'></li>
 					<li><div class='possibilidades'></div></li>
 				</ul>
@@ -647,7 +649,7 @@ class mk {
 				if (mk.Q("body .mkHeadMenu .possibilidades").classList.contains("st")) {
 					fullsel = "";
 				}
-				htmlPossiveis += "<li class='nosel botao " + fullsel + "' id='headMenuTodos' onclick='mk.headMenuMarcarExclusivos()'>" + mk.hmCfg.svgSquare + mk.hmCfg.selectAll + " (" + exFiltrado.length + ")";
+				htmlPossiveis += "<li class='nosel botao " + fullsel + "' id='headMenuTodos' onclick='mk.headMenuMarcarExclusivos()'>" + mk.hmCfg.svgSquare + mk.hmCfg.espaco + mk.hmCfg.selectAll + " (" + exFiltrado.length + ")";
 				if (v != "") {
 					htmlPossiveis += " Pesquisados";
 				}
@@ -670,7 +672,7 @@ class mk {
 					if (vOut.length > 40) {
 						vOut = vOut.slice(0, 37) + "...";
 					}
-					htmlPossiveis += "<li name='" + mk.removerAspas(v) + "' class='nosel botao " + sel + "' onclick='mk.headMenuMarcarExclusivos(this)'>" + mk.hmCfg.svgSquare + vOut + "</li>";
+					htmlPossiveis += "<li name='" + mk.removerAspas(v) + "' class='nosel botao " + sel + "' onclick='mk.headMenuMarcarExclusivos(this)'>" + mk.hmCfg.svgSquare + mk.hmCfg.espaco + vOut + "</li>";
 				})
 			}
 			htmlPossiveis += "</ul>"
@@ -2925,11 +2927,9 @@ class mk {
 							}
 						} else if (k.formato === "mkHeadMenuSel") {
 							let item = mk.removeEspecias(m).toString().toLowerCase().trim();
-							k.conteudo.forEach((hm) => {
-								if (hm == item) {
-									podeExibir = false;
-								}
-							})
+							if (k.conteudo.includes(item)) {
+								podeExibir = false;
+							}
 						} else if (k.formato === "stringNumerosVirgula") {
 							// Filtro por numero exado. Provavelmente sejam duas arrays (MultiSelect), O filtro precisa encontrar tudo no objeto.
 							let filtroInvertido = false;
