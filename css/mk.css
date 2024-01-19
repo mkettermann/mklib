@@ -1906,9 +1906,9 @@ ul.mkUlFase li.disabled a {
 /* =======================
 	HEAD MENU
 =========================*/
-.mkhmIco {
+.mkhmHeadIco {
 	position: absolute;
-	display: flex;
+	display: none;
 	align-items: center;
 	top: 0;
 	height: 100%;
@@ -1921,8 +1921,13 @@ ul.mkUlFase li.disabled a {
 	padding: 1px;
 }
 
-.mkhmIco svg {
+.mkhmHeadIco svg {
 	transform: scale(0.8);
+}
+
+thead th:hover .mkhmHeadIco,
+thead td:hover .mkhmHeadIco {
+	display: flex;
 }
 
 .mkHeadMenu {

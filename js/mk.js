@@ -536,17 +536,14 @@ class mk {
     };
     headSeeMenuAbrir = (colName, e) => {
         e.classList.add("relative");
-        if (!e.querySelector(".mkhmIco")) {
+        if (!e.querySelector(".mkhmHeadIco")) {
             let mkhmIco = document.createElement("div");
-            mkhmIco.className = "mkhmIco";
+            mkhmIco.className = "mkhmHeadIco";
             mkhmIco.innerHTML = mk.hmCfg.svgF;
             mk.Ao("click", mkhmIco, () => {
                 this.headMenuAbrir(colName);
             });
             e.appendChild(mkhmIco);
-            setTimeout(() => {
-                mkhmIco.remove();
-            }, 2000);
         }
     };
     // HM (MK HEAD MENU)
