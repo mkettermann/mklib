@@ -574,20 +574,24 @@ class mk {
             this.hmunsel = [];
         }
         this.exclusivos = mk.getExclusivos(this)[colName.split(".")[0]];
-        let exclusivosInternos = [];
+        let exclusivosProcessado = [];
         if (colName.includes(".")) {
             this.exclusivos.forEach(ex => {
-                exclusivosInternos.push(mk.getV(colName, ex).toString());
+                exclusivosProcessado.push(mk.getV(colName, ex).trim());
             });
-            this.exclusivos = exclusivosInternos;
+            this.exclusivos = exclusivosProcessado;
         }
         if (!this.exclusivos) {
             this.exclusivos = [];
         }
         ;
+        this.exclusivos = this.exclusivos.map(i => {
+            return mk.removeEspecias(i).toLowerCase().trim();
+        });
         mk.headMenuFiltraExclusivo = (v) => {
-            let exFiltrado = this.exclusivos?.filter(f => {
-                return mk.removeEspecias(f).toLowerCase().trim().includes(mk.removeEspecias(v).toLowerCase().trim());
+            let vProcessado = mk.removeEspecias(v).toLowerCase().trim();
+            let exFiltrado = this.exclusivos?.filter((f) => {
+                return f.toLowerCase().includes(vProcessado);
             });
             let muitosExclusivos = false;
             if (exFiltrado) {
