@@ -568,7 +568,7 @@ class mk {
 		clacre: "Classificar Crescente",
 		cladec: "Classificar Decrescente",
 		contem: "Contém...",
-		espaco: "&nbsp;";
+		espaco: "&nbsp;",
 		limparIndivisual: "Limpar filtros de",
 		limparTodos: "Limpar todos filtros",
 		selectAll: "Selecionar Todos",
@@ -623,13 +623,13 @@ class mk {
 			this.exclusivos = exclusivosProcessado;
 		}
 		if (!this.exclusivos) { this.exclusivos = [] };
-		this.exclusivos = this.exclusivos.map(i => {
-			return mk.removeEspecias(i).toLowerCase().trim();
-		});
+		// this.exclusivos = this.exclusivos.map(i => {
+		// 	return mk.removeEspecias(i).toLowerCase().trim();
+		// });
 		mk.headMenuFiltraExclusivo = (v: any) => {
 			let vProcessado = mk.removeEspecias(v).toLowerCase().trim();
 			let exFiltrado = this.exclusivos?.filter((f: string) => {
-				return f.toLowerCase().includes(vProcessado);
+				return mk.removeEspecias(f).toLowerCase().trim().includes(vProcessado);
 			});
 			let muitosExclusivos = false;
 			if (exFiltrado) {
@@ -656,8 +656,9 @@ class mk {
 				htmlPossiveis += "</li>";
 				exFiltrado.forEach(v => {
 					let sel = "sel";
+					let v2 = mk.removeEspecias(v).toLowerCase().trim();
 					this.hmunsel.forEach(hm => {
-						if (mk.removeEspecias(hm).toString().toLowerCase().trim() == mk.removeEspecias(v).toString().toLowerCase().trim()) {
+						if (mk.removeEspecias(hm).toLowerCase().trim() == v2) {
 							sel = "";
 						}
 					});
@@ -672,7 +673,7 @@ class mk {
 					if (vOut.length > 40) {
 						vOut = vOut.slice(0, 37) + "...";
 					}
-					htmlPossiveis += "<li name='" + mk.removerAspas(v) + "' class='nosel botao " + sel + "' onclick='mk.headMenuMarcarExclusivos(this)'>" + mk.hmCfg.svgSquare + mk.hmCfg.espaco + vOut + "</li>";
+					htmlPossiveis += "<li name='" + mk.removerAspas(v2) + "' class='nosel botao " + sel + "' onclick='mk.headMenuMarcarExclusivos(this)'>" + mk.hmCfg.svgSquare + mk.hmCfg.espaco + vOut + "</li>";
 				})
 			}
 			htmlPossiveis += "</ul>"
