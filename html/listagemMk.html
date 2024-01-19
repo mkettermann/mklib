@@ -97,7 +97,7 @@
 						<th class="sort-mNome">Usuário</th>
 						<th class="sort-mDataCadastro">Data Cadastro</th>
 						<th class="sort-mDataUltimoAcesso">Último Acesso</th>
-						<th class="sort-mTotalAcessos">Tot. Acessos</th>
+						<th class="sort-mTotalAcessos.a.b">Tot. Acessos</th>
 						<th class="sort-mStatus">Status</th>
 						<th class="acao">Editar</th>
 						<th class="acao">Deletar</th>
@@ -141,7 +141,7 @@
 
 		<div class="col20">
 			<div class="i">
-				<input type="search" name="mkFullFiltro" value="77" class="iConsultas" placeholder="Filtro Geral Listagem 1" />
+				<input type="search" name="mkFullFiltro" value="" class="iConsultas" placeholder="Filtro Geral Listagem 1" />
 			</div>
 		</div>
 
@@ -190,7 +190,7 @@
 			</div>
 		</div>
 		<div class="col20">
-			<input type="search" name="mkFullFiltro" class="fTabela2" placeholder="Filtro Geral Listagem 2" />
+			<input type="search" name="mkFullFiltro" value="la" class="fTabela2" placeholder="Filtro Geral Listagem 2" />
 		</div>
 	</div>
 </div>
@@ -487,7 +487,7 @@ listas[0].orderBy("mNome");
 			<input type="date" value="${mDataCadastro}" />
 		</td>
 		<td class="sort-mDataUltimoAcesso">${mDataUltimoAcesso}</td>
-		<td class="sort-mTotalAcessos">${mTotalAcessos.a.b}</td>
+		<td class="sort-mTotalAcessos.a.b">${mTotalAcessos.a.b}</td>
 		<td class="sort-mStatus ${mStatus}"></td>
 		<td class="acao">
 			<a onclick="uiGetEDIT(mk.getTr(this),0);">EDIT</a>

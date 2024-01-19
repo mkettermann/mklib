@@ -567,8 +567,8 @@ class mk {
 		clacre: "Classificar Crescente",
 		cladec: "Classificar Decrescente",
 		contem: "Contém...",
-		limparIndivisual: "Limpar",
-		limparTodos: "Limpar Todos Filtros",
+		limparIndivisual: "Limpar esta coluna",
+		limparTodos: "Limpar todos filtros",
 	}
 
 	// HM (MK HEAD MENU)
@@ -581,7 +581,7 @@ class mk {
 			ehm.innerHTML = `
 			<div class='hmin fimsecao'>
 				<div class='i htit'>
-					<div class='col90'>
+					<div class='col90 hmTitulo'>
 						Filtro
 					</div>
 					<div class='col10 fechar botao nosel' onclick='mk.headMenuHideX()'>
@@ -592,8 +592,8 @@ class mk {
 					<li onclick='mk.headMenuCrescente()' class='botao nosel'>${mk.hmCfg.svgAB} ${mk.hmCfg.clacre}</li>
 					<li onclick='mk.headMenuDecrescente()' class='botao nosel fimsecao'>${mk.hmCfg.svgBA} ${mk.hmCfg.cladec}</li>
 					<li><input class='nosel' type='text' name='filtrarCampo' oninput='mk.headMenuContemInput(this.value)' placeholder='${mk.hmCfg.contem}'></li>
-					<li onclick='mk.headMenuLimparTodos()' class='botao nosel'>${mk.hmCfg.svgX} ${mk.hmCfg.limparTodos}</li>
-					<li onclick='mk.headMenuLimpar()' class='botao nosel fimsecao'>${mk.hmCfg.svgX} ${mk.hmCfg.limparIndivisual} <span class='nomeCampo'></span></li>
+					<li onclick='mk.headMenuLimpar()' class='botao nosel'>${mk.hmCfg.svgX} ${mk.hmCfg.limparIndivisual}</li>
+					<li onclick='mk.headMenuLimparTodos()' class='botao nosel fimsecao'>${mk.hmCfg.svgX} ${mk.hmCfg.limparTodos}</li>
 					<li><input type='search' oninput='mk.headMenuFiltraExclusivo(this.value)' name='filtrarPossibilidades' placeholder='Pesquisar'></li>
 					<li><div class='possibilidades'></div></li>
 				</ul>
@@ -606,11 +606,18 @@ class mk {
 			mk.Q(".mkHeadMenu input[name='filtrarCampo']").value = "";
 		}
 		mk.Q(".mkHeadMenu input[name='filtrarPossibilidades']").value = "";
-		this.exclusivos = mk.getExclusivos(this.dadosFull)[colName];
 		if (this.c.objFiltro[colName]?.formato == "mkHeadMenuSel") {
 			this.hmunsel = this.c.objFiltro[colName].conteudo;
 		} else {
 			this.hmunsel = [];
+		}
+		this.exclusivos = mk.getExclusivos(this)[colName.split(".")[0]];
+		let exclusivosInternos: any = []
+		if (colName.includes(".")) {
+			this.exclusivos.forEach(ex => {
+				exclusivosInternos.push(mk.getV(colName, ex).toString());
+			})
+			this.exclusivos = exclusivosInternos;
 		}
 		mk.headMenuFiltraExclusivo = (v: any) => {
 			let exFiltrado = this.exclusivos?.filter(f => {
@@ -728,7 +735,9 @@ class mk {
 		};
 
 		mk.atribuir(mk.Q("body"), () => { mk.headMenuHide(event) }, "onclick");
-		mk.Q("body .mkHeadMenu .nomeCampo").innerHTML = colName;
+		mk.QAll("body .mkHeadMenu .hmTitulo").forEach(e => {
+			e.innerHTML = colName;
+		});
 		mk.Q("body .mkHeadMenu").classList.remove("oculto");
 		mk.Q("body .mkHeadMenu").classList.add("lock");
 		mk.Q(".mkHeadMenu input[name='filtrarCampo']").focus();
@@ -748,7 +757,8 @@ class mk {
 			if (possui != false) {
 				let colName = possui.replace("sort-", "");
 				if (colName != "") {
-					mk.Ao("click", this.c.divTabela + " thead .sort-" + colName, (e) => {
+					mk.l(colName);
+					mk.Ao("click", th, (e) => {
 						if (this.c.tipoHead == "menu") {
 							this.headMenuAbrir(colName, e);
 						} else {
@@ -1356,8 +1366,15 @@ class mk {
 	};
 
 	// Atalho para QuerySelectorAll. List []
-	static QAll = (query: string = "body"): Element[] => {
-		return Array.from(document.querySelectorAll(query));
+	static QAll = (query: Element | string = "body"): Element[] => {
+		if (mk.classof(query) == "String") {
+			return Array.from(document.querySelectorAll(query));
+		} else if (query instanceof Element) {
+			return [query];
+		} else {
+			mk.w("QAll() - Formato " + mk.classof(query) + " não implementado: ", query);
+			return [];
+		}
 	};
 
 	static AoConfig = {
@@ -1367,7 +1384,7 @@ class mk {
 	}
 
 	// Adiciona evento em todos elementos encontrados
-	static Ao = (tipoEvento: string = "click", query: string, executar: any) => {
+	static Ao = (tipoEvento: string = "click", query: any, executar: any) => {
 		// Em QAll, pois o Filtro pega todos os .iConsultas
 		mk.QAll(query).forEach((e) => {
 			e.addEventListener(tipoEvento, () => {
@@ -1431,6 +1448,7 @@ class mk {
 	}
 
 	static removeEspecias = (s: string) => {
+		s = s.toString();
 		let r = "";
 		let sS = "áàãâäéèêëíìîïóòõôöúùûüçÁÀÃÂÄÉÈÊËÍÌÎÏÓÒÕÖÔÚÙÛÜÇ";
 		let sN = "aaaaaeeeeiiiiooooouuuucAAAAAEEEEIIIIOOOOOUUUUC";
@@ -2068,8 +2086,10 @@ class mk {
 			});
 		});
 		let campos: any = {};
+		let virouJson: any = {};
 		chaves.forEach((k: any) => {
 			let tempSet = new Set();
+			let tempJson = new Set();
 			a.forEach((o: any) => {
 				let temp = o[k];
 				let tipo = mk.classof(o[k])
@@ -2079,10 +2099,19 @@ class mk {
 						temp = mk.toLocale(temp)
 					}
 				}
-				if (tipo == "Object") { temp = JSON.stringify(temp).slice(1).slice(0, -1).replaceAll("\"", "") }
+				if (tipo == "Object") {
+					temp = JSON.stringify(temp);
+					if (tempJson) tempJson.add(k);
+				}
 				if (temp) tempSet.add(temp);
 			});
 			campos[k] = [...tempSet];
+			virouJson[k] = [...tempJson];
+			virouJson[k]?.forEach(kJson => {
+				for (let i = 0; i < campos[kJson].length; i++) {
+					campos[kJson][i] = JSON.parse(campos[kJson][i]);
+				};
+			});
 		});
 		return campos;
 	};
@@ -2852,7 +2881,7 @@ class mk {
 					}
 					if (propFiltro.includes(".")) {
 						m = mk.getV(propFiltro, o); // m representa o dado do item
-						//this.l("NoFIltro: ", objFiltro[propFiltro].conteudo.toString().toLowerCase(), " > DadoItem: ", m)
+						//this.l("NoFIltro: ", objFiltro[propFiltro].conteudo.toString().toLowerCase(), " DadoItem: ", m)
 					}
 					//this.l("objFiltro[propFiltro]: ", objFiltro[propFiltro])
 					// Cada Propriedade de Cada Item da Array
