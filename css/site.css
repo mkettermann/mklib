@@ -292,7 +292,7 @@ h2 {
 /* Outros */
 input {
 	width: 100%;
-	background-color: var(--fundoPrincipal);
+	background-color: white;
 	color: var(--corPrincipal);
 	border: 1px outset var(--bordaInput);
 	border-radius: 4px;
