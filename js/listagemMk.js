@@ -35,7 +35,7 @@ var lista = new mk("./GetList", "#tabela1", "", "", {
 			cla: "",
 		},
 		{
-			k: "mTotalAcessos",
+			k: "mTotalAcessos.a.b",
 			l: "Total de Acessos",
 			tag: "input",
 			atr: "type='number'",

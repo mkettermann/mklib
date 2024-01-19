@@ -735,9 +735,14 @@ class mk {
 		};
 
 		mk.atribuir(mk.Q("body"), () => { mk.headMenuHide(event) }, "onclick");
+		let colNameLabel = colName;
+		let esteModel = this.getModel().filter((f) => { return f.k == colName });
+		mk.l(esteModel);
+		if (esteModel?.[0]?.l) {
+			colNameLabel = esteModel[0].l;
+		}
 		mk.QAll("body .mkHeadMenu .hmTitulo").forEach(e => {
-			// Pegar o label desse colName
-			e.innerHTML = colName;
+			e.innerHTML = colNameLabel;
 		});
 		mk.Q("body .mkHeadMenu").classList.remove("oculto");
 		mk.Q("body .mkHeadMenu").classList.add("lock");
