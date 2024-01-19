@@ -1906,6 +1906,25 @@ ul.mkUlFase li.disabled a {
 /* =======================
 	HEAD MENU
 =========================*/
+.mkhmIco {
+	position: absolute;
+	display: flex;
+	align-items: center;
+	top: 0;
+	height: 100%;
+	right: 10px;
+	border: 1px outset var(--bordaMaster);
+	color: var(--corLink);
+	background-color: var(--bordaMaster);
+
+	border-radius: 3px;
+	padding: 1px;
+}
+
+.mkhmIco svg {
+	transform: scale(0.8);
+}
+
 .mkHeadMenu {
 	display: flex;
 	position: fixed;

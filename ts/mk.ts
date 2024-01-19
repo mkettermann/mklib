@@ -574,10 +574,25 @@ class mk {
 		selectAll: "Selecionar Todos",
 	}
 
-	// HM (MK HEAD MENU)
-	headMenuAbrir = (colName: any, e: any) => {
+	headSeeMenuAbrir = (colName: string, e: HTMLTableCellElement) => {
+		e.classList.add("relative");
+		if (!e.querySelector(".mkhmIco")) {
+			let mkhmIco = document.createElement("div");
+			mkhmIco.className = "mkhmIco";
+			mkhmIco.innerHTML = mk.hmCfg.svgF;
+			mk.Ao("click", mkhmIco, () => {
+				this.headMenuAbrir(colName);
+			})
+			e.appendChild(mkhmIco);
+			setTimeout(() => {
+				mkhmIco.remove();
+			}, 2000)
+		}
+	}
 
-		e.classList.add("headMenuTarget");
+	// HM (MK HEAD MENU)
+	headMenuAbrir = (colName: any) => {
+		let eHead = mk.Q(this.c.divTabela + " .sort-" + colName);
 		if (mk.Q("body .mkHeadMenu") == null) {
 			let ehm = document.createElement("div");
 			ehm.className = "mkHeadMenu oculto";
@@ -618,7 +633,8 @@ class mk {
 		let exclusivosProcessado: any = []
 		if (colName.includes(".")) {
 			this.exclusivos.forEach(ex => {
-				exclusivosProcessado.push(mk.getV(colName, ex).trim());
+				let colv = mk.getV(colName, ex).toString();
+				exclusivosProcessado.push(colv);
 			})
 			this.exclusivos = exclusivosProcessado;
 		}
@@ -770,7 +786,7 @@ class mk {
 			colNameLabel = esteLabel;
 		}
 		if (colNameLabel == colName) {
-			colNameLabel = e.innerHTML;
+			colNameLabel = eHead.innerHTML;
 		}
 		mk.QAll("body .mkHeadMenu .hmTitulo").forEach(e => {
 			e.innerHTML = colNameLabel;
@@ -795,10 +811,11 @@ class mk {
 				let colName = possui.replace("sort-", "");
 				if (colName != "") {
 					mk.Ao("click", th, (e) => {
+						this.orderBy(colName);
+					});
+					mk.Ao("mousemove", th, (e) => {
 						if (this.c.tipoHead == "menu") {
-							this.headMenuAbrir(colName, e);
-						} else {
-							this.orderBy(colName);
+							this.headSeeMenuAbrir(colName, e);
 						}
 					});
 				}
