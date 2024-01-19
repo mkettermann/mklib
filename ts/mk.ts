@@ -666,7 +666,7 @@ class mk {
 					if (vOut.length > 40) {
 						vOut = vOut.slice(0, 37) + "...";
 					}
-					htmlPossiveis += "<li name='" + v + "' class='nosel botao " + sel + "' onclick='mk.headMenuMarcarExclusivos(this)'>" + mk.hmCfg.svgSquare + vOut + "</li>";
+					htmlPossiveis += "<li name='" + mk.removerAspas(v) + "' class='nosel botao " + sel + "' onclick='mk.headMenuMarcarExclusivos(this)'>" + mk.hmCfg.svgSquare + vOut + "</li>";
 				})
 			}
 			htmlPossiveis += "</ul>"
@@ -3849,9 +3849,10 @@ class mk {
 	//			MK Molde (Template/Modelo)	\\
 	//___________________________________\\
 
-	static removerAspasDuplas = (s: any) => {
+	static removerAspas = (s: any) => {
 		if (typeof s == "string") {
 			s = s.replaceAll('"', "&quot;");
+			s = s.replaceAll("\'", "&#39;");
 		}
 		return s;
 	};
@@ -3904,7 +3905,7 @@ class mk {
 				let end: number = ini[i].indexOf("}");
 				let key: string = ini[i].slice(0, end).trim();
 				if (mk.classof(o) == "Object" && o != null) {
-					let v = this.removerAspasDuplas(this.getV(key, o));
+					let v = this.removerAspas(this.getV(key, o));
 					if (v != null) {
 						ret += v;
 					}
