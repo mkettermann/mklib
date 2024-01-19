@@ -698,6 +698,7 @@ class mk {
         };
         mk.atribuir(mk.Q("body"), () => { mk.headMenuHide(event); }, "onclick");
         mk.QAll("body .mkHeadMenu .hmTitulo").forEach(e => {
+            // Pegar o label desse colName
             e.innerHTML = colName;
         });
         mk.Q("body .mkHeadMenu").classList.remove("oculto");
