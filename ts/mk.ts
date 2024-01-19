@@ -3039,8 +3039,9 @@ class mk {
 	// Essa funcção deveria ser da instancia atual para recever os atributos da instancia por padrao
 	static ordenar = (array: object[], nomeProp: string, reverse: any) => {
 		array.sort((oA: any, oB: any) => {
-			let a = oA[nomeProp];
-			let b = oB[nomeProp];
+			let a = mk.getV(nomeProp, oA);
+			let b = mk.getV(nomeProp, oB);
+			//let b = oB[nomeProp];
 			if (typeof a == "string") a = a.toLowerCase();
 			if (typeof b == "string") b = b.toLowerCase();
 			if (a !== b) {
@@ -5038,48 +5039,11 @@ class mk {
 		});
 	};
 
-	// UUIDV4 Gerador de identificador unico
+	// Padrão UUIDV4 - Gerador de identificador unico
 	static uuid: any = () => {
 		return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c =>
 			(c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
 		);
-	}
-
-	// LOGGER (Meta programming)
-	static log: any = (o: any, name: any) => {
-		// Função para debugar determinado objeto.
-		const h = {
-			get(t, p, r) {
-				mk.l(`~ get(${name},${p.toString()})`);
-				let v = Reflect.get(t, p, r);
-				if (Reflect.ownKeys(t).includes(p) &&
-					(typeof v === "object" || typeof v === "function")) {
-					return mk.log(v, `${name}.${p.toString()}`);
-				}
-				return v;
-			},
-			set(t, p, v, r) {
-				mk.l(`~ set(${name},${p.toString()},${v})`);
-				return Reflect.set(t, p, v, r);
-			},
-			apply(t, r, a) {
-				mk.l(`~ ${name}(${a})`);
-				return Reflect.apply(t, r, a);
-			},
-			construct(t, a, r) {
-				mk.l(`~ ${name}(${a})`);
-				return Reflect.construct(t, a, r);
-			}
-		}
-		Reflect.ownKeys(Reflect).forEach(hn => {
-			if (!(hn in h)) {
-				h[hn] = function (t, ...args) {
-					mk.l(`~ ${hn}(${name},${args})`);
-					return Reflect[hn](t, ...args);
-				}
-			}
-		});
-		return new Proxy(o, h);
 	}
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
