@@ -150,7 +150,7 @@ class mk {
 		this.c.tableInicioFim = this.c.divTabela + " .tableInicioFim";
 		this.c.pag = this.c.pagBotoes + " .pag";
 		this.c.pagBotao = this.c.pagBotoes + " .pagBotao";
-		this.c.tipoHead = "sort"; // menu / sort
+		this.c.tipoHead = "menu"; // menu / sort
 		if (arg.tipoHead) this.c.tipoHead = arg.tipoHead;
 		if (arg.versaoDb != null) this.c.versaoDb = arg.versaoDb;
 		if (arg.tabela) this.c.nomeTabela = arg.tabela;
@@ -3042,11 +3042,14 @@ class mk {
 			let a = mk.getV(nomeProp, oA);
 			let b = mk.getV(nomeProp, oB);
 			//let b = oB[nomeProp];
-			if (typeof a == "string") a = a.toLowerCase();
-			if (typeof b == "string") b = b.toLowerCase();
+			if (typeof a == "string") a = a.toLowerCase().trim();
+			if (typeof b == "string") b = b.toLowerCase().trim();
 			if (a !== b) {
 				if (a > b) return 1;
 				if (a < b) return -1;
+			}
+			if (!a || !b) { // Nulo
+				return 0;
 			}
 			return -1;
 		});

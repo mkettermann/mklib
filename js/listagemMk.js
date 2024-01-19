@@ -2,7 +2,6 @@
 
 var lista = new mk("./GetList", "#tabela1", "", "", {
 	importar: true,
-	tipoHead: "menu",
 	tabela: "Listagem1",
 	m: [
 		{
@@ -53,6 +52,7 @@ var lista = new mk("./GetList", "#tabela1", "", "", {
 
 var lista2 = new mk("./GetList2", "#tabela2", "#modelo2", ".fTabela2", {
 	importar: true,
+	tipoHead: "sort",
 });
 var lista3 = new mk("./GetList3", "#tabela3", "#modelo3", ".fTabela3");
 
