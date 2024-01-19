@@ -580,10 +580,18 @@ class mk {
             });
             this.exclusivos = exclusivosInternos;
         }
+        if (!this.exclusivos) {
+            this.exclusivos = [];
+        }
+        ;
         mk.headMenuFiltraExclusivo = (v) => {
             let exFiltrado = this.exclusivos?.filter(f => {
                 return mk.removeEspecias(f).toString().toLowerCase().includes(mk.removeEspecias(v).toString().toLowerCase().trim());
             });
+            if (!exFiltrado) {
+                exFiltrado = [];
+            }
+            ;
             if (this.hmunsel.length <= 0) {
                 mk.Q("body .mkHeadMenu .possibilidades").classList.remove("st");
             }

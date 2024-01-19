@@ -619,14 +619,17 @@ class mk {
 			})
 			this.exclusivos = exclusivosInternos;
 		}
+		if (!this.exclusivos) { this.exclusivos = [] };
 		mk.headMenuFiltraExclusivo = (v: any) => {
 			let exFiltrado = this.exclusivos?.filter(f => {
 				return mk.removeEspecias(f).toString().toLowerCase().includes(mk.removeEspecias(v).toString().toLowerCase().trim())
 			});
+			if (!exFiltrado) { exFiltrado = [] };
 			if (this.hmunsel.length <= 0) {
 				mk.Q("body .mkHeadMenu .possibilidades").classList.remove("st");
 			}
 			let htmlPossiveis = "<ul class='filtravel'>";
+
 			if (exFiltrado.length > 0) {
 				let fullsel = "sel";
 				if (mk.Q("body .mkHeadMenu .possibilidades").classList.contains("st")) {
