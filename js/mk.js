@@ -530,6 +530,7 @@ class mk {
         contem: "Contém...",
         limparIndivisual: "Limpar esta coluna",
         limparTodos: "Limpar todos filtros",
+        selectAll: "Selecionar Todos",
     };
     // HM (MK HEAD MENU)
     headMenuAbrir = (colName, e) => {
@@ -586,9 +587,15 @@ class mk {
         ;
         mk.headMenuFiltraExclusivo = (v) => {
             let exFiltrado = this.exclusivos?.filter(f => {
-                return mk.removeEspecias(f).toString().toLowerCase().includes(mk.removeEspecias(v).toString().toLowerCase().trim());
+                return mk.removeEspecias(f).toLowerCase().trim().includes(mk.removeEspecias(v).toLowerCase().trim());
             });
-            if (!exFiltrado) {
+            let muitosExclusivos = false;
+            if (exFiltrado) {
+                if (exFiltrado.length > 100) {
+                    muitosExclusivos = true;
+                }
+            }
+            else {
                 exFiltrado = [];
             }
             ;
@@ -601,7 +608,7 @@ class mk {
                 if (mk.Q("body .mkHeadMenu .possibilidades").classList.contains("st")) {
                     fullsel = "";
                 }
-                htmlPossiveis += "<li class='nosel botao " + fullsel + "' id='headMenuTodos' onclick='mk.headMenuMarcarExclusivos()'>" + mk.hmCfg.svgSquare + "Selecionar Todos";
+                htmlPossiveis += "<li class='nosel botao " + fullsel + "' id='headMenuTodos' onclick='mk.headMenuMarcarExclusivos()'>" + mk.hmCfg.svgSquare + mk.hmCfg.selectAll + " (" + exFiltrado.length + ")";
                 if (v != "") {
                     htmlPossiveis += " Pesquisados";
                 }
