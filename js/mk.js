@@ -2809,8 +2809,9 @@ class mk {
                             }
                         }
                         else if (k.formato === "mkHeadMenuSel") {
+                            let item = mk.removeEspecias(m).toString().toLowerCase().trim();
                             k.conteudo.forEach((hm) => {
-                                if (mk.removeEspecias(hm).toString().toLowerCase().trim() == mk.removeEspecias(m).toString().toLowerCase().trim()) {
+                                if (hm == item) {
                                     podeExibir = false;
                                 }
                             });
