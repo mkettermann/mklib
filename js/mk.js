@@ -621,6 +621,10 @@ class mk {
                     else if (mk.util.dataIso8601[1].test(vOut)) {
                         vOut = mk.toLocale(vOut);
                     }
+                    vOut = vOut.toString();
+                    if (vOut.length > 40) {
+                        vOut = vOut.slice(0, 37) + "...";
+                    }
                     htmlPossiveis += "<li name='" + v + "' class='nosel botao " + sel + "' onclick='mk.headMenuMarcarExclusivos(this)'>" + mk.hmCfg.svgSquare + vOut + "</li>";
                 });
             }
@@ -717,6 +721,9 @@ class mk {
         let esteLabel = this.getModel()?.filter((f) => { return f.k == colName; })?.[0]?.l;
         if (esteLabel) {
             colNameLabel = esteLabel;
+        }
+        if (colNameLabel == colName) {
+            colNameLabel = e.innerHTML;
         }
         mk.QAll("body .mkHeadMenu .hmTitulo").forEach(e => {
             e.innerHTML = colNameLabel;
