@@ -54,13 +54,13 @@ var lista2 = new mk("./GetList2", "#tabela2", "#modelo2", ".fTabela2", {
 	importar: true,
 	tipoHead: "sort",
 });
-var lista3 = new mk("./GetList3", "#tabela3", "#modelo3", ".fTabela3");
+
 
 //var lista = new Mk("/data/usersExemplo.json", ".tabela1", "#modelo");
 
 //Aqui foi utilizado um container manual das listas instanciadas.
 //Basta a funcão enviar o id correto para o Set ser na lista correta.
-var listas = [lista, lista2, lista3]; //(Lista 3 está na posicao 2)
+var listas = [lista, lista2]; //(Lista 3 está na posicao 2)
 
 // Aqui modificamos a exibicao de um campo por outro formato
 lista.antesDePopularTabela = (l) => {

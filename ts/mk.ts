@@ -254,7 +254,8 @@ class mk {
 			}
 
 			// Armazena em 1 array que está em 2 locais na memória
-			this.dadosFull = this.dadosFiltrado = temosDados;
+			this.addMany(temosDados);
+			//this.dadosFull = this.dadosFiltrado = temosDados;
 			this.aoConcluirDownload(this.dadosFull);
 			// Executa função antes de ordenar a tabela (Util para calcular coisas no conteudo recebido)
 			await this.antesDeOrdenarAsync();
