@@ -5082,14 +5082,26 @@ class mk {
 	};
 
 	// Padrão UUIDV4 - Gerador de identificador unico
-	static uuid: any = () => {
+	static uuid = () => {
 		return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c =>
 			(c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
 		);
 	}
 
-	static Inicializar = () => {
-		var mkWorkerElement = document.createElement("script")
+	static worker: Worker | null = null;
+
+	static mkWorker = () => {
+		// Se estiver nulo, constroi o worker;
+		if (mk.worker == null) {
+			let eSctWorker = mk.Q("#mkWorker");
+			var urlBlob = window.URL.createObjectURL(new Blob([eSctWorker?.textContent], { type: "text/javascript" }));
+			mk.worker = new Worker(urlBlob);
+		}
+		return mk.worker;
+	}
+
+	static moldeWorker = () => {
+		let mkWorkerElement = document.createElement("script")
 		mkWorkerElement.setAttribute("type", "javascript/worker")
 		mkWorkerElement.setAttribute("id", "mkWorker")
 		mkWorkerElement.innerHTML = `
@@ -5097,11 +5109,15 @@ const l = (...args) => {
 	console.log("W> ", args);
 }
 onmessage = (ev) => {
-	console.log("W> C: ", ev.data.c, " D: ", ev.data.d);
+	console.log("W Recebido> C: ", ev.data.c, " D: ", ev.data.d);
 	// Ao receber um comando, executar um Job.
 	postMessage({ c: "Msg", d: ["Show"] });
 }`
 		document.body.append(mkWorkerElement);
+	}
+
+	static Inicializar = () => {
+		mk.moldeWorker()
 		mk.mkClicarNaAba(mk.Q(".mkAbas a.active")); // Inicia no ativo
 		mk.mkRecargaExe();
 	}
