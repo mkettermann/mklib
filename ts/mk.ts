@@ -5088,6 +5088,24 @@ class mk {
 		);
 	}
 
+	static Inicializar = () => {
+		var mkWorkerElement = document.createElement("script")
+		mkWorkerElement.setAttribute("type", "javascript/worker")
+		mkWorkerElement.setAttribute("id", "mkWorker")
+		mkWorkerElement.innerHTML = `
+const l = (...args) => {
+	console.log("W> ", args);
+}
+onmessage = (ev) => {
+	console.log("W> C: ", ev.data.c, " D: ", ev.data.d);
+	// Ao receber um comando, executar um Job.
+	postMessage({ c: "Msg", d: ["Show"] });
+}`
+		document.body.append(mkWorkerElement);
+		mk.mkClicarNaAba(mk.Q(".mkAbas a.active")); // Inicia no ativo
+		mk.mkRecargaExe();
+	}
+
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 	//			RECARGAS										\\
 	//___________________________________\\
@@ -5114,14 +5132,5 @@ class mk {
 	}
 
 } // <<< FIM MK Class.
-
-// Configs
 //Object.defineProperty(mk, "request", { enumerable: false });
-
-//onerror = () => { mk.l("ERRO") };
-
-//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-//		AO INICIAR										\\
-//___________________________________\\
-mk.mkClicarNaAba(mk.Q(".mkAbas a.active")); // Inicia no ativo
-mk.mkRecargaExe();
+mk.Inicializar();

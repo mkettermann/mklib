@@ -5,7 +5,7 @@ const menuAbrir = async (t) => {
 	let e = mk.Q("#" + t);
 	let destino = mk.QdataGet(e, "go");
 	if (destino != null) {
-		let pac = await mk.get.html("./html/" + destino);
+		let pac = await mk.get.html("./html/" + destino + "?" + mk.uuid());
 		if (pac.retorno != null) {
 			mk.Q(".conteudo").innerHTML = pac.retorno;
 			mk.mkNodeToScript(mk.Q(".conteudo"));

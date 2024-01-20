@@ -4864,6 +4864,23 @@ class mk {
     static uuid = () => {
         return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c => (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16));
     };
+    static Inicializar = () => {
+        var mkWorkerElement = document.createElement("script");
+        mkWorkerElement.setAttribute("type", "javascript/worker");
+        mkWorkerElement.setAttribute("id", "mkWorker");
+        mkWorkerElement.innerHTML = `
+const l = (...args) => {
+	console.log("W> ", args);
+}
+onmessage = (ev) => {
+	console.log("W> C: ", ev.data.c, " D: ", ev.data.d);
+	// Ao receber um comando, executar um Job.
+	postMessage({ c: "Msg", d: ["Show"] });
+}`;
+        document.body.append(mkWorkerElement);
+        mk.mkClicarNaAba(mk.Q(".mkAbas a.active")); // Inicia no ativo
+        mk.mkRecargaExe();
+    };
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //			RECARGAS										\\
     //___________________________________\\
@@ -4888,11 +4905,5 @@ class mk {
         setTimeout(mk.mkRecargaExe, mk.mkRecargaTimer);
     };
 } // <<< FIM MK Class.
-// Configs
 //Object.defineProperty(mk, "request", { enumerable: false });
-//onerror = () => { mk.l("ERRO") };
-//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-//		AO INICIAR										\\
-//___________________________________\\
-mk.mkClicarNaAba(mk.Q(".mkAbas a.active")); // Inicia no ativo
-mk.mkRecargaExe();
+mk.Inicializar();
