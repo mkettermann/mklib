@@ -3,7 +3,7 @@ const l = (...args) => {
 	console.log("W> ", ...args);
 }
 onmessage = (ev) => {
-	l(ev);
+	l("Evento: ", ev);
 	if (ev?.data?.c) {
 		switch (ev.data.c) {
 			case "MSG":
