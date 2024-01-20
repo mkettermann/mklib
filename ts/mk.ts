@@ -2,23 +2,15 @@
 // - Bootstrap Modal
 // - Poper
 
-var mkt; // Variavel de Testes;
-var mkt2; // Variavel de Testes;
-
-//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-//			GLOBAL VARS | CONST					\\
-//___________________________________\\
 declare const appPath: any;
+
+
+
 
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //			CLASSE MK Instanciavel			\\
 //___________________________________\\
 class mk {
-	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-	//			PROPRIEDADES								\\
-	//___________________________________\\
-
-	// Armazenadores
 	db: IDBDatabase | null = null;
 	dadosFull: any = []; // Todos os dados sem filtro, mas ordenaveis.
 	dadosFiltrado: any = []; // Mesmos dadosFull, mas após filtro.
@@ -5105,14 +5097,25 @@ class mk {
 		mkWorkerElement.setAttribute("type", "javascript/worker")
 		mkWorkerElement.setAttribute("id", "mkWorker")
 		mkWorkerElement.innerHTML = `
-const l = (...args) => {
-	console.log("W> ", args);
-}
-onmessage = (ev) => {
-	console.log("W Recebido> C: ", ev.data.c, " D: ", ev.data.d);
-	// Ao receber um comando, executar um Job.
-	postMessage({ c: "Msg", d: ["Show"] });
-}`
+		const l = (...args) => {
+			console.log("W> ", ...args);
+		}
+		onmessage = (ev) => {
+			l(ev);
+			if (ev?.data?.c) {
+				switch (ev.data.c) {
+					case "MSG":
+						l("C: ", ev.data.c, " D: ", ev.data.d);
+						break;
+					case "PUT_MKDATA":
+		
+						break;
+					default:
+				}
+			}
+			// Ao receber um comando, executar um Job.
+			//postMessage({ c: "MSG", d: ["Show"] });
+		}`
 		document.body.append(mkWorkerElement);
 	}
 

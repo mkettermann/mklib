@@ -1,5 +1,5 @@
 var w = mk.mkWorker();
-w.postMessage({ c: "Msg", d: ["Dados Enviados"] });
+w.postMessage({ c: "MSG", d: ["Dados Enviados"] });
 w.onmessage = (ev) => {
 	console.log("A Recebido> C: ", ev.data.c, " D: ", ev.data.d);
 }
