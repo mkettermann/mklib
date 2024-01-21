@@ -9,24 +9,39 @@
 // - Implementação de banco de dados indexavel.
 // - Implementação de Design de colunas.
 // - Tentar tornar as funções de sobreescrever em Event Based.
+// CLASSE Do Design das colunas para formar o mkt.
+class mktm {
+    get [Symbol.toStringTag]() { return "mktm"; }
+    pk = false; // Este campo é Primary Key?
+    k = null; // Key / Chave (Propriedade do objeto)
+    v = null; // Valor (Inicialmente nulo, mas ao recuperar o objeto da lista ele vem preenchido)
+    l = null; // Label (Texto que descreve o campo)
+    r = null; // Regex para validar o campo
+    tag = "input"; // Qual é a tag do campo caso ele precise preencher?
+    atr = "type='text'"; // Todos os atributos padrões deste campo.
+    classes = "mkCampo"; // Classes padrões / iniciais deste campo
+    target = "value"; // Propriedade para edição (value, innerHTML).
+}
 // CLASSE DE CONFIG (Construtor único)
 class mkt_config {
     url = new URL("GetList", window.location.href.split("?")[0]).href; // Requer a URL para o fetch dos dados. Se não tiver, passar os dados no parametros dados e tornar esse null.
     dados = null; // Caso a tela já tenha os dados, podem ser passador por aqui, se não deixar 
+    nomeTabela = null; // Nome da tabela (Usado pra contruir o banco de dados)
     container = ".divListagemContainer"; // Classe / Id de onde será buscada uma tabela para ser populada.
     idmodelo = "#modelo"; // Classe / Id do template/script contendo o formato de exibição de cada registro da lista.
-    design = null; // Lista de Configuração de coluna, como Label, Formato do conteudo, Classes padrões...
-    filtros = ".iConsultas"; // Busca por esta classe para filtrar campos por nome do input.
+    model = []; // Lista de Configuração de coluna, como Label, Formato do conteudo, Classes padrões...
     container_importar = false; // No container, executa importar dados baseados no atributo.
     filtroExtra = null; // modificaFiltro Retorna um booleano que permite um filtro configurado externamente do processoFiltragem.
+    filtros = ".iConsultas"; // Busca por esta classe para filtrar campos por nome do input.
+    hearSort = true; // Indicador se ativará o ordenamento ao clicar no cabeçalho
+    hearMenu = true; // Indicador se ativará o botãozinho que abre o filtro completo do campo.
+    sortBy = null; // Campo a ser ordenado inicialmente;
+    sortDir = 0; // 0,1,2 = Crescente, Decrescente, Toogle;
 }
 // Event Based:
 // - aoConcluirDownload
 // - aoConcluirFiltragem
 // - aoConcluirExibicao
-// CLASSE Do Design das colunas para formar o mkt.
-class mkt_design {
-}
 // CLASSE INSTANCIAVEL
 class mkt {
     c;
@@ -39,11 +54,8 @@ class mkt {
     idContainer = 0;
     vars = {
         objFiltro: {},
-        divTabela: ".divListagemContainer",
         urlOrigem: "",
         pagAtual: 1,
-        tablePorPagina: null,
-        tableTotal: null,
         sortBy: "",
         sortDir: false,
         totalFull: this.dadosFull.length,
@@ -54,7 +66,22 @@ class mkt {
         pagItensFim: 0,
         totPags: 0,
         versaoDb: 1,
-        pk: null, // Possivel setar o nome do campo que é primary key já na construcao
+        pk: null,
+        filtro: null,
+        tbody: null,
+        ths: null,
+        pagBotoes: null,
+        tableResultado: null,
+        tablePorPagina: null,
+        tableExibePorPagina: null,
+        tableTotal: null,
+        tableFiltrado: null,
+        tableIni: null,
+        tableFim: null,
+        tableInicioFim: null,
+        pag: null,
+        pagBotao: null,
+        nomeTabela: null,
     };
     constructor(mktconfig) {
         if (mktconfig == null) {
@@ -63,8 +90,52 @@ class mkt {
         else {
             this.c = mktconfig;
         }
+        // Mapeamento dos elementos baseado no container informado.
+        this.vars.tbody = this.c.container + " tbody";
+        this.vars.ths = this.c.container + " th";
+        this.vars.pagBotoes = this.c.container + " .pagBotoes";
+        this.vars.tableResultado = this.c.container + " .tableResultado";
+        this.vars.tablePorPagina = this.c.container + " input[name='tablePorPagina']";
+        this.vars.tableExibePorPagina = this.c.container + " .tableExibePorPagina";
+        this.vars.tableTotal = this.c.container + " .tableTotal";
+        this.vars.tableFiltrado = this.c.container + " .tableFiltrado";
+        this.vars.tableIni = this.c.container + " .tableIni";
+        this.vars.tableFim = this.c.container + " .tableFim";
+        this.vars.tableInicioFim = this.c.container + " .tableInicioFim";
+        this.vars.pag = this.vars.pagBotoes + " .pag";
+        this.vars.pagBotao = this.vars.pagBotoes + " .pagBotao";
+        // Mesmo sem Design no contrutor, vai formando um mínimo necessário.
+        // Gerando Design de Modelo Aceitável
+        if (mk.classof(this.c.model) != "Array")
+            this.c.model = [];
+        // Impede a inserção de modelos que não são objetos da classe mktm
+        if (this.c.model?.length > 0) {
+            this.c.model?.forEach(o => {
+                if (mk.classof(o) != "mktm") {
+                    o = new mktm();
+                }
+                if (o.pk) {
+                    this.vars.pk = o.k;
+                }
+            });
+        }
+        if (this.vars.pk == null) {
+            mk.w("Nenhuma Primary Key encontrada no Model.");
+        }
+        if (this.c.url != null) {
+            let w = mkt.mkWorker();
+            w.postMessage({ c: "FETCH", u: this.c.url });
+            w.onmessage = (ev) => {
+                console.log("A Recebido> C: ", ev.data.c, " D: ", ev.data.d);
+            };
+            w.onerror = (ev) => {
+                console.log("A> Erro: ", ev);
+                ev.preventDefault();
+            };
+        }
     }
     static vars;
+    static mkWorker;
     static moldeWorker;
     static classof;
     static Inicializar;
@@ -72,6 +143,9 @@ class mkt {
     static exeTimer;
     static infolog = true; // Desliga / Liga Log do console
 }
+//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+//   Variaveis Estáticas            \\
+//___________________________________\\
 Object.defineProperty(mkt, "vars", {
     value: {
         exeTimer: 500,

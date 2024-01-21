@@ -9,8 +9,8 @@ onmessage = (ev) => {
 			case "MSG":
 				l("C: ", ev.data.c, " D: ", ev.data.d);
 				break;
-			case "PUT_MKDATA":
-
+			case "FETCH":
+				l("C: ", ev.data.c, " U: ", ev.data.u);
 				break;
 			default:
 		}
