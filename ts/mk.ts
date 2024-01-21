@@ -1280,6 +1280,7 @@ class mk {
 		} else {
 			this.l("Mascarar Requer Texto: ", texto, " e Mascara: ", mascara);
 		}
+		return null;
 	}
 
 	// Valor em Texto / Número, convertido para Float de no máximo 2 casas.
@@ -3609,11 +3610,7 @@ class mk {
 				this.config = config;
 				this.update();
 			}
-
-			async aoAvancar() {
-
-			}
-
+			async aoAvancar() { }
 			async avancar(novaFase: any = null) {
 				return new Promise(async (r, err) => {
 					if (await mk.estaValido(".modalFase" + this.atual)) {
@@ -3647,7 +3644,6 @@ class mk {
 					}
 				});
 			}
-
 			async voltar() {
 				return new Promise((r, err) => {
 					if (this.possiveis.indexOf(this.atual) >= 1) {
@@ -3665,7 +3661,6 @@ class mk {
 					}
 				});
 			}
-
 			update() {
 				mk.QAll(this.config.classe + " ul.mkUlFase li a").forEach((e) => {
 					// Limpar os Status
@@ -3717,15 +3712,12 @@ class mk {
 					mk.erro("mk.fase.possiveis Deve ser uma Array!");
 				}
 			}
-
 			has(x: number) {
 				return typeof x === "number" && this.possiveis.includes(x);
 			}
-
 			toString() {
 				return `[${this.possiveis.join()}]`;
 			}
-
 			// Iterator
 			[Symbol.iterator]() {
 				let next = 0;

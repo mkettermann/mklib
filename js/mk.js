@@ -1268,6 +1268,7 @@ class mk {
         else {
             this.l("Mascarar Requer Texto: ", texto, " e Mascara: ", mascara);
         }
+        return null;
     };
     // Valor em Texto / Número, convertido para Float de no máximo 2 casas.
     static toNumber = (valor, c = {}) => {
@@ -3501,8 +3502,7 @@ class mk {
                 this.config = config;
                 this.update();
             }
-            async aoAvancar() {
-            }
+            async aoAvancar() { }
             async avancar(novaFase = null) {
                 return new Promise(async (r, err) => {
                     if (await mk.estaValido(".modalFase" + this.atual)) {
