@@ -1,5 +1,7 @@
 "use strict";
 
+var lista_mkt = new mkt_config();
+lista_mkt.container;
 var lista = new mkt();
 
 var lista2 = new mkt();

@@ -8,6 +8,7 @@
 // - Implementação de banco de dados indexavel.
 // - Implementação de Design de colunas.
 // - Tentar tornar as funções de sobreescrever em Event Based.
+var mkz = null;
 
 // CLASSE Do Design das colunas para formar o mkt.
 class mktm {
@@ -34,7 +35,7 @@ class mkt_config {
 	idmodelo: string = "#modelo"; // Classe / Id do template/script contendo o formato de exibição de cada registro da lista.
 	model: Array<mktm> = []; // Lista de Configuração de coluna, como Label, Formato do conteudo, Classes padrões...
 	container_importar: boolean = false; // No container, executa importar dados baseados no atributo.
-	filtroExtra: Function | null = null; // modificaFiltro Retorna um booleano que permite um filtro configurado externamente do processoFiltragem.
+	filtroExtra: Function | null = null; // modificaFiltro Retorna um booleano que permite um filtro configurado externamente do processo Filtragem.
 	filtro: string | null = ".iConsultas"; // Busca por esta classe para filtrar campos por nome do input.
 	hearSort: boolean = true; // Indicador se ativará o ordenamento ao clicar no cabeçalho
 	hearMenu: boolean = true; // Indicador se ativará o botãozinho que abre o filtro completo do campo.
@@ -43,7 +44,7 @@ class mkt_config {
 	sortDir: Number | null = 0; // 0,1,2 = Crescente, Decrescente, Toogle;
 	objFiltro: any = {}; // Itens Filtrados
 	urlOrigem = "" as string | null; // URL de origem dos dados a serem populados
-	pagAtual: Number = 1; // Representa a pagina
+	pagAtual: number = 1; // Representa a pagina
 	totalFull = 0;
 	totalFiltrado = 0;
 	totalExibidos = 0;
@@ -66,12 +67,14 @@ class mkt_config {
 	tableInicioFim = ".tableInicioFim";
 	pag = ".pag";
 	pagBotao = ".pagBotao";
+	dbInit = (store: IDBObjectStore) => { } // Funcao de contrução do design do banco de dados
+	// Alterar essas funções para modificar dados durante etapas.
+	aoIniciarListagem = async (i) => { }; // Recebe a própria instancia no parametro.
+	aoPossuirDados = async (data: any) => { }; // Recebe os dados de dadosFull
+	aoConcluirFiltragem = async (data: any) => { }; // Recebe os dados filtrados
+	aoAntesDePopularTabela = async (data: any) => { }; // Recebe os dados a serem exibidos desta página
+	aoConcluirExibicao = async () => { };
 }
-
-// Event Based:
-// - aoConcluirDownload
-// - aoConcluirFiltragem
-// - aoConcluirExibicao
 
 
 // CLASSE INSTANCIAVEL
@@ -145,13 +148,70 @@ class mkt {
 		}
 	}
 
+	static vars: any;
+	static mkWorker: Function;
+	static moldeWorker: Function;
+	static classof: Function;
+	static Inicializar: Function;
+	static mkClicarNaAba: Function;
+	static exeTimer: Function;
+	static log = true; // Desliga / Liga Log do console
+	static headMenuCrescente: Function;
+	static headMenuDecrescente: Function;
+	static headMenuLimpar: Function;
+	static headMenuLimparTodos: Function;
+	static headMenuContemInput: Function;
+	static headMenuFiltraExclusivo: Function;
+	static headMenuMarcarExclusivos: Function;
+	static headMenuHideX: Function;
+	static toString: Function;
+	static regras: any = [];
+	static t: any;
+	static MESES: any;
+	static CORES: any;
+	static util: any;
+	static mascarar: Function;
+	static toNumber: Function;
+	static fromNumber: Function;
+	static elementoDuranteUpload: any;
+	static contaImportados = 0;
+	static Q: Function;
+	static QAll: Function;
+	static l: Function;
+	static w: Function;
+	static erro: Function;
+	static gc: Function;
+	static ge: Function;
+	static importar: Function;
+	static Ao: Function;
+	static mkLimparOA: Function;
+	static mkExecutaNoObj: Function;
+	static mkMoldeOA: Function;
+	static get: any;
+	static post: any;
+	static sortDir: Function;
+	static QverOff: Function;
+	static QverOn: Function;
+	static Qoff: Function;
+	static Qon: Function;
+	static html: Function;
+	static wait: Function;
+	static ordenar: Function;
+	static processoFiltragem: Function;
+	static getV: Function;
+	static clonar: Function;
+	static allSubPropriedades: Function;
+	static removeEspecias: Function;
+	static getExclusivos: Function;
+	static toLocale: Function;
+
 	autoStartConfig = async (arg: any = {}) => {
 		// SE for importar: Espera o container para então continuar.
 		if (this.c.container_importar) { await mkt.importar(this.c.container); }
 		// GATILHOS do Container da tabela (Paginação e Limite por Página)
 		// Seta Gatilho dos botoes de paginacao.
 		if (mkt.Q(this.c.pagBotao)) {
-			mkt.QAll(this.c.pagBotao).forEach((li) => {
+			mkt.QAll(this.c.pagBotao).forEach((li: HTMLLIElement) => {
 				li.addEventListener("click", (ev) => {
 					this.mudaPag(ev.target);
 				});
@@ -195,14 +255,14 @@ class mkt {
 		return new Promise((r) => {
 			let w = mkt.mkWorker();
 			w.postMessage({ c: "MKT_LIST_TO", u: url });
-			w.onmessage = (ev) => {
+			w.onmessage = (ev: MessageEvent) => {
 				console.log("A Recebido> C: ", ev.data.c, " D: ", ev.data.d);
 				if (ev.data.c == "MKT_LIST_BACK") {
 					this.dadosFull.push(...ev.data.d);
 					r(this);
 				}
 			}
-			w.onerror = (ev) => {
+			w.onerror = (ev: MessageEvent) => {
 				console.log("A> Erro: ", ev);
 				ev.preventDefault();
 				if (ev.data.c == "MKT_LIST_BACK") {
@@ -216,6 +276,7 @@ class mkt {
 	startListagem = async (arg: any = {}) => {
 		//EVENT: aoIniciarListagem
 		mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoIniciarListagem"));
+		this.c.aoIniciarListagem(this);
 
 		// DB CON
 		if (this.c.nomeTabela != null) {
@@ -237,14 +298,12 @@ class mkt {
 		if (temosDados != null) {
 			// Limpar Dados nulos
 			mkt.mkLimparOA(temosDados);
-			// Executa funcao personalizada por página
-			mkt.mkExecutaNoObj(temosDados, this.aoReceberDados);
 
 			if (this.c.nomeTabela) {
 				// DB FILL
 				let tx = this.db?.transaction(this.c.nomeTabela, "readwrite");
 				let store = tx?.objectStore(this.c.nomeTabela);
-				temosDados.forEach(o => {
+				temosDados.forEach((o: any) => {
 					store?.put(o);
 				});
 				if (tx) tx.oncomplete = () => {
@@ -255,12 +314,13 @@ class mkt {
 			// Armazena em 1 array que está em 2 locais na memória
 			this.addMany(temosDados);
 			//this.dadosFull = this.dadosFiltrado = temosDados;
-			this.aoConcluirDownload(this.dadosFull);
-			// Executa função antes de ordenar a tabela (Util para calcular coisas no conteudo recebido)
-			await this.antesDeOrdenarAsync();
+
+			//EVENT: aoPossuirDados
+			mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoPossuirDados"));
+			await this.c.aoPossuirDados(this.dadosFull);
 
 			// Ordena a lista geral com base na primeira propriedade.
-			mkt.ordenamento(this.dadosFull, this.c.sortBy, this.c.sortDir);
+			mkt.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
 			//Adiciona eventos aos botões do filtro
 			this.setFiltroListener();
 			// Executa um filtro inicial e na sequencia processa a exibição.
@@ -277,34 +337,39 @@ class mkt {
 	//___________________________________\\
 	dbCon = async (): Promise<IDBDatabase | null> => {
 		return new Promise((r) => {
-			let dbConOpen = indexedDB.open(this.c.nomeTabela, this.c.versaoDb);
-			dbConOpen.onerror = (...args) => { mkt.erro(args); r(null); }
-			dbConOpen.onsuccess = () => {
-				r(dbConOpen.result);
-			}
-			dbConOpen.onupgradeneeded = () => {
-				// Aqui da pra melhorar com o getModel() 
-				// Pré criar a tabela com os K do getModel();
-				let conParametros: IDBObjectStoreParameters = {};
-				if (this.c.pk != null && this.c.pk != "" && this.c.pk != "pk") {
-					conParametros.keyPath = this.c.pk;
+			if (mkt.classof(this.c.nomeTabela) == "String") {
+				let dbConOpen = indexedDB.open(this.c.nomeTabela as string, this.c.versaoDb);
+				dbConOpen.onerror = (...args) => { mkt.erro(args); r(null); }
+				dbConOpen.onsuccess = () => {
+					r(dbConOpen.result);
 				}
+				dbConOpen.onupgradeneeded = () => {
+					// Aqui da pra melhorar com o getModel() 
+					// Pré criar a tabela com os K do getModel();
+					let conParametros: IDBObjectStoreParameters = {};
+					if (this.c.pk != null && this.c.pk != "" && this.c.pk != "pk") {
+						conParametros.keyPath = this.c.pk;
+					}
 
-				// CREATE TABLE
-				let store = dbConOpen.result.createObjectStore(this.c.nomeTabela, conParametros);
-				if (mkt.classof(this.c.Initializer) == "Function") {
-					this.c.Initializer(store);
+					// CREATE TABLE
+					let store = dbConOpen.result.createObjectStore(this.c.nomeTabela as string, conParametros);
+					if (mkt.classof(this.c.dbInit) == "Function") {
+						this.c.dbInit(store);
+					}
+					// INDEX
+					// store.createIndex("porNome", "mNome", { unique: true });
+					// DADOS INICIAIS
+					// store.put({
+					//  	"mId": 2,
+					//		"mNome": "Fulano Sem Dados",
+					//		"mStatus": null
+					// });
+
+					r(dbConOpen.result);
 				}
-				// INDEX
-				// store.createIndex("porNome", "mNome", { unique: true });
-				// DADOS INICIAIS
-				// store.put({
-				//  	"mId": 2,
-				//		"mNome": "Fulano Sem Dados",
-				//		"mStatus": null
-				// });
-
-				r(dbConOpen.result);
+			} else {
+				mk.w("dbCon() - nomeTabela não informado: ", this.c.nomeTabela);
+				r(null);
 			}
 		});
 	}
@@ -323,6 +388,10 @@ class mkt {
 		);
 		// Processar calculos de paginacao
 		this.atualizarStatusListagem();
+
+		//EVENT: aoConcluirFiltragem
+		mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoConcluirFiltragem"));
+		await this.c.aoConcluirFiltragem(this.dadosFiltrado);
 
 		// Apenas executa a atualização do resumo, se a pagBotoes estiver presente na página.
 		if (this.c.totalFiltrado > this.c.pagPorPagina)
@@ -343,9 +412,16 @@ class mkt {
 				this.dadosExibidos = this.dadosFiltrado;
 			}
 			mkt.Q(this.c.tbody)?.removeAttribute("hidden");
-			this.antesDePopularTabela(this);
-			await mkt.mkMoldeOA(this.dadosExibidos, this.c.idModelo, this.c.tbody);
-			this.aoCompletarExibicao();
+
+			//EVENT: aoAntesDePopularTabela
+			mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoAntesDePopularTabela"));
+			await this.c.aoAntesDePopularTabela(this.dadosFiltrado);
+
+			await mkt.mkMoldeOA(this.dadosExibidos, this.c.idmodelo, this.c.tbody);
+
+			//EVENT: aoConcluirExibicao
+			mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoConcluirExibicao"));
+			await this.c.aoConcluirExibicao();
 		}
 	};
 
@@ -468,7 +544,7 @@ class mkt {
 			}
 		}
 		// Ativar Pagina
-		mkt.QAll(this.c.pagBotao).forEach((li) => {
+		mkt.QAll(this.c.pagBotao).forEach((li: HTMLLIElement) => {
 			li.classList.remove("ativo");
 			if (this.c.pagAtual == Number(li.innerHTML)) {
 				li.classList.add("ativo");
@@ -489,7 +565,7 @@ class mkt {
 		// Limpa filtro atual
 		this.c.objFiltro = {};
 		// Gera filtro os nos campos
-		mkt.QAll(this.c.filtro).forEach((e) => {
+		mkt.QAll(this.c.filtro).forEach((e: HTMLElement) => {
 			this.gerarFiltro(e);
 		});
 		this.atualizaNaPaginaUm();
@@ -518,7 +594,7 @@ class mkt {
 
 	// Gerar Gatilhos de FILTRO
 	setFiltroListener = () => {
-		mkt.Ao("input", this.c.filtro, (e) => {
+		mkt.Ao("input", this.c.filtro, (e: HTMLElement) => {
 			this.gerarFiltro(e);
 			this.atualizaNaPaginaUm();
 		});
@@ -529,7 +605,7 @@ class mkt {
 		if (!e.querySelector(".mkhmHeadIco")) {
 			let mkhmIco = document.createElement("div");
 			mkhmIco.className = "mkhmHeadIco";
-			mkhmIco.innerHTML = mkt.hmCfg.svgF;
+			mkhmIco.innerHTML = mkt.vars.svgF;
 			mkt.Ao("click", mkhmIco, () => {
 				this.headMenuAbrir(colName);
 			})
@@ -539,7 +615,7 @@ class mkt {
 
 	// HM (MK HEAD MENU)
 	headMenuAbrir = (colName: any) => {
-		let eHead = mkt.Q(this.c.divTabela + " .sort-" + colName);
+		let eHead = mkt.Q(this.c.container + " .sort-" + colName);
 		if (mkt.Q("body .mkHeadMenu") == null) {
 			let ehm = document.createElement("div");
 			ehm.className = "mkHeadMenu oculto";
@@ -550,15 +626,15 @@ class mkt {
 						Filtro
 					</div>
 					<div class='col10 fechar botao nosel' onclick='mkt.headMenuHideX()'>
-						${mkt.hmCfg.svgX}
+						${mkt.vars.svgX}
 					</div>
 				</div>
 				<ul>
-					<li onclick='mkt.headMenuCrescente()' class='claico botao nosel'>${mkt.hmCfg.svgAB}${mkt.hmCfg.espaco}${mkt.hmCfg.clacre}</li>
-					<li onclick='mkt.headMenuDecrescente()' class='claico botao nosel fimsecao'>${mkt.hmCfg.svgBA}${mkt.hmCfg.espaco}${mkt.hmCfg.cladec}</li>
-					<li><input class='nosel' type='text' name='filtrarCampo' oninput='mkt.headMenuContemInput(this.value)' placeholder='${mkt.hmCfg.contem}'></li>
-					<li onclick='mkt.headMenuLimpar()' class='limpar botao nosel'>${mkt.hmCfg.svgF}${mkt.hmCfg.espaco}${mkt.hmCfg.limparIndivisual}${mkt.hmCfg.espaco}<span class='hmTitulo'></span></li>
-					<li onclick='mkt.headMenuLimparTodos()' class='limpar botao nosel fimsecao'>${mkt.hmCfg.svgF}${mkt.hmCfg.espaco}${mkt.hmCfg.limparTodos}</li>
+					<li onclick='mkt.headMenuCrescente()' class='claico botao nosel'>${mkt.vars.svgAB}${mkt.vars.espaco}${mkt.vars.clacre}</li>
+					<li onclick='mkt.headMenuDecrescente()' class='claico botao nosel fimsecao'>${mkt.vars.svgBA}${mkt.vars.espaco}${mkt.vars.cladec}</li>
+					<li><input class='nosel' type='text' name='filtrarCampo' oninput='mkt.headMenuContemInput(this.value)' placeholder='${mkt.vars.contem}'></li>
+					<li onclick='mkt.headMenuLimpar()' class='limpar botao nosel'>${mkt.vars.svgF}${mkt.vars.espaco}${mkt.vars.limparIndivisual}${mkt.vars.espaco}<span class='hmTitulo'></span></li>
+					<li onclick='mkt.headMenuLimparTodos()' class='limpar botao nosel fimsecao'>${mkt.vars.svgF}${mkt.vars.espaco}${mkt.vars.limparTodos}</li>
 					<li><input type='search' oninput='mkt.headMenuFiltraExclusivo(this.value)' name='filtrarPossibilidades' placeholder='Pesquisar'></li>
 					<li><div class='possibilidades'></div></li>
 				</ul>
@@ -579,7 +655,7 @@ class mkt {
 		this.exclusivos = mkt.getExclusivos(this)[colName.split(".")[0]];
 		let exclusivosProcessado: any = []
 		if (colName.includes(".")) {
-			this.exclusivos.forEach(ex => {
+			this.exclusivos.forEach((ex: any) => {
 				let colv = mkt.getV(colName, ex).toString();
 				exclusivosProcessado.push(colv);
 			})
@@ -612,7 +688,7 @@ class mkt {
 				if (mkt.Q("body .mkHeadMenu .possibilidades").classList.contains("st")) {
 					fullsel = "";
 				}
-				htmlPossiveis += "<li class='nosel botao " + fullsel + "' id='headMenuTodos' onclick='mkt.headMenuMarcarExclusivos()'>" + mkt.hmCfg.svgSquare + mkt.hmCfg.espaco + mkt.hmCfg.selectAll + " (" + exFiltrado.length + ")";
+				htmlPossiveis += "<li class='nosel botao " + fullsel + "' id='headMenuTodos' onclick='mkt.headMenuMarcarExclusivos()'>" + mkt.vars.svgSquare + mkt.vars.espaco + mkt.vars.selectAll + " (" + exFiltrado.length + ")";
 				if (v != "") {
 					htmlPossiveis += " Pesquisados";
 				}
@@ -636,7 +712,7 @@ class mkt {
 					if (vOut.length > 40) {
 						vOut = vOut.slice(0, 37) + "...";
 					}
-					htmlPossiveis += "<li name='" + mkt.removerAspas(v2) + "' class='nosel botao " + sel + "' onclick='mkt.headMenuMarcarExclusivos(this)'>" + mkt.hmCfg.svgSquare + mkt.hmCfg.espaco + vOut + "</li>";
+					htmlPossiveis += "<li name='" + mkt.removerAspas(v2) + "' class='nosel botao " + sel + "' onclick='mkt.headMenuMarcarExclusivos(this)'>" + mkt.vars.svgSquare + mkt.vars.espaco + vOut + "</li>";
 				})
 			}
 			htmlPossiveis += "</ul>"
@@ -745,7 +821,7 @@ class mkt {
 
 	// Gera Listeners na THEAD da tabela (Requer classe: "sort-campo")
 	headAtivar = () => {
-		let eTrHeadPai = mkt.Q(this.c.divTabela + " thead tr");
+		let eTrHeadPai = mkt.Q(this.c.container + " thead tr");
 		Array.from(eTrHeadPai.children).forEach((th) => {
 			let possui: any = false;
 			th.classList.forEach((classe) => {
@@ -994,7 +1070,7 @@ class mkt {
 	};
 
 	getAllTr = () => {
-		return Array.from(mkt.QAll(this.c.divTabela + " tbody tr"));
+		return Array.from(mkt.QAll(this.c.container + " tbody tr"));
 	};
 
 	// USER INTERFACE - UI - INDIVIDUAL
@@ -1040,33 +1116,7 @@ class mkt {
 		return this.dadosFull;
 	};
 
-
-	static vars: any;
-	static mkWorker: Function;
-	static moldeWorker: Function;
-	static classof: Function;
-	static Inicializar: Function;
-	static mkClicarNaAba: Function;
-	static exeTimer: Function;
-	static log = true; // Desliga / Liga Log do console
-	static headMenuCrescente: Function;
-	static headMenuDecrescente: Function;
-	static headMenuLimpar: Function;
-	static headMenuLimparTodos: Function;
-	static headMenuContemInput: Function;
-	static headMenuFiltraExclusivo: Function;
-	static headMenuMarcarExclusivos: Function;
-	static headMenuHideX: Function;
-	static toString: Function;
-	static regras: any = [];
-	static t: any;
-	static MESES: any;
-	static CORES: any;
-	static util: any;
-	static mascarar: Function;
-	static toNumber: Function;
-	static fromNumber: Function;
-}
+} // FIM CLASSE MKT
 
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //	 FUNCOES BASICAS / ATALHOS   		\\
@@ -1380,7 +1430,7 @@ Object.defineProperty(mkt, "contem", {
 
 Object.defineProperty(mkt, "allSubPropriedades", {
 	value: (OA: any, funcao: Function | null = null, exceto: string = "object") => {
-		// Informando a Array ou o Objeto, itera sobre todas e executa a funcao, e retorna o total de propriedades iteradas.
+		// Executa a FUNCAO em todas as propriedades deste OA
 		let c = 0;
 		for (let a in OA) {
 			let target = OA[a];
@@ -2962,9 +3012,10 @@ Object.defineProperty(mkt, "processoFiltragem", {
 //___________________________________\\
 
 Object.defineProperty(mkt, "ordenar", {
-	value: (array: object[], nomeProp: string, reverse: any) => {
+	value: (array: object[], nomeProp: string, sortDir: any) => {
 		// Possibilidade de inverter a lista (Tentar deixar esse padrao)
 		// Essa funcção deveria ser da instancia atual para recever os atributos da instancia por padrao
+		// 0 - Crescente:
 		array.sort((oA: any, oB: any) => {
 			let a = mkt.getV(nomeProp, oA);
 			let b = mkt.getV(nomeProp, oB);
@@ -2980,12 +3031,14 @@ Object.defineProperty(mkt, "ordenar", {
 			}
 			return -1;
 		});
-		this.contaOrdena++;
-		if (reverse == true) {
+		if (!mkt.vars.contaOrdena) { mkt.vars.contaOrdena = 0; }
+		mkt.vars.contaOrdena++;
+		// 1 - Decrescente
+		if (sortDir === 1) {
 			array = array.reverse();
-		} else if (reverse == 2) {
-			// toogle
-			if (this.contaOrdena % 2 == 0) {
+		} else if (sortDir === 2) {
+			// 2 - Toogle 
+			if (mkt.vars.contaOrden % 2 == 0) {
 				array = array.reverse();
 			}
 		}
@@ -3335,53 +3388,53 @@ Object.defineProperty(mkt, "regrar", {
 		 * on: 	padrão true. define se vai executar a regra ou não.
 		 */
 		if (typeof nome != "string") {
-			return mk.w("Regrar() precisa receber o nome do input como string");
+			return mkt.w("Regrar() precisa receber o nome do input como string");
 		}
-		container = mk.Q(container);
+		container = mkt.Q(container);
 		let e = container?.querySelector("*[name='" + nome + "']");
 		if (e) {
-			mk.atribuir(e, () => { mk.exeregra(e) }, "oninput");
-			mk.atribuir(e, () => { mk.exeregra(e, event) }, "onblur");
+			mkt.atribuir(e, () => { mkt.exeregra(e) }, "oninput");
+			mkt.atribuir(e, () => { mkt.exeregra(e, event) }, "onblur");
 
 			// Buscar Elemento e regra
 			let auto = false;
 			let novaregra: any = { c: container, n: nome, e: e, r: [...obj] };
-			let posE = mk.regras.findIndex(o => o.e == e);
+			let posE = mkt.regras.findIndex(o => o.e == e);
 			if (posE >= 0) {
 				// Elemento já encontrado, substituir a regra específica
 				novaregra.r.forEach(i => {
-					let posRe = mk.regras[posE].r.findIndex(o => o.k == i.k);
+					let posRe = mkt.regras[posE].r.findIndex(o => o.k == i.k);
 					if (posRe >= 0) {
 						for (let p in novaregra.r) {
-							mk.regras[posE].r[posRe] = novaregra.r[p];
+							mkt.regras[posE].r[posRe] = novaregra.r[p];
 						}
 					} else {
-						mk.regras[posE].r.push(i);
+						mkt.regras[posE].r.push(i);
 					}
 				});
 			} else {
-				mk.regras.push(novaregra);
+				mkt.regras.push(novaregra);
 			}
 			// Auto Executa
 			if (auto) {
-				mk.exeregra(e, "inicial");
+				mkt.exeregra(e, "inicial");
 			}
 		} else {
-			mk.w("Regrar Requer Elemento (" + nome + "): ", e, " Container: ", container)
+			mkt.w("Regrar Requer Elemento (" + nome + "): ", e, " Container: ", container)
 		}
 	}, enumerable: false, writable: false, configurable: false,
 });
 
 Object.defineProperty(mkt, "estaValido", {
 	value: async (container: any) => {
-		container = mk.Q(container);
+		container = mkt.Q(container);
 		let validou = false;
 
 		// Informando um container qualquer, executa apenas as regras dentro deles.
 		let promises: any = [];
-		mk.regras.forEach(regra => {
-			if (mk.isInside(regra.e, container)) {
-				promises.push(mk.exeregra(regra.e, "full"));
+		mkt.regras.forEach(regra => {
+			if (mkt.isInside(regra.e, container)) {
+				promises.push(mkt.exeregra(regra.e, "full"));
 			}
 		});
 		let resultado: any = [];
@@ -3428,7 +3481,7 @@ Object.defineProperty(mkt, "exeregra", {
 		// Quando concluir (onChange), executar novamentepra remover erros já corrigidos (justamente no último caracter).
 		return new Promise((resolver) => {
 			let erros: any = [];
-			let regrasDoE = mk.regras.find(o => o.e == e);
+			let regrasDoE = mkt.regras.find(o => o.e == e);
 			let eDisplay = regrasDoE?.c.querySelector(".mkRegrar[data-valmsg-for='" + regrasDoE.n + "']")
 			let regras = regrasDoE?.r;
 			let promises: any = []
@@ -3457,7 +3510,7 @@ Object.defineProperty(mkt, "exeregra", {
 
 								case "mascarar":  // EXE
 									if (e[re.target]) {
-										let mascarado = mk.mascarar(e[re.target], re.v)
+										let mascarado = mkt.mascarar(e[re.target], re.v)
 										if (mascarado != null) e[re.target] = mascarado;
 									}
 									prom(re.k);
@@ -3465,14 +3518,14 @@ Object.defineProperty(mkt, "exeregra", {
 
 								case "moeda":  // EXE
 									if (e[re.target]) {
-										e[re.target] = mk.toMoeda(e[re.target]);
+										e[re.target] = mkt.toMoeda(e[re.target]);
 									}
 									prom(re.k);
 									break;
 
 								case "numero":  // EXE
 									if (e[re.target]) {
-										e[re.target] = mk.fromNumber(e[re.target]);
+										e[re.target] = mkt.fromNumber(e[re.target]);
 									}
 									prom(re.k);
 									break;
@@ -3480,7 +3533,7 @@ Object.defineProperty(mkt, "exeregra", {
 								case "charproibido": // EXE
 									for (let c of re.v) {
 										if (e[re.target].includes(c)) {
-											if (!re.m) re.m = mk.m.charproibido + c;
+											if (!re.m) re.m = mkt.m.charproibido + c;
 											erros.push(re);
 											e[re.target] = e[re.target].replaceAll(c, "");
 										}
@@ -3489,8 +3542,8 @@ Object.defineProperty(mkt, "exeregra", {
 									break;
 
 								case "apenasnumeros": // EXE
-									if (!(mk.util.numeros[1].test(e[re.target]))) {
-										if (!re.m) re.m = mk.m.apenasnumeros;
+									if (!(mkt.util.numeros[1].test(e[re.target]))) {
+										if (!re.m) re.m = mkt.m.apenasnumeros;
 										erros.push(re);
 										e[re.target] = e[re.target].replaceAll(/((?![0-9]).)/g, "")
 									}
@@ -3498,8 +3551,8 @@ Object.defineProperty(mkt, "exeregra", {
 									break;
 
 								case "apenasletras": // EXE
-									if (!(mk.util.letras[1].test(e[re.target]))) {
-										if (!re.m) re.m = mk.m.apenasletras;
+									if (!(mkt.util.letras[1].test(e[re.target]))) {
+										if (!re.m) re.m = mkt.m.apenasletras;
 										erros.push(re);
 										e[re.target] = e[re.target].replaceAll(/((?![a-zA-Z]).)/g, "")
 									}
@@ -3509,7 +3562,7 @@ Object.defineProperty(mkt, "exeregra", {
 								case "maxchars": // EXE
 									e.setAttribute("maxlength", re.v);
 									if (e[re.target].length > Number(re.v)) {
-										if (!re.m) re.m = mk.m.maxc;
+										if (!re.m) re.m = mkt.m.maxc;
 										erros.push(re);
 										e[re.target] = e[re.target].slice(0, Number(re.v));
 									}
@@ -3519,7 +3572,7 @@ Object.defineProperty(mkt, "exeregra", {
 								case "minchars": // EXE
 									e.setAttribute("minlength", re.v);
 									if (e[re.target].length < Number(re.v)) {
-										if (!re.m) re.m = mk.m.minc + re.v;
+										if (!re.m) re.m = mkt.m.minc + re.v;
 										erros.push(re);
 										let _a = [...e[re.target]];
 										if (!re.fill) re.fill = "0";
@@ -3532,8 +3585,8 @@ Object.defineProperty(mkt, "exeregra", {
 									break;
 
 								case "datamax": // EXE
-									if (mk.getMs(e[re.target]) > mk.getMs(re.v)) {
-										if (!re.m) re.m = mk.m.datamax;
+									if (mkt.getMs(e[re.target]) > mkt.getMs(re.v)) {
+										if (!re.m) re.m = mkt.m.datamax;
 										erros.push(re);
 										e[re.target] = re.v;
 									}
@@ -3542,8 +3595,8 @@ Object.defineProperty(mkt, "exeregra", {
 
 								case "nummin": // EXE
 									e.setAttribute("min", re.v);
-									if (mk.mkFloat(e[re.target]) < Number(re.v)) {
-										if (!re.m) re.m = mk.m.nummin + re.v;
+									if (mkt.mkFloat(e[re.target]) < Number(re.v)) {
+										if (!re.m) re.m = mkt.m.nummin + re.v;
 										erros.push(re);
 										e[re.target] = re.v;
 									}
@@ -3552,8 +3605,8 @@ Object.defineProperty(mkt, "exeregra", {
 
 								case "nummax": // EXE
 									e.setAttribute("max", re.v);
-									if (mk.mkFloat(e[re.target]) > Number(re.v)) {
-										if (!re.m) re.m = mk.m.nummax + re.v;
+									if (mkt.mkFloat(e[re.target]) > Number(re.v)) {
+										if (!re.m) re.m = mkt.m.nummax + re.v;
 										erros.push(re);
 										e[re.target] = re.v;
 									}
@@ -3566,9 +3619,9 @@ Object.defineProperty(mkt, "exeregra", {
 										if (e[re.target] == "") {
 											if (!re.m) {
 												if (e.classList.contains("mkSel")) {
-													re.m = mk.m.so;
+													re.m = mkt.m.so;
 												} else {
-													re.m = mk.m.po;
+													re.m = mkt.m.po;
 												}
 											}
 											erros.push(re);
@@ -3579,7 +3632,7 @@ Object.defineProperty(mkt, "exeregra", {
 
 								case "regex": // INFO
 									if (!(new RegExp(re.v).test(e[re.target]))) {
-										if (!re.m) re.m = mk.m.fi;
+										if (!re.m) re.m = mkt.m.fi;
 										erros.push(re);
 									}
 									prom(re.k);
@@ -3594,7 +3647,7 @@ Object.defineProperty(mkt, "exeregra", {
 									for (let i = 0; i < _vs.length; i++) {
 										if (!([...e[re.target]].some(le => new RegExp(_vs[i]).test(le)))) {
 											if (!re.m) {
-												re.m = mk.m.some;
+												re.m = mkt.m.some;
 											}
 											re.vmfail.push(re.vm[i]);
 											b = true;
@@ -3609,7 +3662,7 @@ Object.defineProperty(mkt, "exeregra", {
 								case "mincharsinfo": // INFO
 									e.setAttribute("minlength", re.v);
 									if (e[re.target].length < Number(re.v)) {
-										if (!re.m) re.m = mk.m.minc + re.v;
+										if (!re.m) re.m = mkt.m.minc + re.v;
 										erros.push(re);
 									}
 									prom(re.k);
@@ -3617,7 +3670,7 @@ Object.defineProperty(mkt, "exeregra", {
 
 								case "maxcharsinfo": // INFO
 									if (e[re.target].length > Number(re.v)) {
-										if (!re.m) re.m = mk.m.maxc + re.v;
+										if (!re.m) re.m = mkt.m.maxc + re.v;
 										erros.push(re);
 									}
 									prom(re.k);
@@ -3625,23 +3678,23 @@ Object.defineProperty(mkt, "exeregra", {
 
 								case "fn": // INFO
 									if (!(re.v(e[re.target]))) {
-										if (!re.m) re.m = mk.m.negado;
+										if (!re.m) re.m = mkt.m.negado;
 										erros.push(re);
 									}
 									prom(re.k);
 									break;
 
 								case "datamaiorque": // INFO
-									if (mk.getMs(e[re.target]) < mk.getMs(re.v)) {
-										if (!re.m) re.m = mk.m.datamaiorque;
+									if (mkt.getMs(e[re.target]) < mkt.getMs(re.v)) {
+										if (!re.m) re.m = mkt.m.datamaiorque;
 										erros.push(re);
 									}
 									prom(re.k);
 									break;
 
 								case "datamenorque": // INFO
-									if (mk.getMs(e[re.target]) > mk.getMs(re.v)) {
-										if (!re.m) re.m = mk.m.datamenorque;
+									if (mkt.getMs(e[re.target]) > mkt.getMs(re.v)) {
+										if (!re.m) re.m = mkt.m.datamenorque;
 										erros.push(re);
 									}
 									prom(re.k);
@@ -3650,7 +3703,7 @@ Object.defineProperty(mkt, "exeregra", {
 								case "server": // INFO - ASYNC EVENT
 									//(Verificação remota, DB / API)
 									if (ev) {
-										if (!re.m) re.m = mk.m.in;
+										if (!re.m) re.m = mkt.m.in;
 										if (e[re.target] != "") {
 											e.classList.add("pending");
 											let queryString = "?" + regrasDoE.n + "=" + e[re.target];
@@ -3666,7 +3719,7 @@ Object.defineProperty(mkt, "exeregra", {
 													}
 												});
 											}
-											mk.get.json({ url: re.v + queryString, quiet: true }).then(ret => {
+											mkt.get.json({ url: re.v + queryString, quiet: true }).then(ret => {
 												let retorno = ret.retorno;
 												if (retorno != true) {
 													if (typeof retorno == "string") {
@@ -3690,7 +3743,7 @@ Object.defineProperty(mkt, "exeregra", {
 									break;
 
 								default:
-									mk.w("Regrar() - Regra não encontrada: ", regraK)
+									mkt.w("Regrar() - Regra não encontrada: ", regraK)
 									prom(null);
 							} // fim switch regras possíveis
 
@@ -3703,14 +3756,14 @@ Object.defineProperty(mkt, "exeregra", {
 					let mensagens = erros.map(a => {
 						if (Array.isArray(a.vmfail)) {
 							// Aqui dá pra evoluir se houver um template nos padrões.
-							a.m = mk.m.some + a.vmfail.join(", ");
+							a.m = mkt.m.some + a.vmfail.join(", ");
 						}
 						return a.m;
 					}).join("<br/>");
-					mk.regraDisplay(e, true, eDisplay, mensagens);
-					mk.regraBlink(e);
+					mkt.regraDisplay(e, true, eDisplay, mensagens);
+					mkt.regraBlink(e);
 				} else {
-					mk.regraDisplay(e, false, eDisplay, "");
+					mkt.regraDisplay(e, false, eDisplay, "");
 				}
 				resolver(erros);
 			});
@@ -3741,19 +3794,19 @@ Object.defineProperty(mkt, "regraDisplay", {
 Object.defineProperty(mkt, "regraBlink", {
 	value: (e) => {
 		if (typeof e == "string") {
-			e = mk.Q(e);
+			e = mkt.Q(e);
 		}
-		mk.TerremotoErros("");
+		mkt.TerremotoErros("");
 	}, enumerable: false, writable: false, configurable: false,
 });
 
 Object.defineProperty(mkt, "regraClear", {
 	value: () => {
 		// A cada elemento
-		mk.regras.forEach(r => {
+		mkt.regras.forEach(r => {
 			let e = r.e;
 			let eDisplay = r.c.querySelector(".mkRegrar[data-valmsg-for='" + r.n + "']")
-			mk.regraDisplay(e, false, eDisplay);
+			mkt.regraDisplay(e, false, eDisplay);
 		})
 	}, enumerable: false, writable: false, configurable: false,
 });
@@ -3761,12 +3814,12 @@ Object.defineProperty(mkt, "regraClear", {
 Object.defineProperty(mkt, "desregrar", {
 	value: async (container: any) => {
 		// Remove as regras de um determinado container
-		container = mk.Q(container);
+		container = mkt.Q(container);
 
-		mk.regras.forEach(regra => {
-			if (mk.isInside(regra.e, container)) {
+		mkt.regras.forEach(regra => {
+			if (mkt.isInside(regra.e, container)) {
 				this.l(regra);
-				mk.regras.splice(mk.regras.indexOf(regra), 1);
+				mkt.regras.splice(mkt.regras.indexOf(regra), 1);
 			}
 		});
 	}, enumerable: false, writable: false, configurable: false,
@@ -3776,7 +3829,7 @@ Object.defineProperty(mkt, "TerremotoErros", {
 	value: (form: string): void => {
 		// Efeito de terremoto em campos com erros no formulario informado
 		if (!form) form = "";
-		mk.QAll(form + " input.input-validation-error").forEach((e) => {
+		mkt.QAll(form + " input.input-validation-error").forEach((e) => {
 			e.nextElementSibling?.classList.add("mkTerremoto");
 			setTimeout(() => {
 				e.nextElementSibling?.classList.remove("mkTerremoto");
@@ -3793,7 +3846,7 @@ Object.defineProperty(mkt, "fase", {
 	value: (possiveis: number[], config: any) => {
 		// Botões: .btnVoltar, .btnAvancar, .btnConclusivo.
 		// Telas: .modalFaseX (X é o numero da fase)
-		// Utiliza a array mk.fase.possiveis para possibilitar a rota
+		// Utiliza a array mkt.fase.possiveis para possibilitar a rota
 		// config.classe (Classe do container que cerca todas as fases, botoes e navegadores)
 		// Faltando os Validadores no avancar e colocar o avancar específico no menu html.
 		class FasearMK {
@@ -3814,14 +3867,14 @@ Object.defineProperty(mkt, "fase", {
 			async aoAvancar() { }
 			async avancar(novaFase: any = null) {
 				return new Promise(async (r, err) => {
-					if (await mk.estaValido(".modalFase" + this.atual)) {
+					if (await mkt.estaValido(".modalFase" + this.atual)) {
 						if (novaFase) {
 							if (novaFase instanceof HTMLElement) {
 								if (novaFase.getAttribute("data-libera")) {
 									this.atual = Number(novaFase.getAttribute("data-pag"))
 									this.config.aoAvancar();
 								} else {
-									mk.w("Avançar para fase específica negado. Requer Libera!")
+									mkt.w("Avançar para fase específica negado. Requer Libera!")
 								}
 							} else {
 								this.atual = novaFase;
@@ -3863,7 +3916,7 @@ Object.defineProperty(mkt, "fase", {
 				});
 			}
 			update() {
-				mk.QAll(this.config.classe + " ul.mkUlFase li a").forEach((e) => {
+				mkt.QAll(this.config.classe + " ul.mkUlFase li a").forEach((e) => {
 					// Limpar os Status
 					e.parentElement?.classList.remove("mkFaseBack");
 					e.parentElement?.classList.remove("mkFaseAtivo");
@@ -3882,35 +3935,35 @@ Object.defineProperty(mkt, "fase", {
 					}
 				});
 				for (let i = 0; i < this.possiveis.length; i++) {
-					let elemento = mk.Q(this.config.classe + " .modalFase" + this.possiveis[i]);
+					let elemento = mkt.Q(this.config.classe + " .modalFase" + this.possiveis[i]);
 					if (elemento) {
 						elemento?.classList.add("oculto");
 					} else {
-						mk.w("Fase não encontrada: .modalFase" + i);
+						mkt.w("Fase não encontrada: .modalFase" + i);
 					}
 				}
-				mk.QverOff(this.config.classe + " .btnVoltar");
-				mk.QverOff(this.config.classe + " .btnAvancar");
-				mk.QverOff(this.config.classe + " .btnConclusivo");
+				mkt.QverOff(this.config.classe + " .btnVoltar");
+				mkt.QverOff(this.config.classe + " .btnAvancar");
+				mkt.QverOff(this.config.classe + " .btnConclusivo");
 				if (Array.isArray(this.possiveis)) {
 					if (this.possiveis.length >= 0) {
 						if (this.possiveis.indexOf(this.atual) >= this.possiveis.length - 1) {
 							// Fase Atual é a última possível, Então não há como avançar
-							mk.QverOn(this.config.classe + " .btnConclusivo");
+							mkt.QverOn(this.config.classe + " .btnConclusivo");
 						} else {
 							// Não está na última posição
-							mk.QverOn(this.config.classe + " .btnAvancar");
+							mkt.QverOn(this.config.classe + " .btnAvancar");
 						};
 						if (this.possiveis.indexOf(this.atual) >= 1) {
 							// Não está na primeira posição possível
-							mk.QverOn(this.config.classe + " .btnVoltar");
+							mkt.QverOn(this.config.classe + " .btnVoltar");
 						};
-						mk.QverOn(this.config.classe + " .modalFase" + this.atual);
+						mkt.QverOn(this.config.classe + " .modalFase" + this.atual);
 					} else {
-						mk.w("A array mk.fase.possiveis não contém opções para dar update.");
+						mkt.w("A array mkt.fase.possiveis não contém opções para dar update.");
 					}
 				} else {
-					mk.erro("mk.fase.possiveis Deve ser uma Array!");
+					mkt.erro("mkt.fase.possiveis Deve ser uma Array!");
 				}
 			}
 			has(x: number) {
@@ -3944,942 +3997,956 @@ Object.defineProperty(mkt, "fase", {
 //___________________________________\\
 
 
-Object.defineProperty(mkt, "transMsEmMinutos", {
-	value: , enumerable: false, writable: false, configurable: false,
+Object.defineProperty(mkt, "removerAspas", {
+	value: (s: any) => {
+		if (typeof s == "string") {
+			s = s.replaceAll('"', "&quot;");
+			s = s.replaceAll("\'", "&#39;");
+		}
+		return s;
+	}, enumerable: false, writable: false, configurable: false,
 });
 
-Object.defineProperty(mkt, "transMsEmMinutos", {
-	value: , enumerable: false, writable: false, configurable: false,
-});
-
-Object.defineProperty(mkt, "transMsEmMinutos", {
-	value: , enumerable: false, writable: false, configurable: false,
-});
-
-Object.defineProperty(mkt, "transMsEmMinutos", {
-	value: , enumerable: false, writable: false, configurable: false,
-});
-
-Object.defineProperty(mkt, "transMsEmMinutos", {
-	value: , enumerable: false, writable: false, configurable: false,
-});
-
-Object.defineProperty(mkt, "transMsEmMinutos", {
-	value: , enumerable: false, writable: false, configurable: false,
-});
-
-Object.defineProperty(mkt, "transMsEmMinutos", {
-	value: , enumerable: false, writable: false, configurable: false,
-});
-
-Object.defineProperty(mkt, "transMsEmMinutos", {
-	value: , enumerable: false, writable: false, configurable: false,
-});
-
-
-static removerAspas = (s: any) => {
-	if (typeof s == "string") {
-		s = s.replaceAll('"', "&quot;");
-		s = s.replaceAll("\'", "&#39;");
-	}
-	return s;
-};
-
-// Retorna o valor do chave informada, podendo ser obj.obj.chave
-// mk.getV("a.b.c",{a:{b:{c:"d"}}})
-static getV = (keys: string, objeto: any) => {
-	if (typeof objeto == "object") {
-		if (typeof keys == "string") {
-			if (keys.includes(".")) {
-				// Multi
-				let ks: string[] = keys.split(".");
-				let lastObj = objeto;
-				let lastV = {};
-				// Iterar o Keys, Ver Obj atual e Setar Conteudo;
-				ks.forEach((k) => {
-					lastV = lastObj[k];
-					if (typeof lastV == "object") {
-						lastObj = lastV;
-					}
-				});
-				return lastV;
+Object.defineProperty(mkt, "getV", {
+	value: (keys: string, objeto: any) => {
+		// Retorna o valor do chave informada, podendo ser obj.obj.chave
+		// mkt.getV("a.b.c",{a:{b:{c:"d"}}})
+		if (typeof objeto == "object") {
+			if (typeof keys == "string") {
+				if (keys.includes(".")) {
+					// Multi
+					let ks: string[] = keys.split(".");
+					let lastObj = objeto;
+					let lastV = {};
+					// Iterar o Keys, Ver Obj atual e Setar Conteudo;
+					ks.forEach((k) => {
+						lastV = lastObj[k];
+						if (typeof lastV == "object") {
+							lastObj = lastV;
+						}
+					});
+					return lastV;
+				} else {
+					// Simples
+					return objeto[keys];
+				}
 			} else {
-				// Simples
-				return objeto[keys];
+				mkt.w(
+					"As chaves precisam estar em formato string (" + typeof keys + ")"
+				);
 			}
 		} else {
-			mk.w(
-				"As chaves precisam estar em formato string (" + typeof keys + ")"
+			mkt.w(
+				"Para ver a chave, o parametro objeto precisa receber um objeto. (" +
+				typeof objeto +
+				")"
 			);
 		}
-	} else {
-		mk.w(
-			"Para ver a chave, o parametro objeto precisa receber um objeto. (" +
-			typeof objeto +
-			")"
-		);
-	}
-	return null;
-};
+		return null;
+	}, enumerable: false, writable: false, configurable: false,
+});
 
-// Conversor de "${obj.key}" em valor.
-static mkToValue = (m: string, o: any) => {
-	let ret: string = "";
-	if (m.indexOf("${") >= 0) {
-		let ini = m.split("${");
-		ret = ini[0];
-		for (let i in ini) {
-			if (i == "0") continue;
-			let end: number = ini[i].indexOf("}");
-			let key: string = ini[i].slice(0, end).trim();
-			if (mk.classof(o) == "Object" && o != null) {
-				let v = this.removerAspas(this.getV(key, o));
-				if (v != null) {
-					ret += v;
+Object.defineProperty(mkt, "mkToValue", {
+	value: (m: string, o: any) => {
+		// Conversor de "${obj.key}" em valor.
+		let ret: string = "";
+		if (m.indexOf("${") >= 0) {
+			let ini = m.split("${");
+			ret = ini[0];
+			for (let i in ini) {
+				if (i == "0") continue;
+				let end: number = ini[i].indexOf("}");
+				let key: string = ini[i].slice(0, end).trim();
+				if (mkt.classof(o) == "Object" && o != null) {
+					let v = this.removerAspas(this.getV(key, o));
+					if (v != null) {
+						ret += v;
+					}
 				}
+				ret += ini[i].slice(end + 1);
 			}
-			ret += ini[i].slice(end + 1);
+		} else {
+			ret = m;
 		}
-	} else {
-		ret = m;
-	}
-	return ret;
-};
+		return ret;
+	}, enumerable: false, writable: false, configurable: false,
+});
 
-static mkMoldeOA = async (
-	dadosOA: object[] | object,
-	modelo: string = "#modelo",
-	repositorio: string = ".tableListagem .listBody"
-) => {
-	return new Promise((r) => {
-		let eModelo = mk.Q(modelo);
-		if (eModelo == null) {
-			mk.erro(
-				"Modelo (Template) informado (" + modelo + ") não encontrado."
-			);
-			return r(null);
-		}
-		let eRepositorio = mk.Q(repositorio);
-		if (eRepositorio == null) {
-			mk.erro(
-				"Repositório informado (" + repositorio + ") não encontrado."
-			);
-			return r(null);
-		}
-		let listaNode = "";
-		let mkMoldeOAA_Execute = (o: any) => {
-			let node: any = eModelo.innerHTML;
-			node = mk.mkToValue(node, o);
-			listaNode += node;
-		};
-		mk.mkExecutaNoObj(dadosOA, mkMoldeOAA_Execute);
-		//Allow Tags
-		listaNode = listaNode.replaceAll("&lt;", "<");
-		listaNode = listaNode.replaceAll("&gt;", ">");
-		eRepositorio.innerHTML = listaNode;
-		r(this); // class mk
-	});
-};
+Object.defineProperty(mkt, "mkMoldeOA", {
+	value: async (
+		dadosOA: object[] | object,
+		modelo: string = "#modelo",
+		repositorio: string = ".tableListagem .listBody"
+	) => {
+		return new Promise((r) => {
+			let eModelo = mkt.Q(modelo);
+			if (eModelo == null) {
+				mkt.erro(
+					"Modelo (Template) informado (" + modelo + ") não encontrado."
+				);
+				return r(null);
+			}
+			let eRepositorio = mkt.Q(repositorio);
+			if (eRepositorio == null) {
+				mkt.erro(
+					"Repositório informado (" + repositorio + ") não encontrado."
+				);
+				return r(null);
+			}
+			let listaNode = "";
+			let mkMoldeOAA_Execute = (o: any) => {
+				let node: any = eModelo.innerHTML;
+				node = mkt.mkToValue(node, o);
+				listaNode += node;
+			};
+			mkt.mkExecutaNoObj(dadosOA, mkMoldeOAA_Execute);
+			//Allow Tags
+			listaNode = listaNode.replaceAll("&lt;", "<");
+			listaNode = listaNode.replaceAll("&gt;", ">");
+			eRepositorio.innerHTML = listaNode;
+			r(this); // class mk
+		});
+	}, enumerable: false, writable: false, configurable: false,
+});
 
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //			MK Include									\\
 //___________________________________\\
 
-static mkInclude = async () => {
-	return new Promise((r) => {
-		mk.QAll("body *").forEach(async (e) => {
-			let destino = e.getAttribute("mkInclude");
-			if (destino != null) {
-				//mk.l("Incluindo: " + destino);
-				let p = await mk.get.html({ url: destino, quiet: true });
-				if (p.retorno != null) {
-					e.innerHTML = p.retorno;
-					//mk.mkNodeToScript(mk.Q(".conteudo"));
-				} else {
-					mk.l("Falhou ao coletar dados");
+Object.defineProperty(mkt, "mkInclude", {
+	value: async () => {
+		return new Promise((r) => {
+			mkt.QAll("body *").forEach(async (e) => {
+				let destino = e.getAttribute("mkInclude");
+				if (destino != null) {
+					//mkt.l("Incluindo: " + destino);
+					let p = await mkt.get.html({ url: destino, quiet: true });
+					if (p.retorno != null) {
+						e.innerHTML = p.retorno;
+						//mkt.mkNodeToScript(mkt.Q(".conteudo"));
+					} else {
+						mkt.l("Falhou ao coletar dados");
+					}
+					r(p.retorno);
 				}
-				r(p.retorno);
-			}
+			});
 		});
-	});
-};
+	}, enumerable: false, writable: false, configurable: false,
+});
 
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //			MK UI Confirmar							\\
 //___________________________________\\
-// p { corSim: "bVerde", corNao: "bCinza"}
-static mkConfirma = async (
-	texto: string = "Você tem certeza?",
-	p: any = null
-) => {
-	let possiveisBotoes = ["bCinza", "bVermelho", "bVerde"];
-	let corSim = "bVerde";
-	if (p?.corSim != undefined) corSim = p.corSim;
-	let corNao = "bCinza";
-	if (p?.corNao != undefined) corNao = p.corNao;
-	let classContainer = "";
-	if (p?.classContainer != undefined) classContainer = p.classContainer;
-	return new Promise((r) => {
-		function verficiarResposta() {
-			let resposta = null;
-			if (mk.Q(".mkConfirmadorBloco .mkConfirmadorArea .bBotao.icoSim.true"))
-				resposta = true;
-			if (mk.Q(".mkConfirmadorBloco .mkConfirmadorArea .bBotao.icoNao.true"))
-				resposta = false;
-			//mk.l("Resposta: " + resposta);
-			if (resposta !== null) {
-				mk.Q(".mkConfirmadorBloco .icoSim").classList.remove("true");
-				mk.Q(".mkConfirmadorBloco .icoNao").classList.remove("true");
-				mk.Q(".mkConfirmadorBloco").classList.add("oculto");
-				retornar(resposta);
-			}
-		}
-		let eConfirmar = Array.from(mk.Q("body").children).find((e) =>
-			e.classList.contains("mkConfirmadorBloco")
-		);
-		if (!eConfirmar) {
-			let divMkConfirmarBloco = document.createElement("div");
-			let divMkConfirmarFora = document.createElement("div");
-			let divMkConfirmarArea = document.createElement("div");
-			let divMkConfirmarTitulo = document.createElement("div");
-			let divMkConfirmarTexto = document.createElement("div");
-			let divMkConfirmarBotoes = document.createElement("div");
-			let divMkConfirmarSim = document.createElement("button");
-			let divMkConfirmarNao = document.createElement("button");
-			divMkConfirmarBloco.className = "mkConfirmadorBloco microPos5";
-			divMkConfirmarFora.className = "mkConfirmadorFora";
-			divMkConfirmarArea.className =
-				"mkConfirmadorArea microPos5 tb fsb " + classContainer;
-			divMkConfirmarTitulo.className = "mkConfirmadorTitulo";
-			divMkConfirmarTexto.className = "mkConfirmadorTexto";
-			divMkConfirmarBotoes.className = "mkConfirmadorBotoes fsb";
-			divMkConfirmarSim.className = "bBotao icoSim " + corSim;
-			divMkConfirmarNao.className = "bBotao icoNao " + corNao;
-			divMkConfirmarTitulo.innerHTML =
-				"<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path d='M9.05.435c-.58-.58-1.52-.58-2.1 0L.436 6.95c-.58.58-.58 1.519 0 2.098l6.516 6.516c.58.58 1.519.58 2.098 0l6.516-6.516c.58-.58.58-1.519 0-2.098L9.05.435zM5.495 6.033a.237.237 0 0 1-.24-.247C5.35 4.091 6.737 3.5 8.005 3.5c1.396 0 2.672.73 2.672 2.24 0 1.08-.635 1.594-1.244 2.057-.737.559-1.01.768-1.01 1.486v.105a.25.25 0 0 1-.25.25h-.81a.25.25 0 0 1-.25-.246l-.004-.217c-.038-.927.495-1.498 1.168-1.987.59-.444.965-.736.965-1.371 0-.825-.628-1.168-1.314-1.168-.803 0-1.253.478-1.342 1.134-.018.137-.128.25-.266.25h-.825zm2.325 6.443c-.584 0-1.009-.394-1.009-.927 0-.552.425-.94 1.01-.94.609 0 1.028.388 1.028.94 0 .533-.42.927-1.029.927z'/></svg><span>Confirmação</span>";
 
-			divMkConfirmarTexto.innerHTML = texto;
-			divMkConfirmarSim.innerHTML = "Sim";
-			divMkConfirmarNao.innerHTML = "Não";
-			divMkConfirmarFora.setAttribute(
-				"onclick",
-				"mk.w('Essa funcionalidade não está disponível no momento.')"
+Object.defineProperty(mkt, "mkConfirma", {
+	value: async (
+		texto: string = "Você tem certeza?",
+		p: any = null
+	) => {
+		// p { corSim: "bVerde", corNao: "bCinza"}
+		let possiveisBotoes = ["bCinza", "bVermelho", "bVerde"];
+		let corSim = "bVerde";
+		if (p?.corSim != undefined) corSim = p.corSim;
+		let corNao = "bCinza";
+		if (p?.corNao != undefined) corNao = p.corNao;
+		let classContainer = "";
+		if (p?.classContainer != undefined) classContainer = p.classContainer;
+		return new Promise((r) => {
+			function verficiarResposta() {
+				let resposta = null;
+				if (mkt.Q(".mkConfirmadorBloco .mkConfirmadorArea .bBotao.icoSim.true"))
+					resposta = true;
+				if (mkt.Q(".mkConfirmadorBloco .mkConfirmadorArea .bBotao.icoNao.true"))
+					resposta = false;
+				//mkt.l("Resposta: " + resposta);
+				if (resposta !== null) {
+					mkt.Q(".mkConfirmadorBloco .icoSim").classList.remove("true");
+					mkt.Q(".mkConfirmadorBloco .icoNao").classList.remove("true");
+					mkt.Q(".mkConfirmadorBloco").classList.add("oculto");
+					retornar(resposta);
+				}
+			}
+			let eConfirmar = Array.from(mkt.Q("body").children).find((e) =>
+				e.classList.contains("mkConfirmadorBloco")
 			);
-			divMkConfirmarSim.setAttribute("onclick", "this.classList.add(true);");
-			divMkConfirmarNao.setAttribute("onclick", "this.classList.add(true);");
-			mk.Q("body").appendChild(divMkConfirmarBloco);
-			divMkConfirmarBloco.appendChild(divMkConfirmarFora);
-			divMkConfirmarBloco.appendChild(divMkConfirmarArea);
-			divMkConfirmarArea.appendChild(divMkConfirmarTitulo);
-			divMkConfirmarArea.appendChild(divMkConfirmarTexto);
-			divMkConfirmarArea.appendChild(divMkConfirmarBotoes);
-			divMkConfirmarBotoes.appendChild(divMkConfirmarSim);
-			divMkConfirmarBotoes.appendChild(divMkConfirmarNao);
-		} else {
-			// Limpeza de cores anteriores
-			possiveisBotoes.forEach((s) => {
-				mk.QAll(".mkConfirmadorBloco .bBotao").forEach((botao: any) => {
-					botao.classList.remove(s);
+			if (!eConfirmar) {
+				let divMkConfirmarBloco = document.createElement("div");
+				let divMkConfirmarFora = document.createElement("div");
+				let divMkConfirmarArea = document.createElement("div");
+				let divMkConfirmarTitulo = document.createElement("div");
+				let divMkConfirmarTexto = document.createElement("div");
+				let divMkConfirmarBotoes = document.createElement("div");
+				let divMkConfirmarSim = document.createElement("button");
+				let divMkConfirmarNao = document.createElement("button");
+				divMkConfirmarBloco.className = "mkConfirmadorBloco microPos5";
+				divMkConfirmarFora.className = "mkConfirmadorFora";
+				divMkConfirmarArea.className =
+					"mkConfirmadorArea microPos5 tb fsb " + classContainer;
+				divMkConfirmarTitulo.className = "mkConfirmadorTitulo";
+				divMkConfirmarTexto.className = "mkConfirmadorTexto";
+				divMkConfirmarBotoes.className = "mkConfirmadorBotoes fsb";
+				divMkConfirmarSim.className = "bBotao icoSim " + corSim;
+				divMkConfirmarNao.className = "bBotao icoNao " + corNao;
+				divMkConfirmarTitulo.innerHTML =
+					"<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path d='M9.05.435c-.58-.58-1.52-.58-2.1 0L.436 6.95c-.58.58-.58 1.519 0 2.098l6.516 6.516c.58.58 1.519.58 2.098 0l6.516-6.516c.58-.58.58-1.519 0-2.098L9.05.435zM5.495 6.033a.237.237 0 0 1-.24-.247C5.35 4.091 6.737 3.5 8.005 3.5c1.396 0 2.672.73 2.672 2.24 0 1.08-.635 1.594-1.244 2.057-.737.559-1.01.768-1.01 1.486v.105a.25.25 0 0 1-.25.25h-.81a.25.25 0 0 1-.25-.246l-.004-.217c-.038-.927.495-1.498 1.168-1.987.59-.444.965-.736.965-1.371 0-.825-.628-1.168-1.314-1.168-.803 0-1.253.478-1.342 1.134-.018.137-.128.25-.266.25h-.825zm2.325 6.443c-.584 0-1.009-.394-1.009-.927 0-.552.425-.94 1.01-.94.609 0 1.028.388 1.028.94 0 .533-.42.927-1.029.927z'/></svg><span>Confirmação</span>";
+
+				divMkConfirmarTexto.innerHTML = texto;
+				divMkConfirmarSim.innerHTML = "Sim";
+				divMkConfirmarNao.innerHTML = "Não";
+				divMkConfirmarFora.setAttribute(
+					"onclick",
+					"mkt.w('Essa funcionalidade não está disponível no momento.')"
+				);
+				divMkConfirmarSim.setAttribute("onclick", "this.classList.add(true);");
+				divMkConfirmarNao.setAttribute("onclick", "this.classList.add(true);");
+				mkt.Q("body").appendChild(divMkConfirmarBloco);
+				divMkConfirmarBloco.appendChild(divMkConfirmarFora);
+				divMkConfirmarBloco.appendChild(divMkConfirmarArea);
+				divMkConfirmarArea.appendChild(divMkConfirmarTitulo);
+				divMkConfirmarArea.appendChild(divMkConfirmarTexto);
+				divMkConfirmarArea.appendChild(divMkConfirmarBotoes);
+				divMkConfirmarBotoes.appendChild(divMkConfirmarSim);
+				divMkConfirmarBotoes.appendChild(divMkConfirmarNao);
+			} else {
+				// Limpeza de cores anteriores
+				possiveisBotoes.forEach((s) => {
+					mkt.QAll(".mkConfirmadorBloco .bBotao").forEach((botao: any) => {
+						botao.classList.remove(s);
+					});
 				});
-			});
-			// Set das cores novas
-			mk.Q(".mkConfirmadorBloco .bBotao.icoSim").classList.add(corSim);
-			mk.Q(".mkConfirmadorBloco .bBotao.icoNao").classList.add(corNao);
-			mk.Q(".mkConfirmadorBloco").classList.remove("oculto");
-			mk.Q(".mkConfirmadorTexto").innerHTML = texto;
-		}
-		const checkResposta = setInterval(verficiarResposta, 100);
-		// Função de conclusão.
-		function retornar(resultado: boolean = false) {
-			clearInterval(checkResposta);
-			return r(resultado);
-		}
-	});
-};
+				// Set das cores novas
+				mkt.Q(".mkConfirmadorBloco .bBotao.icoSim").classList.add(corSim);
+				mkt.Q(".mkConfirmadorBloco .bBotao.icoNao").classList.add(corNao);
+				mkt.Q(".mkConfirmadorBloco").classList.remove("oculto");
+				mkt.Q(".mkConfirmadorTexto").innerHTML = texto;
+			}
+			const checkResposta = setInterval(verficiarResposta, 100);
+			// Função de conclusão.
+			function retornar(resultado: boolean = false) {
+				clearInterval(checkResposta);
+				return r(resultado);
+			}
+		});
+	}, enumerable: false, writable: false, configurable: false,
+});
 
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //			MK Botao Imagem (mkBot)			\\
 //___________________________________\\
-// Botao incluido uma imagem/pdf visualizavel e clicavel.
-// Valor inicial no value, quando não presente, exibe data-value.	
-static elementoDuranteUpload: any;
-static mkBotCheck = async () => {
-	mk.QAll("button.mkBot").forEach(async (e: any) => {
-		// Apenas quando contem Atualizar
-		let semEvento = e.classList.contains("atualizarSemEvento");
-		if (e.classList.contains("atualizar") || semEvento) {
-			e.classList.remove("atualizar");
-			e.classList.remove("atualizarSemEvento");
-			e.classList.add("atualizando");
-			// - Remove conteudo
-			e.innerHTML = "";
-			// - Coleta value do campo (ex: botao tem value="/img/teste.jpg")
-			let v = e.getAttribute("value");
-			// - Caso Nulo, Tentar pelo dataset
-			if (v == null || v == "") {
-				v = e.dataset.value;
-			}
-			let clicavel = e.dataset.clicavel;
-			let exibirbarra = e.dataset.exibirbarra;
 
-			if (v != null && v != "") {
-				let tipo = null;
-				let terminacao = v.slice(v.length - 3, v.length).toString().toLowerCase();
-
-				// Verificar aqui se trata-se de um link ou de uma base64 direto no elemento.					
-				// - Verifica se terminacao do arquivo é PDF ou OUTRO,
-				if ((v.includes("application/pdf")) || (terminacao == "pdf")) {
-					tipo = "pdf";
+Object.defineProperty(mkt, "mkBotCheck", {
+	value: async () => {
+		// Botao incluido uma imagem/pdf visualizavel e clicavel.
+		// Valor inicial no value, quando não presente, exibe data-value.
+		mkt.QAll("button.mkBot").forEach(async (e: any) => {
+			// Apenas quando contem Atualizar
+			let semEvento = e.classList.contains("atualizarSemEvento");
+			if (e.classList.contains("atualizar") || semEvento) {
+				e.classList.remove("atualizar");
+				e.classList.remove("atualizarSemEvento");
+				e.classList.add("atualizando");
+				// - Remove conteudo
+				e.innerHTML = "";
+				// - Coleta value do campo (ex: botao tem value="/img/teste.jpg")
+				let v = e.getAttribute("value");
+				// - Caso Nulo, Tentar pelo dataset
+				if (v == null || v == "") {
+					v = e.dataset.value;
 				}
+				let clicavel = e.dataset.clicavel;
+				let exibirbarra = e.dataset.exibirbarra;
 
-				// << Inicio do conteúdo
-				let retornar = "<";
+				if (v != null && v != "") {
+					let tipo = null;
+					let terminacao = v.slice(v.length - 3, v.length).toString().toLowerCase();
 
-				// FORMATOS DE ARQUIVO
-				if (tipo == "pdf") {
-					retornar += "embed type='application/pdf' class='mkCem mkBotEmbed' src='" + v;
-				} else {
-					retornar +=
-						e.innerHTML = "img class='mkCem' src='" + v;
-				}
-				if (exibirbarra) {
-					retornar += "#toolbar=0"
-				}
-
-				// << Fim o conteúdo
-				retornar += "'>";
-				// Se é ou não clicavel
-				if (!clicavel) {
-					retornar += "<div class='mkBotSobre'></div>"
-				}
-				// Set
-				e.innerHTML = retornar;
-
-				// Ao concluir, tenta executar atributo onchange, se houver
-				if (!semEvento) {
-					if (e.onchange) {
-						e.onchange();
+					// Verificar aqui se trata-se de um link ou de uma base64 direto no elemento.					
+					// - Verifica se terminacao do arquivo é PDF ou OUTRO,
+					if ((v.includes("application/pdf")) || (terminacao == "pdf")) {
+						tipo = "pdf";
 					}
-				}
 
-			} else {
-				mk.w("Elemento com 'value' nulo. Esperava-se conteudo: ", v);
+					// << Inicio do conteúdo
+					let retornar = "<";
+
+					// FORMATOS DE ARQUIVO
+					if (tipo == "pdf") {
+						retornar += "embed type='application/pdf' class='mkCem mkBotEmbed' src='" + v;
+					} else {
+						retornar +=
+							e.innerHTML = "img class='mkCem' src='" + v;
+					}
+					if (exibirbarra) {
+						retornar += "#toolbar=0"
+					}
+
+					// << Fim o conteúdo
+					retornar += "'>";
+					// Se é ou não clicavel
+					if (!clicavel) {
+						retornar += "<div class='mkBotSobre'></div>"
+					}
+					// Set
+					e.innerHTML = retornar;
+
+					// Ao concluir, tenta executar atributo onchange, se houver
+					if (!semEvento) {
+						if (e.onchange) {
+							e.onchange();
+						}
+					}
+
+				} else {
+					mkt.w("Elemento com 'value' nulo. Esperava-se conteudo: ", v);
+				}
+				e.classList.remove("atualizando");
 			}
-			e.classList.remove("atualizando");
-		}
-	});
-};
+		});
+	}, enumerable: false, writable: false, configurable: false,
+});
 
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //			MK Recomendador (mkRec)			\\
 //___________________________________\\
 
-static mkRecRenderizar = async () => {
-	mk.QAll("input.mkRec").forEach(async (e) => {
-		// Gerar Elemento de recomendações
-		if (!e.nextElementSibling?.classList.contains("mkRecList")) {
-			let ePai: any = e.parentElement;
-			let ePos = Array.from(ePai?.children).indexOf(e);
-			let divMkRecList = document.createElement("div");
-			divMkRecList.className = "mkRecList emFoco";
-			divMkRecList.setAttribute("tabindex", "-1");
-			ePai?.insertBefore(divMkRecList, ePai?.children[ePos + 1]);
-			// Incrementar Evento
-			let oninput = e.getAttribute("oninput");
-			if (!oninput || !oninput.includes(";mk.mkRecUpdate(this)")) {
-				e.setAttribute("oninput", oninput + ";mk.mkRecUpdate(this)");
-			}
-			let onfocus = e.getAttribute("onfocus");
-			if (!oninput || !oninput.includes(";mk.mkRecFoco(this,true)")) {
-				e.setAttribute("onfocus", oninput + ";mk.mkRecFoco(this,true)");
-			}
-			let onblur = e.getAttribute("onblur");
-			if (!oninput || !oninput.includes(";mk.mkRecFoco(this,false)")) {
-				e.setAttribute("onblur", oninput + ";mk.mkRecFoco(this,false)");
-			}
-			e.setAttribute(
-				"autocomplete",
-				"off"
-			);
-			const popperInstance: any = Popper.createPopper(
-				e,
-				divMkRecList,
-				{
-					placement: "bottom-start",
-					strategy: "fixed",
-					modifiers: [],
+Object.defineProperty(mkt, "mkRecRenderizar", {
+	value: async () => {
+		mkt.QAll("input.mkRec").forEach(async (e) => {
+			// Gerar Elemento de recomendações
+			if (!e.nextElementSibling?.classList.contains("mkRecList")) {
+				let ePai: any = e.parentElement;
+				let ePos = Array.from(ePai?.children).indexOf(e);
+				let divMkRecList = document.createElement("div");
+				divMkRecList.className = "mkRecList emFoco";
+				divMkRecList.setAttribute("tabindex", "-1");
+				ePai?.insertBefore(divMkRecList, ePai?.children[ePos + 1]);
+				// Incrementar Evento
+				let oninput = e.getAttribute("oninput");
+				if (!oninput || !oninput.includes(";mkt.mkRecUpdate(this)")) {
+					e.setAttribute("oninput", oninput + ";mkt.mkRecUpdate(this)");
 				}
-			);
-			mk.poppers.push(popperInstance);
-
-			mk.mkRecUpdate(e);
-		} else {
-			if (!e.getAttribute("data-selarray") && e.getAttribute("data-refill")) {
-				// REC não foi implementado refill
-				//await mk.mkRecDelRefillProcesso(e as HTMLElement);
-			}
-			let geraEvento = false;
-			if (e.classList.contains("atualizar")) geraEvento = true;
-			// Atualiza a lista com base na classe "atualizar" (Gera Evento input e change)
-			if (e.classList.contains("atualizar") || e.classList.contains("atualizarSemEvento")) {
-				e.classList.remove("atualizar");
-				e.classList.remove("atualizarSemEvento");
-				e.classList.add("atualizando");
-				mk.mkRecUpdate(e)
-				e.classList.remove("atualizando");
-			}
-			if (geraEvento) {
-				// Executa evento, em todos atualizar.
-				// O evento serve para que ao trocar o 1, o 2 execute input para então o 3 tb ter como saber que é pra atualizar
-				e.dispatchEvent(new Event("input"));
-				e.dispatchEvent(new Event("change"));
-			}
-		}
-	});
-};
-
-static mkRecUpdate = (e: any) => {
-	// Recebe o elemento input principal.
-	// GERA CADA ITEM DA LISTA COM BASE NO JSON
-	if (e?.getAttribute("data-selarray") != "") {
-		let eList = e.nextElementSibling;
-		let array = e.dataset.selarray;
-		eList.innerHTML = "";
-		if (mk.isJson(array)) {
-			let kvList = mk.parseJSON(array);
-			let c = 0;
-			/* ITENS */
-			kvList.forEach((o: any) => {
-				if (o.v != null && o.v != "") {
-					if (mk.like(e.value, o.v) && e.value.trim() != o.v.trim()) {
-						c++;
-						let item = document.createElement("div");
-						let itemTexto = document.createElement("span");
-						item.className = "recItem";
-						item.setAttribute("data-k", o.k);
-						item.setAttribute(
-							"onmousedown",
-							"mk.mkRecChange(this,'" + o.v + "')"
-						);
-						itemTexto.innerHTML = o.v;
-						item.appendChild(itemTexto);
-						eList.appendChild(item);
+				let onfocus = e.getAttribute("onfocus");
+				if (!oninput || !oninput.includes(";mkt.mkRecFoco(this,true)")) {
+					e.setAttribute("onfocus", oninput + ";mkt.mkRecFoco(this,true)");
+				}
+				let onblur = e.getAttribute("onblur");
+				if (!oninput || !oninput.includes(";mkt.mkRecFoco(this,false)")) {
+					e.setAttribute("onblur", oninput + ";mkt.mkRecFoco(this,false)");
+				}
+				e.setAttribute(
+					"autocomplete",
+					"off"
+				);
+				const popperInstance: any = Popper.createPopper(
+					e,
+					divMkRecList,
+					{
+						placement: "bottom-start",
+						strategy: "fixed",
+						modifiers: [],
 					}
+				);
+				mkt.vars.poppers.push(popperInstance);
+				mkt.mkRecUpdate(e);
+			} else {
+				if (!e.getAttribute("data-selarray") && e.getAttribute("data-refill")) {
+					// REC não foi implementado refill
+					//await mkt.mkRecDelRefillProcesso(e as HTMLElement);
 				}
-			});
-			if (c <= 0) {
-				eList.innerHTML = "Sem recomendações";
+				let geraEvento = false;
+				if (e.classList.contains("atualizar")) geraEvento = true;
+				// Atualiza a lista com base na classe "atualizar" (Gera Evento input e change)
+				if (e.classList.contains("atualizar") || e.classList.contains("atualizarSemEvento")) {
+					e.classList.remove("atualizar");
+					e.classList.remove("atualizarSemEvento");
+					e.classList.add("atualizando");
+					mkt.mkRecUpdate(e)
+					e.classList.remove("atualizando");
+				}
+				if (geraEvento) {
+					// Executa evento, em todos atualizar.
+					// O evento serve para que ao trocar o 1, o 2 execute input para então o 3 tb ter como saber que é pra atualizar
+					e.dispatchEvent(new Event("input"));
+					e.dispatchEvent(new Event("change"));
+				}
+			}
+		});
+	}, enumerable: false, writable: false, configurable: false,
+});
+
+Object.defineProperty(mkt, "mkRecUpdate", {
+	value: (e: any) => {
+		// Recebe o elemento input principal.
+		// GERA CADA ITEM DA LISTA COM BASE NO JSON
+		if (e?.getAttribute("data-selarray") != "") {
+			let eList = e.nextElementSibling;
+			let array = e.dataset.selarray;
+			eList.innerHTML = "";
+			if (mkt.isJson(array)) {
+				let kvList = mkt.parseJSON(array);
+				let c = 0;
+				/* ITENS */
+				kvList.forEach((o: any) => {
+					if (o.v != null && o.v != "") {
+						if (mkt.like(e.value, o.v) && e.value.trim() != o.v.trim()) {
+							c++;
+							let item = document.createElement("div");
+							let itemTexto = document.createElement("span");
+							item.className = "recItem";
+							item.setAttribute("data-k", o.k);
+							item.setAttribute(
+								"onmousedown",
+								"mkt.mkRecChange(this,'" + o.v + "')"
+							);
+							itemTexto.innerHTML = o.v;
+							item.appendChild(itemTexto);
+							eList.appendChild(item);
+						}
+					}
+				});
+				if (c <= 0) {
+					eList.innerHTML = "Sem recomendações";
+				}
+			} else {
+				mkt.w(
+					"mkRecUpdate(e):  atributo selarray Não é um JSON válido: ", array
+				);
 			}
 		} else {
-			mk.w(
-				"mkRecUpdate(e):  atributo selarray Não é um JSON válido: ", array
-			);
+			mkt.w("mkRecUpdate(e): Elemento não encontrado ou selarray dele está vazia.", e);
 		}
-	} else {
-		mk.w("mkRecUpdate(e): Elemento não encontrado ou selarray dele está vazia.", e);
-	}
-};
+	}, enumerable: false, writable: false, configurable: false,
+});
 
-static mkRecChange = (recItem: any, texto: string) => {
-	let e = recItem?.parentElement?.previousElementSibling
-	if (e) {
-		e.value = texto;
-		setTimeout(() => { mk.mkRecUpdate(e); e.focus() }, 10);
-	} else {
-		mk.w("Não foi possível alterar o elemento: ", e);
-	}
-}
-
-static mkRecFoco = (input: any, f: Boolean) => {
-	let e = input?.nextElementSibling
-	if (e) {
-		if (!f) {
-			e.classList.add("emFoco")
+Object.defineProperty(mkt, "mkRecChange", {
+	value: (recItem: any, texto: string) => {
+		let e = recItem?.parentElement?.previousElementSibling
+		if (e) {
+			e.value = texto;
+			setTimeout(() => { mkt.mkRecUpdate(e); e.focus() }, 10);
 		} else {
-			e.classList.remove("emFoco");
+			mkt.w("Não foi possível alterar o elemento: ", e);
 		}
-	} else {
-		mk.w("Não foi possível alterar o elemento: ", e);
-	}
-}
+	}, enumerable: false, writable: false, configurable: false,
+});
+
+Object.defineProperty(mkt, "mkRecFoco", {
+	value: (input: any, f: Boolean) => {
+		let e = input?.nextElementSibling
+		if (e) {
+			if (!f) {
+				e.classList.add("emFoco")
+			} else {
+				e.classList.remove("emFoco");
+			}
+		} else {
+			mkt.w("Não foi possível alterar o elemento: ", e);
+		}
+	}, enumerable: false, writable: false, configurable: false,
+});
 
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //			MK Seletor (mkSel)					\\
 //___________________________________\\
-static poppers = [];
 
-/* CRIA O DROPDOWN por FOCUS */
-static mkSelRenderizar = async () => {
-	mk.QAll("input.mkSel").forEach(async (e) => {
-		// Transforma elemento se ele ainda não foi transformado
-		if (!e.parentElement?.classList.contains("mkSelBloco")) {
-			// COLETA
-			let ePai: any = e.parentElement;
-			let ePos = Array.from(ePai?.children).indexOf(e);
-			// ELEMENTO no BLOCO
-			let divMkSeletorBloco = document.createElement("div");
-			let divMkSeletorPesquisa = document.createElement("div");
-			let divMkSeletorInputExibe = document.createElement("input");
-			let divMkSeletorInputExibeArrow = document.createElement("div");
-			let divMkSeletorList = document.createElement("div");
-			// Nomeando Classes
-			divMkSeletorBloco.className = "mkSelBloco";
-			divMkSeletorPesquisa.className = "mkSelPesquisa";
-			divMkSeletorInputExibe.className = "mkSelInputExibe";
-			divMkSeletorInputExibeArrow.className = "mkSelInputExibeArrow";
-			divMkSeletorList.className = "mkSelList";
-			// ORDEM no DOM
-			ePai?.insertBefore(divMkSeletorBloco, ePai?.children[ePos]);
-			divMkSeletorBloco.appendChild(e);
-			divMkSeletorBloco.appendChild(divMkSeletorPesquisa);
-			divMkSeletorBloco.appendChild(divMkSeletorList);
-			divMkSeletorPesquisa.appendChild(divMkSeletorInputExibe);
-			divMkSeletorPesquisa.appendChild(divMkSeletorInputExibeArrow);
-			// Transfere style
-			divMkSeletorBloco.setAttribute("style", e.getAttribute("style") ?? "");
-			// Flexas que movem o selecionado quando há apenas 1 possibilidade de selecao.
-			if (
-				e.getAttribute("data-selmovesel") == "true" &&
-				e.getAttribute("data-selapenas") == "1"
-			) {
-				let divMkSelArrowSelLeft = document.createElement("div");
-				let divMkSelArrowSelRight = document.createElement("div");
-				divMkSelArrowSelLeft.className = "mkSelArrowSelLeft microPos6";
-				divMkSelArrowSelRight.className = "mkSelArrowSelRight microPos4";
-				divMkSeletorPesquisa.appendChild(divMkSelArrowSelLeft);
-				divMkSeletorPesquisa.appendChild(divMkSelArrowSelRight);
-				divMkSelArrowSelLeft.setAttribute("onclick", "mk.mkSelLeftSel(this)");
-				divMkSelArrowSelRight.setAttribute(
-					"onclick",
-					"mk.mkSelRightSel(this)"
-				);
-				divMkSeletorBloco.style.setProperty("--mkSelArrowSize", "24px");
-			}
-			// Seta atributos e Gatilhos
-			e.removeAttribute("style");
-			e.setAttribute("readonly", "true");
-			e.setAttribute("tabindex", "-1");
-			mk.mkSelTabIndex(e);
-			divMkSeletorInputExibe.setAttribute("placeholder", "Filtro \u{1F50D}");
-			divMkSeletorInputExibe.setAttribute(
-				"onfocus",
-				"mk.mkSelPesquisaFocus(this)"
-			);
-			divMkSeletorInputExibe.setAttribute(
-				"onblur",
-				"mk.mkSelPesquisaBlur(this)"
-			);
-			divMkSeletorInputExibe.setAttribute(
-				"oninput",
-				"mk.mkSelPesquisaInput(this)"
-			);
-			divMkSeletorInputExibe.setAttribute(
-				"onkeydown",
-				"mk.mkSelPesquisaKeyDown(event)"
-			);
-			divMkSeletorInputExibe.setAttribute(
-				"autocomplete",
-				"off"
-			);
-			divMkSeletorList.addEventListener("scroll", (ev) => {
-				mk.mkSelMoveu(ev.target);
-			});
-			// Popular Lista
-			mk.mkSelPopularLista(e);
-			// Seleciona baseado no value do input
-			mk.mkSelUpdate(e);
-
-			// Deixar Elemento de forma visivel, mas inacessivel.
-			if (e.getAttribute("data-dev") != "true") {
-				e.classList.add("mkSecreto");
-			}
-			// v2
-			const popperInstance: any = Popper.createPopper(
-				divMkSeletorPesquisa,
-				divMkSeletorList,
-				{
-					placement: "bottom-start",
-					strategy: "fixed",
-					modifiers: [],
+Object.defineProperty(mkt, "mkSelRenderizar", {
+	value: async () => {
+		mkt.QAll("input.mkSel").forEach(async (e) => {
+			// Transforma elemento se ele ainda não foi transformado
+			if (!e.parentElement?.classList.contains("mkSelBloco")) {
+				// COLETA
+				let ePai: any = e.parentElement;
+				let ePos = Array.from(ePai?.children).indexOf(e);
+				// ELEMENTO no BLOCO
+				let divMkSeletorBloco = document.createElement("div");
+				let divMkSeletorPesquisa = document.createElement("div");
+				let divMkSeletorInputExibe = document.createElement("input");
+				let divMkSeletorInputExibeArrow = document.createElement("div");
+				let divMkSeletorList = document.createElement("div");
+				// Nomeando Classes
+				divMkSeletorBloco.className = "mkSelBloco";
+				divMkSeletorPesquisa.className = "mkSelPesquisa";
+				divMkSeletorInputExibe.className = "mkSelInputExibe";
+				divMkSeletorInputExibeArrow.className = "mkSelInputExibeArrow";
+				divMkSeletorList.className = "mkSelList";
+				// ORDEM no DOM
+				ePai?.insertBefore(divMkSeletorBloco, ePai?.children[ePos]);
+				divMkSeletorBloco.appendChild(e);
+				divMkSeletorBloco.appendChild(divMkSeletorPesquisa);
+				divMkSeletorBloco.appendChild(divMkSeletorList);
+				divMkSeletorPesquisa.appendChild(divMkSeletorInputExibe);
+				divMkSeletorPesquisa.appendChild(divMkSeletorInputExibeArrow);
+				// Transfere style
+				divMkSeletorBloco.setAttribute("style", e.getAttribute("style") ?? "");
+				// Flexas que movem o selecionado quando há apenas 1 possibilidade de selecao.
+				if (
+					e.getAttribute("data-selmovesel") == "true" &&
+					e.getAttribute("data-selapenas") == "1"
+				) {
+					let divMkSelArrowSelLeft = document.createElement("div");
+					let divMkSelArrowSelRight = document.createElement("div");
+					divMkSelArrowSelLeft.className = "mkSelArrowSelLeft microPos6";
+					divMkSelArrowSelRight.className = "mkSelArrowSelRight microPos4";
+					divMkSeletorPesquisa.appendChild(divMkSelArrowSelLeft);
+					divMkSeletorPesquisa.appendChild(divMkSelArrowSelRight);
+					divMkSelArrowSelLeft.setAttribute("onclick", "mkt.mkSelLeftSel(this)");
+					divMkSelArrowSelRight.setAttribute(
+						"onclick",
+						"mkt.mkSelRightSel(this)"
+					);
+					divMkSeletorBloco.style.setProperty("--mkSelArrowSize", "24px");
 				}
-			);
-			mk.poppers.push(popperInstance);
-		} else {
-			// Se não tem array, mas tem o refill e entrou para atualizar, faz o processo de refill genérico
-			if (!e.getAttribute("data-selarray") && e.getAttribute("data-refill")) {
-				await mk.mkSelDelRefillProcesso(e as HTMLElement);
-			}
-			// Atualiza a lista com base na classe "atualizar" (Gera Evento input e change)
-			if (e.classList.contains("atualizar")) {
-				e.classList.remove("atualizar");
-				e.classList.add("atualizando");
-				mk.mkSelPopularLista(e);
-				mk.mkSelUpdate(e);
-				// Executa evento, em todos atualizar.
-				// O evento serve para que ao trocar o 1, o 2 execute input para então o 3 tb ter como saber que é pra atualizar
-				e.dispatchEvent(new Event("input"));
-				e.dispatchEvent(new Event("change"));
-				e.classList.remove("atualizando");
-			}
-			if (e.classList.contains("atualizarSemEvento")) {
-				e.classList.remove("atualizarSemEvento");
-				e.classList.add("atualizando");
-				mk.mkSelPopularLista(e);
-				mk.mkSelUpdate(e);
-				e.classList.remove("atualizando");
-			}
-			// Manter index em -1 para não chegar até esse campo
-			e.setAttribute("tabindex", "-1");
-			mk.mkSelTabIndex(e);
-			//mk.mkSelReposicionar(e.parentElement.children[2]);
-		}
-	});
-	// Atualiza posição com a mesma frequencia que pesquisa os elementos.
-	mk.poppers.forEach((o) => {
-		o.update();
-	});
-};
-
-static mkSelDelRefillProcesso = async (
-	eName: string | HTMLElement,
-	cod = null
-) => {
-	return new Promise(async (r) => {
-		let e = mk.Q(eName);
-		if (e) {
-			// Se há o elemento, e para evitar puxar várias veses a mesma lista, adiciona-se uma classe no inicio e tira-se quando concluiu. Se já tem, não refaz.
-			if (!e.classList.contains("refilling")) {
-				e.classList.add("refilling");
-				let url = appPath + e.getAttribute("data-refill");
-				cod != null ? (url += cod) : null;
-				let p = await mk.get.json(url);
-				if (p.retorno != null) {
-					let kv = p.retorno;
-					if (typeof p.retorno == "object") {
-						kv = JSON.stringify(p.retorno);
-					}
-					if (mk.isJson(kv)) {
-						e.setAttribute("data-selarray", kv);
-						e.classList.remove("refilling");
-						r(e);
-					} else {
-						mk.erro("Resultado não é um JSON. (mkSelDlRefill)");
-					}
-				}
-			} // Apenas 1 rewfill por vez
-		} else {
-			mk.w(
-				"Função (mkSelDlRefill) solicitou Refill em um campo inexistente (JS)"
-			);
-		}
-	});
-};
-static mkSelDlRefill = async (
-	eName: string | HTMLElement,
-	cod: any,
-	clear: boolean = true
-): Promise<void> => {
-	mk.mkSelDelRefillProcesso(eName, cod).then((e: any) => {
-		if (clear) e.value = "";
-		e.classList.add("atualizar");
-	});
-};
-
-// Quando desativado, precisa desativar o TAB também
-static mkSelTabIndex = (e: any) => {
-	if (e.classList.contains("disabled")) {
-		let pes = e.nextElementSibling;
-		if (pes) {
-			if (pes.classList.contains("mkSelPesquisa")) {
-				pes.firstElementChild?.setAttribute("tabindex", "-1");
-			}
-		}
-	} else {
-		let pes = e.nextElementSibling;
-		if (pes) {
-			if (pes.classList.contains("mkSelPesquisa")) {
-				pes.firstElementChild?.removeAttribute("tabindex");
-			}
-		}
-	}
-};
-/* Ao Tentar Selecionar um novo item */
-static mkSelSelecionar = (eItem: any) => {
-	let ePrincipal = eItem.parentElement?.parentElement?.firstElementChild;
-	let KV = mk.mkSelGetKV(ePrincipal);
-	// Obtem limite de seleções
-	let selapenas = ePrincipal?.getAttribute("data-selapenas") || 1;
-	let selLimit = Number(selapenas);
-	// QUANDO O LIMITE é 1
-	if (selLimit == 1) {
-		// Muda valor do input pelo clicado e Gera o evento
-		ePrincipal.value = eItem.getAttribute("data-k");
-		ePrincipal?.dispatchEvent(new Event("input"));
-
-		// Transfere valor para o Display (Exibe)
-		(eItem?.parentElement?.previousElementSibling?.firstElementChild).value =
-			eItem.innerHTML;
-	} else if (selLimit > 1 || selLimit < 0) {
-		let itemK = eItem.getAttribute("data-k");
-		let jaSelecionado = 0;
-		// Forma um array caso ainda não seja, pois pode seleconar mais de um.
-		let arraySelecionado: string[] = [];
-		// Verifica se algum KV.k é o K clicado. (Para saber se vai adicionar ou remover)
-		KV.forEach((ObjKV) => {
-			arraySelecionado.push(ObjKV.k.toString());
-			if (ObjKV.k == itemK) jaSelecionado++;
-		});
-		if (jaSelecionado > 0) {
-			// Remove valor da lista selecionada
-			arraySelecionado.splice(arraySelecionado.indexOf(itemK), 1);
-		} else {
-			// Verifica se é possivel selecionar mais (Se estiver negativo, pode selecionar infinito)
-			if (arraySelecionado.length < selLimit || selLimit < 0) {
-				// Acrescenta valor
-				arraySelecionado.push(itemK);
-			}
-		}
-		// Limpar seleções vazias
-		arraySelecionado.forEach((item) => {
-			if (item == "") {
-				arraySelecionado.splice(arraySelecionado.indexOf(item), 1);
-			}
-		});
-		// Quando estiver vazio, reseta o campo.
-		// Seta o valor no campo de input
-		if (arraySelecionado.length == 0) {
-			ePrincipal.value = ePrincipal.defaultValue;
-		} else {
-			let string = JSON.stringify(arraySelecionado);
-			if (ePrincipal.type == "text") ePrincipal.value = string;
-			else
-				mk.erro(
-					"Erro durante o Set/Conversão do campo. É necessário que este campo seja tipo string."
+				// Seta atributos e Gatilhos
+				e.removeAttribute("style");
+				e.setAttribute("readonly", "true");
+				e.setAttribute("tabindex", "-1");
+				mkt.mkSelTabIndex(e);
+				divMkSeletorInputExibe.setAttribute("placeholder", "Filtro \u{1F50D}");
+				divMkSeletorInputExibe.setAttribute(
+					"onfocus",
+					"mkt.mkSelPesquisaFocus(this)"
 				);
-		}
-		// Gera o Evento
-		ePrincipal.dispatchEvent(new Event("input"));
-
-		// Mantem foco no Display, pois pode selecionar mais de um
-		setTimeout(() => {
-			eItem.parentElement.previousElementSibling.firstElementChild.focus();
-		}, 1);
-	}
-	mk.mkSelUpdate(ePrincipal);
-	// Evento change apos terminar a atualizacao
-	ePrincipal.dispatchEvent(new Event("change"));
-};
-
-// Selecionar o anterior ao atual
-static mkSelLeftSel = (e: any) => {
-	let eAlvo = null;
-	Array.from(e.parentElement?.nextElementSibling?.children).forEach(
-		(el: any) => {
-			if (el.getAttribute("data-s") == "1") {
-				eAlvo = (el as HTMLInputElement).previousElementSibling;
-				return;
-			}
-		}
-	);
-	if (eAlvo == null) {
-		mk.mkSelSelecionar(e.parentElement?.nextElementSibling?.lastElementChild);
-	} else {
-		if ((eAlvo as HTMLElement).classList.contains("mkSelItemDeCima")) {
-			eAlvo = (eAlvo as HTMLElement).parentElement?.lastElementChild
-				?.previousElementSibling;
-		}
-		mk.mkSelSelecionar(eAlvo);
-	}
-};
-// Selecionar o próximo ao atual
-static mkSelRightSel = (e: any) => {
-	let eAlvo = null;
-	Array.from(e.parentElement.nextElementSibling.children).forEach(
-		(el: any) => {
-			if (el.getAttribute("data-s") == "1") {
-				eAlvo = el.nextElementSibling;
-				return;
-			}
-		}
-	);
-	if (eAlvo == null) {
-		mk.mkSelSelecionar(e.parentElement.nextElementSibling.firstElementChild);
-	} else {
-		if ((eAlvo as HTMLElement).classList.contains("mkSelItemDeBaixo")) {
-			eAlvo = (eAlvo as HTMLElement).parentElement?.firstElementChild
-				?.nextElementSibling;
-		}
-		mk.mkSelSelecionar(eAlvo);
-	}
-};
-
-static mkSelPopularLista = (e: any) => {
-	// GERA CADA ITEM DA LISTA COM BASE NO JSON
-	if (e.getAttribute("data-selarray") != "") {
-		let eList = e.nextElementSibling.nextElementSibling;
-		eList.innerHTML = "";
-		try {
-			let seletorArray = mk.parseJSON(e.getAttribute("data-selarray"));
-			if (seletorArray != null) {
-				let c = 0;
-				/* ITENS */
-				seletorArray.forEach((o: any) => {
-					if (o.k != null) {
-						c++;
-						let divMkSeletorItem = document.createElement("div");
-						let divMkSeletorItemTexto = document.createElement("span");
-						let divMkSeletorItemArrow = document.createElement("div");
-						divMkSeletorItem.className = "mkSelItem";
-						divMkSeletorItemArrow.className = "mkSelItemArrow";
-						divMkSeletorItem.setAttribute("data-k", o.k);
-						divMkSeletorItem.setAttribute(
-							"onmousedown",
-							"mk.mkSelSelecionar(this)"
-						);
-						divMkSeletorItemTexto.innerHTML = o.v;
-						divMkSeletorItem.appendChild(divMkSeletorItemTexto);
-						divMkSeletorItem.appendChild(divMkSeletorItemArrow);
-						eList.appendChild(divMkSeletorItem);
-					}
+				divMkSeletorInputExibe.setAttribute(
+					"onblur",
+					"mkt.mkSelPesquisaBlur(this)"
+				);
+				divMkSeletorInputExibe.setAttribute(
+					"oninput",
+					"mkt.mkSelPesquisaInput(this)"
+				);
+				divMkSeletorInputExibe.setAttribute(
+					"onkeydown",
+					"mkt.mkSelPesquisaKeyDown(event)"
+				);
+				divMkSeletorInputExibe.setAttribute(
+					"autocomplete",
+					"off"
+				);
+				divMkSeletorList.addEventListener("scroll", (ev) => {
+					mkt.mkSelMoveu(ev.target);
 				});
-				if (c <= 0) {
-					eList.innerHTML = "Nenhuma opção";
-				} else if (c > 10) {
-					if (e.getAttribute("data-selmove") != "false") {
-						let divMkSelCima = document.createElement("div");
-						divMkSelCima.className = "mkSelItemDeCima microPos2";
-						divMkSelCima.setAttribute(
-							"onmousemove",
-							"mk.mkSelMoveCima(this);"
-						);
-						divMkSelCima.innerHTML = "↑ ↑ ↑";
-						eList.insertBefore(divMkSelCima, eList.firstElementChild);
-
-						let divMkSelBaixo = document.createElement("div");
-						divMkSelBaixo.className = "mkSelItemDeBaixo microPos8";
-						divMkSelBaixo.setAttribute(
-							"onmousemove",
-							"mk.mkSelMoveBaixo(this);"
-						);
-						divMkSelBaixo.innerHTML = "↓ ↓ ↓";
-						eList.appendChild(divMkSelBaixo);
+				// Popular Lista
+				mkt.mkSelPopularLista(e);
+				// Seleciona baseado no value do input
+				mkt.mkSelUpdate(e);
+				// Deixar Elemento de forma visivel, mas inacessivel.
+				if (e.getAttribute("data-dev") != "true") {
+					e.classList.add("mkSecreto");
+				}
+				// v2
+				const popperInstance: any = Popper.createPopper(
+					divMkSeletorPesquisa,
+					divMkSeletorList,
+					{
+						placement: "bottom-start",
+						strategy: "fixed",
+						modifiers: [],
 					}
+				);
+				mkt.vars.poppers.push(popperInstance);
+			} else {
+				// Se não tem array, mas tem o refill e entrou para atualizar, faz o processo de refill genérico
+				if (!e.getAttribute("data-selarray") && e.getAttribute("data-refill")) {
+					await mkt.mkSelDelRefillProcesso(e as HTMLElement);
+				}
+				// Atualiza a lista com base na classe "atualizar" (Gera Evento input e change)
+				if (e.classList.contains("atualizar")) {
+					e.classList.remove("atualizar");
+					e.classList.add("atualizando");
+					mkt.mkSelPopularLista(e);
+					mkt.mkSelUpdate(e);
+					// Executa evento, em todos atualizar.
+					// O evento serve para que ao trocar o 1, o 2 execute input para então o 3 tb ter como saber que é pra atualizar
+					e.dispatchEvent(new Event("input"));
+					e.dispatchEvent(new Event("change"));
+					e.classList.remove("atualizando");
+				}
+				if (e.classList.contains("atualizarSemEvento")) {
+					e.classList.remove("atualizarSemEvento");
+					e.classList.add("atualizando");
+					mkt.mkSelPopularLista(e);
+					mkt.mkSelUpdate(e);
+					e.classList.remove("atualizando");
+				}
+				// Manter index em -1 para não chegar até esse campo
+				e.setAttribute("tabindex", "-1");
+				mkt.mkSelTabIndex(e);
+				//mkt.mkSelReposicionar(e.parentElement.children[2]);
+			}
+		});
+		// Atualiza posição com a mesma frequencia que pesquisa os elementos.
+		mkt.vars.poppers.forEach((o) => {
+			o.update();
+		});
+	}, enumerable: false, writable: false, configurable: false,
+});
+
+Object.defineProperty(mkt, "mkSelDelRefillProcesso", {
+	value: async (
+		eName: string | HTMLElement,
+		cod = null
+	) => {
+		return new Promise(async (r) => {
+			let e = mkt.Q(eName);
+			if (e) {
+				// Se há o elemento, e para evitar puxar várias veses a mesma lista, adiciona-se uma classe no inicio e tira-se quando concluiu. Se já tem, não refaz.
+				if (!e.classList.contains("refilling")) {
+					e.classList.add("refilling");
+					let url = appPath + e.getAttribute("data-refill");
+					cod != null ? (url += cod) : null;
+					let p = await mkt.get.json(url);
+					if (p.retorno != null) {
+						let kv = p.retorno;
+						if (typeof p.retorno == "object") {
+							kv = JSON.stringify(p.retorno);
+						}
+						if (mkt.isJson(kv)) {
+							e.setAttribute("data-selarray", kv);
+							e.classList.remove("refilling");
+							r(e);
+						} else {
+							mkt.erro("Resultado não é um JSON. (mkSelDlRefill)");
+						}
+					}
+				} // Apenas 1 rewfill por vez
+			} else {
+				mkt.w(
+					"Função (mkSelDlRefill) solicitou Refill em um campo inexistente (JS)"
+				);
+			}
+		});
+	}, enumerable: false, writable: false, configurable: false,
+});
+
+Object.defineProperty(mkt, "mkSelDlRefill", {
+	value: async (
+		eName: string | HTMLElement,
+		cod: any,
+		clear: boolean = true
+	): Promise<void> => {
+		mkt.mkSelDelRefillProcesso(eName, cod).then((e: any) => {
+			if (clear) e.value = "";
+			e.classList.add("atualizar");
+		});
+	}, enumerable: false, writable: false, configurable: false,
+});
+
+Object.defineProperty(mkt, "mkSelTabIndex", {
+	value: (e: any) => {
+		if (e.classList.contains("disabled")) {
+			let pes = e.nextElementSibling;
+			if (pes) {
+				if (pes.classList.contains("mkSelPesquisa")) {
+					pes.firstElementChild?.setAttribute("tabindex", "-1");
 				}
 			}
-		} catch {
-			mk.erro(
-				"Erro durante conversao para Json:" + e.getAttribute("data-selarray")
-			);
+		} else {
+			let pes = e.nextElementSibling;
+			if (pes) {
+				if (pes.classList.contains("mkSelPesquisa")) {
+					pes.firstElementChild?.removeAttribute("tabindex");
+				}
+			}
 		}
-	}
-};
+	}, enumerable: false, writable: false, configurable: false,
+});
 
-/* EVENTO de Pesquisa (FOCUS) */
-static mkSelPesquisaFocus = (e: any) => {
-	// Atualiza Itens Selecionados, caso houve mudança sem atualizar.
-	mk.mkSelUpdate(e.parentElement.previousElementSibling);
-	// Limpa o Display
-	e.value = "";
-	// Limpa o resultado do filtro anterior
-	let eList = e.parentElement.nextElementSibling;
-	let ePrimeiroSel: any = null;
-	Array.from(eList.children).forEach((el: any) => {
-		el.style.display = "";
-		el.removeAttribute("data-m");
-		if (el.getAttribute("data-s") == 1 && ePrimeiroSel == null)
-			ePrimeiroSel = el;
-	});
+Object.defineProperty(mkt, "mkSelSelecionar", {
+	value: (eItem: any) => {
+		let ePrincipal = eItem.parentElement?.parentElement?.firstElementChild;
+		let KV = mkt.mkSelGetKV(ePrincipal);
+		// Obtem limite de seleções
+		let selapenas = ePrincipal?.getAttribute("data-selapenas") || 1;
+		let selLimit = Number(selapenas);
+		// QUANDO O LIMITE é 1
+		if (selLimit == 1) {
+			// Muda valor do input pelo clicado e Gera o evento
+			ePrincipal.value = eItem.getAttribute("data-k");
+			ePrincipal?.dispatchEvent(new Event("input"));
 
-	// Faz movimento no scroll até o primeiro item selecionado
-	let primeiroOffSet = ePrimeiroSel?.offsetTop || 0;
-	eList.scrollTop =
-		primeiroOffSet - 120 - (eList.offsetHeight - eList.clientHeight) / 2;
+			// Transfere valor para o Display (Exibe)
+			(eItem?.parentElement?.previousElementSibling?.firstElementChild).value =
+				eItem.innerHTML;
+		} else if (selLimit > 1 || selLimit < 0) {
+			let itemK = eItem.getAttribute("data-k");
+			let jaSelecionado = 0;
+			// Forma um array caso ainda não seja, pois pode seleconar mais de um.
+			let arraySelecionado: string[] = [];
+			// Verifica se algum KV.k é o K clicado. (Para saber se vai adicionar ou remover)
+			KV.forEach((ObjKV) => {
+				arraySelecionado.push(ObjKV.k.toString());
+				if (ObjKV.k == itemK) jaSelecionado++;
+			});
+			if (jaSelecionado > 0) {
+				// Remove valor da lista selecionada
+				arraySelecionado.splice(arraySelecionado.indexOf(itemK), 1);
+			} else {
+				// Verifica se é possivel selecionar mais (Se estiver negativo, pode selecionar infinito)
+				if (arraySelecionado.length < selLimit || selLimit < 0) {
+					// Acrescenta valor
+					arraySelecionado.push(itemK);
+				}
+			}
+			// Limpar seleções vazias
+			arraySelecionado.forEach((item) => {
+				if (item == "") {
+					arraySelecionado.splice(arraySelecionado.indexOf(item), 1);
+				}
+			});
+			// Quando estiver vazio, reseta o campo.
+			// Seta o valor no campo de input
+			if (arraySelecionado.length == 0) {
+				ePrincipal.value = ePrincipal.defaultValue;
+			} else {
+				let string = JSON.stringify(arraySelecionado);
+				if (ePrincipal.type == "text") ePrincipal.value = string;
+				else
+					mkt.erro(
+						"Erro durante o Set/Conversão do campo. É necessário que este campo seja tipo string."
+					);
+			}
+			// Gera o Evento
+			ePrincipal.dispatchEvent(new Event("input"));
 
-	// Atualizar posição da Lista.
-	mk.mkSelReposicionar(e.parentElement.nextElementSibling);
-};
-
-static getParentScrollTop = (e: any) => {
-	let eHtml = e;
-	let soma = 0;
-	while (eHtml.tagName != "HTML") {
-		soma += eHtml.scrollTop;
-		eHtml = eHtml.parentElement;
-	}
-	return soma;
-};
-
-static mkSelReposicionar = (eList: any) => {
-	// Redimenciona a lista do tamanho do campo pesquisar
-	let ew = eList.previousElementSibling.offsetWidth;
-	eList.style.minWidth = ew + "px";
-	eList.style.maxWidth = ew + "px";
-	/* Substituido pelo Poper
-	// Posiciona a lista.
-	// Lado esquerdo baseado na posicao, mas em mobile fica full.
-	let wLargura = window.innerWidth;
-	if (wLargura < 768) {
-		eList.style.top = 35 + "px";
-		eList.style.left = 35 + "px";
-	} else {
-		// Primeiramente seta a posição ref ao input fixo.
-		eList.style.top =
-			eRef.offsetTop -
-			mk.getParentScrollTop(eRef) +
-			eRef.offsetHeight +
-			2 +
-			"px";
-	
-		eList.style.left = eRef.offsetLeft + "px";
-		// Depois, verifica se saiu da tela
-		let posXCantoOpostoRef = eRef.offsetLeft + eRef.offsetWidth;
-		let posXCantoOpostoList = eList.offsetLeft + eList.offsetWidth;
-		if (posXCantoOpostoList > (mk.Q("body") as HTMLElement).offsetWidth) {
-			eList.style.left = posXCantoOpostoRef - eList.offsetWidth - 1 + "px";
+			// Mantem foco no Display, pois pode selecionar mais de um
+			setTimeout(() => {
+				eItem.parentElement.previousElementSibling.firstElementChild.focus();
+			}, 1);
 		}
-	}
-*/
-};
+		mkt.mkSelUpdate(ePrincipal);
+		// Evento change apos terminar a atualizacao
+		ePrincipal.dispatchEvent(new Event("change"));
+	}, enumerable: false, writable: false, configurable: false,
+});
 
-/* EVENTO de Pesquisa (BLUR) */
-static mkSelPesquisaBlur = (e: any) => {
-	mk.mkSelUpdate(e.parentElement.previousElementSibling);
-};
-
-/* EVENTO de Pesquisa (KEYDOWN) */
-static mkSelPesquisaKeyDown = (ev: any) => {
-	let isNegado = false;
-	//mk.l(ev);
-	if (ev.key == "Escape") {
-		ev.srcElement.blur();
-	}
-	if (ev.key == "ArrowUp" || ev.key == "ArrowDown" || ev.key == "Enter") {
-		isNegado = true;
-		let eList = ev.srcElement.parentElement.nextElementSibling;
-		let eListItem;
-		let array: any = Array.from(eList.children).filter((e: any) => {
-			return e.style.display != "none";
-		});
-		let eM = array.find((e: any) => e.getAttribute("data-m") == "1");
-		Array.from(eList.children).forEach((e: any) =>
-			e.removeAttribute("data-m")
+Object.defineProperty(mkt, "mkSelLeftSel", {
+	value: (e: any) => {
+		let eAlvo = null;
+		Array.from(e.parentElement?.nextElementSibling?.children).forEach(
+			(el: any) => {
+				if (el.getAttribute("data-s") == "1") {
+					eAlvo = (el as HTMLInputElement).previousElementSibling;
+					return;
+				}
+			}
 		);
-		if (ev.key == "Enter") {
-			if (eM) mk.mkSelSelecionar(eM);
+		if (eAlvo == null) {
+			mkt.mkSelSelecionar(e.parentElement?.nextElementSibling?.lastElementChild);
+		} else {
+			if ((eAlvo as HTMLElement).classList.contains("mkSelItemDeCima")) {
+				eAlvo = (eAlvo as HTMLElement).parentElement?.lastElementChild
+					?.previousElementSibling;
+			}
+			mkt.mkSelSelecionar(eAlvo);
+		}
+	}, enumerable: false, writable: false, configurable: false,
+});
+
+Object.defineProperty(mkt, "mkSelRightSel", {
+	value: (e: any) => {
+		let eAlvo = null;
+		Array.from(e.parentElement.nextElementSibling.children).forEach(
+			(el: any) => {
+				if (el.getAttribute("data-s") == "1") {
+					eAlvo = el.nextElementSibling;
+					return;
+				}
+			}
+		);
+		if (eAlvo == null) {
+			mkt.mkSelSelecionar(e.parentElement.nextElementSibling.firstElementChild);
+		} else {
+			if ((eAlvo as HTMLElement).classList.contains("mkSelItemDeBaixo")) {
+				eAlvo = (eAlvo as HTMLElement).parentElement?.firstElementChild
+					?.nextElementSibling;
+			}
+			mkt.mkSelSelecionar(eAlvo);
+		}
+	}, enumerable: false, writable: false, configurable: false,
+});
+
+Object.defineProperty(mkt, "mkSelPopularLista", {
+	value: (e: any) => {
+		// GERA CADA ITEM DA LISTA COM BASE NO JSON
+		if (e.getAttribute("data-selarray") != "") {
+			let eList = e.nextElementSibling.nextElementSibling;
+			eList.innerHTML = "";
+			try {
+				let seletorArray = mkt.parseJSON(e.getAttribute("data-selarray"));
+				if (seletorArray != null) {
+					let c = 0;
+					/* ITENS */
+					seletorArray.forEach((o: any) => {
+						if (o.k != null) {
+							c++;
+							let divMkSeletorItem = document.createElement("div");
+							let divMkSeletorItemTexto = document.createElement("span");
+							let divMkSeletorItemArrow = document.createElement("div");
+							divMkSeletorItem.className = "mkSelItem";
+							divMkSeletorItemArrow.className = "mkSelItemArrow";
+							divMkSeletorItem.setAttribute("data-k", o.k);
+							divMkSeletorItem.setAttribute(
+								"onmousedown",
+								"mkt.mkSelSelecionar(this)"
+							);
+							divMkSeletorItemTexto.innerHTML = o.v;
+							divMkSeletorItem.appendChild(divMkSeletorItemTexto);
+							divMkSeletorItem.appendChild(divMkSeletorItemArrow);
+							eList.appendChild(divMkSeletorItem);
+						}
+					});
+					if (c <= 0) {
+						eList.innerHTML = "Nenhuma opção";
+					} else if (c > 10) {
+						if (e.getAttribute("data-selmove") != "false") {
+							let divMkSelCima = document.createElement("div");
+							divMkSelCima.className = "mkSelItemDeCima microPos2";
+							divMkSelCima.setAttribute(
+								"onmousemove",
+								"mkt.mkSelMoveCima(this);"
+							);
+							divMkSelCima.innerHTML = "↑ ↑ ↑";
+							eList.insertBefore(divMkSelCima, eList.firstElementChild);
+
+							let divMkSelBaixo = document.createElement("div");
+							divMkSelBaixo.className = "mkSelItemDeBaixo microPos8";
+							divMkSelBaixo.setAttribute(
+								"onmousemove",
+								"mkt.mkSelMoveBaixo(this);"
+							);
+							divMkSelBaixo.innerHTML = "↓ ↓ ↓";
+							eList.appendChild(divMkSelBaixo);
+						}
+					}
+				}
+			} catch {
+				mkt.erro(
+					"Erro durante conversao para Json:" + e.getAttribute("data-selarray")
+				);
+			}
+		}
+	}, enumerable: false, writable: false, configurable: false,
+});
+
+Object.defineProperty(mkt, "mkSelPesquisaFocus", {
+	value: (e: any) => {
+		// Atualiza Itens Selecionados, caso houve mudança sem atualizar.
+		mkt.mkSelUpdate(e.parentElement.previousElementSibling);
+		// Limpa o Display
+		e.value = "";
+		// Limpa o resultado do filtro anterior
+		let eList = e.parentElement.nextElementSibling;
+		let ePrimeiroSel: any = null;
+		Array.from(eList.children).forEach((el: any) => {
+			el.style.display = "";
+			el.removeAttribute("data-m");
+			if (el.getAttribute("data-s") == 1 && ePrimeiroSel == null)
+				ePrimeiroSel = el;
+		});
+
+		// Faz movimento no scroll até o primeiro item selecionado
+		let primeiroOffSet = ePrimeiroSel?.offsetTop || 0;
+		eList.scrollTop =
+			primeiroOffSet - 120 - (eList.offsetHeight - eList.clientHeight) / 2;
+
+		// Atualizar posição da Lista.
+		mkt.mkSelReposicionar(e.parentElement.nextElementSibling);
+	}, enumerable: false, writable: false, configurable: false,
+});
+
+Object.defineProperty(mkt, "getParentScrollTop", {
+	value: (e: any) => {
+		let eHtml = e;
+		let soma = 0;
+		while (eHtml.tagName != "HTML") {
+			soma += eHtml.scrollTop;
+			eHtml = eHtml.parentElement;
+		}
+		return soma;
+	}, enumerable: false, writable: false, configurable: false,
+});
+
+Object.defineProperty(mkt, "mkSelReposicionar", {
+	value: (eList: any) => {
+		// Redimenciona a lista do tamanho do campo pesquisar
+		let ew = eList.previousElementSibling.offsetWidth;
+		eList.style.minWidth = ew + "px";
+		eList.style.maxWidth = ew + "px";
+		/* Substituido pelo Poper
+		// Posiciona a lista.
+		// Lado esquerdo baseado na posicao, mas em mobile fica full.
+		let wLargura = window.innerWidth;
+		if (wLargura < 768) {
+			eList.style.top = 35 + "px";
+			eList.style.left = 35 + "px";
+		} else {
+			// Primeiramente seta a posição ref ao input fixo.
+			eList.style.top =
+				eRef.offsetTop -
+				mkt.getParentScrollTop(eRef) +
+				eRef.offsetHeight +
+				2 +
+				"px";
+		
+			eList.style.left = eRef.offsetLeft + "px";
+			// Depois, verifica se saiu da tela
+			let posXCantoOpostoRef = eRef.offsetLeft + eRef.offsetWidth;
+			let posXCantoOpostoList = eList.offsetLeft + eList.offsetWidth;
+			if (posXCantoOpostoList > (mkt.Q("body") as HTMLElement).offsetWidth) {
+				eList.style.left = posXCantoOpostoRef - eList.offsetWidth - 1 + "px";
+			}
+		}
+	*/
+	}, enumerable: false, writable: false, configurable: false,
+});
+
+Object.defineProperty(mkt, "mkSelPesquisaBlur", {
+	value: (e: any) => {
+		mkt.mkSelUpdate(e.parentElement.previousElementSibling);
+	}, enumerable: false, writable: false, configurable: false,
+});
+
+Object.defineProperty(mkt, "mkSelPesquisaKeyDown", {
+	value: (ev: any) => {
+		let isNegado = false;
+		//mkt.l(ev);
+		if (ev.key == "Escape") {
 			ev.srcElement.blur();
 		}
-		if (ev.key == "ArrowUp") {
+		if (ev.key == "ArrowUp" || ev.key == "ArrowDown" || ev.key == "Enter") {
 			isNegado = true;
-			let ultimo = array[array.length - 1];
-			let peNultimo = array[array.length - 2];
+			let eList = ev.srcElement.parentElement.nextElementSibling;
+			let eListItem;
+			let array: any = Array.from(eList.children).filter((e: any) => {
+				return e.style.display != "none";
+			});
+			let eM = array.find((e: any) => e.getAttribute("data-m") == "1");
+			Array.from(eList.children).forEach((e: any) =>
+				e.removeAttribute("data-m")
+			);
+			if (ev.key == "Enter") {
+				if (eM) mkt.mkSelSelecionar(eM);
+				ev.srcElement.blur();
+			}
+			if (ev.key == "ArrowUp") {
+				isNegado = true;
+				let ultimo = array[array.length - 1];
+				let peNultimo = array[array.length - 2];
 
-			if (eM) {
-				let indexProximo = array.indexOf(eM) - 1;
-				if (
-					array[indexProximo] &&
-					!array[indexProximo].classList.contains("mkSelItemDeCima")
-				) {
-					eListItem = array[indexProximo];
+				if (eM) {
+					let indexProximo = array.indexOf(eM) - 1;
+					if (
+						array[indexProximo] &&
+						!array[indexProximo].classList.contains("mkSelItemDeCima")
+					) {
+						eListItem = array[indexProximo];
+					} else {
+						if (ultimo?.classList.contains("mkSelItemDeBaixo")) {
+							eListItem = peNultimo;
+						} else {
+							eListItem = ultimo;
+						}
+					}
 				} else {
 					if (ultimo?.classList.contains("mkSelItemDeBaixo")) {
 						eListItem = peNultimo;
@@ -4887,27 +4954,27 @@ static mkSelPesquisaKeyDown = (ev: any) => {
 						eListItem = ultimo;
 					}
 				}
-			} else {
-				if (ultimo?.classList.contains("mkSelItemDeBaixo")) {
-					eListItem = peNultimo;
-				} else {
-					eListItem = ultimo;
-				}
+				eListItem?.setAttribute("data-m", "1");
+				let alvoOffsetTop = eListItem?.offsetTop || 0;
+				eList.scrollTop =
+					alvoOffsetTop - 120 - (eList.offsetHeight - eList.clientHeight) / 2;
 			}
-			eListItem?.setAttribute("data-m", "1");
-			let alvoOffsetTop = eListItem?.offsetTop || 0;
-			eList.scrollTop =
-				alvoOffsetTop - 120 - (eList.offsetHeight - eList.clientHeight) / 2;
-		}
-		if (ev.key == "ArrowDown") {
-			isNegado = true;
-			if (eM) {
-				let indexProximo = array.indexOf(eM) + 1;
-				if (
-					array[indexProximo] &&
-					!array[indexProximo].classList.contains("mkSelItemDeBaixo")
-				) {
-					eListItem = array[indexProximo];
+			if (ev.key == "ArrowDown") {
+				isNegado = true;
+				if (eM) {
+					let indexProximo = array.indexOf(eM) + 1;
+					if (
+						array[indexProximo] &&
+						!array[indexProximo].classList.contains("mkSelItemDeBaixo")
+					) {
+						eListItem = array[indexProximo];
+					} else {
+						if (array[0]?.classList.contains("mkSelItemDeCima")) {
+							eListItem = array[1];
+						} else {
+							eListItem = array[0];
+						}
+					}
 				} else {
 					if (array[0]?.classList.contains("mkSelItemDeCima")) {
 						eListItem = array[1];
@@ -4915,286 +4982,291 @@ static mkSelPesquisaKeyDown = (ev: any) => {
 						eListItem = array[0];
 					}
 				}
+				eListItem?.setAttribute("data-m", "1");
+				let alvoOffsetTop = eListItem?.offsetTop || 0;
+				eList.scrollTop =
+					alvoOffsetTop - 120 - (eList.clientHeight - eList.offsetHeight) / 2;
+			}
+		}
+		if (isNegado) {
+			ev.preventDefault();
+		}
+	}, enumerable: false, writable: false, configurable: false,
+});
+
+Object.defineProperty(mkt, "mkSelPesquisaInput", {
+	value: (e: any) => {
+		let cVisivel = 0;
+		let eList = e.parentElement.nextElementSibling;
+		Array.from(eList.children).forEach((el: any) => {
+			let exibe = false;
+			if (el.classList.contains("mkSelItem")) {
+				let strInputado = e.value.toLowerCase();
+				let strFromKv = el.firstElementChild.innerHTML.toLowerCase();
+				if (mkt.like(strInputado, strFromKv)) {
+					exibe = true;
+					cVisivel++;
+				}
+			}
+			if (exibe) {
+				el.style.display = "";
 			} else {
-				if (array[0]?.classList.contains("mkSelItemDeCima")) {
-					eListItem = array[1];
-				} else {
-					eListItem = array[0];
-				}
+				el.style.display = "none";
 			}
-			eListItem?.setAttribute("data-m", "1");
-			let alvoOffsetTop = eListItem?.offsetTop || 0;
-			eList.scrollTop =
-				alvoOffsetTop - 120 - (eList.clientHeight - eList.offsetHeight) / 2;
+		});
+		if (cVisivel > 10) {
+			eList.firstElementChild.style.display = "";
+			eList.lastElementChild.style.display = "";
 		}
-	}
-	if (isNegado) {
-		ev.preventDefault();
-	}
-};
+	}, enumerable: false, writable: false, configurable: false,
+});
 
-/* EVENTO de Pesquisa (INPUT) */
-static mkSelPesquisaInput = (e: any) => {
-	let cVisivel = 0;
-	let eList = e.parentElement.nextElementSibling;
-	Array.from(eList.children).forEach((el: any) => {
-		let exibe = false;
-		if (el.classList.contains("mkSelItem")) {
-			let strInputado = e.value.toLowerCase();
-			let strFromKv = el.firstElementChild.innerHTML.toLowerCase();
-			if (mk.like(strInputado, strFromKv)) {
-				exibe = true;
-				cVisivel++;
-			}
+Object.defineProperty(mkt, "mkSelMoveu", {
+	value: (e: any) => {
+		if (e.firstElementChild.classList.contains("mkSelItemDeCima")) {
+			e.firstElementChild.style.display = "";
+			e.lastElementChild.style.display = "";
 		}
-		if (exibe) {
-			el.style.display = "";
-		} else {
-			el.style.display = "none";
+	}, enumerable: false, writable: false, configurable: false,
+});
+
+Object.defineProperty(mkt, "mkSelMoveCima", {
+	value: (e: any) => {
+		let eList = e.parentElement;
+		eList.scrollTop = eList.scrollTop - 5;
+		mkt.mkSelMoveu(eList);
+	}, enumerable: false, writable: false, configurable: false,
+});
+
+Object.defineProperty(mkt, "mkSelMoveBaixo", {
+	value: (e: any) => {
+		let eList = e.parentElement;
+		eList.scrollTop = eList.scrollTop + 5;
+		mkt.mkSelMoveu(eList);
+	}, enumerable: false, writable: false, configurable: false,
+});
+
+Object.defineProperty(mkt, "mkSelUpdate", {
+	value: (e: any, KV: any[] | null = null) => {
+		if (KV == null) {
+			KV = mkt.mkSelGetKV(e);
 		}
-	});
-	if (cVisivel > 10) {
-		eList.firstElementChild.style.display = "";
-		eList.lastElementChild.style.display = "";
-	}
-};
-
-// Receber e = div .mkSelList
-static mkSelMoveu = (e: any) => {
-	if (e.firstElementChild.classList.contains("mkSelItemDeCima")) {
-		// if (e.scrollTop == 0) {
-		// 	e.firstElementChild.style.display = "none";
-		// 	e.lastElementChild.style.display = "";
-		// } else if (e.scrollTop + e.clientHeight >= e.scrollHeight) {
-		// 	e.firstElementChild.style.display = "";
-		// 	e.lastElementChild.style.display = "none";
-		// } else {
-		e.firstElementChild.style.display = "";
-		e.lastElementChild.style.display = "";
-		// }
-	}
-};
-
-// Receber e = div .mkSelItemDeCima
-static mkSelMoveCima = (e: any) => {
-	let eList = e.parentElement;
-	eList.scrollTop = eList.scrollTop - 5;
-	mk.mkSelMoveu(eList);
-};
-
-// Receber e = div .mkSelItemDeBaixo
-static mkSelMoveBaixo = (e: any) => {
-	let eList = e.parentElement;
-	eList.scrollTop = eList.scrollTop + 5;
-	mk.mkSelMoveu(eList);
-};
-
-/* ATUALIZA Display e Selecionados*/
-static mkSelUpdate = (e: any, KV: any[] | null = null) => {
-	if (KV == null) {
-		KV = mk.mkSelGetKV(e);
-	}
-	// Desmarcar todos mkSelItem pra 0
-	Array.from(e.nextElementSibling.nextElementSibling.children).forEach(
-		(el) => {
-			(el as HTMLElement).setAttribute("data-s", "0");
-		}
-	);
-	KV.forEach((o) => {
-		/* Marcar mkSelItem pra 1 onde tem K selecionado */
+		// Desmarcar todos mkSelItem pra 0
 		Array.from(e.nextElementSibling.nextElementSibling.children).forEach(
-			(item: any) => {
-				if (item.getAttribute("data-k") == o.k) {
-					item.setAttribute("data-s", "1");
+			(el) => {
+				(el as HTMLElement).setAttribute("data-s", "0");
+			}
+		);
+		KV.forEach((o) => {
+			/* Marcar mkSelItem pra 1 onde tem K selecionado */
+			Array.from(e.nextElementSibling.nextElementSibling.children).forEach(
+				(item: any) => {
+					if (item.getAttribute("data-k") == o.k) {
+						item.setAttribute("data-s", "1");
+					}
 				}
-			}
-		);
-	});
-	// Seta Valor do display
-	mk.mkSelSetDisplay(e, KV);
-};
-
-// SET a ARRAY do SELETOR, formato MAP (Recebe array de arrays)
-static mkSelArraySetMap = (e: any, map: any) => {
-	if (e) {
-		if (map instanceof Map) {
-			let kv: any[] = [];
-			for (let [k, v] of map) {
-				kv.push({
-					k: k,
-					v: v,
-				});
-			}
-			mk.mkSelArraySetKV(e, kv);
-		} else {
-			mk.w(
-				"Função mkSelArraySetMap() precisa receber um objeto formato Map no segundo parametro"
 			);
+		});
+		// Seta Valor do display
+		mkt.mkSelSetDisplay(e, KV);
+	}, enumerable: false, writable: false, configurable: false,
+});
+
+Object.defineProperty(mkt, "mkSelArraySetMap", {
+	value: (e: any, map: any) => {
+		if (e) {
+			if (map instanceof Map) {
+				let kv: any[] = [];
+				for (let [k, v] of map) {
+					kv.push({
+						k: k,
+						v: v,
+					});
+				}
+				mkt.mkSelArraySetKV(e, kv);
+			} else {
+				mkt.w(
+					"Função mkSelArraySetMap() precisa receber um objeto formato Map no segundo parametro"
+				);
+			}
+			return e;
+		} else {
+			mkt.w(
+				"Função mkSelArraySetMap() precisa receber o elemento no primeiro parametro"
+			);
+			return null;
 		}
+	}, enumerable: false, writable: false, configurable: false,
+});
+
+Object.defineProperty(mkt, "mkSelArraySetKV", {
+	value: (e: any, kv: any[]) => {
+		let kvj = JSON.stringify(kv);
+		e.dataset.selarray = kvj;
+		e.classList.add("atualizarSemEvento");
 		return e;
-	} else {
-		mk.w(
-			"Função mkSelArraySetMap() precisa receber o elemento no primeiro parametro"
-		);
-		return null;
-	}
-};
+	}, enumerable: false, writable: false, configurable: false,
+});
 
-// SET a ARRAY do SELETOR, formato KV (Recebe uma array de objetos)
-static mkSelArraySetKV = (e: any, kv: any[]) => {
-	let kvj = JSON.stringify(kv);
-	e.dataset.selarray = kvj;
-	e.classList.add("atualizarSemEvento");
-	return e;
-};
+Object.defineProperty(mkt, "mkSelArrayGetMap", {
+	value: (e: any): any => {
+		let kvs = e.dataset.selarray;
+		let map: any[] = [];
+		if (mkt.isJson(kvs)) {
+			let kv = mkt.parseJSON(kvs);
+			kv.forEach((o: any) => {
+				map.push([o.k, o.v]);
+			});
+		}
+		return new Map(map);
+	}, enumerable: false, writable: false, configurable: false,
+});
 
-// GET do ARRAY do SELETOR, formato MAP
-static mkSelArrayGetMap = (e: any): any => {
-	let kvs = e.dataset.selarray;
-	let map: any[] = [];
-	if (mk.isJson(kvs)) {
-		let kv = mk.parseJSON(kvs);
-		kv.forEach((o: any) => {
+Object.defineProperty(mkt, "mkSelArrayGetKV", {
+	value: (e: any): any[] => {
+		let kv = e.dataset.selarray;
+		if (mkt.isJson(kv)) {
+			kv = mkt.parseJSON(kv);
+		}
+		return kv;
+	}, enumerable: false, writable: false, configurable: false,
+});
+
+Object.defineProperty(mkt, "mkSelGetMap", {
+	value: (e: any) => {
+		let kv = mkt.mkSelGetKV(e);
+		let map: any[] = [];
+		kv.forEach((o) => {
 			map.push([o.k, o.v]);
 		});
-	}
-	return new Map(map);
-};
+		return new Map(map);
+	}, enumerable: false, writable: false, configurable: false,
+});
 
-// GET do ARRAY do SELETOR, formato KV
-static mkSelArrayGetKV = (e: any): any[] => {
-	let kv = e.dataset.selarray;
-	if (mk.isJson(kv)) {
-		kv = mk.parseJSON(kv);
-	}
-	return kv;
-};
-
-// GET do ATUAL SELECIONADO do SELETOR, formato MAP
-static mkSelGetMap = (e: any) => {
-	let kv = mk.mkSelGetKV(e);
-	let map: any[] = [];
-	kv.forEach((o) => {
-		map.push([o.k, o.v]);
-	});
-	return new Map(map);
-};
-
-// GET do ATUAL SELECIONADO do SELETOR, formato KV
-// Retorna o Objeto em formato KV dos itens selecionados do elemento E
-static mkSelGetKV = (e: any): any[] => {
-	let kSels: any[];
-	let kOpcoes: any;
-	// Lista de Selecoes vira K do KV
-	if (mk.isJson(e.value)) {
-		kSels = mk.parseJSON(e.value);
-		if (!Array.isArray(kSels)) {
-			kSels = [{ k: kSels }];
-		} else {
-			kSels = [];
-			mk.parseJSON(e.value).forEach((kSel: any) => {
-				kSels.push({ k: kSel });
-			});
-		}
-	} else kSels = [{ k: e.value }];
-	// Prepara lista de Opções para iterar
-	if (mk.isJson(e.dataset.selarray)) {
-		kOpcoes = mk.parseJSON(e.dataset.selarray);
-		if (!Array.isArray(kOpcoes)) {
-			kOpcoes = [{ k: kOpcoes, v: "\u{2209} Opções" }];
-		}
-	} else kOpcoes = null;
-	if (kOpcoes != null) {
-		// Acrescentar V ao KV
-		kSels.forEach((objKv) => {
-			kOpcoes.forEach((opcao: any) => {
-				if (opcao.k == objKv.k) {
-					objKv.v = opcao.v;
-				}
-			});
-		});
-	}
-	return kSels;
-};
-
-static mkSelSetDisplay = (e: any, KV: any) => {
-	if (KV.length <= 0) {
-		mk.w("Não foi possível encontrar os itens selecionados.");
-		e.nextElementSibling.firstElementChild.value = "Opções \u{2209}";
-	} else {
-		if (KV.length == 1) {
-			let display = "-- Selecione --";
-			if (KV[0].v != null) {
-				display = KV[0].v;
-			}
-
-			if (display == "-- Selecione --") {
-				// Criado um argumento indicando que o VALOR do campo está dessincronizado com as POSSIBILIDADDES em kv.
-				e.dataset.selerror = "true";
-				e.dataset.selerrorMsg =
-					"O item selecionado não está na lista de possibilidades";
+Object.defineProperty(mkt, "mkSelGetKV", {
+	value: (e: any): any[] => {
+		let kSels: any[];
+		let kOpcoes: any;
+		// Lista de Selecoes vira K do KV
+		if (mkt.isJson(e.value)) {
+			kSels = mkt.parseJSON(e.value);
+			if (!Array.isArray(kSels)) {
+				kSels = [{ k: kSels }];
 			} else {
-				e.dataset.selerror = "false";
-				e.dataset.selerrorMsg = "";
+				kSels = [];
+				mkt.parseJSON(e.value).forEach((kSel: any) => {
+					kSels.push({ k: kSel });
+				});
 			}
-			e.nextElementSibling.firstElementChild.value = display;
-		} else if (KV.length > 1) {
-			e.nextElementSibling.firstElementChild.value =
-				"[" + KV.length + "] Selecionados";
-		}
-	}
-};
-
-static contaImportados = 0;
-// IMPORTAR - Classe - Coleta o html externo
-static importar = async (tagBuscar = ".divListagemContainer", tipo: any = "race", quiet: boolean = true) => {
-	return new Promise((r, x) => {
-		let num = mk.contaImportados++;
-		if (!quiet) {
-			mk.gc("\t(" + num + ") Executando Importador no modo: ", tipo)
-		}
-		let ps: any = [];
-		mk.QAll(tagBuscar + " *").forEach((e) => {
-			let destino = e.getAttribute("mkImportar");
-			if (destino != null) {
-				ps.push({ p: mk.get.html({ url: destino, quiet: true, carregador: false }), e: e, n: num });
+		} else kSels = [{ k: e.value }];
+		// Prepara lista de Opções para iterar
+		if (mkt.isJson(e.dataset.selarray)) {
+			kOpcoes = mkt.parseJSON(e.dataset.selarray);
+			if (!Array.isArray(kOpcoes)) {
+				kOpcoes = [{ k: kOpcoes, v: "\u{2209} Opções" }];
 			}
-		});
-		if (!quiet) {
-			mk.l(ps);
-			mk.ge();
-		}
-		Promise[tipo](ps.map(x => { return x.p })).then(ret => {
-			ps.forEach(async (o) => {
-				let re = await o.p;
-
-				if (re.retorno != null) {
-					o.e.removeAttribute("mkImportar");
-					o.e.innerHTML = re.retorno;
-					try {
-						mk.mkNodeToScript(o.e);
-					} catch (error) {
-						mk.gc("Auto Import por TAG lancou erros:");
-						mk.erro("ERRO: ", error);
-						mk.ge();
+		} else kOpcoes = null;
+		if (kOpcoes != null) {
+			// Acrescentar V ao KV
+			kSels.forEach((objKv) => {
+				kOpcoes.forEach((opcao: any) => {
+					if (opcao.k == objKv.k) {
+						objKv.v = opcao.v;
 					}
+				});
+			});
+		}
+		return kSels;
+	}, enumerable: false, writable: false, configurable: false,
+});
+
+Object.defineProperty(mkt, "mkSelSetDisplay", {
+	value: (e: any, KV: any) => {
+		if (KV.length <= 0) {
+			mkt.w("Não foi possível encontrar os itens selecionados.");
+			e.nextElementSibling.firstElementChild.value = "Opções \u{2209}";
+		} else {
+			if (KV.length == 1) {
+				let display = "-- Selecione --";
+				if (KV[0].v != null) {
+					display = KV[0].v;
+				}
+
+				if (display == "-- Selecione --") {
+					// Criado um argumento indicando que o VALOR do campo está dessincronizado com as POSSIBILIDADDES em kv.
+					e.dataset.selerror = "true";
+					e.dataset.selerrorMsg =
+						"O item selecionado não está na lista de possibilidades";
 				} else {
-					x(false);
-					mk.l("Falhou ao coletar dados");
+					e.dataset.selerror = "false";
+					e.dataset.selerrorMsg = "";
+				}
+				e.nextElementSibling.firstElementChild.value = display;
+			} else if (KV.length > 1) {
+				e.nextElementSibling.firstElementChild.value =
+					"[" + KV.length + "] Selecionados";
+			}
+		}
+	}, enumerable: false, writable: false, configurable: false,
+});
+
+//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+//   IMPORTAR                       \\
+//___________________________________\\
+
+Object.defineProperty(mkt, "importar", {
+	value: async (tagBuscar = ".divListagemContainer", tipo: any = "race", quiet: boolean = true) => {
+		// IMPORTAR - Classe - Coleta o html externo
+		return new Promise((r, x) => {
+			let num = mkt.contaImportados++;
+			if (!quiet) {
+				mkt.gc("\t(" + num + ") Executando Importador no modo: ", tipo)
+			}
+			let ps: any = [];
+			mkt.QAll(tagBuscar + " *").forEach((e) => {
+				let destino = e.getAttribute("mkImportar");
+				if (destino != null) {
+					ps.push({ p: mkt.get.html({ url: destino, quiet: true, carregador: false }), e: e, n: num });
 				}
 			});
-			//mk.l("(" + num + ") Gerenciador Importar finalizado.")
-			r(true);
+			if (!quiet) {
+				mkt.l(ps);
+				mkt.ge();
+			}
+			Promise[tipo](ps.map(x => { return x.p })).then(ret => {
+				ps.forEach(async (o) => {
+					let re = await o.p;
+					if (re.retorno != null) {
+						o.e.removeAttribute("mkImportar");
+						o.e.innerHTML = re.retorno;
+						try {
+							mkt.mkNodeToScript(o.e);
+						} catch (error) {
+							mkt.gc("Auto Import por TAG lancou erros:");
+							mkt.erro("ERRO: ", error);
+							mkt.ge();
+						}
+					} else {
+						x(false);
+						mkt.l("Falhou ao coletar dados");
+					}
+				});
+				//mkt.l("(" + num + ") Gerenciador Importar finalizado.")
+				r(true);
+			});
 		});
-	});
-};
+	}, enumerable: false, writable: false, configurable: false,
+});
 
-// Padrão UUIDV4 - Gerador de identificador unico
-static uuid = () => {
-	return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c =>
-		(c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
-	);
-}
+Object.defineProperty(mkt, "uuid", {
+	value: () => {
+		// Padrão UUIDV4 - Gerador de identificador unico
+		return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c =>
+			(c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+		);
+	}, enumerable: false, writable: false, configurable: false,
+});
+
 
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //   UTEIS                          \\
