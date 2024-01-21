@@ -24,6 +24,7 @@ class mktm {
 }
 // CLASSE DE CONFIG (Construtor único)
 class mkt_config {
+    get [Symbol.toStringTag]() { return "mktc"; }
     url = new URL("GetList", window.location.href.split("?")[0]).href; // Requer a URL para o fetch dos dados. Se não tiver, passar os dados no parametros dados e tornar esse null.
     dados = null; // Caso a tela já tenha os dados, podem ser passador por aqui, se não deixar 
     nomeTabela = null; // Nome da tabela (Usado pra contruir o banco de dados)
@@ -37,6 +38,35 @@ class mkt_config {
     hearMenu = true; // Indicador se ativará o botãozinho que abre o filtro completo do campo.
     sortBy = null; // Campo a ser ordenado inicialmente;
     sortDir = 0; // 0,1,2 = Crescente, Decrescente, Toogle;
+    objFiltro = {}; // Itens Filtrados
+    urlOrigem = ""; // URL de origem dos dados a serem populados
+    pagAtual = 1; // Representa a pagina
+    sortBy = ""; // Propriedade a ser ordenada. (Apenas 1)
+    sortDir = false; // Direcao dos itens ordenados? true / false
+    totalFull = this.dadosFull.length;
+    totalFiltrado = this.dadosFiltrado.length;
+    totalExibidos = this.dadosExibidos.length;
+    pagPorPagina = 5; // VAR = Total de linhas exibidas por página.
+    pagItensIni = 0;
+    pagItensFim = 0;
+    totPags = 0;
+    versaoDb = 1;
+    pk = null; // Possivel setar o nome do campo que é primary key já na construcao
+    filtro = null;
+    tbody = null;
+    ths = null;
+    pagBotoes = null;
+    tableResultado = null;
+    tablePorPagina = null; // TAG = Total de linhas exibidas por página.
+    tableExibePorPagina = null;
+    tableTotal = null; // TAG = Total de registros.
+    tableFiltrado = null;
+    tableIni = null;
+    tableFim = null;
+    tableInicioFim = null;
+    pag = null;
+    pagBotao = null;
+    nomeTabela = null;
 }
 // Event Based:
 // - aoConcluirDownload
@@ -44,6 +74,7 @@ class mkt_config {
 // - aoConcluirExibicao
 // CLASSE INSTANCIAVEL
 class mkt {
+    get [Symbol.toStringTag]() { return "mkt"; }
     c;
     db = null;
     dadosFull = []; // Todos os dados sem filtro, mas ordenaveis.
@@ -52,37 +83,6 @@ class mkt {
     alvo = {}; // Guarda o objeto selecionado permitindo manupular outro dado com este de referencia.
     thisListNum = 0;
     idContainer = 0;
-    vars = {
-        objFiltro: {},
-        urlOrigem: "",
-        pagAtual: 1,
-        sortBy: "",
-        sortDir: false,
-        totalFull: this.dadosFull.length,
-        totalFiltrado: this.dadosFiltrado.length,
-        totalExibidos: this.dadosExibidos.length,
-        pagPorPagina: 5,
-        pagItensIni: 0,
-        pagItensFim: 0,
-        totPags: 0,
-        versaoDb: 1,
-        pk: null,
-        filtro: null,
-        tbody: null,
-        ths: null,
-        pagBotoes: null,
-        tableResultado: null,
-        tablePorPagina: null,
-        tableExibePorPagina: null,
-        tableTotal: null,
-        tableFiltrado: null,
-        tableIni: null,
-        tableFim: null,
-        tableInicioFim: null,
-        pag: null,
-        pagBotao: null,
-        nomeTabela: null,
-    };
     constructor(mktconfig) {
         if (mktconfig == null) {
             this.c = new mkt_config();
@@ -91,37 +91,39 @@ class mkt {
             this.c = mktconfig;
         }
         // Mapeamento dos elementos baseado no container informado.
-        this.vars.tbody = this.c.container + " tbody";
-        this.vars.ths = this.c.container + " th";
-        this.vars.pagBotoes = this.c.container + " .pagBotoes";
-        this.vars.tableResultado = this.c.container + " .tableResultado";
-        this.vars.tablePorPagina = this.c.container + " input[name='tablePorPagina']";
-        this.vars.tableExibePorPagina = this.c.container + " .tableExibePorPagina";
-        this.vars.tableTotal = this.c.container + " .tableTotal";
-        this.vars.tableFiltrado = this.c.container + " .tableFiltrado";
-        this.vars.tableIni = this.c.container + " .tableIni";
-        this.vars.tableFim = this.c.container + " .tableFim";
-        this.vars.tableInicioFim = this.c.container + " .tableInicioFim";
-        this.vars.pag = this.vars.pagBotoes + " .pag";
-        this.vars.pagBotao = this.vars.pagBotoes + " .pagBotao";
+        this.c.tbody = this.c.container + " tbody";
+        this.c.ths = this.c.container + " th";
+        this.c.pagBotoes = this.c.container + " .pagBotoes";
+        this.c.tableResultado = this.c.container + " .tableResultado";
+        this.c.tablePorPagina = this.c.container + " input[name='tablePorPagina']";
+        this.c.tableExibePorPagina = this.c.container + " .tableExibePorPagina";
+        this.c.tableTotal = this.c.container + " .tableTotal";
+        this.c.tableFiltrado = this.c.container + " .tableFiltrado";
+        this.c.tableIni = this.c.container + " .tableIni";
+        this.c.tableFim = this.c.container + " .tableFim";
+        this.c.tableInicioFim = this.c.container + " .tableInicioFim";
+        this.c.pag = this.c.pagBotoes + " .pag";
+        this.c.pagBotao = this.c.pagBotoes + " .pagBotao";
         // Mesmo sem Design no contrutor, vai formando um mínimo necessário.
         // Gerando Design de Modelo Aceitável
-        if (mk.classof(this.c.model) != "Array")
+        if (mkt.classof(this.c.model) != "Array")
             this.c.model = [];
         // Impede a inserção de modelos que não são objetos da classe mktm
         if (this.c.model?.length > 0) {
             this.c.model?.forEach(o => {
-                if (mk.classof(o) != "mktm") {
+                if (mkt.classof(o) != "mktm") {
                     o = new mktm();
                 }
                 if (o.pk) {
-                    this.vars.pk = o.k;
+                    this.c.pk = o.k;
                 }
             });
         }
-        if (this.vars.pk == null) {
-            mk.w("Nenhuma Primary Key encontrada no Model.");
+        // PRIMARY KEY ALERTA (Necessária para CRUDs)
+        if (this.c.pk == null) {
+            mkt.w("Nenhuma Primary Key encontrada no Model.");
         }
+        // Iniciando o Worker
         if (this.c.url != null) {
             let w = mkt.mkWorker();
             w.postMessage({ c: "FETCH", u: this.c.url });
@@ -132,6 +134,22 @@ class mkt {
                 console.log("A> Erro: ", ev);
                 ev.preventDefault();
             };
+        }
+        // GATILHOS do Container da tabela (Paginação e Limite por Página)
+        if (mkt.Q(this.c.container)) {
+            // Seta Gatilho dos botoes de paginacao.
+            mkt.QAll(this.c.pagBotao).forEach((li) => {
+                li.addEventListener("click", (ev) => {
+                    this.mudaPag(ev.target);
+                });
+            });
+            // Seta Gatilho do indicador de quantidade por pagina.
+            if (mkt.Q(this.c.tablePorPagina)) {
+                mkt.Ao("input", this.c.tablePorPagina, async () => {
+                    this.atualizaNaPaginaUm();
+                });
+            }
+            this.headAtivar();
         }
     }
     static vars;
@@ -210,7 +228,7 @@ Object.defineProperty(mkt, "mkClicarNaAba", {
             let totalAbas = Number(listaAbas?.getAttribute("data-mkabas"));
             for (let i = 1; i <= totalAbas; i++) {
                 // Giro do 1 ao Total
-                mk.QAll(".mkAba" + i).forEach((e) => {
+                mkt.QAll(".mkAba" + i).forEach((e) => {
                     if (i == estaAba) {
                         e.classList.remove("oculto");
                     }
@@ -233,15 +251,15 @@ Object.defineProperty(mkt, "classof", {
 Object.defineProperty(mkt, "Inicializar", {
     value: () => {
         mkt.moldeWorker();
-        mkt.mkClicarNaAba(mk.Q(".mkAbas a.active")); // Inicia no ativo
+        mkt.mkClicarNaAba(mkt.Q(".mkAbas a.active")); // Inicia no ativo
         mkt.exeTimer();
     }, enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "exeTimer", {
     value: () => {
-        mk.mkSelRenderizar();
-        mk.mkRecRenderizar();
-        mk.mkBotCheck();
+        mkt.mkSelRenderizar();
+        mkt.mkRecRenderizar();
+        mkt.mkBotCheck();
         // Itera sobre todos os Poppers para atualizar na mesma frequencia deste intervalo.
         mkt.vars.poppers.forEach((o) => {
             if (!o.state.elements.popper.classList.contains("oculto")) {
