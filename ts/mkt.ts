@@ -273,6 +273,16 @@ class mkt {
 		}
 	}
 
+	newDownloadContinuo = async (parametros: string = "", novaurl: string | null = null) => {
+		this.ultimoGet = this.c.limiteget + 1;
+		if (novaurl != null) {
+			this.c.url = this.c.urlOrigem;
+		} else {
+			this.c.url = novaurl;
+		}
+		this.startDownloadContinuo(parametros);
+	}
+
 	startDownloadContinuo = async (parametros: string = "") => {
 		if (this.ultimoGet >= this.c.limiteget) {
 			if (mkt.classof(this.c.url) == "String") {
