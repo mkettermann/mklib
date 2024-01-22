@@ -37,8 +37,8 @@ class mkt_config {
 	container_importar: boolean = false; // No container, executa importar dados baseados no atributo.
 	filtroExtra: Function | null = null; // modificaFiltro Retorna um booleano que permite um filtro configurado externamente do processo Filtragem.
 	filtro: string | null = ".iConsultas"; // Busca por esta classe para filtrar campos por nome do input.
-	hearSort: boolean = true; // Indicador se ativará o ordenamento ao clicar no cabeçalho
-	hearMenu: boolean = true; // Indicador se ativará o botãozinho que abre o filtro completo do campo.
+	headSort: boolean = true; // Indicador se ativará o ordenamento ao clicar no cabeçalho
+	headMenu: boolean = true; // Indicador se ativará o botãozinho que abre o filtro completo do campo.
 	// Os demais podem se alterar durante as operações da listagem.
 	sortBy: string | null = null; // Campo a ser ordenado inicialmente;
 	sortDir: Number | null = 0; // 0,1,2 = Crescente, Decrescente, Toogle;
@@ -69,7 +69,7 @@ class mkt_config {
 	pagBotao = ".pagBotao";
 	dbInit = (store: IDBObjectStore) => { } // Funcao de contrução do design do banco de dados
 	// Alterar essas funções para modificar dados durante etapas.
-	aoIniciarListagem = async (i) => { }; // Recebe a própria instancia no parametro.
+	aoIniciarListagem = async (i: mkt) => { }; // Recebe a própria instancia no parametro.
 	aoPossuirDados = async (data: any) => { }; // Recebe os dados de dadosFull
 	aoConcluirFiltragem = async (data: any) => { }; // Recebe os dados filtrados
 	aoAntesDePopularTabela = async (data: any) => { }; // Recebe os dados a serem exibidos desta página
@@ -149,7 +149,7 @@ class mkt {
 	}
 
 	static vars: any;
-	static mkWorker: Function;
+	static mktWorker: Function;
 	static moldeWorker: Function;
 	static classof: Function;
 	static Inicializar: Function;
@@ -182,6 +182,8 @@ class mkt {
 	static erro: Function;
 	static gc: Function;
 	static ge: Function;
+	static ct: Function;
+	static cte: Function;
 	static importar: Function;
 	static Ao: Function;
 	static mkLimparOA: Function;
@@ -204,6 +206,10 @@ class mkt {
 	static removeEspecias: Function;
 	static getExclusivos: Function;
 	static toLocale: Function;
+	static removerAspas: Function;
+	static AoConfig: Function;
+	static request: Function;
+	static getMs: Function;
 
 	autoStartConfig = async (arg: any = {}) => {
 		// SE for importar: Espera o container para então continuar.
@@ -231,16 +237,21 @@ class mkt {
 			this.c.urlOrigem = this.c.url;
 			// URL de coleta informada. 
 			await this.appendList(this.c.url);
-			if (this.c.dados == null) {
+			if (this.dadosFull.length > 0) {
+				mk.l("Started from url: ", this.c.url, " Size: ", this.dadosFull.length);
 				started = true;
 				this.startListagem();
 			}
 		}
 		if (this.c.dados != null) {
 			if (mkt.classof(this.c.dados) == "Array") {
+				await this.appendList(this.c.dados);
 				if (!started) {
-					started = true;
-					this.startListagem();
+					if (this.dadosFull.length > 0) {
+						mk.l("Started from dados: ", this.c.dados);
+						started = true;
+						this.startListagem();
+					}
 				}
 			} else {
 				mkt.w("Os dados informados precisa ser uma Lista. (Array). Recebido:", mkt.classof(this.c.dados));
@@ -251,24 +262,51 @@ class mkt {
 		}
 	}
 
-	appendList = async (url: string) => {
+	appendList = async (data_url: string | Array<any>) => {
 		return new Promise((r) => {
-			let w = mkt.mkWorker();
-			w.postMessage({ c: "MKT_LIST_TO", u: url });
-			w.onmessage = (ev: MessageEvent) => {
-				console.log("A Recebido> C: ", ev.data.c, " D: ", ev.data.d);
-				if (ev.data.c == "MKT_LIST_BACK") {
-					this.dadosFull.push(...ev.data.d);
-					r(this);
-				}
+			if (mkt.classof(data_url) == "Array") {
+				this.dadosFull.push(...data_url);
+				r(this);
+			} else if (mkt.classof(data_url) == "String") {
+				mkt.get.json(this.c.urlOrigem).then((p: any) => {
+					if (p.retorno != null) {
+						this.dadosFull.push(...p.retorno);
+						r(this);
+					}
+				});
 			}
-			w.onerror = (ev: MessageEvent) => {
-				console.log("A> Erro: ", ev);
-				ev.preventDefault();
-				if (ev.data.c == "MKT_LIST_BACK") {
-					r(null);
-				}
-			}
+
+			// let w = mkt.mktWorker();
+			// w.postMessage({ c: "MKT_LIST_GO", u: url });
+			// w.onmessage = (ev: MessageEvent) => {
+			// 	console.log("APP> c: ", ev.data.c, " d: ", ev.data.d);
+			// 	if (ev.data.c == "MKT_LIST_BACK") {
+			// 		this.dadosFull.push(...ev.data.d);
+			// 		r(this);
+			// 	}
+			// }
+			// w.onerror = (ev: MessageEvent) => {
+			// 	console.log("APP> Erro: ", ev);
+			// 	ev.preventDefault();
+			// 	if (ev.data.c == "MKT_LIST_BACK") {
+			// 		r(null);
+			// 	}
+			// }
+			// DB CON
+			// if (this.c.nomeTabela != null) {
+			// 	this.db = await this.dbCon();
+			// }
+			// if (this.c.nomeTabela) {
+			// 	// DB FILL
+			// 	let tx = this.db?.transaction(this.c.nomeTabela, "readwrite");
+			// 	let store = tx?.objectStore(this.c.nomeTabela);
+			// 	this.dadosFull.forEach((o: any) => {
+			// 		store?.put(o);
+			// 	});
+			// 	if (tx) tx.oncomplete = () => {
+			// 		// All requests have succeeded and the transaction has committed.
+			// 	};
+			// }
 		});
 	}
 
@@ -278,42 +316,9 @@ class mkt {
 		mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoIniciarListagem"));
 		this.c.aoIniciarListagem(this);
 
-		// DB CON
-		if (this.c.nomeTabela != null) {
-			this.db = await this.dbCon();
-		}
-
-		// Caso o receba uma array na url, os dados já estão aqui.
-		let temosDados = null;
-		if (mkt.classof(this.c.urlOrigem) == "Array") {
-			temosDados = this.c.urlOrigem;
-		} else {
-			// Inicia o Coleta de dados
-			let pac = await mkt.get.json(this.c.urlOrigem);
-			if (pac.retorno != null) {
-				temosDados = pac.retorno;
-			}
-		}
-
-		if (temosDados != null) {
+		if (this.dadosFull.length > 0) {
 			// Limpar Dados nulos
-			mkt.mkLimparOA(temosDados);
-
-			if (this.c.nomeTabela) {
-				// DB FILL
-				let tx = this.db?.transaction(this.c.nomeTabela, "readwrite");
-				let store = tx?.objectStore(this.c.nomeTabela);
-				temosDados.forEach((o: any) => {
-					store?.put(o);
-				});
-				if (tx) tx.oncomplete = () => {
-					// All requests have succeeded and the transaction has committed.
-				};
-			}
-
-			// Armazena em 1 array que está em 2 locais na memória
-			this.addMany(temosDados);
-			//this.dadosFull = this.dadosFiltrado = temosDados;
+			mkt.mkLimparOA(this.dadosFull);
 
 			//EVENT: aoPossuirDados
 			mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoPossuirDados"));
@@ -368,7 +373,7 @@ class mkt {
 					r(dbConOpen.result);
 				}
 			} else {
-				mk.w("dbCon() - nomeTabela não informado: ", this.c.nomeTabela);
+				mkt.w("dbCon() - nomeTabela não informado: ", this.c.nomeTabela);
 				r(null);
 			}
 		});
@@ -693,7 +698,7 @@ class mkt {
 					htmlPossiveis += " Pesquisados";
 				}
 				htmlPossiveis += "</li>";
-				exFiltrado.forEach(v => {
+				exFiltrado.forEach((v: any) => {
 					let sel = "sel";
 					let v2 = mkt.removeEspecias(v).toLowerCase().trim();
 					this.hmunsel.forEach(hm => {
@@ -720,7 +725,7 @@ class mkt {
 		};
 		mkt.headMenuFiltraExclusivo("");
 		// Marca de Desmarca
-		mkt.headMenuMarcarExclusivos = (e) => {
+		mkt.headMenuMarcarExclusivos = (e: HTMLElement) => {
 			if (e) {
 				let name = e.getAttribute("name");
 				if (this.hmunsel.includes(name)) {
@@ -833,10 +838,10 @@ class mkt {
 			if (possui != false) {
 				let colName = possui.replace("sort-", "");
 				if (colName != "") {
-					mkt.Ao("click", th, (e) => {
+					mkt.Ao("click", th, (e: HTMLTableCellElement) => {
 						this.orderBy(colName);
 					});
-					mkt.Ao("mousemove", th, (e) => {
+					mkt.Ao("mousemove", th, (e: HTMLTableCellElement) => {
 						if (this.c.tipoHead == "menu") {
 							this.headSeeMenuAbrir(colName, e);
 						}
@@ -907,7 +912,7 @@ class mkt {
 			if (this.c.objFiltro[campoEspecifico]) {
 				delete this.c.objFiltro[campoEspecifico];
 			}
-			mkt.QAll(this.c.filtro + "[name='" + campoEspecifico + "']").forEach((e) => {
+			mkt.QAll(this.c.filtro + "[name='" + campoEspecifico + "']").forEach((e: HTMLInputElement) => {
 				e.value = "";
 			});
 			mkt.QAll(this.c.filtro + ".mkSel[name='" + campoEspecifico + "']").forEach((mkSel) => {
@@ -917,7 +922,7 @@ class mkt {
 			// LIMPAR TUDO
 			this.c.objFiltro = {};
 			// RESET Form (Limpar seria "0" / "") (Set e.defaultValue)
-			mkt.QAll(this.c.filtro).forEach((e) => {
+			mkt.QAll(this.c.filtro).forEach((e: HTMLInputElement) => {
 				e.value = "";
 			});
 
@@ -1234,9 +1239,9 @@ Object.defineProperty(mkt, "ge", {
 });
 Object.defineProperty(mkt, "ct", {
 	value: (s: any) => {
-		let t = mkt.timers.find((t: any) => t.name == s);
+		let t = mkt.vars.timers.find((t: any) => t.name == s);
 		if (!t) {
-			mkt.timers.push({
+			mkt.vars.timers.push({
 				name: s,
 				ini: mkt.getMs(),
 				fim: 0,
@@ -1247,7 +1252,7 @@ Object.defineProperty(mkt, "ct", {
 });
 Object.defineProperty(mkt, "cte", {
 	value: (s: any, quietMode: any = false) => {
-		let t = mkt.timers.find((t: any) => t.name == s);
+		let t = mkt.vars.timers.find((t: any) => t.name == s);
 		if (t.fim == 0) {
 			t.fim = mkt.getMs();
 			t.tempo = t.fim - t.ini;
@@ -1291,7 +1296,7 @@ Object.defineProperty(mkt, "Ao", {
 	value: (tipoEvento: string = "click", query: any, executar: any) => {
 		// Adiciona evento em todos elementos encontrados
 		// Em QAll, pois o Filtro pega todos os .iConsultas
-		mkt.QAll(query).forEach((e) => {
+		mkt.QAll(query).forEach((e: any) => {
 			e.addEventListener(tipoEvento, () => {
 				executar(e);
 			}, mkt.AoConfig);
@@ -2643,21 +2648,21 @@ Object.defineProperty(mkt, "request", {
 		 */
 		// CONFIG ! Necessário
 		if (typeof config != "object") {
-			this.w("É necessário informar o objeto de configuração com a URL.");
+			mkt.w("É necessário informar o objeto de configuração com a URL.");
 			return { url: null, retorno: null }; // Não há config, Mas pra retornar sempre o config
 		}
 		// URL ! Necessário
 		if (!config?.url) {
-			this.w("Necessário informar uma URL nos requests.");
+			mkt.w("Necessário informar uma URL nos requests.");
 			return { url: config?.url, retorno: null };
 		}
 		// GET ? POST, PUT, DELETE
 		if (!config?.metodo) {
-			this.w("Nenhum método informado. Avançando com GET");
+			mkt.w("Nenhum método informado. Avançando com GET");
 			config.metodo = "GET";
 		} else {
 			if (config.metodo == "POST" && config.dados == null) { // Todo POST requer dados a serem enviados.
-				this.w("Método POST, mas SEM DADOS informados. Enviando string vazia ''.");
+				mkt.w("Método POST, mas SEM DADOS informados. Enviando string vazia ''.");
 				config.dados = "";
 			}
 		}
@@ -2864,11 +2869,11 @@ Object.defineProperty(mkt, "ativaPaginaAtual", {
 });
 
 Object.defineProperty(mkt, "processoFiltragem", {
-	value: (aTotal: any, objFiltro: any, inst: any) => {
+	value: (aTotal: any, objFiltro: any, inst: mkt) => {
 		/**
 		 * FullFiltroFull - processoFiltragem
 		 * Executa a redução da listagem basedo no objFiltro.
-		 * Usando modificaFiltro(), pode-se filtrar o objeto da lista também.
+		 * Usando filtroExtra(), pode-se filtrar o objeto da lista também.
 		 * Atributos:
 		 * 		data-mkfformato = "date"
 		 * 		data-mkfoperador = "<="
@@ -2877,10 +2882,11 @@ Object.defineProperty(mkt, "processoFiltragem", {
 		if (Array.isArray(aTotal)) {
 			let temp: any[] = [];
 			aTotal.forEach((o) => {
-				let podeExibir = inst.modicaFiltro(o); // true
-				if (typeof podeExibir != "boolean") {
+				let podeExibir = true;
+				if (inst.c.filtroExtra != null) podeExibir = inst.c.filtroExtra(o); // true
+				if (mk.classof(podeExibir) != "Boolean") {
 					podeExibir = true;
-					mkt.w("modicaFiltro() precisa retornar boolean");
+					mkt.w("filtroExtra() precisa retornar boolean");
 				}
 				for (let propFiltro in objFiltro) {
 					// Faz-se o cruzamento dos dados, quando encontrar a prorpiedade no outro objeto, seta pra executar o filtro.
@@ -3301,11 +3307,11 @@ Object.defineProperty(mkt, "headMenuHide", {
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //   WORKERS                        \\
 //___________________________________\\
-Object.defineProperty(mkt, "mkWorker", {
+Object.defineProperty(mkt, "mktWorker", {
 	value: () => {
 		// Se estiver nulo, constroi o worker;
 		if (mkt.vars.worker == null) {
-			let eSctWorker = mkt.Q("#mkWorker");
+			let eSctWorker = mkt.Q("#mktWorker");
 			var urlBlob = window.URL.createObjectURL(new Blob([eSctWorker?.textContent], { type: "text/javascript" }));
 			mkt.vars.worker = new Worker(urlBlob);
 		}
@@ -3315,22 +3321,22 @@ Object.defineProperty(mkt, "mkWorker", {
 
 Object.defineProperty(mkt, "moldeWorker", {
 	value: () => {
-		let mkWorkerElement = document.createElement("script")
-		mkWorkerElement.setAttribute("type", "javascript/worker")
-		mkWorkerElement.setAttribute("id", "mkWorker")
-		mkWorkerElement.innerHTML = `
+		let mktWorkerElement = document.createElement("script")
+		mktWorkerElement.setAttribute("type", "javascript/worker")
+		mktWorkerElement.setAttribute("id", "mktWorker")
+		mktWorkerElement.innerHTML = `
 		const l = (...args) => {
 			console.log("W> ", ...args);
 		}
 		onmessage = (ev) => {
-			l("Evento: ", ev);
+			l("Ev Data: ", ev.data);
 			if (ev?.data?.c) {
 				switch (ev.data.c) {
 					case "MSG":
-						l("C: ", ev.data.c, " D: ", ev.data.d);
+						l("c: ", ev.data.c, " d: ", ev.data.d);
 						break;
-					case "PUT_MKDATA":
-						
+					case "MKT_LIST_GO":
+						postMessage({ c: "MKT_LIST_BACK", d: ["Show"] });
 						break;
 					default:
 				}
@@ -3338,7 +3344,7 @@ Object.defineProperty(mkt, "moldeWorker", {
 			// Ao receber um comando, executar um Job.
 			//postMessage({ c: "MSG", d: ["Show"] });
 		}`
-		document.body.append(mkWorkerElement);
+		document.body.append(mktWorkerElement);
 	}, enumerable: false, writable: false, configurable: false,
 });
 
@@ -4058,7 +4064,7 @@ Object.defineProperty(mkt, "mkToValue", {
 				let end: number = ini[i].indexOf("}");
 				let key: string = ini[i].slice(0, end).trim();
 				if (mkt.classof(o) == "Object" && o != null) {
-					let v = this.removerAspas(this.getV(key, o));
+					let v = mkt.removerAspas(mkt.getV(key, o));
 					if (v != null) {
 						ret += v;
 					}
@@ -4872,31 +4878,6 @@ Object.defineProperty(mkt, "mkSelReposicionar", {
 		let ew = eList.previousElementSibling.offsetWidth;
 		eList.style.minWidth = ew + "px";
 		eList.style.maxWidth = ew + "px";
-		/* Substituido pelo Poper
-		// Posiciona a lista.
-		// Lado esquerdo baseado na posicao, mas em mobile fica full.
-		let wLargura = window.innerWidth;
-		if (wLargura < 768) {
-			eList.style.top = 35 + "px";
-			eList.style.left = 35 + "px";
-		} else {
-			// Primeiramente seta a posição ref ao input fixo.
-			eList.style.top =
-				eRef.offsetTop -
-				mkt.getParentScrollTop(eRef) +
-				eRef.offsetHeight +
-				2 +
-				"px";
-		
-			eList.style.left = eRef.offsetLeft + "px";
-			// Depois, verifica se saiu da tela
-			let posXCantoOpostoRef = eRef.offsetLeft + eRef.offsetWidth;
-			let posXCantoOpostoList = eList.offsetLeft + eList.offsetWidth;
-			if (posXCantoOpostoList > (mkt.Q("body") as HTMLElement).offsetWidth) {
-				eList.style.left = posXCantoOpostoRef - eList.offsetWidth - 1 + "px";
-			}
-		}
-	*/
 	}, enumerable: false, writable: false, configurable: false,
 });
 

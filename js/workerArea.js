@@ -3,14 +3,14 @@ const l = (...args) => {
 	console.log("W> ", ...args);
 }
 onmessage = (ev) => {
-	l("Evento: ", ev);
+	l("Ev Data: ", ev.data);
 	if (ev?.data?.c) {
 		switch (ev.data.c) {
 			case "MSG":
-				l("C: ", ev.data.c, " D: ", ev.data.d);
+				l("c: ", ev.data.c, " d: ", ev.data.d);
 				break;
-			case "FETCH":
-				l("C: ", ev.data.c, " U: ", ev.data.u);
+			case "MKT_LIST_GO":
+				postMessage({ c: "MKT_LIST_BACK", d: ["Show"] });
 				break;
 			default:
 		}

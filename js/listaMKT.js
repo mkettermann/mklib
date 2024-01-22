@@ -4,7 +4,7 @@ var lista_mkt = new mkt_config();
 lista_mkt.container;
 var lista = new mkt();
 
-var lista2 = new mkt();
+//var lista2 = new mkt();
 
 
 //var lista = new Mk("/data/usersExemplo.json", ".tabela1", "#modelo");
