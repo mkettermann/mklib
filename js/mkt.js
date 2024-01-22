@@ -2737,8 +2737,8 @@ Object.defineProperty(mkt, "request", {
                         tam = "";
                     }
                     mkt.gc("Retorno " + config.pacote.status +
-                        " (" + config.metodo + "): " +
-                        config.url + " (" + config.tipo + ") {" + config.retorno.length + "}");
+                        " (" + config.metodo + "):{" + config.retorno.length + "} " +
+                        config.url + " (" + config.tipo + ")");
                 }
                 mkt.cte("Request: " + nomeRequest, config.quiet);
                 if (!config.quiet) {
