@@ -313,6 +313,7 @@ class mkt {
 					this.ultimoParametro = parametros;
 					this.ultimoParametroTotal = 0;
 					this.dadosFull = [];
+					this.totalappends = 1;
 				}
 				let urlTemp = new URL("?c=" + this.ultimoParametroTotal, (data_url as string)?.split("?")[0]).href + parametros;
 				mkt.get.json(urlTemp).then((p: any) => {
@@ -2831,10 +2832,14 @@ Object.defineProperty(mkt, "request", {
 					config.retorno = await config.pacote.json();
 				}
 				if (!config.quiet) {
+					let tam = config.retorno.length;
+					if (!tam) {
+						tam = "";
+					}
 					mkt.gc(
 						"Retorno " + config.pacote.status +
 						" (" + config.metodo + "): " +
-						config.url + " (" + config.tipo + ")"
+						config.url + " (" + config.tipo + ") {" + config.retorno.length + "}"
 					);
 				}
 				mkt.cte("Request: " + nomeRequest, config.quiet);
