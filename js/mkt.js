@@ -70,7 +70,7 @@ class mktc {
     pagItensFim = 0;
     totPags = 0;
     versaoDb = 1;
-    limiteget = 2000; // Se coletar igual ou mais que este valor, solicita um novo get.
+    limiteget = 50000; // Se coletar igual ou mais que este valor, solicita um novo get.
     pk = null; // Possivel setar o nome do campo que é primary key já na construcao
     tbody = "tbody";
     ths = "th";
