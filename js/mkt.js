@@ -278,7 +278,9 @@ class mkt {
     appendList = async (data_url) => {
         return new Promise((r) => {
             if (mkt.classof(data_url) == "Array") {
-                this.dadosFull.push(...data_url);
+                for (let i = 0; i < data_url.length; i++) {
+                    this.dadosFull.push(data_url[i]);
+                }
                 r(true);
             }
             else if (mkt.classof(data_url) == "String") {
@@ -289,7 +291,9 @@ class mkt {
                 let urlTemp = new URL("?c=" + this.dadosFull.length, data_url?.split("?")[0]).href;
                 mkt.get.json(urlTemp).then((p) => {
                     if (p.retorno != null) {
-                        this.dadosFull.push(...p.retorno);
+                        for (let i = 0; i < p.retorno.length; i++) {
+                            this.dadosFull.push(p.retorno[i]);
+                        }
                         this.ultimoGet = p.retorno.length;
                         mkt.l(this.c.nomeTabela + " baixou " + this.ultimoGet + " registros.");
                         r(p.retorno.length);
