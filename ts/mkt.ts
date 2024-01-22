@@ -38,7 +38,7 @@ class mktm {
 
 // CLASSE DE CONFIG (Construtor único)
 class mktc {
-	url: string | null = new URL("GetList", window.location.href.split("?")[0]).href; // Requer a URL para o fetch dos dados. Se não tiver, passar os dados no parametros dados e tornar esse null.
+	url: string | null = window.location.href.split("?")[0] + "/GetList"; // Requer a URL para o fetch dos dados. Se não tiver, passar os dados no parametros dados e tornar esse null.
 	dados: any[] | null = null; // Caso a tela já tenha os dados, podem ser passador por aqui, se não deixar 
 	nomeTabela: string | null = null; // Nome da tabela (Usado pra contruir o banco de dados)
 	container: string = ".divListagemContainer"; // Classe / Id de onde será buscada uma tabela para ser populada.
@@ -85,6 +85,10 @@ class mktc {
 	aoConcluirFiltragem = async (data: any) => { }; // Recebe os dados filtrados
 	aoAntesDePopularTabela = async (data: any) => { }; // Recebe os dados a serem exibidos desta página
 	aoConcluirExibicao = async () => { };
+	constructor(array: Array<mktm>) {
+		this.model = array;
+		if (this.url) { this.url = this.url?.replace("//GetList", "/GetList"); }
+	}
 	get [Symbol.toStringTag]() { return "mktc"; }
 }
 

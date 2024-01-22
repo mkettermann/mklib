@@ -45,7 +45,7 @@ class mktm {
 }
 // CLASSE DE CONFIG (Construtor único)
 class mktc {
-    url = new URL("GetList", window.location.href.split("?")[0]).href; // Requer a URL para o fetch dos dados. Se não tiver, passar os dados no parametros dados e tornar esse null.
+    url = window.location.href.split("?")[0] + "/GetList"; // Requer a URL para o fetch dos dados. Se não tiver, passar os dados no parametros dados e tornar esse null.
     dados = null; // Caso a tela já tenha os dados, podem ser passador por aqui, se não deixar 
     nomeTabela = null; // Nome da tabela (Usado pra contruir o banco de dados)
     container = ".divListagemContainer"; // Classe / Id de onde será buscada uma tabela para ser populada.
@@ -92,6 +92,12 @@ class mktc {
     aoConcluirFiltragem = async (data) => { }; // Recebe os dados filtrados
     aoAntesDePopularTabela = async (data) => { }; // Recebe os dados a serem exibidos desta página
     aoConcluirExibicao = async () => { };
+    constructor(array) {
+        this.model = array;
+        if (this.url) {
+            this.url = this.url?.replace("//GetList", "/GetList");
+        }
+    }
     get [Symbol.toStringTag]() { return "mktc"; }
 }
 // CLASSE INSTANCIAVEL
