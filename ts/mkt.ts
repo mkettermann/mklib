@@ -109,6 +109,8 @@ class mkt {
 	exclusivos: any = [];
 	hmunsel = [];
 	ultimoGet = -1;
+	ultimoParametro = "";
+	ultimoParametroTotal = 0;
 	totalappends = 0;
 
 	constructor(mkt_c: mktc) {
@@ -271,6 +273,20 @@ class mkt {
 		}
 	}
 
+	startDownloadContinuo = async (parametros: string = "") => {
+		if (this.ultimoGet >= this.c.limiteget) {
+			if (mkt.classof(this.c.url) == "String") {
+				await this.appendList(this.c.url as string, parametros);
+				this.atualizarListagem();
+				if (this.totalappends <= this.c.limitegetcall) {
+					mkt.wait(1).then(() => {
+						this.startDownloadContinuo(parametros);
+					});
+				}
+			}
+		}
+	}
+
 	appendList = async (data_url: string | Array<any>, parametros: string = "") => {
 		return new Promise((r) => {
 			if (mkt.classof(data_url) == "Array") {
@@ -283,11 +299,19 @@ class mkt {
 				if (this.totalappends > 50) {
 					mk.w("Lista dividida em muitas partes: ", this.totalappends);
 				}
-				let urlTemp = new URL("?c=" + this.dadosFull.length, (data_url as string)?.split("?")[0]).href + parametros;
+				if (parametros != this.ultimoParametro) {
+					this.ultimoParametro = parametros;
+					this.ultimoParametroTotal = 0;
+				}
+				let urlTemp = new URL("?c=" + this.ultimoParametroTotal, (data_url as string)?.split("?")[0]).href + parametros;
 				mkt.get.json(urlTemp).then((p: any) => {
 					if (p.retorno != null) {
+						this.ultimoParametroTotal += p.retorno.length;
 						for (let i = 0; i < p.retorno.length; i++) {
-							this.dadosFull.push(p.retorno[i]);
+							let id = p.retorno[i][this.c.pk];
+							if (!(this.dadosFull.map((o: any) => { return o[this.c.pk]; }).includes(id))) {
+								this.dadosFull.push(p.retorno[i]);
+							}
 						}
 						this.ultimoGet = p.retorno.length;
 						mkt.l(this.c.nomeTabela + " baixou " + this.ultimoGet + " registros.")
@@ -364,20 +388,6 @@ class mkt {
 
 		}
 	};
-
-	startDownloadContinuo = async (parametros: string = "") => {
-		if (this.ultimoGet >= this.c.limiteget) {
-			if (mkt.classof(this.c.url) == "String") {
-				await this.appendList(this.c.url as string, parametros);
-				this.atualizarListagem();
-				if (this.totalappends <= this.c.limitegetcall) {
-					mkt.wait(1).then(() => {
-						this.startDownloadContinuo(parametros);
-					});
-				}
-			}
-		}
-	}
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 	//			MK DB Client-Side						\\

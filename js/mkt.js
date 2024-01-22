@@ -94,7 +94,9 @@ class mktc {
     aoAntesDePopularTabela = async (dadosExibidos) => { }; // Recebe os dados a serem exibidos desta página
     aoConcluirExibicao = async () => { };
     constructor(array) {
-        this.model = array;
+        if (mkt.classof(array) == "Array") {
+            this.model = array;
+        }
         if (this.url) {
             this.url = this.url?.replace("//GetList", "/GetList");
         }
@@ -114,10 +116,12 @@ class mkt {
     exclusivos = [];
     hmunsel = [];
     ultimoGet = -1;
+    ultimoParametro = "";
+    ultimoParametroTotal = 0;
     totalappends = 0;
     constructor(mkt_c) {
         if (mkt_c == null) {
-            this.c = new mktc();
+            this.c = new mktc([]);
         }
         else {
             this.c = mkt_c;
@@ -276,6 +280,19 @@ class mkt {
             mkt.w("Nenhuma fonte de dados encontrada. Não será possível popular a listagem sem dados.");
         }
     };
+    startDownloadContinuo = async (parametros = "") => {
+        if (this.ultimoGet >= this.c.limiteget) {
+            if (mkt.classof(this.c.url) == "String") {
+                await this.appendList(this.c.url, parametros);
+                this.atualizarListagem();
+                if (this.totalappends <= this.c.limitegetcall) {
+                    mkt.wait(1).then(() => {
+                        this.startDownloadContinuo(parametros);
+                    });
+                }
+            }
+        }
+    };
     appendList = async (data_url, parametros = "") => {
         return new Promise((r) => {
             if (mkt.classof(data_url) == "Array") {
@@ -289,11 +306,19 @@ class mkt {
                 if (this.totalappends > 50) {
                     mk.w("Lista dividida em muitas partes: ", this.totalappends);
                 }
-                let urlTemp = new URL("?c=" + this.dadosFull.length, data_url?.split("?")[0]).href + parametros;
+                if (parametros != this.ultimoParametro) {
+                    this.ultimoParametro = parametros;
+                    this.ultimoParametroTotal = 0;
+                }
+                let urlTemp = new URL("?c=" + this.ultimoParametroTotal, data_url?.split("?")[0]).href + parametros;
                 mkt.get.json(urlTemp).then((p) => {
                     if (p.retorno != null) {
+                        this.ultimoParametroTotal += p.retorno.length;
                         for (let i = 0; i < p.retorno.length; i++) {
-                            this.dadosFull.push(p.retorno[i]);
+                            let id = p.retorno[i][this.c.pk];
+                            if (!(this.dadosFull.map((o) => { return o[this.c.pk]; }).includes(id))) {
+                                this.dadosFull.push(p.retorno[i]);
+                            }
                         }
                         this.ultimoGet = p.retorno.length;
                         mkt.l(this.c.nomeTabela + " baixou " + this.ultimoGet + " registros.");
@@ -363,19 +388,6 @@ class mkt {
                 mkt.Q(this.c.tableResultado).classList.remove("oculto");
             // Inicia download do resto da lista
             this.startDownloadContinuo();
-        }
-    };
-    startDownloadContinuo = async (parametros = "") => {
-        if (this.ultimoGet >= this.c.limiteget) {
-            if (mkt.classof(this.c.url) == "String") {
-                await this.appendList(this.c.url, parametros);
-                this.atualizarListagem();
-                if (this.totalappends <= this.c.limitegetcall) {
-                    mkt.wait(1).then(() => {
-                        this.startDownloadContinuo(parametros);
-                    });
-                }
-            }
         }
     };
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
