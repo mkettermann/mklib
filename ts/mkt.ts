@@ -123,8 +123,8 @@ class mkt {
 		this.c.tableIni = cs + this.c.tableIni;
 		this.c.tableFim = cs + this.c.tableFim;
 		this.c.tableInicioFim = cs + this.c.tableInicioFim;
-		this.c.pag = cs + this.c.pagBotoes + " " + this.c.pag;
-		this.c.pagBotao = cs + this.c.pagBotoes + " " + this.c.pagBotao;
+		this.c.pag = cs + " " + this.c.pag;
+		this.c.pagBotao = cs + " " + this.c.pagBotao;
 		// Mesmo sem Design no contrutor, vai formando um mínimo necessário.
 		// Gerando Design de Modelo Aceitável
 		if (mkt.classof(this.c.model) != "Array") this.c.model = [];
