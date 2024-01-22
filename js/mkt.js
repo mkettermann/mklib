@@ -319,16 +319,14 @@ class mkt {
                 if (parametros != this.ultimoParametro) {
                     this.ultimoParametro = parametros;
                     this.ultimoParametroTotal = 0;
+                    this.dadosFull = [];
                 }
                 let urlTemp = new URL("?c=" + this.ultimoParametroTotal, data_url?.split("?")[0]).href + parametros;
                 mkt.get.json(urlTemp).then((p) => {
                     if (p.retorno != null) {
                         this.ultimoParametroTotal += p.retorno.length;
                         for (let i = 0; i < p.retorno.length; i++) {
-                            let id = p.retorno[i][this.c.pk];
-                            if (!(this.dadosFull.map((o) => { return o[this.c.pk]; }).includes(id))) {
-                                this.dadosFull.push(p.retorno[i]);
-                            }
+                            this.dadosFull.push(p.retorno[i]);
                         }
                         this.ultimoGet = p.retorno.length;
                         mkt.l(this.c.nomeTabela + " baixou " + this.ultimoGet + " registros.");
