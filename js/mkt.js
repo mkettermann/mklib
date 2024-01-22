@@ -121,6 +121,7 @@ class mkt {
     exclusivos = [];
     hmunsel = [];
     ultimoGet = -1;
+    totalappends = 0;
     constructor(mkt_c) {
         if (mkt_c == null) {
             this.c = new mktc();
@@ -289,6 +290,10 @@ class mkt {
                 r(true);
             }
             else if (mkt.classof(data_url) == "String") {
+                this.totalappends++;
+                if (this.totalappends > 50) {
+                    mk.w("Lista dividida em muitas partes: ", this.totalappends);
+                }
                 let urlTemp = new URL("?c=" + this.dadosFull.length, data_url?.split("?")[0]).href;
                 mkt.get.json(urlTemp).then((p) => {
                     if (p.retorno != null) {
