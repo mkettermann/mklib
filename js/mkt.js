@@ -330,7 +330,7 @@ class mkt {
                             this.dadosFull.push(p.retorno[i]);
                         }
                         this.ultimoGet = p.retorno.length;
-                        mkt.l(this.c.nomeTabela + " baixou " + this.ultimoGet + " registros.");
+                        //mkt.l(this.c.nomeTabela + " baixou " + this.ultimoGet + " registros.")
                         r(p.retorno.length);
                     }
                     else {
