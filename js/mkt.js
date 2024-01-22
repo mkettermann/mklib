@@ -89,9 +89,9 @@ class mktc {
     dbInit = (store) => { }; // Funcao de contrução do design do banco de dados
     // Alterar essas funções para modificar dados durante etapas.
     aoIniciarListagem = async (i) => { }; // Recebe a própria instancia no parametro.
-    aoPossuirDados = async (data) => { }; // Recebe os dados de dadosFull
-    aoConcluirFiltragem = async (data) => { }; // Recebe os dados filtrados
-    aoAntesDePopularTabela = async (data) => { }; // Recebe os dados a serem exibidos desta página
+    aoPossuirDados = async (dadosFull) => { }; // Recebe os dados de dadosFull
+    aoConcluirFiltragem = async (dadosFiltrado) => { }; // Recebe os dados filtrados
+    aoAntesDePopularTabela = async (dadosExibidos) => { }; // Recebe os dados a serem exibidos desta página
     aoConcluirExibicao = async () => { };
     constructor(array) {
         this.model = array;
@@ -455,7 +455,7 @@ class mkt {
             mkt.Q(this.c.tbody)?.removeAttribute("hidden");
             //EVENT: aoAntesDePopularTabela
             mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoAntesDePopularTabela"));
-            await this.c.aoAntesDePopularTabela(this.dadosFiltrado);
+            await this.c.aoAntesDePopularTabela(this.dadosExibidos);
             await mkt.mkMoldeOA(this.dadosExibidos, this.c.idmodelo, this.c.tbody);
             //EVENT: aoConcluirExibicao
             mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoConcluirExibicao"));
