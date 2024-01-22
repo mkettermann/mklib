@@ -12,7 +12,6 @@
 var mkz = null;
 // CLASSE Do Design das colunas para formar o mkt.
 class mktm {
-    get [Symbol.toStringTag]() { return "mktm"; }
     pk = false; // Este campo é Primary Key?
     k = null; // Key / Chave (Propriedade do objeto)
     v = null; // Valor (Inicialmente nulo, mas ao recuperar o objeto da lista ele vem preenchido)
@@ -42,10 +41,10 @@ class mktm {
         if (o.target)
             this.target = o.target;
     }
+    get [Symbol.toStringTag]() { return "mktm"; }
 }
 // CLASSE DE CONFIG (Construtor único)
 class mktc {
-    get [Symbol.toStringTag]() { return "mktc"; }
     url = new URL("GetList", window.location.href.split("?")[0]).href; // Requer a URL para o fetch dos dados. Se não tiver, passar os dados no parametros dados e tornar esse null.
     dados = null; // Caso a tela já tenha os dados, podem ser passador por aqui, se não deixar 
     nomeTabela = null; // Nome da tabela (Usado pra contruir o banco de dados)
@@ -93,23 +92,10 @@ class mktc {
     aoConcluirFiltragem = async (data) => { }; // Recebe os dados filtrados
     aoAntesDePopularTabela = async (data) => { }; // Recebe os dados a serem exibidos desta página
     aoConcluirExibicao = async () => { };
+    get [Symbol.toStringTag]() { return "mktc"; }
 }
 // CLASSE INSTANCIAVEL
 class mkt {
-    get [Symbol.toStringTag]() { return "mkt"; }
-    [Symbol.iterator]() {
-        let iteratorArray = this.dadosFull[Symbol.iterator]();
-        // Iteration result
-        return {
-            next() {
-                return iteratorArray.next();
-            },
-            // Iterable
-            [Symbol.iterator]() {
-                return this;
-            },
-        };
-    }
     c;
     db = null;
     dadosFull = []; // Todos os dados sem filtro, mas ordenaveis.
@@ -1137,6 +1123,20 @@ class mkt {
     valueOf = () => {
         return this.dadosFull;
     };
+    get [Symbol.toStringTag]() { return "mkt"; }
+    [Symbol.iterator]() {
+        let iteratorArray = this.dadosFull[Symbol.iterator]();
+        // Iteration result
+        return {
+            next() {
+                return iteratorArray.next();
+            },
+            // Iterable
+            [Symbol.iterator]() {
+                return this;
+            },
+        };
+    }
 } // FIM CLASSE MKT
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //	 FUNCOES BASICAS / ATALHOS   		\\
