@@ -63,7 +63,8 @@ class mktc {
 	pagItensFim = 0;
 	totPags = 0;
 	versaoDb = 1;
-	limiteget = 2000; // Se coletar igual ou mais que este valor, solicita um novo get.
+	limitegetcall = 150; // Limite da recursiva de novos dados.
+	limiteget = 5000; // Se coletar igual ou mais que este valor, solicita um novo get.
 	pk = null as string | null; // Possivel setar o nome do campo que é primary key já na construcao
 	tbody = "tbody";
 	ths = "th";
@@ -81,10 +82,14 @@ class mktc {
 	dbInit = (store: IDBObjectStore) => { } // Funcao de contrução do design do banco de dados
 	// Alterar essas funções para modificar dados durante etapas.
 	aoIniciarListagem = async (i: mkt) => { }; // Recebe a própria instancia no parametro.
-	aoPossuirDados = async (data: any) => { }; // Recebe os dados de dadosFull
-	aoConcluirFiltragem = async (data: any) => { }; // Recebe os dados filtrados
-	aoAntesDePopularTabela = async (data: any) => { }; // Recebe os dados a serem exibidos desta página
+	aoPossuirDados = async (dadosFull: any) => { }; // Recebe os dados de dadosFull
+	aoConcluirFiltragem = async (dadosFiltrado: any) => { }; // Recebe os dados filtrados
+	aoAntesDePopularTabela = async (dadosExibidos: any) => { }; // Recebe os dados a serem exibidos desta página
 	aoConcluirExibicao = async () => { };
+	constructor(array: Array<mktm>) {
+		this.model = array;
+		if (this.url) { this.url = this.url?.replace("//GetList", "/GetList"); }
+	}
 	get [Symbol.toStringTag]() { return "mktc"; }
 	constructor(array_de_modelos) {
 		if (mkt.classof(array_de_modelos) == "Array") {
@@ -129,8 +134,8 @@ class mkt {
 		this.c.tableIni = cs + this.c.tableIni;
 		this.c.tableFim = cs + this.c.tableFim;
 		this.c.tableInicioFim = cs + this.c.tableInicioFim;
-		this.c.pag = cs + this.c.pagBotoes + " " + this.c.pag;
-		this.c.pagBotao = cs + this.c.pagBotoes + " " + this.c.pagBotao;
+		this.c.pag = cs + " " + this.c.pag;
+		this.c.pagBotao = cs + " " + this.c.pagBotao;
 		// Mesmo sem Design no contrutor, vai formando um mínimo necessário.
 		// Gerando Design de Modelo Aceitável
 		if (mkt.classof(this.c.model) != "Array") this.c.model = [];
@@ -270,20 +275,24 @@ class mkt {
 		}
 	}
 
-	appendList = async (data_url: string | Array<any>) => {
+	appendList = async (data_url: string | Array<any>, parametros: string = "") => {
 		return new Promise((r) => {
 			if (mkt.classof(data_url) == "Array") {
-				this.dadosFull.push(...data_url);
+				for (let i = 0; i < data_url.length; i++) {
+					this.dadosFull.push(data_url[i]);
+				}
 				r(true);
 			} else if (mkt.classof(data_url) == "String") {
 				this.totalappends++;
 				if (this.totalappends > 50) {
 					mk.w("Lista dividida em muitas partes: ", this.totalappends);
 				}
-				let urlTemp = new URL("?c=" + this.dadosFull.length, (data_url as string)?.split("?")[0]).href
+				let urlTemp = new URL("?c=" + this.dadosFull.length, (data_url as string)?.split("?")[0]).href + parametros;
 				mkt.get.json(urlTemp).then((p: any) => {
 					if (p.retorno != null) {
-						this.dadosFull.push(...p.retorno);
+						for (let i = 0; i < p.retorno.length; i++) {
+							this.dadosFull.push(p.retorno[i]);
+						}
 						this.ultimoGet = p.retorno.length;
 						mkt.l(this.c.nomeTabela + " baixou " + this.ultimoGet + " registros.")
 						r(p.retorno.length);
@@ -360,14 +369,16 @@ class mkt {
 		}
 	};
 
-	startDownloadContinuo = async () => {
+	startDownloadContinuo = async (parametros: string = "") => {
 		if (this.ultimoGet >= this.c.limiteget) {
 			if (mkt.classof(this.c.url) == "String") {
-				await this.appendList(this.c.url as string);
+				await this.appendList(this.c.url as string, parametros);
 				this.atualizarListagem();
-				mkt.wait(1).then(() => {
-					this.startDownloadContinuo();
-				});
+				if (this.totalappends <= this.c.limitegetcall) {
+					mkt.wait(1).then(() => {
+						this.startDownloadContinuo(parametros);
+					});
+				}
 			}
 		}
 	}
@@ -455,7 +466,7 @@ class mkt {
 
 			//EVENT: aoAntesDePopularTabela
 			mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoAntesDePopularTabela"));
-			await this.c.aoAntesDePopularTabela(this.dadosFiltrado);
+			await this.c.aoAntesDePopularTabela(this.dadosExibidos);
 
 			await mkt.mkMoldeOA(this.dadosExibidos, this.c.idmodelo, this.c.tbody);
 
