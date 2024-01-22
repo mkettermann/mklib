@@ -87,16 +87,12 @@ class mktc {
 	aoAntesDePopularTabela = async (dadosExibidos: any) => { }; // Recebe os dados a serem exibidos desta página
 	aoConcluirExibicao = async () => { };
 	constructor(array: Array<mktm>) {
-		this.model = array;
+		if (mkt.classof(array) == "Array") {
+			this.model = array;
+		}
 		if (this.url) { this.url = this.url?.replace("//GetList", "/GetList"); }
 	}
 	get [Symbol.toStringTag]() { return "mktc"; }
-	constructor(array_de_modelos) {
-		if (mkt.classof(array_de_modelos) == "Array") {
-			this.model = array_de_modelos;
-		}
-		this.url?.replace("//GetList", "/GetList");
-	}
 }
 
 
@@ -117,7 +113,7 @@ class mkt {
 
 	constructor(mkt_c: mktc) {
 		if (mkt_c == null) {
-			this.c = new mktc();
+			this.c = new mktc([]);
 		} else {
 			this.c = mkt_c;
 		}
