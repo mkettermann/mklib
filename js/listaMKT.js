@@ -1,10 +1,21 @@
 "use strict";
+var modeloList1 = [
+	new mktm({ k: "mNome", l: "Usuários", pk: true }),
+	new mktm({ k: "mDataCadastro", l: "Data Cadastro" }),
+	new mktm({ k: "mDataUltimoAcesso", l: "Último Acesso" }),
+	new mktm({ k: "mTotalAcessos.a.b", l: "Total Acessos" }),
+	new mktm({ k: "mStatus", l: "Status" }),
+]
 
 var lista_mkt = new mkt_config();
-lista_mkt.container;
-var lista = new mkt();
+lista_mkt.model = modeloList1;
+var lista = new mkt(lista_mkt);
 
-//var lista2 = new mkt();
+var lista_mkt2 = new mkt_config();
+lista_mkt2.container = "#tabela2";
+lista_mkt2.idmodelo = "#modelo2";
+lista_mkt2.model = modeloList1;
+var lista2 = new mkt(lista_mkt2);
 
 
 //var lista = new Mk("/data/usersExemplo.json", ".tabela1", "#modelo");

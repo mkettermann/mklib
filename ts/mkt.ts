@@ -22,6 +22,17 @@ class mktm {
 	atr: string | null = "type='text'" // Todos os atributos padrões deste campo.
 	classes: string = "mkCampo" // Classes padrões / iniciais deste campo
 	target: string = "value" // Propriedade para edição (value, innerHTML).
+	constructor(o: any) {
+		if (o.k) this.k = o.k;
+		if (o.pk) this.pk = o.pk;
+		if (o.l) this.l = o.l;
+		if (o.r) this.r = o.r;
+		if (o.v) this.v = o.v;
+		if (o.tag) this.tag = o.tag;
+		if (o.atr) this.atr = o.atr;
+		if (o.classes) this.classes = o.classes;
+		if (o.target) this.target = o.target;
+	}
 }
 
 
@@ -838,14 +849,16 @@ class mkt {
 			if (possui != false) {
 				let colName = possui.replace("sort-", "");
 				if (colName != "") {
-					mkt.Ao("click", th, (e: HTMLTableCellElement) => {
-						this.orderBy(colName);
-					});
-					mkt.Ao("mousemove", th, (e: HTMLTableCellElement) => {
-						if (this.c.tipoHead == "menu") {
+					if (this.c.headSort == true) {
+						mkt.Ao("click", th, (e: HTMLTableCellElement) => {
+							this.orderBy(colName);
+						});
+					}
+					if (this.c.headMenu == true) {
+						mkt.Ao("mousemove", th, (e: HTMLTableCellElement) => {
 							this.headSeeMenuAbrir(colName, e);
-						}
-					});
+						});
+					}
 				}
 			}
 		});
@@ -1013,7 +1026,7 @@ class mkt {
 
 	getModel = () => {
 		// LISTA DE CHAVES , CADA CHAVE(OBJ) TEM SUAS 
-		return this.c;
+		return this.c.model;
 	};
 
 	// KVLR (E mais...)
@@ -3023,8 +3036,8 @@ Object.defineProperty(mkt, "ordenar", {
 		// Essa funcção deveria ser da instancia atual para recever os atributos da instancia por padrao
 		// 0 - Crescente:
 		array.sort((oA: any, oB: any) => {
-			let a = mkt.getV(nomeProp, oA);
-			let b = mkt.getV(nomeProp, oB);
+			let a = nomeProp ? mkt.getV(nomeProp, oA) : null;
+			let b = nomeProp ? mkt.getV(nomeProp, oB) : null;
 			//let b = oB[nomeProp];
 			if (typeof a == "string") a = a.toLowerCase().trim();
 			if (typeof b == "string") b = b.toLowerCase().trim();
@@ -4038,7 +4051,7 @@ Object.defineProperty(mkt, "getV", {
 				}
 			} else {
 				mkt.w(
-					"As chaves precisam estar em formato string (" + typeof keys + ")"
+					"getV() - Nome da propriedade precisa ser em string. (" + typeof keys + "):", keys
 				);
 			}
 		} else {

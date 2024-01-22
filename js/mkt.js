@@ -22,6 +22,26 @@ class mktm {
     atr = "type='text'"; // Todos os atributos padrões deste campo.
     classes = "mkCampo"; // Classes padrões / iniciais deste campo
     target = "value"; // Propriedade para edição (value, innerHTML).
+    constructor(o) {
+        if (o.k)
+            this.k = o.k;
+        if (o.pk)
+            this.pk = o.pk;
+        if (o.l)
+            this.l = o.l;
+        if (o.r)
+            this.r = o.r;
+        if (o.v)
+            this.v = o.v;
+        if (o.tag)
+            this.tag = o.tag;
+        if (o.atr)
+            this.atr = o.atr;
+        if (o.classes)
+            this.classes = o.classes;
+        if (o.target)
+            this.target = o.target;
+    }
 }
 // CLASSE DE CONFIG (Construtor único)
 class mkt_config {
@@ -812,14 +832,16 @@ class mkt {
             if (possui != false) {
                 let colName = possui.replace("sort-", "");
                 if (colName != "") {
-                    mkt.Ao("click", th, (e) => {
-                        this.orderBy(colName);
-                    });
-                    mkt.Ao("mousemove", th, (e) => {
-                        if (this.c.tipoHead == "menu") {
+                    if (this.c.headSort == true) {
+                        mkt.Ao("click", th, (e) => {
+                            this.orderBy(colName);
+                        });
+                    }
+                    if (this.c.headMenu == true) {
+                        mkt.Ao("mousemove", th, (e) => {
                             this.headSeeMenuAbrir(colName, e);
-                        }
-                    });
+                        });
+                    }
                 }
             }
         });
@@ -984,7 +1006,7 @@ class mkt {
     // pk		Primary Key
     getModel = () => {
         // LISTA DE CHAVES , CADA CHAVE(OBJ) TEM SUAS 
-        return this.c;
+        return this.c.model;
     };
     // KVLR (E mais...)
     // K (Chave)	- V (Valor) - L (Label) - R (REGEX)	- TAG (TAG Html) - ATR (Attributos Tag) - target (Value no Inner)
@@ -2906,8 +2928,8 @@ Object.defineProperty(mkt, "ordenar", {
         // Essa funcção deveria ser da instancia atual para recever os atributos da instancia por padrao
         // 0 - Crescente:
         array.sort((oA, oB) => {
-            let a = mkt.getV(nomeProp, oA);
-            let b = mkt.getV(nomeProp, oB);
+            let a = nomeProp ? mkt.getV(nomeProp, oA) : null;
+            let b = nomeProp ? mkt.getV(nomeProp, oB) : null;
             //let b = oB[nomeProp];
             if (typeof a == "string")
                 a = a.toLowerCase().trim();
@@ -3951,7 +3973,7 @@ Object.defineProperty(mkt, "getV", {
                 }
             }
             else {
-                mkt.w("As chaves precisam estar em formato string (" + typeof keys + ")");
+                mkt.w("getV() - Nome da propriedade precisa ser em string. (" + typeof keys + "):", keys);
             }
         }
         else {
