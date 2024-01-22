@@ -63,7 +63,7 @@ class mktc {
 	pagItensFim = 0;
 	totPags = 0;
 	versaoDb = 1;
-	limitegetcall = 50; // Limite da recursiva de novos dados.
+	limitegetcall = 150; // Limite da recursiva de novos dados.
 	limiteget = 5000; // Se coletar igual ou mais que este valor, solicita um novo get.
 	pk = null as string | null; // Possivel setar o nome do campo que é primary key já na construcao
 	tbody = "tbody";
