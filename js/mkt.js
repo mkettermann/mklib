@@ -44,7 +44,7 @@ class mktm {
     }
 }
 // CLASSE DE CONFIG (Construtor único)
-class mkt_config {
+class mktc {
     get [Symbol.toStringTag]() { return "mktc"; }
     url = new URL("GetList", window.location.href.split("?")[0]).href; // Requer a URL para o fetch dos dados. Se não tiver, passar os dados no parametros dados e tornar esse null.
     dados = null; // Caso a tela já tenha os dados, podem ser passador por aqui, se não deixar 
@@ -71,6 +71,7 @@ class mkt_config {
     pagItensFim = 0;
     totPags = 0;
     versaoDb = 1;
+    limiteget = 2000; // Se coletar igual ou mais que este valor, solicita um novo get.
     pk = null; // Possivel setar o nome do campo que é primary key já na construcao
     tbody = "tbody";
     ths = "th";
@@ -119,12 +120,13 @@ class mkt {
     idContainer = 0;
     exclusivos = [];
     hmunsel = [];
-    constructor(mktconfig) {
-        if (mktconfig == null) {
-            this.c = new mkt_config();
+    ultimoGet = -1;
+    constructor(mkt_c) {
+        if (mkt_c == null) {
+            this.c = new mktc();
         }
         else {
-            this.c = mktconfig;
+            this.c = mkt_c;
         }
         let cs = this.c.container + " ";
         // Incrementa o container para garantir a seleção do elemento
@@ -149,7 +151,7 @@ class mkt {
         if (this.c.model?.length > 0) {
             this.c.model?.forEach(o => {
                 if (mkt.classof(o) != "mktm") {
-                    o = new mktm();
+                    o = new mktm({});
                 }
                 if (o.pk) {
                     this.c.pk = o.k;
@@ -247,31 +249,33 @@ class mkt {
             });
         }
         this.headAtivar();
-        // Iniciando o Worker
         let started = false;
-        if (this.c.url != null) {
-            this.c.urlOrigem = this.c.url;
-            // URL de coleta informada. 
-            await this.appendList(this.c.url);
-            if (this.dadosFull.length > 0) {
-                mk.l("Started from url: ", this.c.url, " Size: ", this.dadosFull.length);
-                started = true;
-                this.startListagem();
-            }
-        }
         if (this.c.dados != null) {
             if (mkt.classof(this.c.dados) == "Array") {
-                await this.appendList(this.c.dados);
-                if (!started) {
-                    if (this.dadosFull.length > 0) {
-                        mk.l("Started from dados: ", this.c.dados);
-                        started = true;
-                        this.startListagem();
-                    }
+                if (await this.appendList(this.c.dados) == true) {
+                    mk.l(this.c.nomeTabela + "- Started from dados: ", this.c.dados, " Atual Size: ", this.dadosFull.length);
+                    started = true;
+                    this.startListagem();
                 }
             }
             else {
                 mkt.w("Os dados informados precisa ser uma Lista. (Array). Recebido:", mkt.classof(this.c.dados));
+            }
+        }
+        if (this.c.url != null) {
+            // URL de coleta informada.
+            if (mkt.classof(this.c.url) == "String") {
+                this.c.urlOrigem = this.c.url;
+                if (await this.appendList(this.c.url) != null) {
+                    if (!started) {
+                        mk.l(this.c.nomeTabela + "- Started from url: ", this.c.url, " Atual Size: ", this.dadosFull.length);
+                        started = true;
+                        this.startListagem();
+                    }
+                    else {
+                        this.atualizarListagem();
+                    }
+                }
             }
         }
         if (this.c.dados == null && this.c.url == null) {
@@ -282,15 +286,24 @@ class mkt {
         return new Promise((r) => {
             if (mkt.classof(data_url) == "Array") {
                 this.dadosFull.push(...data_url);
-                r(this);
+                r(true);
             }
             else if (mkt.classof(data_url) == "String") {
-                mkt.get.json(this.c.urlOrigem).then((p) => {
+                let urlTemp = new URL("?c=" + this.dadosFull.length + "&n=" + this.c.nomeTabela, data_url?.split("?")[0]).href;
+                mkt.get.json(urlTemp).then((p) => {
                     if (p.retorno != null) {
                         this.dadosFull.push(...p.retorno);
-                        r(this);
+                        this.ultimoGet = p.retorno.length;
+                        mkt.l(this.c.nomeTabela + " Recebeu: ", this.ultimoGet);
+                        r(p.retorno.length);
+                    }
+                    else {
+                        r(null);
                     }
                 });
+            }
+            else {
+                r(null);
             }
             // let w = mkt.mktWorker();
             // w.postMessage({ c: "MKT_LIST_GO", u: url });
@@ -346,6 +359,19 @@ class mkt {
             // Remove oculto, caso encontre a tag
             if (mkt.Q(this.c.tableResultado))
                 mkt.Q(this.c.tableResultado).classList.remove("oculto");
+            // Inicia download do resto da lista
+            this.startDownloadContinuo();
+        }
+    };
+    startDownloadContinuo = async () => {
+        if (this.ultimoGet >= this.c.limiteget) {
+            if (mkt.classof(this.c.url) == "String") {
+                await this.appendList(this.c.url);
+                this.atualizarListagem();
+                mkt.wait(1).then(() => {
+                    this.startDownloadContinuo();
+                });
+            }
         }
     };
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\

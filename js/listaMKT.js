@@ -7,11 +7,16 @@ var modeloList1 = [
 	new mktm({ k: "mStatus", l: "Status" }),
 ]
 
-var lista_mkt = new mkt_config();
+var lista_mkt = new mktc();
 lista_mkt.model = modeloList1;
+lista_mkt.nomeTabela = "Listagem1";
 var lista = new mkt(lista_mkt);
 
-var lista_mkt2 = new mkt_config();
+// A lista 2 inicia com 0, e também busca na url.
+var lista_mkt2 = new mktc();
+lista_mkt2.dados = [];
+lista_mkt2.url = "http://127.0.0.1:5501/GetList";
+lista_mkt2.nomeTabela = "Listagem2";
 lista_mkt2.container = "#tabela2";
 lista_mkt2.idmodelo = "#modelo2";
 lista_mkt2.model = modeloList1;
