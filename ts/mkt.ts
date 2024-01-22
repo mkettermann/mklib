@@ -269,7 +269,7 @@ class mkt {
 		}
 	}
 
-	appendList = async (data_url: string | Array<any>) => {
+	appendList = async (data_url: string | Array<any>, parametros: string = "") => {
 		return new Promise((r) => {
 			if (mkt.classof(data_url) == "Array") {
 				for (let i = 0; i < data_url.length; i++) {
@@ -281,7 +281,7 @@ class mkt {
 				if (this.totalappends > 50) {
 					mk.w("Lista dividida em muitas partes: ", this.totalappends);
 				}
-				let urlTemp = new URL("?c=" + this.dadosFull.length, (data_url as string)?.split("?")[0]).href
+				let urlTemp = new URL("?c=" + this.dadosFull.length, (data_url as string)?.split("?")[0]).href + parametros;
 				mkt.get.json(urlTemp).then((p: any) => {
 					if (p.retorno != null) {
 						for (let i = 0; i < p.retorno.length; i++) {
@@ -363,14 +363,14 @@ class mkt {
 		}
 	};
 
-	startDownloadContinuo = async () => {
+	startDownloadContinuo = async (parametros: string = "") => {
 		if (this.ultimoGet >= this.c.limiteget) {
 			if (mkt.classof(this.c.url) == "String") {
-				await this.appendList(this.c.url as string);
+				await this.appendList(this.c.url as string, parametros);
 				this.atualizarListagem();
 				if (this.totalappends <= this.c.limitegetcall) {
 					mkt.wait(1).then(() => {
-						this.startDownloadContinuo();
+						this.startDownloadContinuo(parametros);
 					});
 				}
 			}

@@ -276,7 +276,7 @@ class mkt {
             mkt.w("Nenhuma fonte de dados encontrada. Não será possível popular a listagem sem dados.");
         }
     };
-    appendList = async (data_url) => {
+    appendList = async (data_url, parametros = "") => {
         return new Promise((r) => {
             if (mkt.classof(data_url) == "Array") {
                 for (let i = 0; i < data_url.length; i++) {
@@ -289,7 +289,7 @@ class mkt {
                 if (this.totalappends > 50) {
                     mk.w("Lista dividida em muitas partes: ", this.totalappends);
                 }
-                let urlTemp = new URL("?c=" + this.dadosFull.length, data_url?.split("?")[0]).href;
+                let urlTemp = new URL("?c=" + this.dadosFull.length, data_url?.split("?")[0]).href + parametros;
                 mkt.get.json(urlTemp).then((p) => {
                     if (p.retorno != null) {
                         for (let i = 0; i < p.retorno.length; i++) {
@@ -365,14 +365,14 @@ class mkt {
             this.startDownloadContinuo();
         }
     };
-    startDownloadContinuo = async () => {
+    startDownloadContinuo = async (parametros = "") => {
         if (this.ultimoGet >= this.c.limiteget) {
             if (mkt.classof(this.c.url) == "String") {
-                await this.appendList(this.c.url);
+                await this.appendList(this.c.url, parametros);
                 this.atualizarListagem();
                 if (this.totalappends <= this.c.limitegetcall) {
                     mkt.wait(1).then(() => {
-                        this.startDownloadContinuo();
+                        this.startDownloadContinuo(parametros);
                     });
                 }
             }
