@@ -283,12 +283,12 @@ class mkt {
 				this.dadosFull.push(...data_url);
 				r(true);
 			} else if (mkt.classof(data_url) == "String") {
-				let urlTemp = new URL("?c=" + this.dadosFull.length + "&n=" + this.c.nomeTabela, (data_url as string)?.split("?")[0]).href
+				let urlTemp = new URL("?c=" + this.dadosFull.length, (data_url as string)?.split("?")[0]).href
 				mkt.get.json(urlTemp).then((p: any) => {
 					if (p.retorno != null) {
 						this.dadosFull.push(...p.retorno);
 						this.ultimoGet = p.retorno.length;
-						mkt.l(this.c.nomeTabela + " Recebeu: ", this.ultimoGet)
+						mkt.l(this.c.nomeTabela + " baixou " + this.ultimoGet + " registros.")
 						r(p.retorno.length);
 					} else {
 						r(null);
