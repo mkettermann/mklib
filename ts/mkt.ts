@@ -63,6 +63,7 @@ class mktc {
 	pagItensFim = 0;
 	totPags = 0;
 	versaoDb = 1;
+	limitegetcall = 50; // Limite da recursiva de novos dados.
 	limiteget = 50000; // Se coletar igual ou mais que este valor, solicita um novo get.
 	pk = null as string | null; // Possivel setar o nome do campo que é primary key já na construcao
 	tbody = "tbody";
@@ -367,9 +368,11 @@ class mkt {
 			if (mkt.classof(this.c.url) == "String") {
 				await this.appendList(this.c.url as string);
 				this.atualizarListagem();
-				mkt.wait(1).then(() => {
-					this.startDownloadContinuo();
-				});
+				if (this.totalappends <= this.limitegetcall) {
+					mkt.wait(1).then(() => {
+						this.startDownloadContinuo();
+					});
+				}
 			}
 		}
 	}
