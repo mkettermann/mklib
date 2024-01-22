@@ -275,7 +275,7 @@ class mkt {
 
 	newDownloadContinuo = async (parametros: string = "", novaurl: string | null = null) => {
 		this.ultimoGet = this.c.limiteget + 1;
-		if (novaurl != null) {
+		if (novaurl == null) {
 			this.c.url = this.c.urlOrigem;
 		} else {
 			this.c.url = novaurl;
