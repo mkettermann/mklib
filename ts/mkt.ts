@@ -308,16 +308,21 @@ class mkt {
 		return new Promise((r) => {
 			if (this.ultimoGet >= this.c.limiteget) {
 				if (mkt.classof(this.c.url) == "String") {
-					await this.appendList(this.c.url as string, parametros);
-					this.atualizarListagem();
-					if (this.totalappends <= this.c.limitegetcall) {
-						mkt.wait(1).then(() => {
-							this.startDownloadContinuo(parametros);
-						});
-					}
+					this.appendList(this.c.url as string, parametros).then(re => {
+						this.atualizarListagem();
+						if (this.totalappends <= this.c.limitegetcall) {
+							mkt.wait(2).then(() => {
+								this.startDownloadContinuo(parametros);
+							});
+						}
+						r(true);
+					});
+				} else {
+					r(false);
 				}
+			} else {
+				r(false);
 			}
-			r(true);
 		});
 	}
 

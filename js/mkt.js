@@ -315,16 +315,23 @@ class mkt {
         return new Promise((r) => {
             if (this.ultimoGet >= this.c.limiteget) {
                 if (mkt.classof(this.c.url) == "String") {
-                    await this.appendList(this.c.url, parametros);
-                    this.atualizarListagem();
-                    if (this.totalappends <= this.c.limitegetcall) {
-                        mkt.wait(1).then(() => {
-                            this.startDownloadContinuo(parametros);
-                        });
-                    }
+                    this.appendList(this.c.url, parametros).then(re => {
+                        this.atualizarListagem();
+                        if (this.totalappends <= this.c.limitegetcall) {
+                            mkt.wait(2).then(() => {
+                                this.startDownloadContinuo(parametros);
+                            });
+                        }
+                        r(true);
+                    });
+                }
+                else {
+                    r(false);
                 }
             }
-            r(true);
+            else {
+                r(false);
+            }
         });
     };
     appendList = async (data_url, parametros = "") => {
