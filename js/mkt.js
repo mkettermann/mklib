@@ -187,8 +187,6 @@ class mkt {
     static CORES;
     static util;
     static mascarar;
-    static toNumber;
-    static fromNumber;
     static elementoDuranteUpload;
     static contaImportados = 0;
     static Q;
@@ -226,6 +224,25 @@ class mkt {
     static AoConfig;
     static request;
     static getMs;
+    static getDia;
+    static getMes;
+    static getAno;
+    static getFullData;
+    static atribuir;
+    static mkDuasCasas;
+    static regraDisplay;
+    static regraBlink;
+    static isInside;
+    static TerremotoErros;
+    static contem;
+    static isJson;
+    static apenasNumeros;
+    static apenasLetras;
+    static apenasNumerosLetras;
+    static toMoeda;
+    static fromMoeda;
+    static toNumber;
+    static fromNumber;
     autoStartConfig = async (arg = {}) => {
         // SE for importar: Espera o container para então continuar.
         if (this.c.container_importar) {
@@ -251,7 +268,7 @@ class mkt {
         if (this.c.dados != null) {
             if (mkt.classof(this.c.dados) == "Array") {
                 if (await this.appendList(this.c.dados) == true) {
-                    mk.l(this.c.nomeTabela + "- Started from dados: ", this.c.dados, " Atual Size: ", this.dadosFull.length);
+                    mkt.l(this.c.nomeTabela + "- Started from dados: ", this.c.dados, " Atual Size: ", this.dadosFull.length);
                     started = true;
                     this.startListagem();
                 }
@@ -266,7 +283,7 @@ class mkt {
                 this.c.urlOrigem = this.c.url;
                 if (await this.appendList(this.c.url) != null) {
                     if (!started) {
-                        mk.l(this.c.nomeTabela + "- Started from url: ", this.c.url, " Atual Size: ", this.dadosFull.length);
+                        mkt.l(this.c.nomeTabela + "- Started from url: ", this.c.url, " Atual Size: ", this.dadosFull.length);
                         started = true;
                         this.startListagem();
                     }
@@ -314,7 +331,7 @@ class mkt {
             else if (mkt.classof(data_url) == "String") {
                 this.totalappends++;
                 if (this.totalappends > 50) {
-                    mk.w("Lista dividida em muitas partes: ", this.totalappends);
+                    mkt.w("Lista dividida em muitas partes: ", this.totalappends);
                 }
                 if (parametros != this.ultimoParametro) {
                     this.ultimoParametro = parametros;
@@ -773,25 +790,30 @@ class mkt {
         mkt.headMenuMarcarExclusivos = (e) => {
             if (e) {
                 let name = e.getAttribute("name");
-                if (this.hmunsel.includes(name)) {
-                    e.classList.add("sel");
-                    if (name != null) {
-                        this.hmunsel.splice(this.hmunsel.indexOf(name), 1);
-                        if (this.hmunsel.length == 0) {
-                            mkt.Q("#headMenuTodos").classList.add("sel");
-                            mkt.Q("body .mkHeadMenu .possibilidades").classList.toggle("st");
+                if (name) {
+                    if (this.hmunsel.includes(name)) {
+                        e.classList.add("sel");
+                        if (name != null) {
+                            this.hmunsel.splice(this.hmunsel.indexOf(name), 1);
+                            if (this.hmunsel.length == 0) {
+                                mkt.Q("#headMenuTodos").classList.add("sel");
+                                mkt.Q("body .mkHeadMenu .possibilidades").classList.toggle("st");
+                            }
+                        }
+                    }
+                    else {
+                        e.classList.remove("sel");
+                        if (name != null) {
+                            this.hmunsel.push(name);
+                            if (this.hmunsel.length == this.exclusivos.length) {
+                                mkt.Q("#headMenuTodos").classList.remove("sel");
+                                mkt.Q("body .mkHeadMenu .possibilidades").classList.toggle("st");
+                            }
                         }
                     }
                 }
                 else {
-                    e.classList.remove("sel");
-                    if (name != null) {
-                        this.hmunsel.push(name);
-                        if (this.hmunsel.length == this.exclusivos.length) {
-                            mkt.Q("#headMenuTodos").classList.remove("sel");
-                            mkt.Q("body .mkHeadMenu .possibilidades").classList.toggle("st");
-                        }
-                    }
+                    mkt.w("headMenuMarcarExclusivos() - Atributo NAME não encontrado em: ", e);
                 }
             }
             else {
@@ -2282,7 +2304,7 @@ Object.defineProperty(mkt, "geraMeses", {
         let anoFim = mkt.getAno(config.fim);
         let c = 0;
         while (((anoAtual < anoFim) || (anoAtual == anoFim && mesAtual <= mesFim)) && (c < config.limit)) {
-            let gerado = this.MESES[(mesAtual % 13) - 1]?.[config.tipo];
+            let gerado = mkt.MESES[(mesAtual % 13) - 1]?.[config.tipo];
             let anoFormatado = anoAtual.toString().slice((4 - config.anoCaracteres), 4);
             if (config.ano)
                 gerado = gerado + config.separador + anoFormatado;
@@ -2850,7 +2872,7 @@ Object.defineProperty(mkt, "processoFiltragem", {
                 let podeExibir = true;
                 if (inst.c.filtroExtra != null)
                     podeExibir = inst.c.filtroExtra(o); // true
-                if (mk.classof(podeExibir) != "Boolean") {
+                if (mkt.classof(podeExibir) != "Boolean") {
                     podeExibir = true;
                     mkt.w("filtroExtra() precisa retornar boolean");
                 }
@@ -2884,7 +2906,7 @@ Object.defineProperty(mkt, "processoFiltragem", {
                         else if (k.formato === "stringNumerosVirgula") {
                             // Filtro por numero exado. Provavelmente sejam duas arrays (MultiSelect), O filtro precisa encontrar tudo no objeto.
                             let filtroInvertido = false;
-                            if (this.isJson(k.conteudo)) {
+                            if (mkt.isJson(k.conteudo)) {
                                 let arrayM = m.toString().split(","); // String de Numeros em Array de Strings
                                 let mayBeArrayK = mkt.parseJSON(k.conteudo); // << No objFiltro
                                 if (Array.isArray(mayBeArrayK)) {
@@ -3435,23 +3457,23 @@ Object.defineProperty(mkt, "estaValido", {
         let validou = false;
         // Informando um container qualquer, executa apenas as regras dentro deles.
         let promises = [];
-        mkt.regras.forEach(regra => {
+        mkt.regras.forEach(((regra) => {
             if (mkt.isInside(regra.e, container)) {
                 promises.push(mkt.exeregra(regra.e, "full"));
             }
-        });
+        }));
         let resultado = [];
         resultado = await Promise.all(promises);
         validou = resultado.flat().length <= 0;
-        this.gc("Validou? ", validou);
+        mkt.gc("Validou? ", validou);
         if (!validou) {
             resultado.flat().forEach(r => {
-                this.gc("Regra: " + r.k?.toString().toUpperCase() + " >> Nome do campo: " + r.e?.name);
-                this.l(r.e);
-                this.ge();
+                mkt.gc("Regra: " + r.k?.toString().toUpperCase() + " >> Nome do campo: " + r.e?.name);
+                mkt.l(r.e);
+                mkt.ge();
             });
         }
-        this.ge();
+        mkt.ge();
         return validou;
     }, enumerable: false, writable: false, configurable: false,
 });
@@ -3815,7 +3837,7 @@ Object.defineProperty(mkt, "desregrar", {
         container = mkt.Q(container);
         mkt.regras.forEach(regra => {
             if (mkt.isInside(regra.e, container)) {
-                this.l(regra);
+                mkt.l(regra);
                 mkt.regras.splice(mkt.regras.indexOf(regra), 1);
             }
         });
