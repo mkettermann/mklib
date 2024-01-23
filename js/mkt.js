@@ -243,6 +243,8 @@ class mkt {
     static fromMoeda;
     static toNumber;
     static fromNumber;
+    static CarregarON;
+    static CarregarOFF;
     autoStartConfig = async (arg = {}) => {
         // SE for importar: Espera o container para então continuar.
         if (this.c.container_importar) {
@@ -298,6 +300,7 @@ class mkt {
         }
     };
     newDownloadContinuo = async (parametros = "", novaurl = null) => {
+        mkt.CarregarON();
         this.ultimoGet = this.c.limiteget + 1;
         if (novaurl == null) {
             this.c.url = this.c.urlOrigem;
@@ -333,14 +336,16 @@ class mkt {
                 if (this.totalappends > 50) {
                     mkt.w("Lista dividida em muitas partes: ", this.totalappends);
                 }
+                let carregador = false;
                 if (parametros != this.ultimoParametro) {
                     this.ultimoParametro = parametros;
                     this.ultimoParametroTotal = 0;
                     this.dadosFull = [];
                     this.totalappends = 1;
+                    carregador = true;
                 }
                 let urlTemp = new URL("?c=" + this.ultimoParametroTotal, data_url?.split("?")[0]).href + parametros;
-                mkt.get.json(urlTemp).then((p) => {
+                mkt.get.json({ url: urlTemp, carregador: carregador }).then((p) => {
                     if (p.retorno != null) {
                         this.ultimoParametroTotal += p.retorno.length;
                         for (let i = 0; i < p.retorno.length; i++) {
@@ -2668,7 +2673,7 @@ Object.defineProperty(mkt, "request", {
         mkt.ct("Request: " + nomeRequest);
         // JSON / FORM / *
         if (!config?.tipo) {
-            this.w("Nenhum tipo de dado informado. Avançando com " + mkt.t.J);
+            mkt.w("Nenhum tipo de dado informado. Avançando com " + mkt.t.J);
             config.tipo = mkt.t.J;
         }
         if (!config?.headers) {
