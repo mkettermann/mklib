@@ -308,20 +308,24 @@ class mkt {
         else {
             this.c.url = novaurl;
         }
-        this.startDownloadContinuo(parametros);
+        await this.startDownloadContinuo(parametros);
+        mkt.CarregarOFF();
     };
     startDownloadContinuo = async (parametros = "") => {
-        if (this.ultimoGet >= this.c.limiteget) {
-            if (mkt.classof(this.c.url) == "String") {
-                await this.appendList(this.c.url, parametros);
-                this.atualizarListagem();
-                if (this.totalappends <= this.c.limitegetcall) {
-                    mkt.wait(1).then(() => {
-                        this.startDownloadContinuo(parametros);
-                    });
+        return new Promise((r) => {
+            if (this.ultimoGet >= this.c.limiteget) {
+                if (mkt.classof(this.c.url) == "String") {
+                    await this.appendList(this.c.url, parametros);
+                    this.atualizarListagem();
+                    if (this.totalappends <= this.c.limitegetcall) {
+                        mkt.wait(1).then(() => {
+                            this.startDownloadContinuo(parametros);
+                        });
+                    }
                 }
             }
-        }
+            r(true);
+        });
     };
     appendList = async (data_url, parametros = "") => {
         return new Promise((r) => {
