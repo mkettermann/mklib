@@ -2750,8 +2750,23 @@ Object.defineProperty(mkt, "request", {
                 config.statusCode = config.pacote.status;
                 // FALHA (NÂO 200)
                 mkt.gc("HTTP RETURNO: " + config.pacote.status + " " + config.pacote.statusText);
-                mkt.l(await config.pacote.text());
+                let texto = await config.pacote.text();
+                mkt.l(texto);
                 mkt.ge();
+                if (config.pacote.status >= 300) {
+                    if (!localStorage.mktRequests) {
+                        localStorage.mktRequests = JSON.stringify([]);
+                    }
+                    let erros = JSON.parse(localStorage.mktRequests);
+                    erros.push({
+                        status: config.pacote.status,
+                        texto: texto,
+                    });
+                    if (erros.length > 10) {
+                        erros.shift(1);
+                    }
+                    localStorage.mktRequests = JSON.stringify(erros);
+                }
             }
             else {
                 config.conectou = true;
