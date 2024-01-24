@@ -222,6 +222,7 @@ class mkt {
 	static getMes: Function;
 	static getAno: Function;
 	static getFullData: Function;
+	static hoje: Function;
 	static atribuir: Function;
 	static mkDuasCasas: Function;
 	static regraDisplay: Function;
@@ -2869,6 +2870,7 @@ Object.defineProperty(mkt, "request", {
 
 					let erros = JSON.parse(localStorage.mktRequests);
 					erros.push({
+						quando: mkt.hoje(),
 						status: config.pacote.status,
 						texto: texto,
 					})
