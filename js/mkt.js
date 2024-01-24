@@ -172,6 +172,7 @@ class mkt {
     static mkClicarNaAba;
     static exeTimer;
     static log = true; // Desliga / Liga Log do console
+    static headMenuHide;
     static headMenuCrescente;
     static headMenuDecrescente;
     static headMenuLimpar;
@@ -245,6 +246,9 @@ class mkt {
     static fromNumber;
     static CarregarON;
     static CarregarOFF;
+    static errosLog;
+    static delObjetoFromId;
+    static setObjetoFromId;
     autoStartConfig = async (arg = {}) => {
         // SE for importar: Espera o container para então continuar.
         if (this.c.container_importar) {
@@ -778,7 +782,7 @@ class mkt {
                 exFiltrado.forEach((v) => {
                     let sel = "sel";
                     let v2 = mkt.removeEspecias(v).toLowerCase().trim();
-                    this.hmunsel.forEach(hm => {
+                    this.hmunsel.forEach((hm) => {
                         if (mkt.removeEspecias(hm).toLowerCase().trim() == v2) {
                             sel = "";
                         }
@@ -835,7 +839,7 @@ class mkt {
             else {
                 mkt.Q("body .mkHeadMenu .possibilidades").classList.toggle("st");
                 if (mkt.Q("body .mkHeadMenu .possibilidades").classList.contains("st")) {
-                    mkt.QAll(".mkHeadMenu .possibilidades li").forEach(el => {
+                    mkt.QAll(".mkHeadMenu .possibilidades li").forEach((el) => {
                         let name = el.getAttribute("name");
                         el.classList.remove("sel");
                         if (name != null) {
@@ -846,7 +850,7 @@ class mkt {
                     });
                 }
                 else {
-                    mkt.QAll(".mkHeadMenu .possibilidades li").forEach(el => {
+                    mkt.QAll(".mkHeadMenu .possibilidades li").forEach((el) => {
                         let name = el.getAttribute("name");
                         el.classList.add("sel");
                         if (name != null) {
@@ -900,7 +904,7 @@ class mkt {
         if (colNameLabel == colName) {
             colNameLabel = eHead.innerHTML;
         }
-        mkt.QAll("body .mkHeadMenu .hmTitulo").forEach(e => {
+        mkt.QAll("body .mkHeadMenu .hmTitulo").forEach((e) => {
             e.innerHTML = colNameLabel;
         });
         mkt.Q("body .mkHeadMenu").classList.remove("oculto");
@@ -912,7 +916,7 @@ class mkt {
         let eTrHeadPai = mkt.Q(this.c.container + " thead tr");
         Array.from(eTrHeadPai.children).forEach((th) => {
             let possui = false;
-            th.classList.forEach((classe) => {
+            [...th.classList].forEach((classe) => {
                 // Verifica se contém sort- no inicio da class
                 if (classe.indexOf("sort-") == 0) {
                     possui = classe;
@@ -1025,7 +1029,7 @@ class mkt {
     // Retorna o último objeto da lista onde a chave primaria bateu.
     getObj = (valorKey) => {
         let temp = null;
-        if (Array.isArray(this.dadosFull)) {
+        if (Array.isArray(this.dadosFull) && mk.classof(this.c.pk) == "String") {
             this.dadosFull.forEach((o) => {
                 if (o[this.c.pk] == valorKey) {
                     temp = o;
@@ -1040,7 +1044,7 @@ class mkt {
         let errNotPresent = false;
         let errKeyInvalid = false;
         if (Array.isArray(this.dadosFull)) {
-            if (typeof k === "string") {
+            if (mk.classof(k) == "String") {
                 this.dadosFull.forEach((o) => {
                     if (k in o) {
                         if (o[k] == v) {
@@ -1064,10 +1068,10 @@ class mkt {
     };
     setObj = (v, objeto) => {
         let temp = null;
-        if (Array.isArray(this.dadosFull)) {
+        if (Array.isArray(this.dadosFull) && (mk.classof(this.c.pk) == "String")) {
             let o = this.find(this.c.pk, v);
             if (o) {
-                if (typeof objeto == "object") {
+                if (mk.classof(objeto) == "Object") {
                     for (let p in objeto) {
                         o[p] = objeto[p];
                     }
@@ -1075,7 +1079,7 @@ class mkt {
                 temp = o;
             }
             else {
-                this.dadosFull.push(mkt.aoReceberDados(objeto));
+                this.dadosFull.push(objeto);
                 temp = objeto;
             }
         }
@@ -1093,15 +1097,16 @@ class mkt {
     // tar	Target JS (Método para modificar o campo value/innerHTML)
     // cla	Classes
     // pk		Primary Key
+    // ****** ESTE FORMATO FOI APERFEICOADO NA CLASSE mktm
     getModel = () => {
-        // LISTA DE CHAVES , CADA CHAVE(OBJ) TEM SUAS 
-        return this.c.model;
+        return this.c.model; // <= Classe mktm
     };
     // KVLR (E mais...)
     // K (Chave)	- V (Valor) - L (Label) - R (REGEX)	- TAG (TAG Html) - ATR (Attributos Tag) - target (Value no Inner)
     // keys.push({ k: "mDat", v: "", l: "Data", r: mkt.util.data[1], tag: "input", atr: "type='text'" });
     // keys.push({ k: "mDes", v: "", l: "Descrição", r: "", tag: "textarea", atr: "cols='50' rows='10'", i: true });
     // Recebendo o objeto da lista, traz o getUsedKeys juntamente aos Values deste objeto;
+    // ****** ESTE FORMATO FOI APERFEICOADO NA CLASSE mktm
     getKVLR = (obj) => {
         let models = this.getModel();
         if (models.length == 0)
@@ -1151,10 +1156,13 @@ class mkt {
     };
     getNewPK = () => {
         let maior = 0;
-        this.dadosFull.forEach((o) => {
-            if (o[this.c.pk] > maior)
-                maior = Number(o[this.c.pk]);
-        });
+        if (mk.classof(this.c.pk) == "String") {
+            this.dadosFull.forEach((o) => {
+                if (o[this.c.pk] > maior) {
+                    maior = Number(o[this.c.pk]);
+                }
+            });
+        }
         return Number(maior) + 1;
     };
     getAllTr = () => {
@@ -1162,13 +1170,12 @@ class mkt {
     };
     // USER INTERFACE - UI - INDIVIDUAL
     add = (objDados) => {
-        this.dadosFull.push(this.aoReceberDados(objDados));
+        this.dadosFull.push(objDados);
         mkt.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
         this.atualizarListagem();
     };
     edit = (objDados, k, v) => {
-        this.dadosFull = mkt.delObjetoFromId(k, v, this.dadosFull);
-        this.dadosFull.push(mkt.aoReceberDados(objDados));
+        this.dadosFull = mkt.setObjetoFromId(k, v, this.dadosFull);
         mkt.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
         this.atualizarListagem();
     };
@@ -5147,6 +5154,17 @@ Object.defineProperty(mkt, "mkSelSetDisplay", {
                     "[" + KV.length + "] Selecionados";
             }
         }
+    }, enumerable: false, writable: false, configurable: false,
+});
+//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+//   Erros do LocalStorage          \\
+//___________________________________\\
+Object.defineProperty(mkt, "errosLog", {
+    value: () => {
+        let mktArmazenado = localStorage.mktRequests;
+        if (localStorage.mktRequests)
+            mktArmazenado = JSON.parse(localStorage.mktRequests);
+        return mktArmazenado;
     }, enumerable: false, writable: false, configurable: false,
 });
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\

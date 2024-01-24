@@ -165,6 +165,7 @@ class mkt {
 	static mkClicarNaAba: Function;
 	static exeTimer: Function;
 	static log = true; // Desliga / Liga Log do console
+	static headMenuHide: Function;
 	static headMenuCrescente: Function;
 	static headMenuDecrescente: Function;
 	static headMenuLimpar: Function;
@@ -238,6 +239,9 @@ class mkt {
 	static fromNumber: Function;
 	static CarregarON: Function;
 	static CarregarOFF: Function;
+	static errosLog: Function;
+	static delObjetoFromId: Function;
+	static setObjetoFromId: Function;
 
 	autoStartConfig = async (arg: any = {}) => {
 		// SE for importar: Espera o container para então continuar.
@@ -793,7 +797,7 @@ class mkt {
 				exFiltrado.forEach((v: any) => {
 					let sel = "sel";
 					let v2 = mkt.removeEspecias(v).toLowerCase().trim();
-					this.hmunsel.forEach(hm => {
+					this.hmunsel.forEach((hm: any) => {
 						if (mkt.removeEspecias(hm).toLowerCase().trim() == v2) {
 							sel = "";
 						}
@@ -846,7 +850,7 @@ class mkt {
 			} else {
 				mkt.Q("body .mkHeadMenu .possibilidades").classList.toggle("st");
 				if (mkt.Q("body .mkHeadMenu .possibilidades").classList.contains("st")) {
-					mkt.QAll(".mkHeadMenu .possibilidades li").forEach(el => {
+					mkt.QAll(".mkHeadMenu .possibilidades li").forEach((el: HTMLLIElement) => {
 						let name = el.getAttribute("name");
 						el.classList.remove("sel");
 						if (name != null) {
@@ -856,7 +860,7 @@ class mkt {
 						}
 					})
 				} else {
-					mkt.QAll(".mkHeadMenu .possibilidades li").forEach(el => {
+					mkt.QAll(".mkHeadMenu .possibilidades li").forEach((el: HTMLLIElement) => {
 						let name = el.getAttribute("name");
 						el.classList.add("sel");
 						if (name != null) {
@@ -912,7 +916,7 @@ class mkt {
 		if (colNameLabel == colName) {
 			colNameLabel = eHead.innerHTML;
 		}
-		mkt.QAll("body .mkHeadMenu .hmTitulo").forEach(e => {
+		mkt.QAll("body .mkHeadMenu .hmTitulo").forEach((e: HTMLElement) => {
 			e.innerHTML = colNameLabel;
 		});
 		mkt.Q("body .mkHeadMenu").classList.remove("oculto");
@@ -923,9 +927,9 @@ class mkt {
 	// Gera Listeners na THEAD da tabela (Requer classe: "sort-campo")
 	headAtivar = () => {
 		let eTrHeadPai = mkt.Q(this.c.container + " thead tr");
-		Array.from(eTrHeadPai.children).forEach((th) => {
+		Array.from(eTrHeadPai.children).forEach((th: any) => {
 			let possui: any = false;
-			th.classList.forEach((classe) => {
+			[...th.classList].forEach((classe) => {
 				// Verifica se contém sort- no inicio da class
 				if (classe.indexOf("sort-") == 0) {
 					possui = classe;
@@ -985,7 +989,7 @@ class mkt {
 		// Limpa efeito
 		let thsAll = mkt.QAll(this.c.ths);
 		if (thsAll.length != 0) {
-			thsAll.forEach((th) => {
+			thsAll.forEach((th: HTMLTableCellElement) => {
 				th.classList.remove("mkEfeitoDesce");
 				th.classList.remove("mkEfeitoSobe");
 			});
@@ -993,7 +997,7 @@ class mkt {
 		// Busca elemento que está sendo ordenado
 		let thsSort = mkt.QAll(this.c.ths + ".sort-" + this.c.sortBy);
 		if (thsSort.length != 0) {
-			thsSort.forEach((thSort) => {
+			thsSort.forEach((thSort: HTMLTableCellElement) => {
 				if (this.c.sortDir == 1) {
 					thSort.classList.add("mkEfeitoDesce");
 				} else {
@@ -1013,7 +1017,7 @@ class mkt {
 			mkt.QAll(this.c.filtro + "[name='" + campoEspecifico + "']").forEach((e: HTMLInputElement) => {
 				e.value = "";
 			});
-			mkt.QAll(this.c.filtro + ".mkSel[name='" + campoEspecifico + "']").forEach((mkSel) => {
+			mkt.QAll(this.c.filtro + ".mkSel[name='" + campoEspecifico + "']").forEach((mkSel: HTMLInputElement) => {
 				mkSel.classList.add("atualizar");
 			});
 		} else {
@@ -1025,7 +1029,7 @@ class mkt {
 			});
 
 			// Solicita Atualizacao de todos mkSel
-			mkt.QAll(this.c.filtro + ".mkSel").forEach((mkSel) => {
+			mkt.QAll(this.c.filtro + ".mkSel").forEach((mkSel: HTMLInputElement) => {
 				mkSel.classList.add("atualizar");
 			});
 		}
@@ -1040,9 +1044,9 @@ class mkt {
 	// Retorna o último objeto da lista onde a chave primaria bateu.
 	getObj = (valorKey: any): object | null => {
 		let temp: object | null = null;
-		if (Array.isArray(this.dadosFull)) {
+		if (Array.isArray(this.dadosFull) && mk.classof(this.c.pk) == "String") {
 			this.dadosFull.forEach((o) => {
-				if (o[this.c.pk] == valorKey) {
+				if (o[this.c.pk as string] == valorKey) {
 					temp = o;
 				}
 			});
@@ -1056,7 +1060,7 @@ class mkt {
 		let errNotPresent = false;
 		let errKeyInvalid = false;
 		if (Array.isArray(this.dadosFull)) {
-			if (typeof k === "string") {
+			if (mk.classof(k) == "String") {
 				this.dadosFull.forEach((o) => {
 					if (k in o) {
 						if (o[k] == v) {
@@ -1079,17 +1083,17 @@ class mkt {
 
 	setObj = (v: any, objeto: any): any => {
 		let temp: any = null;
-		if (Array.isArray(this.dadosFull)) {
-			let o = this.find(this.c.pk, v);
+		if (Array.isArray(this.dadosFull) && (mk.classof(this.c.pk) == "String")) {
+			let o = this.find(this.c.pk as string, v);
 			if (o) {
-				if (typeof objeto == "object") {
+				if (mk.classof(objeto) == "Object") {
 					for (let p in objeto) {
 						o[p] = objeto[p];
 					}
 				}
 				temp = o;
 			} else {
-				this.dadosFull.push(mkt.aoReceberDados(objeto));
+				this.dadosFull.push(objeto);
 				temp = objeto;
 			}
 		}
@@ -1108,10 +1112,10 @@ class mkt {
 	// tar	Target JS (Método para modificar o campo value/innerHTML)
 	// cla	Classes
 	// pk		Primary Key
+	// ****** ESTE FORMATO FOI APERFEICOADO NA CLASSE mktm
 
 	getModel = () => {
-		// LISTA DE CHAVES , CADA CHAVE(OBJ) TEM SUAS 
-		return this.c.model;
+		return this.c.model; // <= Classe mktm
 	};
 
 	// KVLR (E mais...)
@@ -1119,6 +1123,7 @@ class mkt {
 	// keys.push({ k: "mDat", v: "", l: "Data", r: mkt.util.data[1], tag: "input", atr: "type='text'" });
 	// keys.push({ k: "mDes", v: "", l: "Descrição", r: "", tag: "textarea", atr: "cols='50' rows='10'", i: true });
 	// Recebendo o objeto da lista, traz o getUsedKeys juntamente aos Values deste objeto;
+	// ****** ESTE FORMATO FOI APERFEICOADO NA CLASSE mktm
 	getKVLR = (obj: any) => {
 		let models = this.getModel();
 		if (models.length == 0) models = this.getUsedKeys(true);
@@ -1147,14 +1152,14 @@ class mkt {
 	getUsedKeys = (formatoKV = false) => {
 		let kv: any = [];
 		let chaves = new Set();
-		this.dadosFull.forEach((o) => {
+		this.dadosFull.forEach((o: any) => {
 			Object.keys(o).forEach((p) => {
 				chaves.add(p);
 			});
 		});
 		if (formatoKV) {
 			[...chaves].forEach((k: any) => {
-				let obj = {};
+				let obj: any = {};
 				obj.k = k;
 				kv.push(obj);
 			});
@@ -1166,9 +1171,13 @@ class mkt {
 
 	getNewPK = () => {
 		let maior = 0;
-		this.dadosFull.forEach((o) => {
-			if (o[this.c.pk] > maior) maior = Number(o[this.c.pk]);
-		});
+		if (mk.classof(this.c.pk) == "String") {
+			this.dadosFull.forEach((o: any) => {
+				if (o[this.c.pk as string] > maior) {
+					maior = Number(o[this.c.pk as string]);
+				}
+			});
+		}
 		return Number(maior) + 1;
 	};
 
@@ -1178,14 +1187,13 @@ class mkt {
 
 	// USER INTERFACE - UI - INDIVIDUAL
 	add = (objDados: object) => {
-		this.dadosFull.push(this.aoReceberDados(objDados));
+		this.dadosFull.push(objDados);
 		mkt.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
 		this.atualizarListagem();
 	};
 
-	edit = (objDados: object, k: any, v: any) => {
-		this.dadosFull = mkt.delObjetoFromId(k, v, this.dadosFull);
-		this.dadosFull.push(mkt.aoReceberDados(objDados));
+	edit = (objDados: object, k: string, v: any) => {
+		this.dadosFull = mkt.setObjetoFromId(k, v, this.dadosFull);
 		mkt.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
 		this.atualizarListagem();
 	};
@@ -5324,6 +5332,17 @@ Object.defineProperty(mkt, "mkSelSetDisplay", {
 	}, enumerable: false, writable: false, configurable: false,
 });
 
+//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+//   Erros do LocalStorage          \\
+//___________________________________\\
+
+Object.defineProperty(mkt, "errosLog", {
+	value: () => {
+		let mktArmazenado = localStorage.mktRequests;
+		if (localStorage.mktRequests) mktArmazenado = JSON.parse(localStorage.mktRequests);
+		return mktArmazenado;
+	}, enumerable: false, writable: false, configurable: false,
+});
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //   IMPORTAR                       \\
 //___________________________________\\
