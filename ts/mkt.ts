@@ -110,7 +110,7 @@ class mkt {
 	hmunsel: any = [];
 	ultimoGet = -1;
 	ultimoParametro = "";
-	ultimoParametroTotal = 0;
+	cTotUltimoParametro = 0;
 	totalappends = 0;
 
 	constructor(mkt_c: mktc) {
@@ -267,7 +267,6 @@ class mkt {
 		if (this.c.dados != null) {
 			if (mkt.classof(this.c.dados) == "Array") {
 				if (await this.appendList(this.c.dados) == true) {
-					mkt.l(this.c.nomeTabela + "- Started from dados: ", this.c.dados, " Atual Size: ", this.dadosFull.length);
 					started = true;
 					this.startListagem();
 				}
@@ -281,7 +280,6 @@ class mkt {
 				this.c.urlOrigem = this.c.url;
 				if (await this.appendList(this.c.url) != null) {
 					if (!started) {
-						mkt.l(this.c.nomeTabela + "- Started from url: ", this.c.url, " Atual Size: ", this.dadosFull.length);
 						started = true;
 						this.startListagem();
 					} else {
@@ -345,15 +343,17 @@ class mkt {
 				let carregador = false;
 				if (parametros != this.ultimoParametro) {
 					this.ultimoParametro = parametros;
-					this.ultimoParametroTotal = 0;
+					this.cTotUltimoParametro = 0;
 					this.dadosFull = [];
 					this.totalappends = 1;
 					carregador = true;
 				}
-				let urlTemp = new URL("?c=" + this.ultimoParametroTotal, (data_url as string)?.split("?")[0]).href + parametros;
+				let urlTemp = (data_url as string)?.split("?")[0] + "?c=" + this.cTotUltimoParametro;
+				if (!urlTemp.includes("://")) urlTemp = window.location.origin + urlTemp;
+				urlTemp += parametros;
 				mkt.get.json({ url: urlTemp, carregador: carregador }).then((p: any) => {
 					if (p.retorno != null) {
-						this.ultimoParametroTotal += p.retorno.length;
+						this.cTotUltimoParametro += p.retorno.length;
 						for (let i = 0; i < p.retorno.length; i++) {
 							this.dadosFull.push(p.retorno[i]);
 						}
