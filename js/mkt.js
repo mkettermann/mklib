@@ -89,6 +89,7 @@ class mktc {
     tableInicioFim = ".tableInicioFim";
     pag = ".pag"; // Indica o paginador atual de 0 a 8: ex: .pag7
     pagBotao = ".pagBotao";
+    botaoNovaConsulta = null;
     dbInit = (store) => { }; // Funcao de contrução do design do banco de dados
     // Alterar essas funções para modificar dados durante etapas.
     aoIniciarListagem = async (i) => { }; // Recebe a própria instancia no parametro.
