@@ -44,6 +44,8 @@ class mktc {
 	container: string = ".divListagemContainer"; // Classe / Id de onde será buscada uma tabela para ser populada.
 	idmodelo: string = "#modelo"; // Classe / Id do template/script contendo o formato de exibição de cada registro da lista.
 	model: Array<mktm> = []; // Lista de Configuração de coluna, como Label, Formato do conteudo, Classes padrões...
+	qntInicial: number = 1000; // Quantidade de coleta inicial de dados.
+	qntSolicitada: number = 5000; // Quantidade de coleta de dados ao solicitar mais.
 	container_importar: boolean = false; // No container, executa importar dados baseados no atributo.
 	filtroExtra: Function | null = null; // modificaFiltro Retorna um booleano que permite um filtro configurado externamente do processo Filtragem.
 	filtro: string | null = ".iConsultas"; // Busca por esta classe para filtrar campos por nome do input.
@@ -62,9 +64,8 @@ class mktc {
 	pagItensIni = 0;
 	pagItensFim = 0;
 	totPags = 0;
+	ativarDbCliente = false; // Quando ativo, salva o dado consultado por um worker em um indexedDb formando um cache rápido de dados no cliente.
 	versaoDb = 1;
-	limitegetcall = 150; // Limite da recursiva de novos dados.
-	limiteget = 5000; // Se coletar igual ou mais que este valor, solicita um novo get.
 	pk = null as string | null; // Possivel setar o nome do campo que é primary key já na construcao
 	tbody = "tbody";
 	ths = "th";
@@ -109,7 +110,7 @@ class mkt {
 	exclusivos: any = [];
 	hmunsel: any = [];
 	ultimoGet = -1;
-	ultimoParametro = "";
+	ultimoParametro = ""; // Aqui precisa ser vazio, pois esse dado indica a primeira consulta.
 	cTotUltimoParametro = 0;
 	totalappends = 0;
 
@@ -258,7 +259,8 @@ class mkt {
 		}
 		// Seta Gatilho do indicador de quantidade por pagina.
 		if (mkt.Q(this.c.tablePorPagina)) {
-			mkt.Ao("input", this.c.tablePorPagina, async () => {
+			mkt.Ao("input", this.c.tablePorPagina, async (e) => {
+				mkt.l("TablePorPagina: ", this.c.tablePorPagina);
 				this.atualizaNaPaginaUm();
 			});
 		}
@@ -290,42 +292,44 @@ class mkt {
 			}
 		}
 
+		// Check e config da quantidade de download
+		if (mkt.classof(this.c.qntSolicitada) != "Number") {
+			this.c.qntSolicitada = 10000;
+		} else if (this.c.qntSolicitada < 0) {
+			this.c.qntSolicitada = 10000;
+		}
+		if (mkt.classof(this.c.qntInicial) != "Number") {
+			this.c.qntInicial = this.c.qntSolicitada;
+		} else if (this.c.qntInicial <= 0) {
+			this.c.qntInicial = this.c.qntSolicitada;
+		}
+
 		if (this.c.dados == null && this.c.url == null) {
 			mkt.w("Nenhuma fonte de dados encontrada. Não será possível popular a listagem sem dados.")
 		}
 	}
 
-	newDownloadContinuo = async (parametros: string = "", novaurl: string | null = null) => {
-		mkt.CarregarON();
-		this.ultimoGet = this.c.limiteget + 1;
-		if (novaurl == null) {
-			this.c.url = this.c.urlOrigem;
-		} else {
-			this.c.url = novaurl;
-		}
-		await this.startDownloadContinuo(parametros);
-		mkt.CarregarOFF();
-	}
-
-	startDownloadContinuo = async (parametros: string = "") => {
+	mais = async (parametros: string | null = null, novaurl: string | null = null) => {
 		return new Promise((r) => {
-			if (this.ultimoGet >= this.c.limiteget) {
-				if (mkt.classof(this.c.url) == "String") {
-					this.appendList(this.c.url as string, parametros).then(re => {
-						this.atualizarListagem();
-						if (this.totalappends <= this.c.limitegetcall) {
-							mkt.wait(2).then(() => {
-								this.startDownloadContinuo(parametros);
-							});
-						}
-						r(true);
-					});
-				} else {
-					r(false);
-				}
+			if (novaurl == null) {
+				this.c.url = this.c.urlOrigem;
 			} else {
+				this.c.url = novaurl;
+			}
+			if (parametros == null) {
+				// Se não informar parametro ou informar o mesmo parametro da ultima consulta, indica que está carregando a continuação: lista.mais();
+				parametros = this.ultimoParametro;
+			}
+			if (mkt.classof(this.c.url) == "String") {
+				this.appendList(this.c.url as string, parametros).then(re => {
+					this.atualizarListagem();
+					r(true);
+				});
+			} else {
+				mk.w("mais() - Url informada não é uma string: ", mkt.classof(this.c.url));
 				r(false);
 			}
+
 		});
 	}
 
@@ -333,23 +337,29 @@ class mkt {
 		return new Promise((r) => {
 			if (mkt.classof(data_url) == "Array") {
 				for (let i = 0; i < data_url.length; i++) {
-					this.dadosFull.push(data_url[i]);
+					if (i < this.c.qntInicial) { // APENAS LISTA SOLICITA INICIAL
+						this.dadosFull.push(data_url[i]);
+					}
 				}
 				r(true);
 			} else if (mkt.classof(data_url) == "String") {
+				// Aqui é a primeira coleta.
+				// qntSolicitada
+				// qntInicial representa o valor inicial a ser solicitado
+
 				this.totalappends++;
-				if (this.totalappends > 50) {
-					mkt.w("Lista dividida em muitas partes: ", this.totalappends);
-				}
 				let carregador = false;
+				let solicitar = this.c.qntInicial;
 				if (parametros != this.ultimoParametro) {
 					this.ultimoParametro = parametros;
 					this.cTotUltimoParametro = 0;
 					this.dadosFull = [];
 					this.totalappends = 1;
 					carregador = true;
+					solicitar = this.c.qntSolicitada;
 				}
-				let urlTemp = (data_url as string)?.split("?")[0] + "?c=" + this.cTotUltimoParametro;
+				// Passa LIST REQUEST e LIST HAVE.
+				let urlTemp = (data_url as string)?.split("?")[0] + "?lr=" + solicitar + "&lh=" + this.cTotUltimoParametro;
 				if (!urlTemp.includes("://")) urlTemp = window.location.origin + urlTemp;
 				urlTemp += parametros;
 				mkt.get.json({ url: urlTemp, carregador: carregador }).then((p: any) => {
@@ -369,37 +379,41 @@ class mkt {
 				r(null);
 			}
 
-			// let w = mkt.mktWorker();
-			// w.postMessage({ c: "MKT_LIST_GO", u: url });
-			// w.onmessage = (ev: MessageEvent) => {
-			// 	console.log("APP> c: ", ev.data.c, " d: ", ev.data.d);
-			// 	if (ev.data.c == "MKT_LIST_BACK") {
-			// 		this.dadosFull.push(...ev.data.d);
-			// 		r(this);
-			// 	}
-			// }
-			// w.onerror = (ev: MessageEvent) => {
-			// 	console.log("APP> Erro: ", ev);
-			// 	ev.preventDefault();
-			// 	if (ev.data.c == "MKT_LIST_BACK") {
-			// 		r(null);
-			// 	}
-			// }
-			// DB CON
-			// if (this.c.nomeTabela != null) {
-			// 	this.db = await this.dbCon();
-			// }
-			// if (this.c.nomeTabela) {
-			// 	// DB FILL
-			// 	let tx = this.db?.transaction(this.c.nomeTabela, "readwrite");
-			// 	let store = tx?.objectStore(this.c.nomeTabela);
-			// 	this.dadosFull.forEach((o: any) => {
-			// 		store?.put(o);
-			// 	});
-			// 	if (tx) tx.oncomplete = () => {
-			// 		// All requests have succeeded and the transaction has committed.
-			// 	};
-			// }
+			// MECANICA CACHE CLIENT SIDE.
+			// A cada APPENDLIST um PUT no indexed;
+			if (this.c.ativarDbCliente) {
+				// let w = mkt.mktWorker();
+				// w.postMessage({ c: "MKT_LIST_GO", u: url });
+				// w.onmessage = (ev: MessageEvent) => {
+				// 	console.log("APP> c: ", ev.data.c, " d: ", ev.data.d);
+				// 	if (ev.data.c == "MKT_LIST_BACK") {
+				// 		this.dadosFull.push(...ev.data.d);
+				// 		r(this);
+				// 	}
+				// }
+				// w.onerror = (ev: MessageEvent) => {
+				// 	console.log("APP> Erro: ", ev);
+				// 	ev.preventDefault();
+				// 	if (ev.data.c == "MKT_LIST_BACK") {
+				// 		r(null);
+				// 	}
+				// }
+				// DB CON
+				// if (this.c.nomeTabela != null) {
+				// 	this.db = await this.dbCon();
+				// }
+				// if (this.c.nomeTabela) {
+				// 	// DB FILL
+				// 	let tx = this.db?.transaction(this.c.nomeTabela, "readwrite");
+				// 	let store = tx?.objectStore(this.c.nomeTabela);
+				// 	this.dadosFull.forEach((o: any) => {
+				// 		store?.put(o);
+				// 	});
+				// 	if (tx) tx.oncomplete = () => {
+				// 		// All requests have succeeded and the transaction has committed.
+				// 	};
+				// }
+			}
 		});
 	}
 
@@ -429,7 +443,7 @@ class mkt {
 				mkt.Q(this.c.tableResultado).classList.remove("oculto");
 
 			// Inicia download do resto da lista
-			this.startDownloadContinuo();
+			//this.startDownloadContinuo();
 
 		}
 	};
@@ -519,6 +533,13 @@ class mkt {
 			mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoAntesDePopularTabela"));
 			await this.c.aoAntesDePopularTabela(this.dadosExibidos);
 
+			// 
+			let aExibir = this.dadosExibidos.length;
+			if (aExibir < this.c.pagPorPagina) {
+				mkt.l("A EXIBIR: ", aExibir, " (Exibir mais())");
+			} else {
+				mkt.l("A EXIBIR: ", aExibir);
+			}
 			await mkt.mkMoldeOA(this.dadosExibidos, this.c.idmodelo, this.c.tbody);
 
 			//EVENT: aoConcluirExibicao
