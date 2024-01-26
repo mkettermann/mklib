@@ -51,7 +51,7 @@ class mktc {
 	filtro: string | null = ".iConsultas"; // Busca por esta classe para filtrar campos por nome do input.
 	filtroDinamico = false;; // Nessa listagem o filtro por tecla não é dinâmico por padrão.
 	headSort: boolean = true; // Indicador se ativará o ordenamento ao clicar no cabeçalho
-	headMenu: boolean = true; // Indicador se ativará o botãozinho que abre o filtro completo do campo.
+	headMenu: boolean = false; // Indicador se ativará o botãozinho que abre o filtro completo do campo.
 	// Os demais podem se alterar durante as operações da listagem.
 	sortBy: string | null = null; // Campo a ser ordenado inicialmente;
 	sortDir: Number | null = 0; // 0,1,2 = Crescente, Decrescente, Toogle;

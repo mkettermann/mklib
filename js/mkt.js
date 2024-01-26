@@ -59,7 +59,7 @@ class mktc {
     filtroDinamico = false;
     ; // Nessa listagem o filtro por tecla não é dinâmico por padrão.
     headSort = true; // Indicador se ativará o ordenamento ao clicar no cabeçalho
-    headMenu = true; // Indicador se ativará o botãozinho que abre o filtro completo do campo.
+    headMenu = false; // Indicador se ativará o botãozinho que abre o filtro completo do campo.
     // Os demais podem se alterar durante as operações da listagem.
     sortBy = null; // Campo a ser ordenado inicialmente;
     sortDir = 0; // 0,1,2 = Crescente, Decrescente, Toogle;
