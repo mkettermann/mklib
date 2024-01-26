@@ -391,6 +391,7 @@ class mkt {
                         if (this.ultimoGet < this.solicitadoUltimoParametro) {
                             // Quando o Recebido for inferior ao solicitado:
                             this.aindaTemMais = false;
+                            mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoBaixarTodosDados"));
                             if (this.c.botaoNovaConsulta != null) {
                                 mk.Qoff(this.c.botaoNovaConsulta);
                             }
