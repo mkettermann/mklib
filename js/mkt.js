@@ -56,6 +56,8 @@ class mktc {
     container_importar = false; // No container, executa importar dados baseados no atributo.
     filtroExtra = null; // modificaFiltro Retorna um booleano que permite um filtro configurado externamente do processo Filtragem.
     filtro = ".iConsultas"; // Busca por esta classe para filtrar campos por nome do input.
+    filtroDinamico = false;
+    ; // Nessa listagem o filtro por tecla não é dinâmico por padrão.
     headSort = true; // Indicador se ativará o ordenamento ao clicar no cabeçalho
     headMenu = true; // Indicador se ativará o botãozinho que abre o filtro completo do campo.
     // Os demais podem se alterar durante as operações da listagem.
@@ -85,7 +87,7 @@ class mktc {
     tableIni = ".tableIni";
     tableFim = ".tableFim";
     tableInicioFim = ".tableInicioFim";
-    pag = ".pag";
+    pag = ".pag"; // Indica o paginador atual de 0 a 8: ex: .pag7
     pagBotao = ".pagBotao";
     dbInit = (store) => { }; // Funcao de contrução do design do banco de dados
     // Alterar essas funções para modificar dados durante etapas.
@@ -119,6 +121,8 @@ class mkt {
     ultimoGet = -1;
     ultimoParametro = ""; // Aqui precisa ser vazio, pois esse dado indica a primeira consulta.
     cTotUltimoParametro = 0;
+    solicitadoUltimoParametro = 0;
+    aindaTemMais = true;
     totalappends = 0;
     constructor(mkt_c) {
         if (mkt_c == null) {
@@ -330,7 +334,7 @@ class mkt {
                 parametros = this.ultimoParametro;
             }
             if (mkt.classof(this.c.url) == "String") {
-                this.appendList(this.c.url, parametros).then(re => {
+                this.appendList(this.c.url, parametros, true).then(re => {
                     this.atualizarListagem();
                     r(true);
                 });
@@ -341,7 +345,7 @@ class mkt {
             }
         });
     };
-    appendList = async (data_url, parametros = "") => {
+    appendList = async (data_url, parametros = "", fromMais = false) => {
         return new Promise((r) => {
             if (mkt.classof(data_url) == "Array") {
                 for (let i = 0; i < data_url.length; i++) {
@@ -366,6 +370,11 @@ class mkt {
                     carregador = true;
                     solicitar = this.c.qntSolicitada;
                 }
+                if (fromMais) {
+                    // Quando a função Mais() que chamar esta, a quantidade solicitada tem prioridade sobre a inicial;
+                    solicitar = this.c.qntSolicitada;
+                }
+                this.solicitadoUltimoParametro = solicitar;
                 // Passa LIST REQUEST e LIST HAVE.
                 let urlTemp = data_url?.split("?")[0] + "?lr=" + solicitar + "&lh=" + this.cTotUltimoParametro;
                 if (!urlTemp.includes("://"))
@@ -377,6 +386,14 @@ class mkt {
                         this.cTotUltimoParametro += this.ultimoGet; // Soma do Ultimo mais o atual
                         for (let i = 0; i < p.retorno.length; i++) {
                             this.dadosFull.push(p.retorno[i]);
+                        }
+                        if (this.ultimoGet < this.solicitadoUltimoParametro) {
+                            // Quando o Recebido for inferior ao solicitado:
+                            this.aindaTemMais = false;
+                        }
+                        else {
+                            // Quando o recebido é igual ou veio até mais do que o solicitado:
+                            this.aindaTemMais = true;
                         }
                         //mkt.l(this.c.nomeTabela + " baixou " + this.ultimoGet + " registros.")
                         r(p.retorno.length);
@@ -440,7 +457,9 @@ class mkt {
             // Ordena a lista geral com base na primeira propriedade.
             mkt.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
             //Adiciona eventos aos botões do filtro
-            this.setFiltroListener();
+            if (this.c.filtroDinamico) {
+                this.setFiltroListener();
+            }
             // Executa um filtro inicial e na sequencia processa a exibição.
             this.updateFiltro();
             this.efeitoSort();
@@ -529,13 +548,24 @@ class mkt {
             //EVENT: aoAntesDePopularTabela
             mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoAntesDePopularTabela"));
             await this.c.aoAntesDePopularTabela(this.dadosExibidos);
-            // 
-            let aExibir = this.dadosExibidos.length;
-            if (aExibir < this.c.pagPorPagina) {
-                mkt.l("A EXIBIR: ", aExibir, " (Exibir mais())");
-            }
-            else {
-                mkt.l("A EXIBIR: ", aExibir);
+            // Apenas quando há mais dados a serem puxados:
+            if (this.aindaTemMais) {
+                // Apenas se estiver na última págiana:
+                if (this.c.totPags == this.c.pagAtual) {
+                    let container = mk.Q(this.c.container);
+                    if (!container.querySelector(".divListagemMaisItens")) {
+                        let mklEFim = document.createElement("div");
+                        mklEFim.className = "divListagemMaisItens";
+                        mklEFim.innerHTML = "Carregar mais registros";
+                        mkt.Ao("click", mklEFim, () => {
+                            this.mais();
+                        });
+                        container.querySelector("table")?.parentElement?.appendChild(mklEFim);
+                    }
+                }
+                else {
+                    mkt.Q(this.c.container + " .divListagemMaisItens")?.remove();
+                }
             }
             await mkt.mkMoldeOA(this.dadosExibidos, this.c.idmodelo, this.c.tbody);
             //EVENT: aoConcluirExibicao
