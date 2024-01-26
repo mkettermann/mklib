@@ -81,7 +81,7 @@ class mktc {
 	tableInicioFim = ".tableInicioFim";
 	pag = ".pag"; // Indica o paginador atual de 0 a 8: ex: .pag7
 	pagBotao = ".pagBotao";
-	botaoNovaConsulta: HTMLButtonElement | null = null;
+	botaoNovaConsulta: HTMLButtonElement | null = null; // Informando o botao. Ao modificar a variavel de fim de lista, trava o botao / destrava.
 	dbInit = (store: IDBObjectStore) => { } // Funcao de contrução do design do banco de dados
 	// Alterar essas funções para modificar dados durante etapas.
 	aoIniciarListagem = async (i: mkt) => { }; // Recebe a própria instancia no parametro.
@@ -381,9 +381,15 @@ class mkt {
 						if (this.ultimoGet < this.solicitadoUltimoParametro) {
 							// Quando o Recebido for inferior ao solicitado:
 							this.aindaTemMais = false;
+							if (this.c.botaoNovaConsulta != null) {
+								mk.Qoff(this.c.botaoNovaConsulta);
+							}
 						} else {
 							// Quando o recebido é igual ou veio até mais do que o solicitado:
 							this.aindaTemMais = true;
+							if (this.c.botaoNovaConsulta != null) {
+								mk.Qon(this.c.botaoNovaConsulta);
+							}
 						}
 						//mkt.l(this.c.nomeTabela + " baixou " + this.ultimoGet + " registros.")
 						r(p.retorno.length);
