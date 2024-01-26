@@ -373,11 +373,11 @@ class mkt {
                 urlTemp += parametros;
                 mkt.get.json({ url: urlTemp, carregador: carregador }).then((p) => {
                     if (p.retorno != null) {
-                        this.cTotUltimoParametro += p.retorno.length;
+                        this.ultimoGet = p.retorno.length;
+                        this.cTotUltimoParametro += this.ultimoGet; // Soma do Ultimo mais o atual
                         for (let i = 0; i < p.retorno.length; i++) {
                             this.dadosFull.push(p.retorno[i]);
                         }
-                        this.ultimoGet = p.retorno.length;
                         //mkt.l(this.c.nomeTabela + " baixou " + this.ultimoGet + " registros.")
                         r(p.retorno.length);
                     }
@@ -2792,6 +2792,7 @@ Object.defineProperty(mkt, "request", {
                         quando: mkt.hoje(),
                         status: config.pacote.status,
                         texto: texto,
+                        url: config.url,
                     });
                     if (erros.length > 10) {
                         erros.shift(1);
@@ -5188,7 +5189,7 @@ Object.defineProperty(mkt, "errosLog", {
         let mktArmazenado = localStorage.mktRequests;
         if (localStorage.mktRequests)
             mktArmazenado = JSON.parse(localStorage.mktRequests);
-        return mktArmazenado;
+        return console.table(mktArmazenado);
     }, enumerable: false, writable: false, configurable: false,
 });
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
