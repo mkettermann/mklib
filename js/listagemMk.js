@@ -92,9 +92,9 @@ var uiGetADD = async (listId, strListagem) => {
 	);
 };
 
-var uiGetEDIT = async (tr, listId) => {
+var uiGetEDIT = async (e, listId) => {
 	let k = listas[listId].c.pk;
-	let v = tr.getAttribute("id");
+	let v = e.closest("TR")?.id
 	mk.QverOn(".operacaoContainer");
 	mk.QScrollTo("#Acao");
 	mk.Q(".operacaoTitulo").innerHTML = "Editar";
@@ -112,9 +112,9 @@ var uiGetEDIT = async (tr, listId) => {
 	);
 };
 
-var uiGetDEL = async (tr, listId) => {
+var uiGetDEL = async (e, listId) => {
 	let k = listas[listId].c.pk;
-	let v = tr.getAttribute("id");
+	let v = e.closest("TR")?.id
 	mk.mkConfirma("Você está prestes a deletar esta linha. Confirma?").then(
 		(r) => {
 			if (r) uiSetDEL(k, v, listId);
