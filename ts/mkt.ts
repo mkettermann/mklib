@@ -115,8 +115,8 @@ class mkt {
 	static mkNodeToScript: Function;
 	static frequencia: Function;
 	static mkYYYYMMDDtoDDMMYYYY: Function;
-	static mkYYYYMMDDtoDDMMYYYY: Function;
-	static mkYYYYMMDDtoDDMMYYYY: Function;
+	static mkBoolToSimNaoOA: Function;
+	static mkFormatarDataOA: Function;
 	static mkYYYYMMDDtoDDMMYYYY: Function;
 	static mkYYYYMMDDtoDDMMYYYY: Function;
 	static mktWorker: Function;
@@ -2859,9 +2859,7 @@ Object.defineProperty(mkt, "request", {
 				config.headers.append("Content-Type", config.tipo);
 			}
 			// TOKEN
-			let aft: any = document.getElementsByName(
-				"__RequestVerificationToken"
-			)[0]?.value;
+			let aft: any = mk.Q("input[name='__RequestVerificationToken']")[0]?.value;
 			config.headers.append("MKANTI-FORGERY-TOKEN", aft || "");
 		}
 		if (!config.quiet) config.quiet = false;
@@ -3053,19 +3051,6 @@ Object.defineProperty(mkt, "delObjetoFromId", {
 			temp = listaDados;
 		}
 		return temp;
-	}, enumerable: false, writable: false, configurable: false,
-});
-
-Object.defineProperty(mkt, "ativaPaginaAtual", {
-	value: () => {
-		mkt.QAll(".paginate_button").forEach((item) => {
-			item.classList.remove("active");
-		});
-		mkt.QAll(".paginate_button .page-link").forEach((item) => {
-			if (this.paginationAtual == Number(item.innerHTML)) {
-				item.parentElement?.classList.add("active");
-			}
-		});
 	}, enumerable: false, writable: false, configurable: false,
 });
 
