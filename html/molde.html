@@ -3,7 +3,7 @@
 <table class="tableListagem">
 	<thead>
 		<tr>
-			<th>Template:</th>
+			<th>Template: (exemplo modificável)</th>
 			<th>Objeto: (onInput)</th>
 			<th>Resultado:</th>
 		</tr>
@@ -20,33 +20,17 @@
 			</td>
 			<td style="vertical-align: top">
 				Name:
-				<input
-					id="inputTeste"
-					type="text"
-					name="nome"
-					value="Fulano"
-					oninput="aoModificarInput(this)"
-				/>
+				<input id="inputTeste" type="text" name="nome" value="Fulano" oninput="aoModificarInput(this)" />
 				<br />
 				<br />Objeto temp.temp:
-				<input
-					id="inputTeste2"
-					type="text"
-					name="temp.temp"
-					value="Show!"
-					oninput="aoModificarObjeto(this)"
-				/>
+				<input id="inputTeste2" type="text" name="temp.temp" value="Show!" oninput="aoModificarObjeto(this)" />
 				<br />
 				<br />Objeto o.a.b.c:
-				<input
-					id="inputTeste3"
-					type="text"
-					name="o.a.b.c"
-					value="InternoMulti"
-					oninput="aoModificarMulti(this)"
-				/>
+				<input id="inputTeste3" type="text" name="o.a.b.c" value="InternoMulti" oninput="aoModificarMulti(this)" />
 			</td>
-			<td style="vertical-align: top"><div class="resultado"></div></td>
+			<td style="vertical-align: top">
+				<div class="resultado"></div>
+			</td>
 		</tr>
 	</tbody>
 </table>
@@ -59,20 +43,12 @@
 1
 2
 3
-4</textarea
-		>
-		<textarea
-			class="codigo"
-			rows="4"
-			cols="100"
-			onfocus="mk.mkSelecionarInner(this)"
-			readonly
-		>
+4</textarea>
+		<textarea class="codigo" rows="4" cols="100" onfocus="mk.mkSelecionarInner(this)" readonly>
 <div id="exibir"></div>
-<script type="text/html" id="modelo">
+<template id="modelo">
 	Olá ${nome} ${sobrenome} (${data.d}/${data.m}/${data.a})!
-</script></textarea
-		>
+</template></textarea>
 	</div>
 </div>
 <br /><br />
@@ -83,38 +59,18 @@
 1
 2
 3
-4</textarea
-		>
-		<textarea
-			class="codigo"
-			rows="4"
-			cols="100"
-			onfocus="mk.mkSelecionarInner(this)"
-			readonly
-		>
+4</textarea>
+		<textarea class="codigo" rows="4" cols="100" onfocus="mk.mkSelecionarInner(this)" readonly>
 var dados = [{ nome: "Marcos", sobrenome: "Kettermann" },{ nome: "Zé", data: { d: "31", m: "12", a: "2023" } },];
 dados.push({nome: "Fulano",sobrenome: "dos Santos Silva",data: { d: 31 },});
-mk.mkMoldeOA(dados, "#modelo333", "#exibir");</textarea
-		>
+mk.mkMoldeOA(dados, "#modelo333", "#exibir");</textarea>
 	</div>
 </div>
 <div>Resultado do script acima:</div>
 <div id="exibir"></div>
-<script type="text/html" id="modelo333">
+<template id="modelo333">
 	Olá ${nome} ${sobrenome} (${data.d}/${data.m}/${data.a})!
-</script>
-<script>
-	var dados = [
-		{ nome: "Marcos", sobrenome: "K" },
-		{ nome: "Zé", data: { d: "31", m: "12", a: "2023" } },
-	];
-	dados.push({
-		nome: "Fulano",
-		sobrenome: "dos Santos Silva",
-		data: { d: 31 },
-	});
-	mk.mkMoldeOA(dados, "#modelo333", "#exibir");
-</script>
+</template>
 
 <br />
 <br />
@@ -142,10 +98,9 @@ mk.mkMoldeOA(dados, "#modelo333", "#exibir");</textarea
 			id="modelo" em uma div, e desta forma ficou visível ao usuário. Veja como
 			utilizar e ocultar um modelo similar ao utilizado no exemplo acima:
 			<pre class="inlineScript">
-&lt;script type="text/html" id="modelo"&gt;
+&lt;template id="modelo"&gt;
 	Olá ${nome}!
-&lt;/script&gt;</pre
-			>
+&lt;/template&gt;</pre>
 			<br />&nbsp; Agora que você entendeu como criar a estrutura (o modelo),
 			vamos aos dados que irão preencher este modelo. O modelo contém ${nome},
 			então será procurado no objeto a propriedade "nome". <br />&nbsp; Na
@@ -163,8 +118,7 @@ function aoModificarInput(e) {
 	objeto[e.name] = e.value;
 	mk.mkMoldeOA(objeto, "#modelo", ".resultado");
 }
-</pre
-			>
+</pre>
 			<br />&nbsp; Um objeto chamado "objeto" é criado no navegador do cliente e
 			este ganha uma propriedade chamada "nome", coletada do atributo "name" do
 			elemento input, recebido por parametro. Então, em resumo:<br />
@@ -184,37 +138,4 @@ function aoModificarInput(e) {
 		</div>
 	</li>
 </ul>
-
-<script defer>
-	var objeto = {
-		nome: "Seu Zé",
-		temp: { temp: "Show" },
-		o: {
-			a: {
-				b: {
-					c: "InternoMulti",
-				},
-			},
-		},
-	};
-
-	function aoModificarInput(e) {
-		objeto[e.name] = e.value;
-		mk.mkMoldeOA(objeto, "#modelo", ".resultado");
-	}
-
-	function aoModificarObjeto(e) {
-		// Aqui já ocorre um problema de get encadeado
-		objeto.temp.temp = e.value;
-		mk.mkMoldeOA(objeto, "#modelo", ".resultado");
-	}
-
-	function aoModificarMulti(e) {
-		// Aqui já ocorre um problema de get encadeado
-		objeto.o.a.b.c = e.value;
-		mk.mkMoldeOA(objeto, "#modelo", ".resultado");
-	}
-
-	// Inicia executando
-	aoModificarInput(mk.Q("#inputTeste"));
-</script>
+<script src="./js/molde.js?2" defer></script>

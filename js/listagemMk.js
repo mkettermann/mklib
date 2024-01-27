@@ -1,5 +1,7 @@
 "use strict";
 
+// Na versão MK, a contrução estava complicado de repassar o Design do objeto.
+// Utilize MKT para obter os benefícios do modelo com Design
 var lista = new mk("./GetList", "#tabela1", "", "", {
 	importar: true,
 	tabela: "Listagem1",

@@ -82,7 +82,7 @@
 <div>
 	&nbsp; Listagem de dados em tabela. A classe pode instanciar mais de uma
 	tabela. Ordenamento, resumo e páginas individuais. O Filtro pode ou não ser
-	individual.
+	individual. Utilize a listagem MKT para obter os benefícios do modelo com Design e recursos mais atualizados.
 </div>
 <br />
 <!-- LISTAGEM 1 -->
@@ -365,7 +365,7 @@ listas[0].orderBy("mNome");
 <br />
 <br />
 <!-- MODELO LISTAGEM 1 -->
-<script type="text/html" id="modelo" ob="mNome" od="0">
+<template id="modelo" ob="mNome" od="0">
 	<tr id="${mId}">
 		<td class="sort-mNome">${mNome}</td>
 		<td class="sort-mDataCadastro">
@@ -381,10 +381,10 @@ listas[0].orderBy("mNome");
 			<a onclick="uiGetDEL(this,0);">DEL</a>
 		</td>
 	</tr>
-</script>
+</template>
 
 <!-- MODELO LISTAGEM 2 -->
-<script type="text/html" id="modelo2" pk="mId" ob="mNome">
+<template id="modelo2" pk="mId" ob="mNome">
 	<tr id="${mId}">
 		<td class="sort-mNome">${mNome}</td>
 		<td class="sort-mStatus ${mStatus}"></td>
@@ -395,14 +395,14 @@ listas[0].orderBy("mNome");
 			<a onclick="uiGetDEL(this,1);">DEL</a>
 		</td>
 	</tr>
-</script>
+</template>
 
 <!-- MODELO DE ADICIONAR E EDITAR -->
-<script type="text/html" id="modeloOperacao">
+<template id="modeloOperacao">
 	<div class="iComGap">
 		<div class="j" style="text-align: right;">${k}</div>
 		<div class="j"><input name="${k}" class="" value="${v}" /></div>
 	</div>
-</script>
+</template>
 
-<script src="./js/listagemMk.js?2"></script>
+<script src="./js/listagemMk.js?3"></script>

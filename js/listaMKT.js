@@ -72,7 +72,8 @@ var uiGetEDIT = async (e, listId) => {
 		"onclick",
 		"uiSetEDIT('" + k + "','" + v + "', " + listId + ")"
 	);
-	let objeto = listas[listId].dadosFull.find((o) => o[k] == v);
+	//let objeto = listas[listId].dadosFull.find((o) => o[k] == v);
+	let objeto = listas[listId].getObj(v); //
 	//console.log("Editando: [k:" + k + ",v:" + v + "]", objeto);
 	await mkt.mkMoldeOA(
 		listas[listId].getKVLR(objeto),
