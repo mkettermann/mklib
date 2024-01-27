@@ -101,68 +101,24 @@ class mktc {
 
 // CLASSE INSTANCIAVEL
 class mkt {
-	c: mktc;
-	db: IDBDatabase | null = null;
-	dadosFull: any = []; // Todos os dados sem filtro, mas ordenaveis.
-	dadosFiltrado: any = []; // Mesmos dadosFull, mas após filtro.
-	dadosExibidos: any = []; // Clonado de dadosFiltrado, mas apenas os desta pagina.
-	alvo: any = {}; // Guarda o objeto selecionado permitindo manupular outro dado com este de referencia.
-	thisListNum = 0;
-	idContainer: any = 0;
-	exclusivos: any = [];
-	hmunsel: any = [];
-	ultimoGet = -1;
-	ultimoParametro = ""; // Aqui precisa ser vazio, pois esse dado indica a primeira consulta.
-	cTotUltimoParametro = 0;
-	solicitadoUltimoParametro = 0;
-	aindaTemMais = true;
-	totalappends = 0;
-
-	constructor(mkt_c: mktc) {
-		if (mkt_c == null) {
-			this.c = new mktc([]);
-		} else {
-			this.c = mkt_c;
-		}
-		let cs = this.c.container + " ";
-		// Incrementa o container para garantir a seleção do elemento
-		this.c.tbody = cs + this.c.tbody;
-		this.c.ths = cs + this.c.ths;
-		this.c.pagBotoes = cs + this.c.pagBotoes;
-		this.c.tableResultado = cs + this.c.tableResultado;
-		this.c.tablePorPagina = cs + this.c.tablePorPagina;
-		this.c.tableExibePorPagina = cs + this.c.tableExibePorPagina;
-		this.c.tableTotal = cs + this.c.tableTotal;
-		this.c.tableFiltrado = cs + this.c.tableFiltrado;
-		this.c.tableIni = cs + this.c.tableIni;
-		this.c.tableFim = cs + this.c.tableFim;
-		this.c.tableInicioFim = cs + this.c.tableInicioFim;
-		this.c.pag = cs + " " + this.c.pag;
-		this.c.pagBotao = cs + " " + this.c.pagBotao;
-		// Mesmo sem Design no contrutor, vai formando um mínimo necessário.
-		// Gerando Design de Modelo Aceitável
-		if (mkt.classof(this.c.model) != "Array") this.c.model = [];
-		// Impede a inserção de modelos que não são objetos da classe mktm
-		if (this.c.model?.length > 0) {
-			this.c.model?.forEach(o => {
-				if (mkt.classof(o) != "mktm") {
-					o = new mktm({});
-				}
-				if (o.pk) {
-					this.c.pk = o.k;
-				}
-			})
-		}
-		// PRIMARY KEY ALERTA (Necessária para CRUDs)
-		if (this.c.pk == null) {
-			mkt.w("Nenhuma Primary Key encontrada no Model.");
-		}
-		if (mkt.Q(this.c.container)) {
-			this.autoStartConfig();
-		}
-	}
 
 	static vars: any;
+	static detectedServerOn: Function;
+	static detectedServerOff: Function;
+	static mkFloat: Function;
+	static parseJSON: Function;
+	static hojeMkData: Function;
+	static hojeMkHora: Function;
+	static hoje: Function;
+	static getDiasDiferenca: Function;
+	static transMsEmDias: Function;
+	static mkNodeToScript: Function;
+	static frequencia: Function;
+	static mkYYYYMMDDtoDDMMYYYY: Function;
+	static mkYYYYMMDDtoDDMMYYYY: Function;
+	static mkYYYYMMDDtoDDMMYYYY: Function;
+	static mkYYYYMMDDtoDDMMYYYY: Function;
+	static mkYYYYMMDDtoDDMMYYYY: Function;
 	static mktWorker: Function;
 	static moldeWorker: Function;
 	static classof: Function;
@@ -227,7 +183,6 @@ class mkt {
 	static getMes: Function;
 	static getAno: Function;
 	static getFullData: Function;
-	static hoje: Function;
 	static atribuir: Function;
 	static mkDuasCasas: Function;
 	static regraDisplay: Function;
@@ -248,6 +203,69 @@ class mkt {
 	static errosLog: Function;
 	static delObjetoFromId: Function;
 	static setObjetoFromId: Function;
+	static aCadaElemento: Function;
+	static cadaExe: Function;
+
+	c: mktc;
+	db: IDBDatabase | null = null;
+	dadosFull: any = []; // Todos os dados sem filtro, mas ordenaveis.
+	dadosFiltrado: any = []; // Mesmos dadosFull, mas após filtro.
+	dadosExibidos: any = []; // Clonado de dadosFiltrado, mas apenas os desta pagina.
+	alvo: any = {}; // Guarda o objeto selecionado permitindo manupular outro dado com este de referencia.
+	thisListNum = 0;
+	idContainer: any = 0;
+	exclusivos: any = [];
+	hmunsel: any = [];
+	ultimoGet = -1;
+	ultimoParametro = ""; // Aqui precisa ser vazio, pois esse dado indica a primeira consulta.
+	cTotUltimoParametro = 0;
+	solicitadoUltimoParametro = 0;
+	aindaTemMais = true;
+	totalappends = 0;
+
+	constructor(mkt_c: mktc) {
+		if (mkt_c == null) {
+			this.c = new mktc([]);
+		} else {
+			this.c = mkt_c;
+		}
+		let cs = this.c.container + " ";
+		// Incrementa o container para garantir a seleção do elemento
+		this.c.tbody = cs + this.c.tbody;
+		this.c.ths = cs + this.c.ths;
+		this.c.pagBotoes = cs + this.c.pagBotoes;
+		this.c.tableResultado = cs + this.c.tableResultado;
+		this.c.tablePorPagina = cs + this.c.tablePorPagina;
+		this.c.tableExibePorPagina = cs + this.c.tableExibePorPagina;
+		this.c.tableTotal = cs + this.c.tableTotal;
+		this.c.tableFiltrado = cs + this.c.tableFiltrado;
+		this.c.tableIni = cs + this.c.tableIni;
+		this.c.tableFim = cs + this.c.tableFim;
+		this.c.tableInicioFim = cs + this.c.tableInicioFim;
+		this.c.pag = cs + " " + this.c.pag;
+		this.c.pagBotao = cs + " " + this.c.pagBotao;
+		// Mesmo sem Design no contrutor, vai formando um mínimo necessário.
+		// Gerando Design de Modelo Aceitável
+		if (mkt.classof(this.c.model) != "Array") this.c.model = [];
+		// Impede a inserção de modelos que não são objetos da classe mktm
+		if (this.c.model?.length > 0) {
+			this.c.model?.forEach(o => {
+				if (mkt.classof(o) != "mktm") {
+					o = new mktm({});
+				}
+				if (o.pk) {
+					this.c.pk = o.k;
+				}
+			})
+		}
+		// PRIMARY KEY ALERTA (Necessária para CRUDs)
+		if (this.c.pk == null) {
+			mkt.w("Nenhuma Primary Key encontrada no Model.");
+		}
+		if (mkt.Q(this.c.container)) {
+			this.autoStartConfig();
+		}
+	}
 
 	autoStartConfig = async (arg: any = {}) => {
 		// SE for importar: Espera o container para então continuar.
@@ -263,7 +281,7 @@ class mkt {
 		}
 		// Seta Gatilho do indicador de quantidade por pagina.
 		if (mkt.Q(this.c.tablePorPagina)) {
-			mkt.Ao("input", this.c.tablePorPagina, async (e) => {
+			mkt.Ao("input", this.c.tablePorPagina, async (e: HTMLInputElement) => {
 				mkt.l("TablePorPagina: ", this.c.tablePorPagina);
 				this.atualizaNaPaginaUm();
 			});
@@ -1271,7 +1289,7 @@ class mkt {
 	};
 
 	find = (k: string, v: any) => {
-		return this.dadosFull.find((o) => o[k] == v);
+		return this.dadosFull.find((o: any) => o[k] == v);
 	};
 
 	toJSON = () => {
@@ -1804,7 +1822,7 @@ Object.defineProperty(mkt, "aCadaElemento", {
 			let elementos = mkt.QAll(query);
 			if (elementos.length == 1) retorno = elementos[0];
 			else retorno = elementos;
-			elementos.forEach((e) => {
+			elementos.forEach((e: any) => {
 				fn(e);
 			});
 			return retorno;
@@ -1827,7 +1845,7 @@ Object.defineProperty(mkt, "cadaExe", {
 		let retorno: any = [];
 		if (typeof query == "string") {
 			let elementos = mkt.QAll(query);
-			elementos.forEach((e) => {
+			elementos.forEach((e: any) => {
 				retorno.push(fn(e));
 			});
 		} else if (Array.isArray(query)) {
@@ -2050,15 +2068,6 @@ Object.defineProperty(mkt, "mkEventBlock", {
 	}, enumerable: false, writable: false, configurable: false,
 });
 
-Object.defineProperty(mkt, "mkTrocaPontoPorVirgula", {
-	value: (query: string): void => {
-		// Imprimir e Exportar de ListaPrecos
-		mkt.QAll(query).forEach((e) => {
-			e.innerHTML = e.innerHTML.replaceAll(".", ",");
-		});
-	}, enumerable: false, writable: false, configurable: false,
-});
-
 Object.defineProperty(mkt, "mkSelecionarInner", {
 	value: (e: HTMLElement) => {
 		// Seleciona texto do elemento
@@ -2195,7 +2204,7 @@ Object.defineProperty(mkt, "clonar", {
 Object.defineProperty(mkt, "getModelo", {
 	value: (array: any) => {
 		let chaves = new Set();
-		array.forEach((o) => {
+		array.forEach((o: any) => {
 			Object.keys(o).forEach((p) => {
 				chaves.add(p);
 			});
@@ -2216,7 +2225,7 @@ Object.defineProperty(mkt, "getExclusivos", {
 	value: (array: any) => {
 		let chaves = new Set();
 		let a = mkt.clonar(array);
-		a.forEach((o) => {
+		a.forEach((o: any) => {
 			Object.keys(o).forEach((p) => {
 				chaves.add(p);
 			});
@@ -2240,7 +2249,7 @@ Object.defineProperty(mkt, "getExclusivos", {
 			});
 			campos[k] = [...tempSet];
 			virouJson[k] = [...tempJson];
-			virouJson[k]?.forEach(kJson => {
+			virouJson[k]?.forEach((kJson: string) => {
 				for (let i = 0; i < campos[kJson].length; i++) {
 					campos[kJson][i] = JSON.parse(campos[kJson][i]);
 				};
@@ -2282,7 +2291,7 @@ Object.defineProperty(mkt, "isInside", {
 				c++;
 			}
 		} else {
-			this.w("isInside: E: ", e, " Container: ", container);
+			mkt.w("isInside: E: ", e, " Container: ", container);
 		}
 		return resultado;
 	}, enumerable: false, writable: false, configurable: false,
@@ -2586,29 +2595,17 @@ Object.defineProperty(mkt, "transDiasEmMs", {
 	}, enumerable: false, writable: false, configurable: false,
 });
 
-Object.defineProperty(mkt, "mkGeraElemento", {
-	value: (e: any, nomeElemento: string = "script") => {
-		// Cria Elemento
-		let elemento: any = document.createElement(nomeElemento);
-		// Popular Elemento
-		elemento.text = e.innerHTML;
-		// Set Atributos
-		let i = -1,
-			attrs = e.attributes,
-			attr;
-		while (++i < attrs.length) {
-			elemento.setAttribute((attr = attrs[i]).name, attr.value);
-		}
-		// Retorna Elemento
-		return elemento;
-	}, enumerable: false, writable: false, configurable: false,
-});
-
 Object.defineProperty(mkt, "mkNodeToScript", {
 	value: (node: any) => {
 		// Apenas Scripts
 		if (node.tagName === "SCRIPT") {
-			node.parentNode.replaceChild(mkt.mkGeraElemento(node, "script"), node);
+			let eScript: any = document.createElement("script");
+			eScript.text = node.innerHTML;
+			let i = -1, attrs = node.attributes, attr;
+			while (++i < attrs.length) {
+				eScript.setAttribute((attr = attrs[i]).name, attr.value);
+			}
+			node.parentNode.replaceChild(eScript, node);
 		} else {
 			// Recursividade sobre filhos
 			var i = -1,
