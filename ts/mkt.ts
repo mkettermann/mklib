@@ -2858,8 +2858,8 @@ Object.defineProperty(mkt, "request", {
 			if (config.tipo == mkt.t.J) {
 				config.headers.append("Content-Type", config.tipo);
 			}
-			// TOKEN
-			let aft: any = mk.Q("input[name='__RequestVerificationToken']")[0]?.value;
+			// TOKEN Baseado neste primeiro input
+			let aft: any = mk.Q("input[name='__RequestVerificationToken']")?.value;
 			config.headers.append("MKANTI-FORGERY-TOKEN", aft || "");
 		}
 		if (!config.quiet) config.quiet = false;
@@ -3377,7 +3377,7 @@ Object.defineProperty(mkt, "mascarar", {
 			}
 			return r.join("");
 		} else {
-			this.l("Mascarar Requer Texto: ", texto, " e Mascara: ", mascara);
+			mkt.l("Mascarar Requer Texto: ", texto, " e Mascara: ", mascara);
 		}
 		return null;
 	}, enumerable: false, writable: false, configurable: false,
@@ -3538,21 +3538,21 @@ Object.defineProperty(mkt, "moldeWorker", {
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //   ABA                            \\
 //___________________________________\\
-
 Object.defineProperty(mkt, "mkClicarNaAba", {
-	value: (este: HTMLElement | Element) => {
-		if (este != null) {
-			let estaAba = Number(este.getAttribute("data-pag"));
-			let listaAbas = este.parentElement?.parentElement;
-			listaAbas?.querySelectorAll("a").forEach((e) => {
-				e.classList.remove("active");
+	value: (e: HTMLAnchorElement) => {
+		let pag = Number(e?.getAttribute("data-pag"));
+		if (mkt.classof(pag) == "Number") { // Caso não for NaN
+			let mkAbasTotal = 0;
+			let mkAbas = e.closest(".mkAbas");
+			mkAbas?.querySelectorAll("a").forEach((a: HTMLAnchorElement) => {
+				a.classList.remove("active");
+				mkAbasTotal++;
 			});
-			este.classList.add("active");
-			let totalAbas: number = Number(listaAbas?.getAttribute("data-mkabas"));
-			for (let i = 1; i <= totalAbas; i++) {
-				// Giro do 1 ao Total
-				mkt.QAll(".mkAba" + i).forEach((e) => {
-					if (i == estaAba) {
+			e.classList.add("active");
+			for (let i = 1; i <= mkAbasTotal; i++) {
+				// Busca, Oculta todas, mas exibe a clicada.
+				mkt.QAll(".mkAba" + i).forEach((e: any) => {
+					if (i == pag) {
 						e.classList.remove("oculto");
 					} else {
 						e.classList.add("oculto");
