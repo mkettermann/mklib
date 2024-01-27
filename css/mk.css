@@ -1928,6 +1928,7 @@ ul.mkUlFase li.disabled a {
 
 	border-radius: 3px;
 	padding: 1px;
+	cursor: pointer;
 }
 
 .mkhmHeadIco svg {

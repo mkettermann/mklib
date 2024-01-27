@@ -1454,8 +1454,10 @@ Object.defineProperty(mkt, "Ao", {
         // Adiciona evento em todos elementos encontrados
         // Em QAll, pois o Filtro pega todos os .iConsultas
         mkt.QAll(query).forEach((e) => {
-            e.addEventListener(tipoEvento, () => {
-                executar(e);
+            e.addEventListener(tipoEvento, (ev) => {
+                if (ev)
+                    ev.stopPropagation(); // Quando o botão está dentro do outro.
+                executar(e, ev);
             }, mkt.AoConfig);
         });
     }, enumerable: false, writable: false, configurable: false,
