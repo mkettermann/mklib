@@ -1159,6 +1159,7 @@ class mkt {
     // cla	Classes
     // pk		Primary Key
     // ****** ESTE FORMATO FOI APERFEICOADO NA CLASSE mktm
+    // Retornar o con
     getModel = () => {
         return this.c.model; // <= Classe mktm
     };
@@ -1430,14 +1431,15 @@ Object.defineProperty(mkt, "Q", {
 Object.defineProperty(mkt, "QAll", {
     value: (query = "body") => {
         // Atalho para QuerySelectorAll. List []
+        //mkz = query;
         if (mkt.classof(query) == "String") {
             return Array.from(document.querySelectorAll(query));
         }
-        else if (query instanceof Element) {
+        else if (mkt.classof(query).endsWith("Element")) {
             return [query];
         }
         else {
-            mkt.w("QAll() - Formato " + mkt.classof(query) + " não implementado: ", query);
+            mkt.w("QAll() - Formato: ", mkt.classof(query), " TOF: ", typeof query, " Query: ", query);
             return [];
         }
     }, enumerable: false, writable: false, configurable: false,
@@ -5291,7 +5293,13 @@ Object.defineProperty(mkt, "uuid", {
 //___________________________________\\
 Object.defineProperty(mkt, "classof", {
     value: (o) => {
-        return Object.prototype.toString.call(o).slice(8, -1);
+        let nomeClasse = Object.prototype.toString.call(o).slice(8, -1);
+        // Tornar NaN em "NaN!" para impedir erros;
+        if (o.toString() == "NaN") {
+            nomeClasse = "NaN";
+        }
+        ;
+        return nomeClasse;
     }, enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "toString", {

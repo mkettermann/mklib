@@ -1,17 +1,31 @@
 "use strict";
+
+// DESIGN DA TABELA (Precisa de uma PK(Primary Key) para qualquer funcionalidade a mais da biblioteca)
+// Este exemplo representa uma tabela de estatística de usuário e cada campo é informado aqui cada característica disponível. (Verifique a classe mktm para saber mais)
 var modeloList1 = [
-	new mktm({ k: "mId", l: "Usuários", pk: true }),
+	new mktm({ k: "mId", l: "ID", pk: true }),
+	new mktm({ k: "mNome", l: "Nome" }),
 	new mktm({ k: "mDataCadastro", l: "Data Cadastro" }),
 	new mktm({ k: "mDataUltimoAcesso", l: "Último Acesso" }),
 	new mktm({ k: "mTotalAcessos.a.b", l: "Total Acessos" }),
 	new mktm({ k: "mStatus", l: "Status" }),
 ]
 
+// CONFIGURAÇÃO Para iniciar a construção
 var lista_mkt = new mktc(modeloList1);
-lista_mkt.nomeTabela = "Listagem1";
+lista_mkt.nomeTabela = " Listagem 1 !";
 lista_mkt.container = "#tabela1";
 lista_mkt.idmodelo = "#modelo1";
 lista_mkt.container_importar = true;
+lista_mkt.aoAntesDePopularTabela = (x) => { // Aqui modificamos a exibicao de um campo por outro formato
+	x.forEach((o) => {
+		if (o.mDataUltimoAcesso) {
+			o.mDataUltimoAcesso = mkt.mkYYYYMMDDtoDDMMYYYY(o.mDataUltimoAcesso);
+		}
+	});
+};
+
+// CONSTRUÇÃO DA LISTAGEM
 var lista = new mkt(lista_mkt);
 
 // A lista 2 inicia com 0, e também busca na url.
@@ -24,30 +38,18 @@ lista_mkt2.idmodelo = "#modelo2";
 lista_mkt2.container_importar = true;
 var lista2 = new mkt(lista_mkt2);
 
-
-//var lista = new Mk("/data/usersExemplo.json", ".tabela1", "#modelo");
-
 //Aqui foi utilizado um container manual das listas instanciadas.
-//Basta a funcão enviar o id correto para o Set ser na lista correta.
-var listas = [lista, lista2]; //(Lista 3 está na posicao 2)
+// permitindo achar a instancia correta baseado na ordem de contrução
+var listas = [lista, lista2];
 
-// Aqui modificamos a exibicao de um campo por outro formato
-lista.antesDePopularTabela = (l) => {
-	// Aplicar em Dados Exibidos,
-	// pois esta array é apenas a que o usuário vê,
-	// então preserva os dados originais.
-	l.dadosExibidos.forEach((o) => {
-		if (o.mDataUltimoAcesso) {
-			o.mDataUltimoAcesso = mkt.mkYYYYMMDDtoDDMMYYYY(o.mDataUltimoAcesso);
-		}
-	});
-};
+
+
 
 // CRUD LISTAGEM 1
 var uiGetADD = async (listId, strListagem) => {
 	mkt.QverOn(".operacaoContainer");
 	mkt.QScrollTo("#Acao");
-	mkt.Q(".operacaoTitulo").innerHTML = "Adicionar na " + strListagem;
+	mkt.Q(".operacaoTitulo").innerHTML = "Adicionar na " + strListagem + " (Dinâmico)";
 	mkt.Q(".operacaoAcao").innerHTML = "Adicionar na " + strListagem;
 	mkt.Q(".operacaoAcao").setAttribute("onclick", "uiSetADD(" + listId + ")");
 	await mkt.mkMoldeOA(
@@ -66,7 +68,7 @@ var uiGetEDIT = async (e, listId) => {
 	let v = e.closest("TR")?.id
 	mkt.QverOn(".operacaoContainer");
 	mkt.QScrollTo("#Acao");
-	mkt.Q(".operacaoTitulo").innerHTML = "Editar";
+	mkt.Q(".operacaoTitulo").innerHTML = "Editar (Dinâmico)";
 	mkt.Q(".operacaoAcao").innerHTML = "Editar";
 	mkt.Q(".operacaoAcao").setAttribute(
 		"onclick",
