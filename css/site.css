@@ -409,6 +409,7 @@ ul.tabela li:nth-child(1) div.quebra {
 .operacaoTitulo {
 	width: 100%;
 	border-radius: inherit;
+	color: var(--corHead);
 	background-color: var(--fundoHead);
 	text-align: center;
 }
