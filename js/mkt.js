@@ -3480,102 +3480,105 @@ Object.defineProperty(mkt, "headMenuHide", {
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //   WORKERS                        \\
 //___________________________________\\
-// Atalho 
+// Atalho de tarefa. Já constroi se necessário
+// mkt.addTask({ k: "MKT_INCLUDE", v: ["a","b"], target: "a" }).then(r=>{mkt.l("Main Recebeu: ",r)})
 Object.defineProperty(mkt, "addTask", {
-    value: (msg) => {
-        if (!mkt.vars.wpool) {
-            mkt.Workers();
-        }
-        mkt.vars.wpool.addTask(msg);
+    value: (msg, numWorkers) => {
+        return new Promise((r) => {
+            if (!mkt.vars.wpool) {
+                mkt.Workers(numWorkers).then(() => {
+                    r(mkt.vars.wpool.addTask(msg));
+                });
+            }
+            else {
+                r(mkt.vars.wpool.addTask(msg));
+            }
+        });
     }, enumerable: true, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "Workers", {
     value: (numWorkers = 3) => {
-        // Constroi elemento se ele não existir:
-        if (!document.querySelector("#mktWorker")) {
-            let we = document.createElement("script");
-            we.setAttribute("type", "javascript/worker");
-            we.setAttribute("id", "mktWorker");
-            we.innerHTML = `
-				const l = (...args) => {
-					console.log("W> ", ...args);
-				}
-				onmessage = (ev) => {
-					l("Ev Data: ", ev.data);
-					if (ev?.data?.c) {
-						switch (ev.data.c) {
-							case "MSG":
-								l("c: ", ev.data.c, " d: ", ev.data.d);
-								break;
-							case "MKT_LIST_GO":
-								postMessage({ c: "MKT_LIST_BACK", d: ["Show"] });
-								break;
-							default:
-						}
-					}
-					// Ao receber um comando, executar um Job.
-					//postMessage({ c: "MSG", d: ["Show"] });
-				}`;
-            document.body.append(we);
-        }
-        // Transformar o elemento em link para dar inicio a classe.
-        let workerBlob = window.URL.createObjectURL(new Blob([mkt.Q("#mktWorker")?.textContent], { type: "text/javascript" }));
-        class WorkerPool {
-            idleWorkers;
-            workQueue;
-            workerMap;
-            // New
-            constructor(numWorkers, workerSource) {
-                this.idleWorkers = [];
-                this.workQueue = [];
-                this.workerMap = new Map();
-                for (let i = 0; i < numWorkers; i++) {
-                    let worker = new Worker(workerSource);
-                    worker.onmessage = msg => {
-                        this._workerDone(worker, null, msg.data);
-                    };
-                    worker.onerror = error => {
-                        this._workerDone(worker, error, null);
-                    };
-                    this.idleWorkers[i] = worker;
-                }
+        return new Promise((r) => {
+            // Constroi elemento se ele não existir:
+            if (!document.querySelector("#mktWorker")) {
+                let we = document.createElement("script");
+                we.setAttribute("type", "javascript/worker");
+                we.setAttribute("id", "mktWorker");
+                we.innerHTML = `
+onmessage = (ev) => {
+	console.log("Worker Recebeu: ", ev.data);
+	if (ev?.data?.k) {
+		let job = ev.data;
+		switch (job.k) { // COMANDOS RECEBIDOS
+			case "MKT_INCLUDE":
+				let resultado = job.v.includes(job.target);
+				postMessage({ k: "MKT_INCLUDE", v: resultado });
+				break;
+			default:
+		}
+	}
+}`;
+                document.body.append(we);
             }
-            // Response
-            _workerDone(worker, error, msg) {
-                let [res, rej] = this.workerMap.get(worker);
-                this.workerMap.delete(worker);
-                if (this.workQueue.length === 0) {
-                    this.idleWorkers.push(worker);
+            // Transformar o elemento em link para dar inicio a classe.
+            let workerBlob = window.URL.createObjectURL(new Blob([mkt.Q("#mktWorker")?.textContent], { type: "text/javascript" }));
+            class WorkerPool {
+                idleWorkers;
+                workQueue;
+                workerMap;
+                // New
+                constructor(numWorkers, workerSource) {
+                    this.idleWorkers = [];
+                    this.workQueue = [];
+                    this.workerMap = new Map();
+                    for (let i = 0; i < numWorkers; i++) {
+                        let worker = new Worker(workerSource);
+                        worker.onmessage = msg => {
+                            this._workerDone(worker, null, msg.data);
+                        };
+                        worker.onerror = error => {
+                            this._workerDone(worker, error, null);
+                        };
+                        this.idleWorkers[i] = worker;
+                    }
                 }
-                else {
-                    let [task, res, rej] = this.workQueue.shift();
-                    this.workerMap.set(worker, [res, rej]);
-                    worker.postMessage(task);
-                }
-                error === null ? res(msg) : rej(error);
-            }
-            // Send Task
-            addTask(task) {
-                return new Promise((res, rej) => {
-                    if (this.idleWorkers.length > 0) {
-                        let worker = this.idleWorkers.pop();
-                        if (worker) {
-                            this.workerMap.set(worker, [res, rej]);
-                            worker.postMessage(task);
-                        }
-                        else {
-                            mkt.w("addTask() - Worker desocupado: ", worker, " não encontrado. " + this.idleWorkers.length + " desocupados: ", this.idleWorkers, " Solicitando novo!");
-                            this.workQueue.push([task, res, rej]);
-                        }
+                // Response
+                _workerDone(worker, error, msg) {
+                    let [res, rej] = this.workerMap.get(worker);
+                    this.workerMap.delete(worker);
+                    if (this.workQueue.length === 0) {
+                        this.idleWorkers.push(worker);
                     }
                     else {
-                        this.workQueue.push([task, res, rej]);
+                        let [task, res, rej] = this.workQueue.shift();
+                        this.workerMap.set(worker, [res, rej]);
+                        worker.postMessage(task);
                     }
-                });
-            }
-        } // FIM WorkerPool class
-        mkt.vars.wpool = new WorkerPool(numWorkers, workerBlob);
-        return mkt.vars.wpool;
+                    error === null ? res(msg) : rej(error);
+                }
+                // Send Task
+                addTask(task) {
+                    return new Promise((res, rej) => {
+                        if (this.idleWorkers.length > 0) {
+                            let worker = this.idleWorkers.pop();
+                            if (worker) {
+                                this.workerMap.set(worker, [res, rej]);
+                                worker.postMessage(task);
+                            }
+                            else {
+                                mkt.w("addTask() - Worker desocupado: ", worker, " não encontrado. " + this.idleWorkers.length + " desocupados: ", this.idleWorkers, " Solicitando novo!");
+                                this.workQueue.push([task, res, rej]);
+                            }
+                        }
+                        else {
+                            this.workQueue.push([task, res, rej]);
+                        }
+                    });
+                }
+            } // FIM WorkerPool class
+            mkt.vars.wpool = new WorkerPool(numWorkers, workerBlob);
+            r(mkt.vars.wpool);
+        });
     }, enumerable: true, writable: false, configurable: false,
 });
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
