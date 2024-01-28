@@ -169,7 +169,6 @@ class mkt {
     static clonar;
     static allSubPropriedades;
     static removeEspecias;
-    static getExclusivos;
     static toLocale;
     static removerAspas;
     static AoConfig;
@@ -828,7 +827,7 @@ class mkt {
         }
     };
     // HM (MK HEAD MENU)
-    headMenuAbrir = (colName) => {
+    headMenuAbrir = async (colName) => {
         let eHead = mkt.Q(this.c.container + " .sort-" + colName);
         if (mkt.Q("body .mkHeadMenu") == null) {
             let ehm = document.createElement("div");
@@ -868,7 +867,8 @@ class mkt {
         else {
             this.hmunsel = [];
         }
-        this.exclusivos = mkt.getExclusivos(this)[colName.split(".")[0]];
+        this.exclusivos = await mkt.addTask({ k: "MKT_Exclusivos", v: this.dadosFull });
+        this.exclusivos = this.exclusivos.v[colName.split(".")[0]];
         let exclusivosProcessado = [];
         if (colName.includes(".")) {
             this.exclusivos.forEach((ex) => {
@@ -2208,43 +2208,9 @@ Object.defineProperty(mkt, "getModelo", {
     }, enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "getExclusivos", {
-    value: (array) => {
-        let chaves = new Set();
-        let a = mkt.clonar(array);
-        a.forEach((o) => {
-            Object.keys(o).forEach((p) => {
-                chaves.add(p);
-            });
-        });
-        let campos = {};
-        let virouJson = {};
-        chaves.forEach((k) => {
-            let tempSet = new Set();
-            let tempJson = new Set();
-            a.forEach((o) => {
-                let temp = o[k];
-                let tipo = mkt.classof(o[k]);
-                if (tipo == "String") {
-                    temp = temp.trim();
-                }
-                if (tipo == "Object") {
-                    temp = JSON.stringify(temp);
-                    if (tempJson)
-                        tempJson.add(k);
-                }
-                if (temp)
-                    tempSet.add(temp.toString());
-            });
-            campos[k] = [...tempSet];
-            virouJson[k] = [...tempJson];
-            virouJson[k]?.forEach((kJson) => {
-                for (let i = 0; i < campos[kJson].length; i++) {
-                    campos[kJson][i] = JSON.parse(campos[kJson][i]);
-                }
-                ;
-            });
-        });
-        return campos;
+    value: async (array) => {
+        let res = await mkt.addTask({ k: "MKT_Exclusivos", v: array });
+        return res.v;
     }, enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "mkMerge", {
@@ -3496,7 +3462,7 @@ Object.defineProperty(mkt, "addTask", {
         });
     }, enumerable: true, writable: false, configurable: false,
 });
-/**
+/** #TASKS
  * Trazer as tarefas e processos aqui.
  * - Exclusivos
  * - ProcessoFiltragem
@@ -3510,19 +3476,63 @@ Object.defineProperty(mkt, "Workers", {
                 we.setAttribute("type", "javascript/worker");
                 we.setAttribute("id", "mktWorker");
                 we.innerHTML = `
-onmessage = (ev) => {
-	console.log("Worker Recebeu: ", ev.data);
-	if (ev?.data?.k) {
-		let job = ev.data;
-		switch (job.k) { // COMANDOS RECEBIDOS
-			case "MKT_INCLUDE":
-				let resultado = job.v.includes(job.target);
-				postMessage({ k: "MKT_INCLUDE", v: resultado });
-				break;
-			default:
-		}
-	}
-}`;
+				const classof = (o) => {
+					let nomeClasse = Object.prototype.toString.call(o).slice(8, -1);
+					// Exceção, apenas quando "Number" converter os NaN pra "NaN".
+					if (nomeClasse == "Number") {
+						if (o.toString() == "NaN") {
+							nomeClasse = "NaN";
+						}
+					}
+					return nomeClasse;
+				}
+				onmessage = (ev) => {
+					console.log("W> ", ev.data);
+					if (ev?.data?.k) {
+						let job = ev.data;
+						switch (job.k) { // COMANDOS RECEBIDOS
+							case "MKT_INCLUDE":
+								let resultado = job.v.includes(job.target);
+								postMessage({ k: "MKT_INCLUDE", v: resultado });
+								break;
+							case "MKT_Exclusivos":
+								let chaves = new Set();
+								let a = job.v;
+								a.forEach((o) => {
+									Object.keys(o).forEach((p) => {
+										chaves.add(p);
+									});
+								});
+								let campos = {};
+								let virouJson = {};
+								chaves.forEach((k) => {
+									let tempSet = new Set();
+									let tempJson = new Set();
+									a.forEach((o) => {
+										let temp = o[k];
+										let tipo = classof(o[k])
+										if (tipo == "String") {
+											temp = temp.trim();
+										}
+										if (tipo == "Object") {
+											temp = JSON.stringify(temp);
+											if (tempJson) tempJson.add(k);
+										}
+										if (temp) tempSet.add(temp.toString());
+									});
+									campos[k] = [...tempSet];
+									virouJson[k] = [...tempJson];
+									virouJson[k]?.forEach((kJson) => {
+										for (let i = 0; i < campos[kJson].length; i++) {
+											campos[kJson][i] = JSON.parse(campos[kJson][i]);
+										};
+									});
+								});
+								postMessage({ k: "MKT_Exclusivos", v: campos });
+							default:
+						}
+					}
+				}`;
                 document.body.append(we);
             }
             // Transformar o elemento em link para dar inicio a classe.
