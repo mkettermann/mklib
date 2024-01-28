@@ -4897,6 +4897,7 @@ class mk {
     };
     static Inicializar = () => {
         mk.moldeWorker();
+        // Abas desativado aqui pois o mkt virou prioridade nessa classe
         //mk.mkClicarNaAba(mk.Q(".mkAbas a.active")); // Inicia no ativo
         mk.mkRecargaExe();
     };
