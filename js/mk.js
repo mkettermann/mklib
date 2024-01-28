@@ -1102,41 +1102,41 @@ class mk {
     // Ex Regex: mk.util.cpf[1];
     static util = {
         cpf: ["000.000.000-00", /^([0-9]{3}([\.]?[0-9]{3}){2}[-]?[0-9]{2})$/, (cpf) => {
-                let m1 = [10, 9, 8, 7, 6, 5, 4, 3, 2];
-                let m2 = [11, 10, 9, 8, 7, 6, 5, 4, 3, 2];
-                if (!cpf) {
-                    return false;
-                }
-                cpf = mk.apenasNumeros(cpf);
-                if (cpf.length != 11) {
-                    return false;
-                }
-                let temp = cpf.slice(0, 9);
-                let c = 0;
-                for (let i = 0; i < 9; i++) {
-                    c += Number(temp.charAt(i)) * m1[i];
-                }
-                let r = c % 11;
-                (r < 2) ? r = 0 : r = 11 - r;
-                temp += r.toString();
-                c = 0;
-                for (let i = 0; i < 10; i++) {
-                    c += Number(temp.charAt(i)) * m2[i];
-                }
-                r = c % 11;
-                (r < 2) ? r = 0 : r = 11 - r;
-                return cpf.charAt(10) == r.toString();
-            }],
+            let m1 = [10, 9, 8, 7, 6, 5, 4, 3, 2];
+            let m2 = [11, 10, 9, 8, 7, 6, 5, 4, 3, 2];
+            if (!cpf) {
+                return false;
+            }
+            cpf = mk.apenasNumeros(cpf);
+            if (cpf.length != 11) {
+                return false;
+            }
+            let temp = cpf.slice(0, 9);
+            let c = 0;
+            for (let i = 0; i < 9; i++) {
+                c += Number(temp.charAt(i)) * m1[i];
+            }
+            let r = c % 11;
+            (r < 2) ? r = 0 : r = 11 - r;
+            temp += r.toString();
+            c = 0;
+            for (let i = 0; i < 10; i++) {
+                c += Number(temp.charAt(i)) * m2[i];
+            }
+            r = c % 11;
+            (r < 2) ? r = 0 : r = 11 - r;
+            return cpf.charAt(10) == r.toString();
+        }],
         cep: ["00.000-000", /^([0-9]{2}[\.]?[0-9]{3}[-]?[0-9]{3})$/, (cep) => {
-                if (!cep) {
-                    return false;
-                }
-                cep = mk.apenasNumeros(cep);
-                if (cep.length != 8) {
-                    return false;
-                }
-                return true;
-            }],
+            if (!cep) {
+                return false;
+            }
+            cep = mk.apenasNumeros(cep);
+            if (cep.length != 8) {
+                return false;
+            }
+            return true;
+        }],
         cnpj: [
             "00.000.000/0000-00",
             /^([0-9]{2}([\.]?[0-9]{3}){2}[\/]?[0-9]{4}[-]?[0-9]{2})$/, (cnpj) => {
@@ -1173,15 +1173,15 @@ class mk {
             }
         ],
         cnh: ["00000000000", /^([0-9]{11})$/, (cnh) => {
-                if (!cnh) {
-                    return false;
-                }
-                cnh = mk.apenasNumeros(cnh);
-                if (cnh.length != 11) {
-                    return false;
-                }
-                return true;
-            }],
+            if (!cnh) {
+                return false;
+            }
+            cnh = mk.apenasNumeros(cnh);
+            if (cnh.length != 11) {
+                return false;
+            }
+            return true;
+        }],
         placa: ["AAA-0S00", /^([A-Za-z]{3}[-]?[0-9]{1}[A-Za-z0-9]{1}[0-9]{2})$/],
         placaAntesMercosul: ["AAA-0000", /^([A-Za-z]{3}[-]?[0-9]{4})$/],
         placaMercosul: [
@@ -4493,26 +4493,26 @@ class mk {
         // Lado esquerdo baseado na posicao, mas em mobile fica full.
         let wLargura = window.innerWidth;
         if (wLargura < 768) {
-            eList.style.top = 35 + "px";
-            eList.style.left = 35 + "px";
+                        eList.style.top = 35 + "px";
+                        eList.style.left = 35 + "px";
         } else {
-            // Primeiramente seta a posição ref ao input fixo.
-            eList.style.top =
-                eRef.offsetTop -
-                mk.getParentScrollTop(eRef) +
-                eRef.offsetHeight +
-                2 +
-                "px";
-        
-            eList.style.left = eRef.offsetLeft + "px";
-            // Depois, verifica se saiu da tela
-            let posXCantoOpostoRef = eRef.offsetLeft + eRef.offsetWidth;
-            let posXCantoOpostoList = eList.offsetLeft + eList.offsetWidth;
-            if (posXCantoOpostoList > (mk.Q("body") as HTMLElement).offsetWidth) {
-                eList.style.left = posXCantoOpostoRef - eList.offsetWidth - 1 + "px";
-            }
+                        // Primeiramente seta a posição ref ao input fixo.
+                        eList.style.top =
+                                        eRef.offsetTop -
+                                        mk.getParentScrollTop(eRef) +
+                                        eRef.offsetHeight +
+                                        2 +
+                                        "px";
+  
+                        eList.style.left = eRef.offsetLeft + "px";
+                        // Depois, verifica se saiu da tela
+                        let posXCantoOpostoRef = eRef.offsetLeft + eRef.offsetWidth;
+                        let posXCantoOpostoList = eList.offsetLeft + eList.offsetWidth;
+                        if (posXCantoOpostoList > (mk.Q("body") as HTMLElement).offsetWidth) {
+                                        eList.style.left = posXCantoOpostoRef - eList.offsetWidth - 1 + "px";
+                        }
         }
-    */
+*/
     };
     /* EVENTO de Pesquisa (BLUR) */
     static mkSelPesquisaBlur = (e) => {

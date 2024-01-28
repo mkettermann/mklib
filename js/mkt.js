@@ -374,7 +374,7 @@ class mkt {
                 });
             }
             else {
-                mk.w("mais() - Url informada não é uma string: ", mkt.classof(this.c.url));
+                mkt.w("mais() - Url informada não é uma string: ", mkt.classof(this.c.url));
                 r(false);
             }
         });
@@ -426,14 +426,14 @@ class mkt {
                             this.aindaTemMais = false;
                             mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoBaixarTodosDados"));
                             if (this.c.botaoNovaConsulta != null) {
-                                mk.Qoff(this.c.botaoNovaConsulta);
+                                mkt.Qoff(this.c.botaoNovaConsulta);
                             }
                         }
                         else {
                             // Quando o recebido é igual ou veio até mais do que o solicitado:
                             this.aindaTemMais = true;
                             if (this.c.botaoNovaConsulta != null) {
-                                mk.Qon(this.c.botaoNovaConsulta);
+                                mkt.Qon(this.c.botaoNovaConsulta);
                             }
                         }
                         //mkt.l(this.c.nomeTabela + " baixou " + this.ultimoGet + " registros.")
@@ -593,7 +593,7 @@ class mkt {
             if (this.aindaTemMais) {
                 // Apenas se estiver na última págiana:
                 if (this.c.totPags == this.c.pagAtual) {
-                    let container = mk.Q(this.c.container);
+                    let container = mkt.Q(this.c.container);
                     if (!container.querySelector(".divListagemMaisItens")) {
                         let mklEFim = document.createElement("div");
                         mklEFim.className = "divListagemMaisItens";
@@ -1123,7 +1123,7 @@ class mkt {
     // Retorna o último objeto da lista onde a chave primaria bateu.
     getObj = (valorKey) => {
         let temp = null;
-        if (Array.isArray(this.dadosFull) && mk.classof(this.c.pk) == "String") {
+        if (Array.isArray(this.dadosFull) && mkt.classof(this.c.pk) == "String") {
             this.dadosFull.forEach((o) => {
                 if (o[this.c.pk] == valorKey) {
                     temp = o;
@@ -1138,7 +1138,7 @@ class mkt {
         let errNotPresent = false;
         let errKeyInvalid = false;
         if (Array.isArray(this.dadosFull)) {
-            if (mk.classof(k) == "String") {
+            if (mkt.classof(k) == "String") {
                 this.dadosFull.forEach((o) => {
                     if (k in o) {
                         if (o[k] == v) {
@@ -1162,10 +1162,10 @@ class mkt {
     };
     setObj = (v, objeto) => {
         let temp = null;
-        if (Array.isArray(this.dadosFull) && (mk.classof(this.c.pk) == "String")) {
+        if (Array.isArray(this.dadosFull) && (mkt.classof(this.c.pk) == "String")) {
             let o = this.find(this.c.pk, v);
             if (o) {
-                if (mk.classof(objeto) == "Object") {
+                if (mkt.classof(objeto) == "Object") {
                     for (let p in objeto) {
                         o[p] = objeto[p];
                     }
@@ -1251,7 +1251,7 @@ class mkt {
     };
     getNewPK = () => {
         let maior = 0;
-        if (mk.classof(this.c.pk) == "String") {
+        if (mkt.classof(this.c.pk) == "String") {
             this.dadosFull.forEach((o) => {
                 if (o[this.c.pk] > maior) {
                     maior = Number(o[this.c.pk]);
@@ -2782,7 +2782,7 @@ Object.defineProperty(mkt, "request", {
                 config.headers.append("Content-Type", config.tipo);
             }
             // TOKEN Baseado neste primeiro input
-            let aft = mk.Q("input[name='__RequestVerificationToken']")?.value;
+            let aft = mkt.Q("input[name='__RequestVerificationToken']")?.value;
             config.headers.append("MKANTI-FORGERY-TOKEN", aft || "");
         }
         if (!config.quiet)
