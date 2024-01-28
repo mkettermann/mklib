@@ -85,7 +85,7 @@ class mktc {
 	pag = ".pag"; // Indica o paginador atual de 0 a 8: ex: .pag7
 	pagBotao = ".pagBotao";
 	botaoAdicionarMaisClasse = "divListagemMaisItens";
-	botaoNovaConsulta: HTMLButtonElement | null = null; // Informando o botao. Ao modificar a variavel de fim de lista, trava o botao / destrava.
+	botaoNovaConsulta: HTMLButtonElement | string | null = "#btnAbrirConsultar"; // Informando o botao. Ao modificar a variavel de fim de lista, trava o botao / destrava.
 	dbInit = (store: IDBObjectStore) => { } // Funcao de contrução do design do banco de dados
 	// Alterar essas funções para modificar dados durante etapas.
 	aoIniciarListagem = async (i: mkt) => { }; // Recebe a própria instancia no parametro.
@@ -98,6 +98,8 @@ class mktc {
 			this.model = array;
 		}
 		if (this.url) { this.url = this.url?.replace("//GetList", "/GetList"); }
+		// Verifica existencia do valor padrão do botaoNovaConsulta.
+		if (!mkt.Q(this.botaoNovaConsulta)) { this.botaoNovaConsulta = null; }
 	}
 	get [Symbol.toStringTag]() { return "mktc"; }
 }
