@@ -813,6 +813,9 @@ class mkt {
 				let parametroAtual = this.gerarParametros();
 				if (parametroAtual != this.ultimoParametro) {
 					mkt.Qon(this.c.botaoNovaConsulta);
+				} else {
+					// Mas se mecher no filtro, botão vinculado e nâo houve mudança. Retorna botão pro off, pois pode ocorrer do usuário trocar o filtro e voltar no mesmo em seguida.
+					mkt.Qoff(this.c.botaoNovaConsulta);
 				}
 			}
 			// Reativa o botao
