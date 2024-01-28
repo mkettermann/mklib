@@ -3483,30 +3483,32 @@ Object.defineProperty(mkt, "headMenuHide", {
 Object.defineProperty(mkt, "Workers", {
     value: (numWorkers = 3) => {
         // Constroi elemento se ele não existir:
-        let mktWorkerElement = document.createElement("script");
-        mktWorkerElement.setAttribute("type", "javascript/worker");
-        mktWorkerElement.setAttribute("id", "mktWorker");
-        mktWorkerElement.innerHTML = `
-		const l = (...args) => {
-			console.log("W> ", ...args);
-		}
-		onmessage = (ev) => {
-			l("Ev Data: ", ev.data);
-			if (ev?.data?.c) {
-				switch (ev.data.c) {
-					case "MSG":
-						l("c: ", ev.data.c, " d: ", ev.data.d);
-						break;
-					case "MKT_LIST_GO":
-						postMessage({ c: "MKT_LIST_BACK", d: ["Show"] });
-						break;
-					default:
+        if (!document.querySelector("#mktWorker")) {
+            let we = document.createElement("script");
+            we.setAttribute("type", "javascript/worker");
+            we.setAttribute("id", "mktWorker");
+            we.innerHTML = `
+				const l = (...args) => {
+					console.log("W> ", ...args);
 				}
-			}
-			// Ao receber um comando, executar um Job.
-			//postMessage({ c: "MSG", d: ["Show"] });
-		}`;
-        document.body.append(mktWorkerElement);
+				onmessage = (ev) => {
+					l("Ev Data: ", ev.data);
+					if (ev?.data?.c) {
+						switch (ev.data.c) {
+							case "MSG":
+								l("c: ", ev.data.c, " d: ", ev.data.d);
+								break;
+							case "MKT_LIST_GO":
+								postMessage({ c: "MKT_LIST_BACK", d: ["Show"] });
+								break;
+							default:
+						}
+					}
+					// Ao receber um comando, executar um Job.
+					//postMessage({ c: "MSG", d: ["Show"] });
+				}`;
+            document.body.append(we);
+        }
         // Transformar o elemento em link para dar inicio a classe.
         let workerBlob = window.URL.createObjectURL(new Blob([mkt.Q("#mktWorker")?.textContent], { type: "text/javascript" }));
         class WorkerPool {
