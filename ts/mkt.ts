@@ -10,6 +10,8 @@
 // - Tentar tornar as funções de sobreescrever em Event Based.
 var mkz = null;
 
+declare const Popper: any;
+
 // CLASSE Do Design das colunas para formar o mkt.
 class mktm {
 	pk: boolean = false; // Este campo é Primary Key?
@@ -103,22 +105,6 @@ class mktc {
 class mkt {
 
 	static vars: any;
-	static detectedServerOn: Function;
-	static detectedServerOff: Function;
-	static mkFloat: Function;
-	static parseJSON: Function;
-	static hojeMkData: Function;
-	static hojeMkHora: Function;
-	static hoje: Function;
-	static getDiasDiferenca: Function;
-	static transMsEmDias: Function;
-	static mkNodeToScript: Function;
-	static frequencia: Function;
-	static mkYYYYMMDDtoDDMMYYYY: Function;
-	static mkBoolToSimNaoOA: Function;
-	static mkFormatarDataOA: Function;
-	static mkYYYYMMDDtoDDMMYYYY: Function;
-	static mkYYYYMMDDtoDDMMYYYY: Function;
 	static mktWorker: Function;
 	static moldeWorker: Function;
 	static classof: Function;
@@ -186,7 +172,6 @@ class mkt {
 	static atribuir: Function;
 	static mkDuasCasas: Function;
 	static regraDisplay: Function;
-	static regraBlink: Function;
 	static isInside: Function;
 	static TerremotoErros: Function;
 	static contem: Function;
@@ -205,6 +190,39 @@ class mkt {
 	static setObjetoFromId: Function;
 	static aCadaElemento: Function;
 	static cadaExe: Function;
+	static detectedServerOn: Function;
+	static detectedServerOff: Function;
+	static mkFloat: Function;
+	static parseJSON: Function;
+	static hojeMkData: Function;
+	static hojeMkHora: Function;
+	static hoje: Function;
+	static getDiasDiferenca: Function;
+	static transMsEmDias: Function;
+	static mkNodeToScript: Function;
+	static frequencia: Function;
+	static mkYYYYMMDDtoDDMMYYYY: Function;
+	static mkBoolToSimNaoOA: Function;
+	static mkFormatarDataOA: Function;
+	static exeregra: Function;
+	static m: any;
+	static estaValido: Function;
+	static mkToValue: Function;
+	static mkRecUpdate: Function;
+	static like: Function;
+	static mkSelTabIndex: Function;
+	static mkSelMoveu: Function;
+	static mkSelPopularLista: Function;
+	static mkSelUpdate: Function;
+	static mkSelDelRefillProcesso: Function;
+	static mkSelGetKV: Function;
+	static mkSelSelecionar: Function;
+	static mkSelReposicionar: Function;
+	static mkSelSetDisplay: Function;
+	static mkSelArraySetKV: Function;
+	static mkSelRenderizar: Function;
+	static mkRecRenderizar: Function;
+	static mkBotCheck: Function;
 
 	c: mktc;
 	db: IDBDatabase | null = null;
@@ -3591,11 +3609,11 @@ Object.defineProperty(mkt, "regrar", {
 			// Buscar Elemento e regra
 			let auto = false;
 			let novaregra: any = { c: container, n: nome, e: e, r: [...obj] };
-			let posE = mkt.regras.findIndex(o => o.e == e);
+			let posE = mkt.regras.findIndex((o: any) => o.e == e);
 			if (posE >= 0) {
 				// Elemento já encontrado, substituir a regra específica
-				novaregra.r.forEach(i => {
-					let posRe = mkt.regras[posE].r.findIndex(o => o.k == i.k);
+				novaregra.r.forEach((i: any) => {
+					let posRe = mkt.regras[posE].r.findIndex((o: any) => o.k == i.k);
 					if (posRe >= 0) {
 						for (let p in novaregra.r) {
 							mkt.regras[posE].r[posRe] = novaregra.r[p];
@@ -3624,7 +3642,7 @@ Object.defineProperty(mkt, "estaValido", {
 
 		// Informando um container qualquer, executa apenas as regras dentro deles.
 		let promises: any = [];
-		mkt.regras.forEach(((regra: any) => {
+		mkt.regras.forEach((regra: any) => {
 			if (mkt.isInside(regra.e, container)) {
 				promises.push(mkt.exeregra(regra.e, "full"));
 			}
@@ -3634,7 +3652,7 @@ Object.defineProperty(mkt, "estaValido", {
 		validou = resultado.flat().length <= 0;
 		mkt.gc("Validou? ", validou);
 		if (!validou) {
-			resultado.flat().forEach(r => {
+			resultado.flat().forEach((r: any) => {
 				mkt.gc("Regra: " + r.k?.toString().toUpperCase() + " >> Nome do campo: " + r.e?.name);
 				mkt.l(r.e);
 				mkt.ge();
@@ -3673,12 +3691,12 @@ Object.defineProperty(mkt, "exeregra", {
 		// Quando concluir (onChange), executar novamentepra remover erros já corrigidos (justamente no último caracter).
 		return new Promise((resolver) => {
 			let erros: any = [];
-			let regrasDoE = mkt.regras.find(o => o.e == e);
+			let regrasDoE = mkt.regras.find((o: any) => o.e == e);
 			let eDisplay = regrasDoE?.c.querySelector(".mkRegrar[data-valmsg-for='" + regrasDoE.n + "']")
 			let regras = regrasDoE?.r;
 			let promises: any = []
 			if (regras) {
-				regras.forEach((re) => {
+				regras.forEach((re: any) => {
 					if (!re.target) {
 						re.target = "value";
 					}
@@ -3901,25 +3919,24 @@ Object.defineProperty(mkt, "exeregra", {
 											let queryString = "?" + regrasDoE.n + "=" + e[re.target];
 											// Anexar campos adicionais:
 											if (re.a) {
-												let arrAdd = re.a.split(",");
-												arrAdd.forEach(s => {
+												let arrAdd: Array<string> = re.a.split(",");
+												arrAdd.forEach((s: string) => {
 													let eAdd = regrasDoE.c.querySelector("*[name='" + s + "']");
 													if (eAdd) {
 														queryString += "&" + s + "=" + eAdd[re.target];
 													} else {
-														this.w("Regrar: Campo Adicional solicitado não encontrado: ", s);
+														mkt.w("Regrar: Campo Adicional solicitado não encontrado: ", s);
 													}
 												});
 											}
-											mkt.get.json({ url: re.v + queryString, quiet: true }).then(ret => {
-												let retorno = ret.retorno;
-												if (retorno != true) {
-													if (typeof retorno == "string") {
-														re.m = retorno;
+											mkt.get.json({ url: re.v + queryString, quiet: true }).then((p: any) => {
+												if (p.retorno != true) {
+													if (mkt.classof(p.retorno) == "String") {
+														re.m = p.retorno;
 													}
 													erros.push(re);
 												}
-												if (retorno != null) {
+												if (p.retorno != null) {
 													e.classList.remove("pending");
 												}
 												prom(re.k);
@@ -3945,7 +3962,7 @@ Object.defineProperty(mkt, "exeregra", {
 			} // Possui regra
 			Promise.all(promises).then(ok => {
 				if (erros.length > 0) {
-					let mensagens = erros.map(a => {
+					let mensagens = erros.map((a: any) => {
 						if (Array.isArray(a.vmfail)) {
 							// Aqui dá pra evoluir se houver um template nos padrões.
 							a.m = mkt.m.some + a.vmfail.join(", ");
@@ -3953,7 +3970,7 @@ Object.defineProperty(mkt, "exeregra", {
 						return a.m;
 					}).join("<br/>");
 					mkt.regraDisplay(e, true, eDisplay, mensagens);
-					mkt.regraBlink(e);
+					mkt.TerremotoErros("");
 				} else {
 					mkt.regraDisplay(e, false, eDisplay, "");
 				}
@@ -3983,19 +4000,10 @@ Object.defineProperty(mkt, "regraDisplay", {
 	}, enumerable: false, writable: false, configurable: false,
 });
 
-Object.defineProperty(mkt, "regraBlink", {
-	value: (e) => {
-		if (typeof e == "string") {
-			e = mkt.Q(e);
-		}
-		mkt.TerremotoErros("");
-	}, enumerable: false, writable: false, configurable: false,
-});
-
 Object.defineProperty(mkt, "regraClear", {
 	value: () => {
 		// A cada elemento
-		mkt.regras.forEach(r => {
+		mkt.regras.forEach((r: any) => {
 			let e = r.e;
 			let eDisplay = r.c.querySelector(".mkRegrar[data-valmsg-for='" + r.n + "']")
 			mkt.regraDisplay(e, false, eDisplay);
@@ -4008,10 +4016,9 @@ Object.defineProperty(mkt, "desregrar", {
 		// Remove as regras de um determinado container
 		container = mkt.Q(container);
 
-		mkt.regras.forEach(regra => {
-			if (mkt.isInside(regra.e, container)) {
-				mkt.l(regra);
-				mkt.regras.splice(mkt.regras.indexOf(regra), 1);
+		mkt.regras.forEach((r: any) => {
+			if (mkt.isInside(r.e, container)) {
+				mkt.regras.splice(mkt.regras.indexOf(r), 1);
 			}
 		});
 	}, enumerable: false, writable: false, configurable: false,
@@ -4021,7 +4028,7 @@ Object.defineProperty(mkt, "TerremotoErros", {
 	value: (form: string): void => {
 		// Efeito de terremoto em campos com erros no formulario informado
 		if (!form) form = "";
-		mkt.QAll(form + " input.input-validation-error").forEach((e) => {
+		mkt.QAll(form + " input.input-validation-error").forEach((e: HTMLInputElement) => {
 			e.nextElementSibling?.classList.add("mkTerremoto");
 			setTimeout(() => {
 				e.nextElementSibling?.classList.remove("mkTerremoto");
@@ -4108,7 +4115,7 @@ Object.defineProperty(mkt, "fase", {
 				});
 			}
 			update() {
-				mkt.QAll(this.config.classe + " ul.mkUlFase li a").forEach((e) => {
+				mkt.QAll(this.config.classe + " ul.mkUlFase li a").forEach((e: HTMLAnchorElement) => {
 					// Limpar os Status
 					e.parentElement?.classList.remove("mkFaseBack");
 					e.parentElement?.classList.remove("mkFaseAtivo");
@@ -4274,7 +4281,7 @@ Object.defineProperty(mkt, "mkMoldeOA", {
 			let eModelo = mkt.Q(modelo);
 			if (eModelo == null) {
 				mkt.erro(
-					"Modelo (Template) informado (" + modelo + ") não encontrado."
+					"Template informado (" + modelo + ") não encontrado."
 				);
 				return r(null);
 			}
@@ -4296,7 +4303,7 @@ Object.defineProperty(mkt, "mkMoldeOA", {
 			listaNode = listaNode.replaceAll("&lt;", "<");
 			listaNode = listaNode.replaceAll("&gt;", ">");
 			eRepositorio.innerHTML = listaNode;
-			r(this); // class mk
+			r(true);
 		});
 	}, enumerable: false, writable: false, configurable: false,
 });
@@ -4308,7 +4315,7 @@ Object.defineProperty(mkt, "mkMoldeOA", {
 Object.defineProperty(mkt, "mkInclude", {
 	value: async () => {
 		return new Promise((r) => {
-			mkt.QAll("body *").forEach(async (e) => {
+			mkt.QAll("body *").forEach(async (e: HTMLElement) => {
 				let destino = e.getAttribute("mkInclude");
 				if (destino != null) {
 					//mkt.l("Incluindo: " + destino);
@@ -4358,10 +4365,7 @@ Object.defineProperty(mkt, "mkConfirma", {
 					retornar(resposta);
 				}
 			}
-			let eConfirmar = Array.from(mkt.Q("body").children).find((e) =>
-				e.classList.contains("mkConfirmadorBloco")
-			);
-			if (!eConfirmar) {
+			if (!document.querySelector(".mkConfirmadorBloco")) {
 				let divMkConfirmarBloco = document.createElement("div");
 				let divMkConfirmarFora = document.createElement("div");
 				let divMkConfirmarArea = document.createElement("div");
@@ -4503,7 +4507,7 @@ Object.defineProperty(mkt, "mkBotCheck", {
 
 Object.defineProperty(mkt, "mkRecRenderizar", {
 	value: async () => {
-		mkt.QAll("input.mkRec").forEach(async (e) => {
+		mkt.QAll("input.mkRec").forEach(async (e: HTMLInputElement) => {
 			// Gerar Elemento de recomendações
 			if (!e.nextElementSibling?.classList.contains("mkRecList")) {
 				let ePai: any = e.parentElement;
@@ -4518,12 +4522,12 @@ Object.defineProperty(mkt, "mkRecRenderizar", {
 					e.setAttribute("oninput", oninput + ";mkt.mkRecUpdate(this)");
 				}
 				let onfocus = e.getAttribute("onfocus");
-				if (!oninput || !oninput.includes(";mkt.mkRecFoco(this,true)")) {
-					e.setAttribute("onfocus", oninput + ";mkt.mkRecFoco(this,true)");
+				if (!onfocus || !onfocus.includes(";mkt.mkRecFoco(this,true)")) {
+					e.setAttribute("onfocus", onfocus + ";mkt.mkRecFoco(this,true)");
 				}
 				let onblur = e.getAttribute("onblur");
-				if (!oninput || !oninput.includes(";mkt.mkRecFoco(this,false)")) {
-					e.setAttribute("onblur", oninput + ";mkt.mkRecFoco(this,false)");
+				if (!onblur || !onblur.includes(";mkt.mkRecFoco(this,false)")) {
+					e.setAttribute("onblur", onblur + ";mkt.mkRecFoco(this,false)");
 				}
 				e.setAttribute(
 					"autocomplete",
@@ -4643,7 +4647,7 @@ Object.defineProperty(mkt, "mkRecFoco", {
 
 Object.defineProperty(mkt, "mkSelRenderizar", {
 	value: async () => {
-		mkt.QAll("input.mkSel").forEach(async (e) => {
+		mkt.QAll("input.mkSel").forEach(async (e: HTMLInputElement) => {
 			// Transforma elemento se ele ainda não foi transformado
 			if (!e.parentElement?.classList.contains("mkSelBloco")) {
 				// COLETA
@@ -4763,11 +4767,10 @@ Object.defineProperty(mkt, "mkSelRenderizar", {
 				// Manter index em -1 para não chegar até esse campo
 				e.setAttribute("tabindex", "-1");
 				mkt.mkSelTabIndex(e);
-				//mkt.mkSelReposicionar(e.parentElement.children[2]);
 			}
 		});
 		// Atualiza posição com a mesma frequencia que pesquisa os elementos.
-		mkt.vars.poppers.forEach((o) => {
+		mkt.vars.poppers.forEach((o: any) => {
 			o.update();
 		});
 	}, enumerable: false, writable: false, configurable: false,
@@ -4865,7 +4868,7 @@ Object.defineProperty(mkt, "mkSelSelecionar", {
 			// Forma um array caso ainda não seja, pois pode seleconar mais de um.
 			let arraySelecionado: string[] = [];
 			// Verifica se algum KV.k é o K clicado. (Para saber se vai adicionar ou remover)
-			KV.forEach((ObjKV) => {
+			KV.forEach((ObjKV: any) => {
 				arraySelecionado.push(ObjKV.k.toString());
 				if (ObjKV.k == itemK) jaSelecionado++;
 			});
@@ -5224,7 +5227,7 @@ Object.defineProperty(mkt, "mkSelUpdate", {
 				(el as HTMLElement).setAttribute("data-s", "0");
 			}
 		);
-		KV.forEach((o) => {
+		KV?.forEach((o) => {
 			/* Marcar mkSelItem pra 1 onde tem K selecionado */
 			Array.from(e.nextElementSibling.nextElementSibling.children).forEach(
 				(item: any) => {
@@ -5303,7 +5306,7 @@ Object.defineProperty(mkt, "mkSelGetMap", {
 	value: (e: any) => {
 		let kv = mkt.mkSelGetKV(e);
 		let map: any[] = [];
-		kv.forEach((o) => {
+		kv.forEach((o: any) => {
 			map.push([o.k, o.v]);
 		});
 		return new Map(map);
@@ -5401,7 +5404,7 @@ Object.defineProperty(mkt, "importar", {
 				mkt.gc("\t(" + num + ") Executando Importador no modo: ", tipo)
 			}
 			let ps: any = [];
-			mkt.QAll(tagBuscar + " *").forEach((e) => {
+			mkt.QAll(tagBuscar + " *").forEach((e: HTMLElement) => {
 				let destino = e.getAttribute("mkImportar");
 				if (destino != null) {
 					ps.push({ p: mkt.get.html({ url: destino, quiet: true, carregador: false }), e: e, n: num });
@@ -5411,8 +5414,8 @@ Object.defineProperty(mkt, "importar", {
 				mkt.l(ps);
 				mkt.ge();
 			}
-			Promise[tipo](ps.map(x => { return x.p })).then(ret => {
-				ps.forEach(async (o) => {
+			(Promise as any)[tipo](ps.map((x: any) => { return x.p })).then((ret: any) => {
+				ps.forEach(async (o: any) => {
 					let re = await o.p;
 					if (re.retorno != null) {
 						o.e.removeAttribute("mkImportar");
@@ -5429,7 +5432,6 @@ Object.defineProperty(mkt, "importar", {
 						mkt.l("Falhou ao coletar dados");
 					}
 				});
-				//mkt.l("(" + num + ") Gerenciador Importar finalizado.")
 				r(true);
 			});
 		});
@@ -5439,8 +5441,9 @@ Object.defineProperty(mkt, "importar", {
 Object.defineProperty(mkt, "uuid", {
 	value: () => {
 		// Padrão UUIDV4 - Gerador de identificador unico
-		return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c =>
-			(c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+		return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, (c: any) => { // c = String
+			return (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16);
+		}
 		);
 	}, enumerable: false, writable: false, configurable: false,
 });

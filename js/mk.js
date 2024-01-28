@@ -1,7 +1,4 @@
 "use strict";
-// Dependencias diretas/indiretas:
-// - Bootstrap Modal
-// - Poper
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //			CLASSE MK Instanciavel			\\
 //___________________________________\\

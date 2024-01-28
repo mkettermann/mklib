@@ -110,22 +110,6 @@ class mktc {
 // CLASSE INSTANCIAVEL
 class mkt {
     static vars;
-    static detectedServerOn;
-    static detectedServerOff;
-    static mkFloat;
-    static parseJSON;
-    static hojeMkData;
-    static hojeMkHora;
-    static hoje;
-    static getDiasDiferenca;
-    static transMsEmDias;
-    static mkNodeToScript;
-    static frequencia;
-    static mkYYYYMMDDtoDDMMYYYY;
-    static mkBoolToSimNaoOA;
-    static mkFormatarDataOA;
-    static mkYYYYMMDDtoDDMMYYYY;
-    static mkYYYYMMDDtoDDMMYYYY;
     static mktWorker;
     static moldeWorker;
     static classof;
@@ -193,7 +177,6 @@ class mkt {
     static atribuir;
     static mkDuasCasas;
     static regraDisplay;
-    static regraBlink;
     static isInside;
     static TerremotoErros;
     static contem;
@@ -212,6 +195,39 @@ class mkt {
     static setObjetoFromId;
     static aCadaElemento;
     static cadaExe;
+    static detectedServerOn;
+    static detectedServerOff;
+    static mkFloat;
+    static parseJSON;
+    static hojeMkData;
+    static hojeMkHora;
+    static hoje;
+    static getDiasDiferenca;
+    static transMsEmDias;
+    static mkNodeToScript;
+    static frequencia;
+    static mkYYYYMMDDtoDDMMYYYY;
+    static mkBoolToSimNaoOA;
+    static mkFormatarDataOA;
+    static exeregra;
+    static m;
+    static estaValido;
+    static mkToValue;
+    static mkRecUpdate;
+    static like;
+    static mkSelTabIndex;
+    static mkSelMoveu;
+    static mkSelPopularLista;
+    static mkSelUpdate;
+    static mkSelDelRefillProcesso;
+    static mkSelGetKV;
+    static mkSelSelecionar;
+    static mkSelReposicionar;
+    static mkSelSetDisplay;
+    static mkSelArraySetKV;
+    static mkSelRenderizar;
+    static mkRecRenderizar;
+    static mkBotCheck;
     c;
     db = null;
     dadosFull = []; // Todos os dados sem filtro, mas ordenaveis.
@@ -3517,11 +3533,11 @@ Object.defineProperty(mkt, "regrar", {
             // Buscar Elemento e regra
             let auto = false;
             let novaregra = { c: container, n: nome, e: e, r: [...obj] };
-            let posE = mkt.regras.findIndex(o => o.e == e);
+            let posE = mkt.regras.findIndex((o) => o.e == e);
             if (posE >= 0) {
                 // Elemento já encontrado, substituir a regra específica
-                novaregra.r.forEach(i => {
-                    let posRe = mkt.regras[posE].r.findIndex(o => o.k == i.k);
+                novaregra.r.forEach((i) => {
+                    let posRe = mkt.regras[posE].r.findIndex((o) => o.k == i.k);
                     if (posRe >= 0) {
                         for (let p in novaregra.r) {
                             mkt.regras[posE].r[posRe] = novaregra.r[p];
@@ -3551,17 +3567,17 @@ Object.defineProperty(mkt, "estaValido", {
         let validou = false;
         // Informando um container qualquer, executa apenas as regras dentro deles.
         let promises = [];
-        mkt.regras.forEach(((regra) => {
+        mkt.regras.forEach((regra) => {
             if (mkt.isInside(regra.e, container)) {
                 promises.push(mkt.exeregra(regra.e, "full"));
             }
-        }));
+        });
         let resultado = [];
         resultado = await Promise.all(promises);
         validou = resultado.flat().length <= 0;
         mkt.gc("Validou? ", validou);
         if (!validou) {
-            resultado.flat().forEach(r => {
+            resultado.flat().forEach((r) => {
                 mkt.gc("Regra: " + r.k?.toString().toUpperCase() + " >> Nome do campo: " + r.e?.name);
                 mkt.l(r.e);
                 mkt.ge();
@@ -3597,7 +3613,7 @@ Object.defineProperty(mkt, "exeregra", {
         // Quando concluir (onChange), executar novamentepra remover erros já corrigidos (justamente no último caracter).
         return new Promise((resolver) => {
             let erros = [];
-            let regrasDoE = mkt.regras.find(o => o.e == e);
+            let regrasDoE = mkt.regras.find((o) => o.e == e);
             let eDisplay = regrasDoE?.c.querySelector(".mkRegrar[data-valmsg-for='" + regrasDoE.n + "']");
             let regras = regrasDoE?.r;
             let promises = [];
@@ -3824,25 +3840,24 @@ Object.defineProperty(mkt, "exeregra", {
                                             // Anexar campos adicionais:
                                             if (re.a) {
                                                 let arrAdd = re.a.split(",");
-                                                arrAdd.forEach(s => {
+                                                arrAdd.forEach((s) => {
                                                     let eAdd = regrasDoE.c.querySelector("*[name='" + s + "']");
                                                     if (eAdd) {
                                                         queryString += "&" + s + "=" + eAdd[re.target];
                                                     }
                                                     else {
-                                                        this.w("Regrar: Campo Adicional solicitado não encontrado: ", s);
+                                                        mkt.w("Regrar: Campo Adicional solicitado não encontrado: ", s);
                                                     }
                                                 });
                                             }
-                                            mkt.get.json({ url: re.v + queryString, quiet: true }).then(ret => {
-                                                let retorno = ret.retorno;
-                                                if (retorno != true) {
-                                                    if (typeof retorno == "string") {
-                                                        re.m = retorno;
+                                            mkt.get.json({ url: re.v + queryString, quiet: true }).then((p) => {
+                                                if (p.retorno != true) {
+                                                    if (mkt.classof(p.retorno) == "String") {
+                                                        re.m = p.retorno;
                                                     }
                                                     erros.push(re);
                                                 }
-                                                if (retorno != null) {
+                                                if (p.retorno != null) {
                                                     e.classList.remove("pending");
                                                 }
                                                 prom(re.k);
@@ -3868,7 +3883,7 @@ Object.defineProperty(mkt, "exeregra", {
             } // Possui regra
             Promise.all(promises).then(ok => {
                 if (erros.length > 0) {
-                    let mensagens = erros.map(a => {
+                    let mensagens = erros.map((a) => {
                         if (Array.isArray(a.vmfail)) {
                             // Aqui dá pra evoluir se houver um template nos padrões.
                             a.m = mkt.m.some + a.vmfail.join(", ");
@@ -3876,7 +3891,7 @@ Object.defineProperty(mkt, "exeregra", {
                         return a.m;
                     }).join("<br/>");
                     mkt.regraDisplay(e, true, eDisplay, mensagens);
-                    mkt.regraBlink(e);
+                    mkt.TerremotoErros("");
                 }
                 else {
                     mkt.regraDisplay(e, false, eDisplay, "");
@@ -3907,18 +3922,10 @@ Object.defineProperty(mkt, "regraDisplay", {
             eDisplay.innerHTML = mensagem;
     }, enumerable: false, writable: false, configurable: false,
 });
-Object.defineProperty(mkt, "regraBlink", {
-    value: (e) => {
-        if (typeof e == "string") {
-            e = mkt.Q(e);
-        }
-        mkt.TerremotoErros("");
-    }, enumerable: false, writable: false, configurable: false,
-});
 Object.defineProperty(mkt, "regraClear", {
     value: () => {
         // A cada elemento
-        mkt.regras.forEach(r => {
+        mkt.regras.forEach((r) => {
             let e = r.e;
             let eDisplay = r.c.querySelector(".mkRegrar[data-valmsg-for='" + r.n + "']");
             mkt.regraDisplay(e, false, eDisplay);
@@ -3929,10 +3936,9 @@ Object.defineProperty(mkt, "desregrar", {
     value: async (container) => {
         // Remove as regras de um determinado container
         container = mkt.Q(container);
-        mkt.regras.forEach(regra => {
-            if (mkt.isInside(regra.e, container)) {
-                mkt.l(regra);
-                mkt.regras.splice(mkt.regras.indexOf(regra), 1);
+        mkt.regras.forEach((r) => {
+            if (mkt.isInside(r.e, container)) {
+                mkt.regras.splice(mkt.regras.indexOf(r), 1);
             }
         });
     }, enumerable: false, writable: false, configurable: false,
@@ -4201,7 +4207,7 @@ Object.defineProperty(mkt, "mkMoldeOA", {
         return new Promise((r) => {
             let eModelo = mkt.Q(modelo);
             if (eModelo == null) {
-                mkt.erro("Modelo (Template) informado (" + modelo + ") não encontrado.");
+                mkt.erro("Template informado (" + modelo + ") não encontrado.");
                 return r(null);
             }
             let eRepositorio = mkt.Q(repositorio);
@@ -4220,7 +4226,7 @@ Object.defineProperty(mkt, "mkMoldeOA", {
             listaNode = listaNode.replaceAll("&lt;", "<");
             listaNode = listaNode.replaceAll("&gt;", ">");
             eRepositorio.innerHTML = listaNode;
-            r(this); // class mk
+            r(true);
         });
     }, enumerable: false, writable: false, configurable: false,
 });
@@ -4279,8 +4285,7 @@ Object.defineProperty(mkt, "mkConfirma", {
                     retornar(resposta);
                 }
             }
-            let eConfirmar = Array.from(mkt.Q("body").children).find((e) => e.classList.contains("mkConfirmadorBloco"));
-            if (!eConfirmar) {
+            if (!document.querySelector(".mkConfirmadorBloco")) {
                 let divMkConfirmarBloco = document.createElement("div");
                 let divMkConfirmarFora = document.createElement("div");
                 let divMkConfirmarArea = document.createElement("div");
@@ -4425,12 +4430,12 @@ Object.defineProperty(mkt, "mkRecRenderizar", {
                     e.setAttribute("oninput", oninput + ";mkt.mkRecUpdate(this)");
                 }
                 let onfocus = e.getAttribute("onfocus");
-                if (!oninput || !oninput.includes(";mkt.mkRecFoco(this,true)")) {
-                    e.setAttribute("onfocus", oninput + ";mkt.mkRecFoco(this,true)");
+                if (!onfocus || !onfocus.includes(";mkt.mkRecFoco(this,true)")) {
+                    e.setAttribute("onfocus", onfocus + ";mkt.mkRecFoco(this,true)");
                 }
                 let onblur = e.getAttribute("onblur");
-                if (!oninput || !oninput.includes(";mkt.mkRecFoco(this,false)")) {
-                    e.setAttribute("onblur", oninput + ";mkt.mkRecFoco(this,false)");
+                if (!onblur || !onblur.includes(";mkt.mkRecFoco(this,false)")) {
+                    e.setAttribute("onblur", onblur + ";mkt.mkRecFoco(this,false)");
                 }
                 e.setAttribute("autocomplete", "off");
                 const popperInstance = Popper.createPopper(e, divMkRecList, {
@@ -4637,7 +4642,6 @@ Object.defineProperty(mkt, "mkSelRenderizar", {
                 // Manter index em -1 para não chegar até esse campo
                 e.setAttribute("tabindex", "-1");
                 mkt.mkSelTabIndex(e);
-                //mkt.mkSelReposicionar(e.parentElement.children[2]);
             }
         });
         // Atualiza posição com a mesma frequencia que pesquisa os elementos.
@@ -5064,7 +5068,7 @@ Object.defineProperty(mkt, "mkSelUpdate", {
         Array.from(e.nextElementSibling.nextElementSibling.children).forEach((el) => {
             el.setAttribute("data-s", "0");
         });
-        KV.forEach((o) => {
+        KV?.forEach((o) => {
             /* Marcar mkSelItem pra 1 onde tem K selecionado */
             Array.from(e.nextElementSibling.nextElementSibling.children).forEach((item) => {
                 if (item.getAttribute("data-k") == o.k) {
@@ -5245,7 +5249,7 @@ Object.defineProperty(mkt, "importar", {
                 mkt.l(ps);
                 mkt.ge();
             }
-            Promise[tipo](ps.map(x => { return x.p; })).then(ret => {
+            Promise[tipo](ps.map((x) => { return x.p; })).then((ret) => {
                 ps.forEach(async (o) => {
                     let re = await o.p;
                     if (re.retorno != null) {
@@ -5265,7 +5269,6 @@ Object.defineProperty(mkt, "importar", {
                         mkt.l("Falhou ao coletar dados");
                     }
                 });
-                //mkt.l("(" + num + ") Gerenciador Importar finalizado.")
                 r(true);
             });
         });
@@ -5274,7 +5277,9 @@ Object.defineProperty(mkt, "importar", {
 Object.defineProperty(mkt, "uuid", {
     value: () => {
         // Padrão UUIDV4 - Gerador de identificador unico
-        return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c => (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16));
+        return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, (c) => {
+            return (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16);
+        });
     }, enumerable: false, writable: false, configurable: false,
 });
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\

@@ -1,7 +1,6 @@
 // Dependencias diretas/indiretas:
 // - Bootstrap Modal
-// - Poper
-
+// - Popper
 declare const appPath: any;
 
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
