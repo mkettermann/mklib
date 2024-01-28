@@ -404,7 +404,8 @@ class mkt {
 				if (parametros != this.ultimoParametro) {
 					this.ultimoParametro = parametros;
 					this.cTotUltimoParametro = 0;
-					this.dadosFull = [];
+					this.dadosFull = []; // Se muda dadosFull pra valor inferior ao que tinha, pagAtual precisa voltar a 1;
+					this.c.pagAtual = 1;
 					this.totalappends = 1;
 					carregador = true;
 					solicitar = this.c.qntSolicitada;
