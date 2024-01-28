@@ -774,22 +774,28 @@ class mkt {
             delete this.c.objFiltro[e.name];
         }
     };
+    gerarParametros = () => {
+        return mkt.QAll(this.c.filtro)
+            .map((i) => { return "&" + i.name + "=" + encodeURIComponent(i.value); })
+            .join("");
+    };
     // Gerar Gatilhos de FILTRO
     setFiltroListener = () => {
         // Onclick do botao
         if (this.c.botaoNovaConsulta != null) {
             mkt.Ao("click", this.c.botaoNovaConsulta, (e) => {
-                let novoParametro = mkt.QAll(this.c.filtro)
-                    .map((i) => { return "&" + i.name + "=" + encodeURIComponent(i.value); })
-                    .join("");
-                this.mais(novoParametro);
+                this.mais(this.gerarParametros());
             });
         }
         // Key dos campos
         mkt.Ao("input", this.c.filtro, (e) => {
             // Reativa o botao
             if (this.c.botaoNovaConsulta != null) {
-                mkt.Qon(this.c.botaoNovaConsulta);
+                // Ao mecher no filtro E botão vinculado E Mudou parametro = liberar botao
+                let parametroAtual = this.gerarParametros();
+                if (parametroAtual != this.ultimoParametro) {
+                    mkt.Qon(this.c.botaoNovaConsulta);
+                }
             }
             // Reativa o botao
             if (this.c.filtroDinamico) {
