@@ -5396,9 +5396,11 @@ Object.defineProperty(mkt, "uuid", {
 Object.defineProperty(mkt, "classof", {
     value: (o) => {
         let nomeClasse = Object.prototype.toString.call(o).slice(8, -1);
-        // Tornar NaN em "NaN!" para impedir erros;
-        if (o.toString() == "NaN") {
-            nomeClasse = "NaN";
+        // Exceção, apenas quando "Number" converter os NaN pra "NaN".
+        if (nomeClasse == "Number") {
+            if (o.toString() == "NaN") {
+                nomeClasse = "NaN";
+            }
         }
         ;
         return nomeClasse;
