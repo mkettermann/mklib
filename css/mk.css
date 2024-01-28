@@ -526,10 +526,6 @@ button.mkBtnInv:hover {
 	color: var(--tTexto);
 }
 
-.mkAbas .mkAbaslink:not(.active):hover {
-	border: 1px solid var(--tFundoHigh);
-}
-
 div[class*="mkAba"] {
 	transition: opacity 0.5s linear;
 	opacity: 1;

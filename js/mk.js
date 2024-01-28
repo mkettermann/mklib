@@ -4897,7 +4897,7 @@ class mk {
     };
     static Inicializar = () => {
         mk.moldeWorker();
-        mk.mkClicarNaAba(mk.Q(".mkAbas a.active")); // Inicia no ativo
+        //mk.mkClicarNaAba(mk.Q(".mkAbas a.active")); // Inicia no ativo
         mk.mkRecargaExe();
     };
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
