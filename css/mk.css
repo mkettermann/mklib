@@ -1905,6 +1905,7 @@ ul.mkUlFase li.disabled a {
 	align-items: center;
 	height: 40px;
 	cursor: pointer;
+	user-select: none;
 }
 
 
