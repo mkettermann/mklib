@@ -3568,6 +3568,11 @@ Object.defineProperty(mkt, "addTask", {
 	}, enumerable: true, writable: false, configurable: false,
 });
 
+/**
+ * Trazer as tarefas e processos aqui.
+ * - Exclusivos
+ * - ProcessoFiltragem
+ */
 Object.defineProperty(mkt, "Workers", {
 	value: (numWorkers: number = 3) => { // Padrao 3
 		return new Promise((r) => {
