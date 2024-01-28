@@ -89,6 +89,7 @@ class mktc {
     tableInicioFim = ".tableInicioFim";
     pag = ".pag"; // Indica o paginador atual de 0 a 8: ex: .pag7
     pagBotao = ".pagBotao";
+    botaoAdicionarMaisClasse = "divListagemMaisItens";
     botaoNovaConsulta = null; // Informando o botao. Ao modificar a variavel de fim de lista, trava o botao / destrava.
     dbInit = (store) => { }; // Funcao de contrução do design do banco de dados
     // Alterar essas funções para modificar dados durante etapas.
@@ -414,6 +415,7 @@ class mkt {
                 if (!urlTemp.includes("://"))
                     urlTemp = window.location.origin + urlTemp;
                 urlTemp += parametros;
+                //this.ultimaUrlComParametro = urlTemp; // Se for impedir chamadas iguais.
                 mkt.get.json({ url: urlTemp, carregador: carregador }).then((p) => {
                     if (p.retorno != null) {
                         this.ultimoGet = p.retorno.length;
@@ -594,18 +596,19 @@ class mkt {
                 // Apenas se estiver na última págiana:
                 if (this.c.totPags == this.c.pagAtual) {
                     let container = mkt.Q(this.c.container);
-                    if (!container.querySelector(".divListagemMaisItens")) {
+                    if (!container.querySelector("." + this.c.botaoAdicionarMaisClasse)) {
                         let mklEFim = document.createElement("div");
-                        mklEFim.className = "divListagemMaisItens";
-                        mklEFim.innerHTML = "Carregar mais registros";
-                        mkt.Ao("click", mklEFim, () => {
+                        mklEFim.className = this.c.botaoAdicionarMaisClasse;
+                        mklEFim.innerHTML = mkt.m.carregarmais;
+                        mkt.Ao("click", mklEFim, (e) => {
                             this.mais();
+                            e.classList.add("disabled");
                         });
                         container.querySelector("table")?.parentElement?.appendChild(mklEFim);
                     }
                 }
                 else {
-                    mkt.Q(this.c.container + " .divListagemMaisItens")?.remove();
+                    mkt.Q(this.c.container + " ." + this.c.botaoAdicionarMaisClasse)?.remove();
                 }
             }
             await mkt.mkMoldeOA(this.dadosExibidos, this.c.idmodelo, this.c.tbody);
@@ -3605,6 +3608,7 @@ Object.defineProperty(mkt, "m", {
         apenasletras: "Apenas Letras",
         datamaiorque: "Deve ser maior que hoje",
         datamenorque: "Deve ser menor que hoje",
+        carregarmais: "Carregar Mais Resultados",
     }, enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "exeregra", {
