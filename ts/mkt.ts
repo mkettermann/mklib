@@ -99,7 +99,9 @@ class mktc {
 		}
 		if (this.url) { this.url = this.url?.replace("//GetList", "/GetList"); }
 		// Verifica existencia do valor padrão do botaoNovaConsulta.
-		if (!mkt.Q(this.botaoNovaConsulta)) { this.botaoNovaConsulta = null; }
+		if (!mkt.Q(this.botaoNovaConsulta)) {
+			this.botaoNovaConsulta = null;
+		}
 	}
 	get [Symbol.toStringTag]() { return "mktc"; }
 }
@@ -291,6 +293,12 @@ class mkt {
 	autoStartConfig = async (arg: any = {}) => {
 		// SE for importar: Espera o container para então continuar.
 		if (this.c.container_importar) { await mkt.importar(this.c.container); }
+		// SE GATILHO EXTERNO inicialmente bloqueado
+		if (mkt.Q(this.c.botaoNovaConsulta)) {
+			if (this.c.qntInicial > 0) { // Se há consulta inicial, então o consultar já vem travado até modificar.
+				mkt.Qoff(this.c.botaoNovaConsulta);
+			}
+		}
 		// GATILHOS do Container da tabela (Paginação e Limite por Página)
 		// Seta Gatilho dos botoes de paginacao.
 		if (mkt.Q(this.c.pagBotao)) {
