@@ -791,6 +791,16 @@ class mkt {
 
 	// Gerar Gatilhos de FILTRO
 	setFiltroListener = () => {
+		// Onclick do botao
+		if (this.c.botaoNovaConsulta != null) {
+			mkt.Ao("click", this.c.botaoNovaConsulta, (e: HTMLElement) => {
+				let novoParametro = mkt.QAll(this.c.filtro)
+					.map((i: HTMLInputElement) => { return "&" + i.name + "=" + encodeURIComponent(i.value); })
+					.join("");
+				this.mais(novoParametro);
+			});
+		}
+		// Key dos campos
 		mkt.Ao("input", this.c.filtro, (e: HTMLElement) => {
 			// Reativa o botao
 			if (this.c.botaoNovaConsulta != null) {
