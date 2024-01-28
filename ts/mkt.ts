@@ -398,6 +398,9 @@ class mkt {
 					this.totalappends = 1;
 					carregador = true;
 					solicitar = this.c.qntSolicitada;
+					if (this.c.botaoNovaConsulta != null) {
+						mkt.Qoff(this.c.botaoNovaConsulta);
+					}
 				}
 				if (fromMais) {
 					// Quando a função Mais() que chamar esta, a quantidade solicitada tem prioridade sobre a inicial;
@@ -420,15 +423,13 @@ class mkt {
 							// Quando o Recebido for inferior ao solicitado:
 							this.aindaTemMais = false;
 							mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoBaixarTodosDados"));
-							if (this.c.botaoNovaConsulta != null) {
-								mkt.Qoff(this.c.botaoNovaConsulta);
+							let eAddMais = mkt.Q(this.c.container)?.querySelector("." + this.c.botaoAdicionarMaisClasse);
+							if (eAddMais) {
+								eAddMais.remove();
 							}
 						} else {
 							// Quando o recebido é igual ou veio até mais do que o solicitado:
 							this.aindaTemMais = true;
-							if (this.c.botaoNovaConsulta != null) {
-								mkt.Qon(this.c.botaoNovaConsulta);
-							}
 						}
 						//mkt.l(this.c.nomeTabela + " baixou " + this.ultimoGet + " registros.")
 						r(p.retorno.length);
@@ -495,9 +496,7 @@ class mkt {
 			// Ordena a lista geral com base na primeira propriedade.
 			mkt.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
 			//Adiciona eventos aos botões do filtro
-			if (this.c.filtroDinamico) {
-				this.setFiltroListener();
-			}
+			this.setFiltroListener();
 			// Executa um filtro inicial e na sequencia processa a exibição.
 			this.updateFiltro();
 			this.efeitoSort();
@@ -793,8 +792,15 @@ class mkt {
 	// Gerar Gatilhos de FILTRO
 	setFiltroListener = () => {
 		mkt.Ao("input", this.c.filtro, (e: HTMLElement) => {
-			this.gerarFiltro(e);
-			this.atualizaNaPaginaUm();
+			// Reativa o botao
+			if (this.c.botaoNovaConsulta != null) {
+				mkt.Qon(this.c.botaoNovaConsulta);
+			}
+			// Reativa o botao
+			if (this.c.filtroDinamico) {
+				this.gerarFiltro(e);
+				this.atualizaNaPaginaUm();
+			}
 		});
 	};
 
