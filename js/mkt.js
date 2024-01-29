@@ -397,11 +397,7 @@ class mkt {
                         this.dadosFull.push(data_url[i]);
                     }
                 }
-                mkt.addTask({ k: "ChavesRepetidas", v: this.dadosFull, target: this.c.pk }).then((r) => {
-                    if (r.v.length > 0) {
-                        mkt.w("ALERT! ", this.c.nomeTabela, " PKs Duplicadas: ", r.v);
-                    }
-                });
+                this.dadosCheck();
                 r(true);
             }
             else if (mkt.classof(data_url) == "String") {
@@ -454,11 +450,7 @@ class mkt {
                             // Quando o recebido é igual ou veio até mais do que o solicitado:
                             this.aindaTemMais = true;
                         }
-                        mkt.addTask({ k: "ChavesRepetidas", v: this.dadosFull, target: this.c.pk }).then((r) => {
-                            if (r.v.length > 0) {
-                                mkt.w("ALERT! ", this.c.nomeTabela, " PKs Duplicadas: ", r.v);
-                            }
-                        });
+                        this.dadosCheck();
                         r(p.retorno.length);
                     }
                     else {
@@ -514,6 +506,20 @@ class mkt {
             // Inicia download do resto da lista
             //this.startDownloadContinuo();
         }
+    };
+    dadosCheck = () => {
+        // Verificação de ChavesRepetidas
+        mkt.addTask({ k: "ChavesRepetidas", v: this.dadosFull, target: this.c.pk }).then((r) => {
+            if (r.v.length > 0) {
+                mkt.erro("URGENTE! ", this.c.nomeTabela, " PKs Duplicadas: ", r.v);
+            }
+        });
+        // Verificação de Duplices
+        mkt.addTask({ k: "Duplices", v: this.dadosFull, target: this.c.pk }).then((r) => {
+            if (r.v.length > 0) {
+                mkt.w("ALERT! ", this.c.nomeTabela, " PKs com Conteúdo igual: ", r.v);
+            }
+        });
     };
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //			MK DB Client-Side						\\
@@ -3459,17 +3465,15 @@ Object.defineProperty(mkt, "addTask", {
  * Trazer as tarefas e processos aqui.
  * - Exclusivos - OK
  * - PK Duplicada - OK
- * - Duplice:  Mesma PK e Mesmo Conteúdo (Tudo Igual)
- * - Duplice: PK Diferente e Mesmo Conteúdo
+ * - Duplice: PK Diferente, mas Mesmo Conteúdo
  * - ProcessoFiltragem
  */
 Object.defineProperty(mkt, "Workers", {
-    value: (numWorkers) => {
-        if (!numWorkers) {
-            numWorkers = navigator.hardwareConcurrency || 3;
-        }
+    value: (numWorkers = navigator.hardwareConcurrency || 5) => {
         if (numWorkers > 3)
-            numWorkers = 3;
+            numWorkers = 3; // Máximo
+        if (numWorkers < 1)
+            numWorkers = 1; // Mínimo
         return new Promise((r) => {
             // Constroi elemento se ele não existir:
             if (!document.querySelector("#mktWorker")) {
@@ -3488,56 +3492,69 @@ Object.defineProperty(mkt, "Workers", {
 					return nomeClasse;
 				}
 				onmessage = (ev) => {
-					//console.log("W> ", ev.data);
 					if (ev?.data?.k) {
 						let job = ev.data;
-						switch (job.k) { // COMANDOS RECEBIDOS
-							case "Exclusivos":
-								let chaves = new Set();
+				
+						if (ev.data.k == "Exclusivos") { // Exclusivos
+							let chaves = new Set();
+							job.v.forEach((o) => {
+								Object.keys(o).forEach((p) => {
+									chaves.add(p);
+								});
+							});
+							let campos = {};
+							let virouJson = {};
+							chaves.forEach((k) => {
+								let tempSet = new Set();
+								let tempJson = new Set();
 								job.v.forEach((o) => {
-									Object.keys(o).forEach((p) => {
-										chaves.add(p);
-									});
-								});
-								let campos = {};
-								let virouJson = {};
-								chaves.forEach((k) => {
-									let tempSet = new Set();
-									let tempJson = new Set();
-									job.v.forEach((o) => {
-										let temp = o[k];
-										let tipo = classof(o[k])
-										if (tipo == "String") {
-											temp = temp.trim();
-										}
-										if (tipo == "Object") {
-											temp = JSON.stringify(temp);
-											if (tempJson) tempJson.add(k);
-										}
-										if (temp) tempSet.add(temp.toString());
-									});
-									campos[k] = [...tempSet];
-									virouJson[k] = [...tempJson];
-									virouJson[k]?.forEach((kJson) => {
-										for (let i = 0; i < campos[kJson].length; i++) {
-											campos[kJson][i] = JSON.parse(campos[kJson][i]);
-										};
-									});
-								});
-								postMessage({ k: "Exclusivos", v: campos });
-								break;
-							case "ChavesRepetidas":
-								let resultado = new Set();
-								let jaTem = new Set();
-								job.v.forEach(o => {
-									if (jaTem.has(o[job.target])) {
-										resultado.add(o[job.target]);
+									let temp = o[k];
+									let tipo = classof(o[k])
+									if (tipo == "String") {
+										temp = temp.trim();
 									}
-									jaTem.add(o[job.target]);
-								})
-								postMessage({ k: "ChavesRepetidas", v: [...resultado] });
-								break;
-							default:
+									if (tipo == "Object") {
+										temp = JSON.stringify(temp);
+										if (tempJson) tempJson.add(k);
+									}
+									if (temp) tempSet.add(temp.toString());
+								});
+								campos[k] = [...tempSet];
+								virouJson[k] = [...tempJson];
+								virouJson[k]?.forEach((kJson) => {
+									for (let i = 0; i < campos[kJson].length; i++) {
+										campos[kJson][i] = JSON.parse(campos[kJson][i]);
+									};
+								});
+							});
+							postMessage({ k: "Exclusivos", v: campos });
+				
+						} else if (ev.data.k == "ChavesRepetidas") { // ChavesRepetidas
+							let resultado = new Set();
+							let jaTem = new Set();
+							job.v.forEach(o => {
+								if (jaTem.has(o[job.target])) {
+									resultado.add(o[job.target]);
+								}
+								jaTem.add(o[job.target]);
+							})
+							postMessage({ k: "ChavesRepetidas", v: [...resultado] });
+				
+						} else if (ev.data.k == "Duplices") { // Duplices
+							let resultado = new Set();
+							let jaTem = new Set();
+							job.v.forEach(o => {
+								let ch = o[job.target];
+								if (o[job.target]) {
+									delete o[job.target];
+								}
+								let str = JSON.stringify(o);
+								if (jaTem.has(str)) {
+									resultado.add(ch);
+								}
+								jaTem.add(str);
+							})
+							postMessage({ k: "ChavesRepetidas", v: [...resultado] });
 						}
 					}
 				}`;
