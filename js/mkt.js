@@ -324,7 +324,7 @@ class mkt {
         let started = false;
         if (this.c.dados != null) {
             if (mkt.classof(this.c.dados) == "Array") {
-                if (await this.appendList(this.c.dados) == true) {
+                if (await this.appendList(this.c.dados) != null) {
                     started = true;
                     this.startListagem();
                 }
@@ -363,6 +363,11 @@ class mkt {
         }
         if (this.c.dados == null && this.c.url == null) {
             mkt.w("Nenhuma fonte de dados encontrada. Não será possível popular a listagem sem dados.");
+        }
+        if (!started) {
+            // Se chegar aqui sem iniciar, avança zerado.
+            mkt.erro("A lista foi iniciada sem confirmação dos dados. Provavelmente ocorreu erro na coleta de dados.");
+            this.startListagem();
         }
     };
     mais = async (parametros = null, novaurl = null) => {
