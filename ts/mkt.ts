@@ -515,7 +515,7 @@ class mkt {
 		// Verificação de Duplices
 		mkt.addTask({ k: "Duplices", v: this.dadosFull, target: this.c.pk }).then((r: any) => {
 			if (r.v.length > 0) {
-				mkt.w("ALERT! ", this.c.nomeTabela, " PKs com Conteúdo igual: ", r.v);
+				mkt.w("ALERTA! ", this.c.nomeTabela, " Conteúdo Repetido Detectado: ", r.v);
 			}
 		});
 	}
