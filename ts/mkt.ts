@@ -509,13 +509,13 @@ class mkt {
 		// Verificação de ChavesRepetidas
 		mkt.addTask({ k: "ChavesRepetidas", v: this.dadosFull, target: this.c.pk }).then((r: any) => {
 			if (r.v.length > 0) {
-				mkt.erro("URGENTE! ", this.c.nomeTabela, " PKs Duplicadas: ", r.v);
+				mkt.erro("URGENTE! ", this.c.nomeTabela, " possui CHAVES PRIMARIAS DUPLICADAS: ", r.v);
 			}
 		});
 		// Verificação de Duplices
 		mkt.addTask({ k: "Duplices", v: this.dadosFull, target: this.c.pk }).then((r: any) => {
 			if (r.v.length > 0) {
-				mkt.w("ALERTA! ", this.c.nomeTabela, " Conteúdo Repetido Detectado: ", r.v);
+				mkt.w("ALERTA! ", this.c.nomeTabela, " possui CONTEÚDO REPETIDO: ", r.v);
 			}
 		});
 	}
