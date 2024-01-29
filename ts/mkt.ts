@@ -639,9 +639,7 @@ class mkt {
 
 	// Atualiza o objeto que contem os dados desta instancia.
 	atualizarStatusListagem = () => {
-		if (mkt.Q(this.c.tablePorPagina) == null) {
-			this.c.pagPorPagina = 5;
-		} else {
+		if (mkt.Q(this.c.tablePorPagina) != null) {
 			this.c.pagPorPagina = Number(
 				(mkt.Q(this.c.tablePorPagina) as HTMLInputElement).value
 			);
