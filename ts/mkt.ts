@@ -1068,30 +1068,32 @@ class mkt {
 	// Gera Listeners na THEAD da tabela (Requer classe: "sort-campo")
 	headAtivar = () => {
 		let eTrHeadPai = mkt.Q(this.c.container + " thead tr");
-		Array.from(eTrHeadPai.children).forEach((th: any) => {
-			let possui: any = false;
-			[...th.classList].forEach((classe) => {
-				// Verifica se contém sort- no inicio da class
-				if (classe.indexOf("sort-") == 0) {
-					possui = classe;
+		if (eTrHeadPai) {
+			Array.from(eTrHeadPai.children).forEach((th: any) => {
+				let possui: any = false;
+				[...th.classList].forEach((classe) => {
+					// Verifica se contém sort- no inicio da class
+					if (classe.indexOf("sort-") == 0) {
+						possui = classe;
+					}
+				});
+				if (possui != false) {
+					let colName = possui.replace("sort-", "");
+					if (colName != "") {
+						if (this.c.headSort == true) {
+							mkt.Ao("click", th, (e: HTMLTableCellElement) => {
+								this.orderBy(colName);
+							});
+						}
+						if (this.c.headMenu == true) {
+							mkt.Ao("mousemove", th, (e: HTMLTableCellElement) => {
+								this.headSeeMenuAbrir(colName, e);
+							});
+						}
+					}
 				}
 			});
-			if (possui != false) {
-				let colName = possui.replace("sort-", "");
-				if (colName != "") {
-					if (this.c.headSort == true) {
-						mkt.Ao("click", th, (e: HTMLTableCellElement) => {
-							this.orderBy(colName);
-						});
-					}
-					if (this.c.headMenu == true) {
-						mkt.Ao("mousemove", th, (e: HTMLTableCellElement) => {
-							this.headSeeMenuAbrir(colName, e);
-						});
-					}
-				}
-			}
-		});
+		}
 	}
 
 	// Direção 0: Crescente
