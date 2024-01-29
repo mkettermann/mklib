@@ -3465,7 +3465,7 @@ Object.defineProperty(mkt, "addTask", {
  * Trazer as tarefas e processos aqui.
  * - Exclusivos - OK
  * - PK Duplicada - OK
- * - Duplice: PK Diferente, mas Mesmo Conteúdo
+ * - Duplice: PK Diferente, mas Mesmo Conteúdo - OK
  * - ProcessoFiltragem
  */
 Object.defineProperty(mkt, "Workers", {
