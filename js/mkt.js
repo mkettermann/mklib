@@ -2882,12 +2882,12 @@ Object.defineProperty(mkt, "request", {
                     config.retorno = await config.pacote.json();
                 }
                 if (!config.quiet) {
-                    let tam = config.retorno.length;
+                    let tam = config.retorno?.length;
                     if (!tam) {
                         tam = "";
                     }
                     mkt.gc("Retorno " + config.pacote.status +
-                        " (" + config.metodo + "):{" + config.retorno.length + "} " +
+                        " (" + config.metodo + "):{" + config.retorno?.length + "} " +
                         config.url + " (" + config.tipo + ")");
                 }
                 mkt.cte("Request: " + nomeRequest, config.quiet);
