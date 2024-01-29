@@ -391,6 +391,11 @@ class mkt {
 						this.dadosFull.push(data_url[i]);
 					}
 				}
+				mkt.addTask({ k: "ChavesRepetidas", v: this.dadosFull, target: this.c.pk }).then((r: any) => {
+					if (r.v.length > 0) {
+						mkt.w("ALERT! ", this.c.nomeTabela, " PKs Duplicadas: ", r.v);
+					}
+				});
 				r(true);
 			} else if (mkt.classof(data_url) == "String") {
 				// Aqui é a primeira coleta.
@@ -441,7 +446,11 @@ class mkt {
 							// Quando o recebido é igual ou veio até mais do que o solicitado:
 							this.aindaTemMais = true;
 						}
-						//mkt.l(this.c.nomeTabela + " baixou " + this.ultimoGet + " registros.")
+						mkt.addTask({ k: "ChavesRepetidas", v: this.dadosFull, target: this.c.pk }).then((r: any) => {
+							if (r.v.length > 0) {
+								mkt.w("ALERT! ", this.c.nomeTabela, " PKs Duplicadas: ", r.v);
+							}
+						});
 						r(p.retorno.length);
 					} else {
 						r(null);
@@ -454,22 +463,6 @@ class mkt {
 			// MECANICA CACHE CLIENT SIDE.
 			// A cada APPENDLIST um PUT no indexed;
 			if (this.c.ativarDbCliente) {
-				// let w = mkt.mktWorker();
-				// w.postMessage({ c: "MKT_LIST_GO", u: url });
-				// w.onmessage = (ev: MessageEvent) => {
-				// 	console.log("APP> c: ", ev.data.c, " d: ", ev.data.d);
-				// 	if (ev.data.c == "MKT_LIST_BACK") {
-				// 		this.dadosFull.push(...ev.data.d);
-				// 		r(this);
-				// 	}
-				// }
-				// w.onerror = (ev: MessageEvent) => {
-				// 	console.log("APP> Erro: ", ev);
-				// 	ev.preventDefault();
-				// 	if (ev.data.c == "MKT_LIST_BACK") {
-				// 		r(null);
-				// 	}
-				// }
 				// DB CON
 				// if (this.c.nomeTabela != null) {
 				// 	this.db = await this.dbCon();
@@ -886,7 +879,7 @@ class mkt {
 		} else {
 			this.hmunsel = [];
 		}
-		this.exclusivos = await mkt.addTask({ k: "MKT_Exclusivos", v: this.dadosFull })
+		this.exclusivos = await mkt.addTask({ k: "Exclusivos", v: this.dadosFull })
 		this.exclusivos = this.exclusivos.v[colName.split(".")[0]];
 		let exclusivosProcessado: any = []
 		if (colName.includes(".")) {
@@ -2281,7 +2274,7 @@ Object.defineProperty(mkt, "getModelo", {
 
 Object.defineProperty(mkt, "getExclusivos", {
 	value: async (array: any) => {
-		let res = await mkt.addTask({ k: "MKT_Exclusivos", v: array });
+		let res = await mkt.addTask({ k: "Exclusivos", v: array });
 		return res.v;
 	}, enumerable: false, writable: false, configurable: false,
 });
@@ -3540,11 +3533,17 @@ Object.defineProperty(mkt, "addTask", {
 /** #TASKS
  * Trazer as tarefas e processos aqui.
  * - Exclusivos - OK
- * - Identificar Objetos Iguais (Mesma PK (Impossibilita CRUD) e PK Diferente com todos dados iguais (Duplicidade))
+ * - PK Duplicada - OK
+ * - Duplice:  Mesma PK e Mesmo Conteúdo (Tudo Igual)
+ * - Duplice: PK Diferente e Mesmo Conteúdo
  * - ProcessoFiltragem
  */
 Object.defineProperty(mkt, "Workers", {
-	value: (numWorkers: number = 3) => { // Padrao 3
+	value: (numWorkers: number | undefined) => {
+		if (!numWorkers) {
+			numWorkers = navigator.hardwareConcurrency || 3;
+		}
+		if (numWorkers > 3) numWorkers = 3;
 		return new Promise((r) => {
 			// Constroi elemento se ele não existir:
 			if (!document.querySelector("#mktWorker")) {
@@ -3563,18 +3562,13 @@ Object.defineProperty(mkt, "Workers", {
 					return nomeClasse;
 				}
 				onmessage = (ev) => {
-					console.log("W> ", ev.data);
+					//console.log("W> ", ev.data);
 					if (ev?.data?.k) {
 						let job = ev.data;
 						switch (job.k) { // COMANDOS RECEBIDOS
-							case "MKT_INCLUDE":
-								let resultado = job.v.includes(job.target);
-								postMessage({ k: "MKT_INCLUDE", v: resultado });
-								break;
-							case "MKT_Exclusivos":
+							case "Exclusivos":
 								let chaves = new Set();
-								let a = job.v;
-								a.forEach((o) => {
+								job.v.forEach((o) => {
 									Object.keys(o).forEach((p) => {
 										chaves.add(p);
 									});
@@ -3584,7 +3578,7 @@ Object.defineProperty(mkt, "Workers", {
 								chaves.forEach((k) => {
 									let tempSet = new Set();
 									let tempJson = new Set();
-									a.forEach((o) => {
+									job.v.forEach((o) => {
 										let temp = o[k];
 										let tipo = classof(o[k])
 										if (tipo == "String") {
@@ -3604,7 +3598,19 @@ Object.defineProperty(mkt, "Workers", {
 										};
 									});
 								});
-								postMessage({ k: "MKT_Exclusivos", v: campos });
+								postMessage({ k: "Exclusivos", v: campos });
+								break;
+							case "ChavesRepetidas":
+								let resultado = new Set();
+								let jaTem = new Set();
+								job.v.forEach(o => {
+									if (jaTem.has(o[job.target])) {
+										resultado.add(o[job.target]);
+									}
+									jaTem.add(o[job.target]);
+								})
+								postMessage({ k: "ChavesRepetidas", v: [...resultado] });
+								break;
 							default:
 						}
 					}

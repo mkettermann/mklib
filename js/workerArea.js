@@ -14,14 +14,9 @@ onmessage = (ev) => {
 	if (ev?.data?.k) {
 		let job = ev.data;
 		switch (job.k) { // COMANDOS RECEBIDOS
-			case "MKT_INCLUDE":
-				let resultado = job.v.includes(job.target);
-				postMessage({ k: "MKT_INCLUDE", v: resultado });
-				break;
-			case "MKT_Exclusivos":
+			case "Exclusivos":
 				let chaves = new Set();
-				let a = job.v;
-				a.forEach((o) => {
+				job.v.forEach((o) => {
 					Object.keys(o).forEach((p) => {
 						chaves.add(p);
 					});
@@ -31,7 +26,7 @@ onmessage = (ev) => {
 				chaves.forEach((k) => {
 					let tempSet = new Set();
 					let tempJson = new Set();
-					a.forEach((o) => {
+					job.v.forEach((o) => {
 						let temp = o[k];
 						let tipo = classof(o[k])
 						if (tipo == "String") {
@@ -51,7 +46,19 @@ onmessage = (ev) => {
 						};
 					});
 				});
-				postMessage({ k: "MKT_Exclusivos", v: campos });
+				postMessage({ k: "Exclusivos", v: campos });
+				break;
+			case "ChavesRepetidas":
+				let resultado = new Set();
+				let jaTem = new Set();
+				job.v.forEach(o => {
+					if (jaTem.has(o[job.target])) {
+						resultado.add(o[job.target]);
+					}
+					jaTem.add(o[job.target]);
+				})
+				postMessage({ k: "ChavesRepetidas", v: [...resultado] });
+				break;
 			default:
 		}
 	}
