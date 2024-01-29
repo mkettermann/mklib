@@ -60,6 +60,7 @@ class mktc {
     ; // Nessa listagem o filtro por tecla não é dinâmico por padrão.
     headSort = true; // Indicador se ativará o ordenamento ao clicar no cabeçalho
     headMenu = true; // Indicador se ativará o botãozinho que abre o filtro completo do campo.
+    exibeBotaoMais = true; // Indicador se ativará o botãozinho que abre o filtro completo do campo.
     // Os demais podem se alterar durante as operações da listagem.
     sortBy = null; // Campo a ser ordenado inicialmente;
     sortDir = 0; // 0,1,2 = Crescente, Decrescente, Toogle;
@@ -604,24 +605,27 @@ class mkt {
             //EVENT: aoAntesDePopularTabela
             mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoAntesDePopularTabela"));
             await this.c.aoAntesDePopularTabela(this.dadosExibidos);
-            // Apenas quando há mais dados a serem puxados:
-            if (this.aindaTemMais) {
-                // Apenas se estiver na última págiana:
-                if (this.c.totPags == this.c.pagAtual) {
-                    let container = mkt.Q(this.c.container);
-                    if (!container.querySelector("." + this.c.botaoAdicionarMaisClasse)) {
-                        let mklEFim = document.createElement("div");
-                        mklEFim.className = this.c.botaoAdicionarMaisClasse;
-                        mklEFim.innerHTML = mkt.m.carregarmais;
-                        mkt.Ao("click", mklEFim, (e) => {
-                            this.mais();
-                            e.classList.add("disabled");
-                        });
-                        container.querySelector("table")?.parentElement?.appendChild(mklEFim);
+            // Apenas se estiver configurado para exibir o botão de continuidade.
+            if (this.c.exibeBotaoMais) {
+                // Apenas quando há mais dados a serem puxados:
+                if (this.aindaTemMais) {
+                    // Apenas se estiver na última págiana:
+                    if (this.c.totPags == this.c.pagAtual) {
+                        let container = mkt.Q(this.c.container);
+                        if (!container.querySelector("." + this.c.botaoAdicionarMaisClasse)) {
+                            let mklEFim = document.createElement("div");
+                            mklEFim.className = this.c.botaoAdicionarMaisClasse;
+                            mklEFim.innerHTML = mkt.m.carregarmais;
+                            mkt.Ao("click", mklEFim, (e) => {
+                                this.mais();
+                                e.classList.add("disabled");
+                            });
+                            container.querySelector("table")?.parentElement?.appendChild(mklEFim);
+                        }
                     }
-                }
-                else {
-                    mkt.Q(this.c.container + " ." + this.c.botaoAdicionarMaisClasse)?.remove();
+                    else {
+                        mkt.Q(this.c.container + " ." + this.c.botaoAdicionarMaisClasse)?.remove();
+                    }
                 }
             }
             await mkt.mkMoldeOA(this.dadosExibidos, this.c.idmodelo, this.c.tbody);
