@@ -3464,7 +3464,8 @@ Object.defineProperty(mkt, "addTask", {
 });
 /** #TASKS
  * Trazer as tarefas e processos aqui.
- * - Exclusivos
+ * - Exclusivos - OK
+ * - Identificar Objetos Iguais (Mesma PK (Impossibilita CRUD) e PK Diferente com todos dados iguais (Duplicidade))
  * - ProcessoFiltragem
  */
 Object.defineProperty(mkt, "Workers", {
