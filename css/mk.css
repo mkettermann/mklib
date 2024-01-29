@@ -1919,11 +1919,11 @@ ul.mkUlFase li.disabled a {
 	top: 0;
 	height: 100%;
 	right: 10px;
-	border: 1px outset var(--bordaMaster);
+	border: 1px outset #fff6;
 	color: var(--corLink);
 	background-color: var(--bordaMaster);
 
-	border-radius: 3px;
+	border-radius: 5px;
 	padding: 1px;
 	cursor: pointer;
 }

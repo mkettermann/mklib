@@ -3506,14 +3506,14 @@ Object.defineProperty(mkt, "headMenuHideX", {
 Object.defineProperty(mkt, "headMenuHide", {
 	value: (ev: any) => {
 		let ehm = mkt.Q("body .mkHeadMenu");
-		if (ehm?.classList.contains("lock")) {
-			ehm.classList.remove("lock");
-		} else {
-			let ethm = ev.target.closest('.mkHeadMenu');
-			if (!ethm) {
-				ehm?.classList.add("oculto");
-			}
+		// if (ehm?.classList.contains("lock")) {
+		// 	ehm.classList.remove("lock");
+		// } else {
+		let ethm = ev.target.closest('.mkHeadMenu');
+		if (!ethm) {
+			ehm?.classList.add("oculto");
 		}
+		// }
 	}, enumerable: false, writable: false, configurable: false,
 });
 
