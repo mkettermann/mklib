@@ -2592,7 +2592,11 @@ Object.defineProperty(mkt, "mkYYYYMMDDtoDDMMYYYY", {
 Object.defineProperty(mkt, "toLocale", {
     value: (data) => {
         // '2023-12-27T12:01:16.158' => '22/12/2023, 11:18:33'
-        return new Date(data).toLocaleString();
+        let dataNum = Number(data);
+        if (mkt.classof(dataNum) != "Number") {
+            dataNum = data;
+        }
+        return new Date(dataNum).toLocaleString();
     }, enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "mkFormatarDataOA", {
