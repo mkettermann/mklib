@@ -493,25 +493,23 @@ class mkt {
         //EVENT: aoIniciarListagem
         mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoIniciarListagem"));
         this.c.aoIniciarListagem(this);
-        if (this.dadosFull.length > 0) {
-            // Limpar Dados nulos
-            mkt.mkLimparOA(this.dadosFull);
-            //EVENT: aoPossuirDados
-            mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoPossuirDados"));
-            await this.c.aoPossuirDados(this.dadosFull);
-            // Ordena a lista geral com base na primeira propriedade.
-            mkt.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
-            //Adiciona eventos aos botões do filtro
-            this.setFiltroListener();
-            // Executa um filtro inicial e na sequencia processa a exibição.
-            this.updateFiltro();
-            this.efeitoSort();
-            // Remove oculto, caso encontre a tag
-            if (mkt.Q(this.c.tableResultado))
-                mkt.Q(this.c.tableResultado).classList.remove("oculto");
-            // Inicia download do resto da lista
-            //this.startDownloadContinuo();
-        }
+        // Limpar Dados nulos
+        mkt.mkLimparOA(this.dadosFull);
+        //EVENT: aoPossuirDados
+        mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoPossuirDados"));
+        await this.c.aoPossuirDados(this.dadosFull);
+        // Ordena a lista geral com base na primeira propriedade.
+        mkt.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
+        //Adiciona eventos aos botões do filtro
+        this.setFiltroListener();
+        // Executa um filtro inicial e na sequencia processa a exibição.
+        this.updateFiltro();
+        this.efeitoSort();
+        // Remove oculto, caso encontre a tag
+        if (mkt.Q(this.c.tableResultado))
+            mkt.Q(this.c.tableResultado).classList.remove("oculto");
+        // Inicia download do resto da lista
+        //this.startDownloadContinuo();
     };
     dadosCheck = () => {
         // Verificação de ChavesRepetidas
