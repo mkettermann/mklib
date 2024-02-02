@@ -1603,8 +1603,27 @@ Object.defineProperty(mkt, "isJson", {
         return true;
     }, enumerable: false, writable: false, configurable: false,
 });
+String.prototype.removeRaw = function () {
+    return this.replace(/\\n/g, "\\n")
+        .replace(/\\'/g, "\\'")
+        .replace(/\\"/g, '\\"')
+        .replace(/\\&/g, "\\&")
+        .replace(/\\r/g, "\\r")
+        .replace(/\\t/g, "\\t")
+        .replace(/\\b/g, "\\b")
+        .replace(/\\f/g, "\\f");
+};
+Object.defineProperty(mkt, "removeRaw", {
+    value: (t) => {
+        return t.re;
+    }, enumerable: false, writable: false, configurable: false,
+});
 Object.defineProperty(mkt, "parseJSON", {
     value: (t) => {
+        if (mkt.classof(t) == "String")
+            t = t.removeRaw();
+        if (t === "")
+            return ""; // Vazio
         if (mkt.isJson(t)) {
             return JSON.parse(t);
         }
