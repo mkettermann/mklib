@@ -1604,24 +1604,22 @@ Object.defineProperty(mkt, "isJson", {
     }, enumerable: false, writable: false, configurable: false,
 });
 String.prototype.removeRaw = function () {
-    return this.replace(/\\n/g, "\\n")
-        .replace(/\\'/g, "\\'")
-        .replace(/\\"/g, '\\"')
-        .replace(/\\&/g, "\\&")
-        .replace(/\\r/g, "\\r")
-        .replace(/\\t/g, "\\t")
-        .replace(/\\b/g, "\\b")
-        .replace(/\\f/g, "\\f");
+    return this.replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("&", "&amp;")
+        .replaceAll("\n", "")
+        .replaceAll("\r", "")
+        .replaceAll("\t", "")
+        .replaceAll("\b", "")
+        .replaceAll("\f", "");
 };
-Object.defineProperty(mkt, "removeRaw", {
-    value: (t) => {
-        return t.re;
-    }, enumerable: false, writable: false, configurable: false,
-});
 Object.defineProperty(mkt, "parseJSON", {
     value: (t) => {
-        if (mkt.classof(t) == "String")
+        mkt.l("Format: ", mkt.classof(t));
+        if (mkt.classof(t) == "String") {
             t = t.removeRaw();
+        }
         if (t === "")
             return ""; // Vazio
         if (mkt.isJson(t)) {

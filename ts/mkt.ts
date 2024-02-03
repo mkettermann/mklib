@@ -1570,6 +1570,7 @@ Object.defineProperty(mkt, "Ao", {
 		});
 	}, enumerable: false, writable: false, configurable: false,
 });
+
 Object.defineProperty(mkt, "atribuir", {
 	value: (e: any, gatilho: any, atributo: string = "oninput") => {
 		// Incrementa no ATRIBUTO do elemento E o texto do GATILHO.
@@ -1594,6 +1595,7 @@ Object.defineProperty(mkt, "atribuir", {
 		} else { mkt.w("mkt.atribuir() - Precisa de um elemento: ", e) }
 	}, enumerable: false, writable: false, configurable: false,
 });
+
 Object.defineProperty(mkt, "html", {
 	value: (query: any, conteudo: string) => {
 		// Atalho para innerHTML que retorna apenas o primeiro elemento da query.
@@ -1604,11 +1606,13 @@ Object.defineProperty(mkt, "html", {
 		return e;
 	}, enumerable: false, writable: false, configurable: false,
 });
+
 Object.defineProperty(mkt, "wait", {
 	value: (ms: number) => {
 		return new Promise(r => setTimeout(r, ms))
 	}, enumerable: false, writable: false, configurable: false,
 });
+
 Object.defineProperty(mkt, "isJson", {
 	value: (s: any): boolean => {
 		try {
@@ -1621,25 +1625,23 @@ Object.defineProperty(mkt, "isJson", {
 });
 
 String.prototype.removeRaw = function () {
-	return this.replace(/\\n/g, "\\n")
-		.replace(/\\'/g, "\\'")
-		.replace(/\\"/g, '\\"')
-		.replace(/\\&/g, "\\&")
-		.replace(/\\r/g, "\\r")
-		.replace(/\\t/g, "\\t")
-		.replace(/\\b/g, "\\b")
-		.replace(/\\f/g, "\\f");
+	return this.replaceAll('"', "&quot;")
+		.replaceAll("'", "&#39;")
+		.replaceAll('"', "&quot;")
+		.replaceAll("&", "&amp;")
+		.replaceAll("\n", "")
+		.replaceAll("\r", "")
+		.replaceAll("\t", "")
+		.replaceAll("\b", "")
+		.replaceAll("\f", "");
 };
-
-Object.defineProperty(mkt, "removeRaw", {
-	value: (t: any) => {
-		return t.re
-	}, enumerable: false, writable: false, configurable: false,
-});
 
 Object.defineProperty(mkt, "parseJSON", {
 	value: (t: any) => {
-		if (mkt.classof(t) == "String") t = t.removeRaw();
+		mkt.l("Format: ", mkt.classof(t));
+		if (mkt.classof(t) == "String") {
+			t = t.removeRaw();
+		}
 		if (t === "") return ""; // Vazio
 		if (mkt.isJson(t)) {
 			return JSON.parse(t);
