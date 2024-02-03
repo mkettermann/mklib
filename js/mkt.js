@@ -1604,16 +1604,25 @@ Object.defineProperty(mkt, "isJson", {
     }, enumerable: false, writable: false, configurable: false,
 });
 String.prototype.removeRaw = function () {
-    return this.replaceAll('"', "&quot;")
-        .replaceAll("'", "&#39;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("&", "&amp;")
-        .replaceAll("\n", "")
+    return this.replaceAll("\n", "")
         .replaceAll("\r", "")
         .replaceAll("\t", "")
         .replaceAll("\b", "")
         .replaceAll("\f", "");
 };
+Object.defineProperty(mkt, "stringfy", {
+    value: (t) => {
+        let s = JSON.stringify(t);
+        return s.replaceAll("\n", "")
+            .replaceAll("\r", "")
+            .replaceAll("\t", "")
+            .replaceAll("\b", "")
+            .replaceAll("\f", "")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#39;")
+            .replaceAll("&", "&amp;");
+    }, enumerable: false, writable: false, configurable: false,
+});
 Object.defineProperty(mkt, "parseJSON", {
     value: (t) => {
         mkt.l("Format: ", mkt.classof(t));
