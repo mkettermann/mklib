@@ -1625,7 +1625,6 @@ Object.defineProperty(mkt, "stringfy", {
 });
 Object.defineProperty(mkt, "parseJSON", {
     value: (t) => {
-        mkt.l("Format: ", mkt.classof(t));
         if (mkt.classof(t) == "String") {
             t = t.removeRaw();
         }
