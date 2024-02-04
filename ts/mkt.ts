@@ -1632,7 +1632,7 @@ Object.defineProperty(mkt, "isJson", {
 		.replaceAll("\f", "");
 };
 
-Object.defineProperty(mkt, "stringfy", {
+Object.defineProperty(mkt, "jsonInsideJson", {
 	value: (t: any) => {
 		let s = JSON.stringify(t);
 		return s.replaceAll("\n", "")

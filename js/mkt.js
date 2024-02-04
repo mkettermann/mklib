@@ -1610,7 +1610,7 @@ String.prototype.removeRaw = function () {
         .replaceAll("\b", "")
         .replaceAll("\f", "");
 };
-Object.defineProperty(mkt, "stringfy", {
+Object.defineProperty(mkt, "jsonInsideJson", {
     value: (t) => {
         let s = JSON.stringify(t);
         return s.replaceAll("\n", "")
