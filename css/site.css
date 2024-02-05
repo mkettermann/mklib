@@ -289,6 +289,13 @@ h2 {
 	margin-bottom: 8px;
 }
 
+h4 {
+	background: linear-gradient(45deg, PURPLE, GREEN, PURPLE);
+	-webkit-background-clip: text;
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
+}
+
 /* Outros */
 input {
 	width: 100%;

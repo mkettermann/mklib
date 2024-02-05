@@ -114,6 +114,11 @@
 	display: none !important;
 }
 
+li,
+ul {
+	list-style: none;
+}
+
 /* HIDE */
 .mkSecreto {
 	width: 0px !important;

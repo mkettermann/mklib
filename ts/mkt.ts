@@ -499,28 +499,27 @@ class mkt {
 		mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoIniciarListagem"));
 		this.c.aoIniciarListagem(this);
 
-		if (this.dadosFull.length > 0) {
-			// Limpar Dados nulos
-			mkt.mkLimparOA(this.dadosFull);
+		// Limpar Dados nulos
+		mkt.mkLimparOA(this.dadosFull);
 
-			//EVENT: aoPossuirDados
-			mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoPossuirDados"));
-			await this.c.aoPossuirDados(this.dadosFull);
+		//EVENT: aoPossuirDados
+		mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoPossuirDados"));
+		await this.c.aoPossuirDados(this.dadosFull);
 
-			// Ordena a lista geral com base na primeira propriedade.
-			mkt.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
+		// Ordena a lista geral com base na primeira propriedade.
+		mkt.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
 
-			// Executa um filtro inicial e na sequencia processa a exibição.
-			this.updateFiltro();
-			this.efeitoSort();
-			// Remove oculto, caso encontre a tag
-			if (mkt.Q(this.c.tableResultado))
-				mkt.Q(this.c.tableResultado).classList.remove("oculto");
+		// Executa um filtro inicial e na sequencia processa a exibição.
+		this.updateFiltro();
+		this.efeitoSort();
+		// Remove oculto, caso encontre a tag
+		if (mkt.Q(this.c.tableResultado))
+			mkt.Q(this.c.tableResultado).classList.remove("oculto");
 
-			// Inicia download do resto da lista
-			//this.startDownloadContinuo();
+		// Inicia download do resto da lista
+		//this.startDownloadContinuo();
 
-		}
+
 	};
 
 	dadosCheck = () => {
@@ -1583,6 +1582,7 @@ Object.defineProperty(mkt, "Ao", {
 		});
 	}, enumerable: false, writable: false, configurable: false,
 });
+
 Object.defineProperty(mkt, "atribuir", {
 	value: (e: any, gatilho: any, atributo: string = "oninput") => {
 		// Incrementa no ATRIBUTO do elemento E o texto do GATILHO.
@@ -1607,6 +1607,7 @@ Object.defineProperty(mkt, "atribuir", {
 		} else { mkt.w("mkt.atribuir() - Precisa de um elemento: ", e) }
 	}, enumerable: false, writable: false, configurable: false,
 });
+
 Object.defineProperty(mkt, "html", {
 	value: (query: any, conteudo: string) => {
 		// Atalho para innerHTML que retorna apenas o primeiro elemento da query.
@@ -1617,11 +1618,13 @@ Object.defineProperty(mkt, "html", {
 		return e;
 	}, enumerable: false, writable: false, configurable: false,
 });
+
 Object.defineProperty(mkt, "wait", {
 	value: (ms: number) => {
 		return new Promise(r => setTimeout(r, ms))
 	}, enumerable: false, writable: false, configurable: false,
 });
+
 Object.defineProperty(mkt, "isJson", {
 	value: (s: any): boolean => {
 		try {
@@ -1633,8 +1636,34 @@ Object.defineProperty(mkt, "isJson", {
 	}, enumerable: false, writable: false, configurable: false,
 });
 
+(String.prototype as any).removeRaw = function () {
+	return this.replaceAll("\n", "")
+		.replaceAll("\r", "")
+		.replaceAll("\t", "")
+		.replaceAll("\b", "")
+		.replaceAll("\f", "");
+};
+
+Object.defineProperty(mkt, "jsonInsideJson", {
+	value: (t: any) => {
+		let s = JSON.stringify(t);
+		return s.replaceAll("\n", "")
+			.replaceAll("\r", "")
+			.replaceAll("\t", "")
+			.replaceAll("\b", "")
+			.replaceAll("\f", "")
+			.replaceAll('"', "&quot;")
+			.replaceAll("'", "&#39;")
+			.replaceAll("&", "&amp;");
+	}, enumerable: false, writable: false, configurable: false,
+});
+
 Object.defineProperty(mkt, "parseJSON", {
 	value: (t: any) => {
+		if (mkt.classof(t) == "String") {
+			t = t.removeRaw();
+		}
+		if (t === "") return ""; // Vazio
 		if (mkt.isJson(t)) {
 			return JSON.parse(t);
 		} else {
@@ -1643,6 +1672,7 @@ Object.defineProperty(mkt, "parseJSON", {
 		}
 	}, enumerable: false, writable: false, configurable: false,
 });
+
 Object.defineProperty(mkt, "removeEspecias", {
 	value: (s: string) => {
 		s = s.toString();
@@ -2696,7 +2726,11 @@ Object.defineProperty(mkt, "mkYYYYMMDDtoDDMMYYYY", {
 Object.defineProperty(mkt, "toLocale", {
 	value: (data: string): string => {
 		// '2023-12-27T12:01:16.158' => '22/12/2023, 11:18:33'
-		return new Date(data).toLocaleString();
+		let dataNum: string | number = Number(data);
+		if (mkt.classof(dataNum) != "Number") {
+			dataNum = data
+		}
+		return new Date(dataNum).toLocaleString();
 	}, enumerable: false, writable: false, configurable: false,
 });
 
