@@ -322,6 +322,16 @@ class mkt {
             });
         }
         this.headAtivar();
+        //Adiciona eventos aos botões do filtro
+        this.setFiltroListener();
+        // Inicial SortBy
+        if (!this.c.sortBy)
+            this.c.sortBy = this.c.pk;
+        // Inicial SortDir
+        if (!this.c.sortDir)
+            this.c.sortDir = 1;
+        // Inicial Sort
+        this.setDirSort(this.c.sortBy, Number(this.c.sortDir));
         let started = false;
         if (this.c.dados != null) {
             if (mkt.classof(this.c.dados) == "Array") {
@@ -501,8 +511,6 @@ class mkt {
             await this.c.aoPossuirDados(this.dadosFull);
             // Ordena a lista geral com base na primeira propriedade.
             mkt.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
-            //Adiciona eventos aos botões do filtro
-            this.setFiltroListener();
             // Executa um filtro inicial e na sequencia processa a exibição.
             this.updateFiltro();
             this.efeitoSort();
