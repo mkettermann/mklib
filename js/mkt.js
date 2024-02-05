@@ -327,10 +327,10 @@ class mkt {
         this.setFiltroListener();
         // Inicial SortBy
         if (!this.c.sortBy)
-            this.c.sortBy = this.c.pk;
+            this.c.sortBy = this.c.pk; // Padrão PK
         // Inicial SortDir
         if (!this.c.sortDir)
-            this.c.sortDir = 1;
+            this.c.sortDir = 0; // Padrão 0 Ccrescente
         // Inicial Sort
         this.setDirSort(this.c.sortBy, Number(this.c.sortDir));
         let started = false;
