@@ -315,6 +315,8 @@ class mkt {
 				this.atualizaNaPaginaUm();
 			});
 		}
+
+		// Ativar THEAD funcionalidades
 		this.headAtivar();
 
 		//Adiciona eventos aos botões do filtro
