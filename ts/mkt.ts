@@ -1352,7 +1352,7 @@ class mkt {
 	};
 
 	edit = (objDados: object, k: string, v: any) => {
-		this.dadosFull = mkt.setObjetoFromId(k, v, this.dadosFull);
+		this.dadosFull = mkt.setObjetoFromId(k, v, objDados, this.dadosFull);
 		mkt.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
 		this.atualizarListagem();
 	};
