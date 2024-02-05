@@ -3110,11 +3110,11 @@ Object.defineProperty(mkt, "setObjetoFromId", {
 		listaDados: object[]
 	): object[] | null => {
 		if (Array.isArray(listaDados)) {
-			listaDados.forEach((o) => {
-				if (o[nomeKey as keyof typeof o] == valorKey) {
-					o = itemModificado;
+			for (let i = 0; i < listaDados.length; i++) {
+				if (listaDados[i][nomeKey] == valorKey) {
+					listaDados[i] = itemModificado;
 				}
-			});
+			}
 		}
 		return listaDados;
 	}, enumerable: false, writable: false, configurable: false,

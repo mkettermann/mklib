@@ -2990,11 +2990,11 @@ Object.defineProperty(mkt, "getObjetoFromId", {
 Object.defineProperty(mkt, "setObjetoFromId", {
     value: (nomeKey, valorKey, itemModificado, listaDados) => {
         if (Array.isArray(listaDados)) {
-            listaDados.forEach((o) => {
-                if (o[nomeKey] == valorKey) {
-                    o = itemModificado;
+            for (let i = 0; i < listaDados.length; i++) {
+                if (listaDados[i][nomeKey] == valorKey) {
+                    listaDados[i] = itemModificado;
                 }
-            });
+            }
         }
         return listaDados;
     }, enumerable: false, writable: false, configurable: false,
