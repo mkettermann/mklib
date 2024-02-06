@@ -5676,18 +5676,18 @@ Object.defineProperty(mkt, "toString", {
 
 Object.defineProperty(mkt, "Inicializar", {
 	value: () => {
-		setTimeout(() => {
-			mkt.mkClicarNaAba(mkt.Q(".mkAbas a.active")); // Inicia no ativo
-			mkt.exeTimer();
-		}, 1);
+
+		mkt.mkClicarNaAba(mkt.Q(".mkAbas a.active")); // Inicia no ativo
+		mkt.exeTimer();
+
 	}, enumerable: false, writable: false, configurable: false,
 });
 
 Object.defineProperty(mkt, "exeTimer", {
 	value: () => {
-		if (mkt.mkSelRenderizar) mkt.mkSelRenderizar();
-		if (mkt.mkRecRenderizar) mkt.mkRecRenderizar();
-		if (mkt.mkBotCheck) mkt.mkBotCheck();
+		mkt.mkSelRenderizar();
+		mkt.mkRecRenderizar();
+		mkt.mkBotCheck();
 		// Itera sobre todos os Poppers para atualizar na mesma frequencia deste intervalo.
 		mkt.vars?.poppers?.forEach((o: any) => {
 			if (!o.state.elements.popper.classList.contains("oculto")) {
@@ -5698,6 +5698,8 @@ Object.defineProperty(mkt, "exeTimer", {
 		setTimeout(mkt.exeTimer, mkt.vars.exeTimer);
 	}, enumerable: false, writable: false, configurable: false,
 });
+
+//Object.defineProperty(mkt , undefined ,{enumerable: false, writable: false, configurable: false});
 
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //   Auto Inicializar               \\
