@@ -5495,18 +5495,22 @@ Object.defineProperty(mkt, "toString", {
 });
 Object.defineProperty(mkt, "Inicializar", {
     value: () => {
-        //mkt.Workers() // mkt.vars.wpool
-        mkt.mkClicarNaAba(mkt.Q(".mkAbas a.active")); // Inicia no ativo
-        mkt.exeTimer();
+        setTimeout(() => {
+            mkt.mkClicarNaAba(mkt.Q(".mkAbas a.active")); // Inicia no ativo
+            mkt.exeTimer();
+        }, 1);
     }, enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "exeTimer", {
     value: () => {
-        mkt.mkSelRenderizar();
-        mkt.mkRecRenderizar();
-        mkt.mkBotCheck();
+        if (mkt.mkSelRenderizar)
+            mkt.mkSelRenderizar();
+        if (mkt.mkRecRenderizar)
+            mkt.mkRecRenderizar();
+        if (mkt.mkBotCheck)
+            mkt.mkBotCheck();
         // Itera sobre todos os Poppers para atualizar na mesma frequencia deste intervalo.
-        mkt.vars.poppers.forEach((o) => {
+        mkt.vars?.poppers?.forEach((o) => {
             if (!o.state.elements.popper.classList.contains("oculto")) {
                 o.update();
             }
