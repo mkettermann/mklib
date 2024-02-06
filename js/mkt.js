@@ -63,7 +63,7 @@ class mktc {
     exibeBotaoMais = true; // Indicador se ativará o botãozinho que abre o filtro completo do campo.
     // Os demais podem se alterar durante as operações da listagem.
     sortBy = null; // Campo a ser ordenado inicialmente;
-    sortDir = 0; // 0,1,2 = Crescente, Decrescente, Toogle;
+    sortDir = 1; // 0,1,2 = Crescente, Decrescente, Toogle;
     objFiltro = {}; // Itens Filtrados
     urlOrigem = ""; // URL de origem dos dados a serem populados
     pagAtual = 1; // Representa a pagina
@@ -330,7 +330,7 @@ class mkt {
             this.c.sortBy = this.c.pk; // Padrão PK
         // Inicial SortDir
         if (!this.c.sortDir)
-            this.c.sortDir = 0; // Padrão 0 Ccrescente
+            this.c.sortDir = 1; // Padrão 0 Decrescente por ID Deixando a Ultima ID no topo
         // Inicial Sort
         this.setDirSort(this.c.sortBy, Number(this.c.sortDir));
         let started = false;
