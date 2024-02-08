@@ -3789,7 +3789,7 @@ class mk {
                     continue;
                 let end = ini[i].indexOf("}");
                 let key = ini[i].slice(0, end).trim();
-                if (mk.classof(o) == "Object" && o != null) {
+                if ((mk.classof(o) == "Object" || mk.classof(o) == "Array") && o != null) {
                     let v = this.removerAspas(this.getV(key, o));
                     if (v != null) {
                         ret += v;
