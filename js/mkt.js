@@ -4393,7 +4393,7 @@ Object.defineProperty(mkt, "mkToValue", {
                     continue;
                 let end = ini[i].indexOf("}");
                 let key = ini[i].slice(0, end).trim();
-                if (mkt.classof(o) == "Object" && o != null) {
+                if ((mkt.classof(o) == "Object" || mkt.classof(o) == "Array") && o != null) {
                     let v = mkt.removerAspas(mkt.getV(key, o));
                     if (v != null) {
                         ret += v;
