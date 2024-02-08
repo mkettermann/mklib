@@ -5448,7 +5448,7 @@ Object.defineProperty(mkt, "importar", {
             mkt.QAll(tagBuscar + " *").forEach((e) => {
                 let destino = e.getAttribute("mkImportar");
                 if (destino != null) {
-                    ps.push({ p: mkt.get.html({ url: destino, quiet: true, carregador: false }), e: e, n: num });
+                    ps.push({ p: mkt.get.html({ url: destino, quiet: quiet, carregador: false }), e: e, n: num });
                 }
             });
             if (!quiet) {
