@@ -4475,6 +4475,7 @@ Object.defineProperty(mkt, "mkToValue", {
 				let end: number = ini[i].indexOf("}");
 				let key: string = ini[i].slice(0, end).trim();
 				if ((mkt.classof(o) == "Object" || mkt.classof(o) == "Array") && o != null) {
+					// Quando é Objeto ou Array, entra na propriedade ou posição solicitada.
 					let v = mkt.removerAspas(mkt.getV(key, o));
 					if (v != null) {
 						ret += v;
