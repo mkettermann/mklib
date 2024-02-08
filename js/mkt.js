@@ -21,6 +21,7 @@ class mktm {
     atr = "type='text'"; // Todos os atributos padrões deste campo.
     classes = "mkCampo"; // Classes padrões / iniciais deste campo
     target = "value"; // Propriedade para edição (value, innerHTML).
+    f = true; // Indicador se é iteravel no filtro HeadMenu.
     constructor(o) {
         if (o.k)
             this.k = o.k;
@@ -40,6 +41,8 @@ class mktm {
             this.classes = o.classes;
         if (o.target)
             this.target = o.target;
+        if (o.f == false)
+            this.f = false;
     }
     get [Symbol.toStringTag]() { return "mktm"; }
 }
@@ -1019,7 +1022,8 @@ class mkt {
             mkt.Q(".mkHeadMenu input[name='filtrarCampo']").value = "";
         };
         mkt.headMenuPrevious = () => {
-            let opcoes = this.getModel().map(o => { return o.k; });
+            let opcoes = this.getModel().map(o => { if (o.f)
+                return o.k; }).filter(r => { return r != null; });
             let posAtual = opcoes.indexOf(colName);
             let posAnterior = 0;
             if (posAtual >= 0) { // Se o atual existe
@@ -1028,11 +1032,13 @@ class mkt {
             if (posAnterior < 0) { // Era o primeiro
                 posAnterior = opcoes.length - 1; //Vira Última Posição
             }
-            //mkt.l("Atual: ", colName, "Anterior: ", opcoes[posAnterior], "Opções: ", opcoes);
-            this.headMenuAbrir(opcoes[posAnterior]);
+            //mkt.l("Atual: ", colName, "| Anterior: ", opcoes[posAnterior], "| Opções: ", opcoes);
+            if (opcoes[posAnterior])
+                this.headMenuAbrir(opcoes[posAnterior]);
         };
         mkt.headMenuNext = () => {
-            let opcoes = this.getModel().map(o => { return o.k; });
+            let opcoes = this.getModel().map(o => { if (o.f)
+                return o.k; }).filter(r => { return r != null; });
             let posAtual = opcoes.indexOf(colName);
             let posSeguinte = 0;
             if (posAtual >= 0) { // Se o atual existe
@@ -1041,8 +1047,9 @@ class mkt {
             if (posSeguinte >= opcoes.length) { // Era o último
                 posSeguinte = 0; //Vira Primeira Posição
             }
-            //mkt.l("Atual: ", colName, "Seguinte: ", opcoes[posSeguinte], "Opções: ", opcoes);
-            this.headMenuAbrir(opcoes[posSeguinte]);
+            //mkt.l("Atual: ", colName, "| Seguinte: ", opcoes[posSeguinte], "| Opções: ", opcoes);
+            if (opcoes[posSeguinte])
+                this.headMenuAbrir(opcoes[posSeguinte]);
         };
         mkt.headMenuCrescente = () => { this.orderBy(colName, 0); };
         mkt.headMenuDecrescente = () => { this.orderBy(colName, 1); };
@@ -1090,6 +1097,9 @@ class mkt {
     // Gera Listeners na THEAD da tabela (Requer classe: "sort-campo")
     headAtivar = () => {
         let eTrHeadPai = mkt.Q(this.c.container + " thead tr");
+        let opcoes = this.getModel().map(o => { if (o.f)
+            return o.k; }).filter(r => { return r != null; });
+        mkt.l(opcoes);
         if (eTrHeadPai) {
             Array.from(eTrHeadPai.children).forEach((th) => {
                 let possui = false;
@@ -1107,10 +1117,13 @@ class mkt {
                                 this.orderBy(colName);
                             });
                         }
-                        if (this.c.headMenu == true) {
-                            mkt.Ao("mousemove", th, (e) => {
-                                this.headSeeMenuAbrir(colName, e);
-                            });
+                        if (this.c.headMenu == true) { // Se Ativo
+                            // Se coluna atual permite filtrar.
+                            if (opcoes.includes(colName)) {
+                                mkt.Ao("mousemove", th, (e) => {
+                                    this.headSeeMenuAbrir(colName, e);
+                                });
+                            }
                         }
                     }
                 }
