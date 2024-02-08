@@ -6,7 +6,7 @@ var modeloList1 = [
 	new mktm({ k: "mId", l: "ID", pk: true, f: false }),
 	new mktm({ k: "mNome", l: "Nome" }),
 	new mktm({ k: "mDataCadastro", l: "Data Cadastro" }),
-	new mktm({ k: "mDataUltimoAcesso", l: "Último Acesso" }),
+	new mktm({ k: "mDataUltimoAcesso", l: "Último Acesso", f: false }),
 	new mktm({ k: "mTotalAcessos.a.b", l: "Total Acessos" }),
 	new mktm({ k: "mStatus", l: "Status" }),
 ]

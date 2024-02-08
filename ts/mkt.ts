@@ -1113,7 +1113,6 @@ class mkt {
 	headAtivar = () => {
 		let eTrHeadPai = mkt.Q(this.c.container + " thead tr");
 		let opcoes = this.getModel().map(o => { if (o.f) return o.k; }).filter(r => { return r != null });
-		mkt.l(opcoes);
 		if (eTrHeadPai) {
 			Array.from(eTrHeadPai.children).forEach((th: any) => {
 				let possui: any = false;
@@ -1133,7 +1132,7 @@ class mkt {
 						}
 						if (this.c.headMenu == true) { // Se Ativo
 							// Se coluna atual permite filtrar.
-							if (opcoes.includes(colName)) {
+							if (opcoes?.includes(colName)) {
 								mkt.Ao("mousemove", th, (e: HTMLTableCellElement) => {
 									this.headSeeMenuAbrir(colName, e);
 								});
