@@ -914,7 +914,7 @@ class mkt {
 		this.exclusivos = this.exclusivos.v[colName.split(".")[0]];
 		let exclusivosProcessado: any = []
 		if (colName.includes(".")) {
-			this.exclusivos.forEach((ex: any) => {
+			this.exclusivos?.forEach((ex: any) => {
 				let colv = mkt.getV(colName, ex).toString();
 				exclusivosProcessado.push(colv);
 			})
@@ -1038,17 +1038,29 @@ class mkt {
 		};
 		mkt.headMenuPrevious = () => {
 			let opcoes = this.getModel().map(o => { return o.k });
-			mkt.l("Atual: ", colName, "Anterior: ", "?", "Opções: ", opcoes);
-			// Iterar sobre Colunas disponiveis no mktm.
-			// Encontrar coluna anterior a atual aberta.
-			// Aqui reabre mkt.headMenuAbrir(ColunaAnterior);
+			let posAtual = opcoes.indexOf(colName);
+			let posAnterior = 0;
+			if (posAtual >= 0) { // Se o atual existe
+				posAnterior = posAtual - 1;
+			}
+			if (posAnterior < 0) {// Era o primeiro
+				posAnterior = opcoes.length - 1;//Vira Última Posição
+			}
+			//mkt.l("Atual: ", colName, "Anterior: ", opcoes[posAnterior], "Opções: ", opcoes);
+			this.headMenuAbrir(opcoes[posAnterior]);
 		};
 		mkt.headMenuNext = () => {
 			let opcoes = this.getModel().map(o => { return o.k });
-			mkt.l("Atual: ", colName, "Proxima: ", "?", "Opções: ", opcoes);
-			// Iterar sobre Colunas disponiveis no mktm.
-			// Encontrar coluna seguinte a atual aberta.
-			// Aqui reabre mkt.headMenuAbrir(ColunaSeguinte);
+			let posAtual = opcoes.indexOf(colName);
+			let posSeguinte = 0;
+			if (posAtual >= 0) { // Se o atual existe
+				posSeguinte = posAtual + 1;
+			}
+			if (posSeguinte >= opcoes.length) {// Era o último
+				posSeguinte = 0;//Vira Primeira Posição
+			}
+			//mkt.l("Atual: ", colName, "Seguinte: ", opcoes[posSeguinte], "Opções: ", opcoes);
+			this.headMenuAbrir(opcoes[posSeguinte]);
 		};
 		mkt.headMenuCrescente = () => { this.orderBy(colName, 0); };
 		mkt.headMenuDecrescente = () => { this.orderBy(colName, 1); };
