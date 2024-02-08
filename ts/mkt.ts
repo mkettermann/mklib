@@ -1036,19 +1036,16 @@ class mkt {
 			// Limpar outros filtros
 			mkt.Q(".mkHeadMenu input[name='filtrarCampo']").value = "";
 		};
-
 		mkt.headMenuPrevious = () => {
 			// Iterar sobre Colunas disponiveis no mktm.
 			// Encontrar coluna anterior a atual aberta.
 			// Aqui reabre mkt.headMenuAbrir(ColunaAnterior);
 		};
-
 		mkt.headMenuNext = () => {
 			// Iterar sobre Colunas disponiveis no mktm.
 			// Encontrar coluna seguinte a atual aberta.
 			// Aqui reabre mkt.headMenuAbrir(ColunaSeguinte);
 		};
-
 		mkt.headMenuCrescente = () => { this.orderBy(colName, 0); };
 		mkt.headMenuDecrescente = () => { this.orderBy(colName, 1); };
 		mkt.headMenuLimpar = () => {
