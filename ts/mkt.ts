@@ -3099,12 +3099,12 @@ Object.defineProperty(mkt, "getObjetoFromId", {
 	value: (
 		nomeKey: any,
 		valorKey: any,
-		listaDados: object[]
+		listaDados: Array<any>
 	): object | null => {
 		let temp: object | null = null;
 		if (Array.isArray(listaDados)) {
 			listaDados.forEach((o) => {
-				if (o[nomeKey as keyof typeof o] == valorKey) {
+				if (o[nomeKey] == valorKey) {
 					temp = o;
 				}
 			});
@@ -3118,8 +3118,8 @@ Object.defineProperty(mkt, "setObjetoFromId", {
 		nomeKey: any,
 		valorKey: any,
 		itemModificado: object,
-		listaDados: object[]
-	): object[] | null => {
+		listaDados: Array<any>
+	): Array<any> | null => {
 		if (Array.isArray(listaDados)) {
 			for (let i = 0; i < listaDados.length; i++) {
 				if (listaDados[i][nomeKey] == valorKey) {
@@ -3135,12 +3135,12 @@ Object.defineProperty(mkt, "delObjetoFromId", {
 	value: (
 		nomeKey: any,
 		valorKey: any,
-		listaDados: object[]
-	): object[] => {
-		let temp: object[] = [];
+		listaDados: Array<any>
+	): Array<any> => {
+		let temp: Array<any> = [];
 		if (Array.isArray(listaDados)) {
 			listaDados.forEach((o) => {
-				if (o[nomeKey as keyof typeof o] != valorKey) {
+				if (o[nomeKey] != valorKey) {
 					temp.push(o);
 				}
 			});
