@@ -119,6 +119,8 @@ class mkt {
 	static exeTimer: Function;
 	static log = true; // Desliga / Liga Log do console
 	static headMenuHide: Function;
+	static headMenuPrevious: Function;
+	static headMenuNext: Function;
 	static headMenuCrescente: Function;
 	static headMenuDecrescente: Function;
 	static headMenuLimpar: Function;
@@ -876,11 +878,11 @@ class mkt {
 			ehm.innerHTML = `
 			<div class='hmin fimsecao'>
 				<div class='i htit'>
-					<div class='col10'>${mkt.vars.svgL}</div>
+					<div class='col10 microPos5' onclick='mkt.headMenuPrevious()'>${mkt.vars.svgL}</div>
 					<div class='col70 hmTitulo'>
 						Filtro
 					</div>
-					<div class='col10'>${mkt.vars.svgR}</div>
+					<div class='col10 microPos5' onclick='mkt.headMenuNext()'>${mkt.vars.svgR}</div>
 					<div class='col10 fechar botao nosel' onclick='mkt.headMenuHideX()'>
 						${mkt.vars.svgX}
 					</div>
@@ -1033,6 +1035,18 @@ class mkt {
 			this.atualizaNaPaginaUm();
 			// Limpar outros filtros
 			mkt.Q(".mkHeadMenu input[name='filtrarCampo']").value = "";
+		};
+
+		mkt.headMenuPrevious = () => {
+			// Iterar sobre Colunas disponiveis no mktm.
+			// Encontrar coluna anterior a atual aberta.
+			// Aqui reabre mkt.headMenuAbrir(ColunaAnterior);
+		};
+
+		mkt.headMenuNext = () => {
+			// Iterar sobre Colunas disponiveis no mktm.
+			// Encontrar coluna seguinte a atual aberta.
+			// Aqui reabre mkt.headMenuAbrir(ColunaSeguinte);
 		};
 
 		mkt.headMenuCrescente = () => { this.orderBy(colName, 0); };
