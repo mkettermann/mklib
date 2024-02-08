@@ -58,7 +58,7 @@ class mktc {
 	exibeBotaoMais: boolean = true; // Indicador se ativará o botãozinho que abre o filtro completo do campo.
 	// Os demais podem se alterar durante as operações da listagem.
 	sortBy: string | null = null; // Campo a ser ordenado inicialmente;
-	sortDir: Number | null = 0; // 0,1,2 = Crescente, Decrescente, Toogle;
+	sortDir: Number | null = 1; // 0,1,2 = Crescente, Decrescente, Toogle;
 	objFiltro: any = {}; // Itens Filtrados
 	urlOrigem = "" as string | null; // URL de origem dos dados a serem populados
 	pagAtual: number = 1; // Representa a pagina
@@ -329,7 +329,7 @@ class mkt {
 			this.c.sortBy = this.c.pk; // Padrão PK
 		// Inicial SortDir
 		if (!this.c.sortDir)
-			this.c.sortDir = 0; // Padrão 0 Ccrescente
+			this.c.sortDir = 1; // Padrão 0 Decrescente por ID Deixando a Ultima ID no topo
 
 		// Inicial Sort
 		this.setDirSort(this.c.sortBy, Number(this.c.sortDir));
@@ -5690,9 +5690,10 @@ Object.defineProperty(mkt, "toString", {
 
 Object.defineProperty(mkt, "Inicializar", {
 	value: () => {
-		//mkt.Workers() // mkt.vars.wpool
+
 		mkt.mkClicarNaAba(mkt.Q(".mkAbas a.active")); // Inicia no ativo
 		mkt.exeTimer();
+
 	}, enumerable: false, writable: false, configurable: false,
 });
 
@@ -5702,7 +5703,7 @@ Object.defineProperty(mkt, "exeTimer", {
 		mkt.mkRecRenderizar();
 		mkt.mkBotCheck();
 		// Itera sobre todos os Poppers para atualizar na mesma frequencia deste intervalo.
-		mkt.vars.poppers.forEach((o: any) => {
+		mkt.vars?.poppers?.forEach((o: any) => {
 			if (!o.state.elements.popper.classList.contains("oculto")) {
 				o.update();
 			}
@@ -5711,6 +5712,8 @@ Object.defineProperty(mkt, "exeTimer", {
 		setTimeout(mkt.exeTimer, mkt.vars.exeTimer);
 	}, enumerable: false, writable: false, configurable: false,
 });
+
+//Object.defineProperty(mkt , undefined ,{enumerable: false, writable: false, configurable: false});
 
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //   Auto Inicializar               \\
