@@ -1658,7 +1658,9 @@ Object.defineProperty(mkt, "isJson", {
 		.replaceAll("\r", "")
 		.replaceAll("\t", "")
 		.replaceAll("\b", "")
-		.replaceAll("\f", "");
+		.replaceAll("\f", "")
+		.replaceAll("\\", "/");
+	// \u
 };
 
 Object.defineProperty(mkt, "jsonInsideJson", {

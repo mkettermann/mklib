@@ -1633,7 +1633,9 @@ String.prototype.removeRaw = function () {
         .replaceAll("\r", "")
         .replaceAll("\t", "")
         .replaceAll("\b", "")
-        .replaceAll("\f", "");
+        .replaceAll("\f", "")
+        .replaceAll("\\", "/");
+    // \u
 };
 Object.defineProperty(mkt, "jsonInsideJson", {
     value: (t) => {
