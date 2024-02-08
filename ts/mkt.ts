@@ -1037,11 +1037,15 @@ class mkt {
 			mkt.Q(".mkHeadMenu input[name='filtrarCampo']").value = "";
 		};
 		mkt.headMenuPrevious = () => {
+			let opcoes = this.getModel().map(o => { return o.k });
+			mkt.l("Atual: ", colName, "Anterior: ", "?", "Opções: ", opcoes);
 			// Iterar sobre Colunas disponiveis no mktm.
 			// Encontrar coluna anterior a atual aberta.
 			// Aqui reabre mkt.headMenuAbrir(ColunaAnterior);
 		};
 		mkt.headMenuNext = () => {
+			let opcoes = this.getModel().map(o => { return o.k });
+			mkt.l("Atual: ", colName, "Proxima: ", "?", "Opções: ", opcoes);
 			// Iterar sobre Colunas disponiveis no mktm.
 			// Encontrar coluna seguinte a atual aberta.
 			// Aqui reabre mkt.headMenuAbrir(ColunaSeguinte);
