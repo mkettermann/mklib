@@ -102,6 +102,7 @@ class mktc {
     aoConcluirFiltragem = async (dadosFiltrado, este) => { }; // Recebe os dados filtrados
     aoAntesDePopularTabela = async (dadosExibidos, este) => { }; // Recebe os dados a serem exibidos desta página
     aoConcluirExibicao = async (este) => { };
+    aoReceberDados = (o, este) => { return o; }; // Função que se executa nos Cruds de objetos e quando se constroi a listagem.
     constructor(array) {
         if (mkt.classof(array) == "Array") {
             this.model = array;
@@ -446,7 +447,7 @@ class mkt {
             if (mkt.classof(data_url) == "Array") {
                 for (let i = 0; i < data_url.length; i++) {
                     if (i < this.c.qntInicial) { // APENAS LISTA SOLICITA INICIAL
-                        this.dadosFull.push(data_url[i]);
+                        this.dadosFull.push(this.c.aoReceberDados(data_url[i], this));
                     }
                 }
                 this.dadosCheck();
@@ -487,7 +488,7 @@ class mkt {
                         this.ultimoGet = p.retorno.length;
                         this.cTotUltimoParametro += this.ultimoGet; // Soma do Ultimo mais o atual
                         for (let i = 0; i < p.retorno.length; i++) {
-                            this.dadosFull.push(p.retorno[i]);
+                            this.dadosFull.push(this.c.aoReceberDados(p.retorno[i], this));
                         }
                         if (this.ultimoGet < this.solicitadoUltimoParametro) {
                             // Quando o Recebido for inferior ao solicitado:
@@ -1397,11 +1398,13 @@ class mkt {
     };
     // USER INTERFACE - UI - INDIVIDUAL
     add = (objDados) => {
+        objDados = this.c.aoReceberDados(objDados, this);
         this.dadosFull.push(objDados);
         mkt.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
         this.atualizarListagem();
     };
     edit = (objDados, k, v) => {
+        objDados = this.c.aoReceberDados(objDados, this);
         this.dadosFull = mkt.setObjetoFromId(k, v, objDados, this.dadosFull);
         mkt.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
         this.atualizarListagem();
@@ -1414,7 +1417,6 @@ class mkt {
     // mkt.aoReceberDados e mkt.ordenar Não se executam pra acelerar a inserção assincrona da listagem
     addMany = (arrayDados) => {
         this.dadosFull.push(...arrayDados);
-        //mkt.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
         this.atualizarListagem();
     };
     find = (k, v) => {
