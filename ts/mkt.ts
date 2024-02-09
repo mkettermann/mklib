@@ -111,7 +111,16 @@ class mktc {
 		} else {
 			this.filtroDinamico = false;
 		}
-	}
+	};
+	// SET Exemplo: new mktc().set("dados",[]).set("url",null)
+	set: Function = (propriedade: string, valor: any) => {
+		if (propriedade in this) {
+			this[propriedade as keyof typeof this] = valor;
+		} else {
+			mkt.w("A classe mktc (.set(Propriedade)) não possui a propriedade: ", propriedade);
+		}
+		return this;
+	};
 	get [Symbol.toStringTag]() { return "mktc"; }
 }
 

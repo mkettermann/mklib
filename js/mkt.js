@@ -121,6 +121,17 @@ class mktc {
             this.filtroDinamico = false;
         }
     }
+    ;
+    // SET Exemplo: new mktc().set("dados",[]).set("url",null)
+    set = (propriedade, valor) => {
+        if (propriedade in this) {
+            this[propriedade] = valor;
+        }
+        else {
+            mkt.w("A classe mktc (.set(Propriedade)) não possui a propriedade: ", propriedade);
+        }
+        return this;
+    };
     get [Symbol.toStringTag]() { return "mktc"; }
 }
 // CLASSE INSTANCIAVEL
