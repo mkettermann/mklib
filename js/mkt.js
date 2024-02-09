@@ -97,11 +97,11 @@ class mktc {
     botaoNovaConsulta = "#btnConsultar"; // Informando o botao. Ao modificar a variavel de fim de lista, trava o botao / destrava.
     dbInit = (store) => { }; // Funcao de contrução do design do banco de dados
     // Alterar essas funções para modificar dados durante etapas.
-    aoIniciarListagem = async (i) => { }; // Recebe a própria instancia no parametro.
-    aoPossuirDados = async (dadosFull) => { }; // Recebe os dados de dadosFull
-    aoConcluirFiltragem = async (dadosFiltrado) => { }; // Recebe os dados filtrados
-    aoAntesDePopularTabela = async (dadosExibidos) => { }; // Recebe os dados a serem exibidos desta página
-    aoConcluirExibicao = async () => { };
+    aoIniciarListagem = async (este) => { }; // Recebe a própria instancia no parametro.
+    aoPossuirDados = async (dadosFull, este) => { }; // Recebe os dados de dadosFull
+    aoConcluirFiltragem = async (dadosFiltrado, este) => { }; // Recebe os dados filtrados
+    aoAntesDePopularTabela = async (dadosExibidos, este) => { }; // Recebe os dados a serem exibidos desta página
+    aoConcluirExibicao = async (este) => { };
     constructor(array) {
         if (mkt.classof(array) == "Array") {
             this.model = array;
@@ -539,7 +539,7 @@ class mkt {
         mkt.mkLimparOA(this.dadosFull);
         //EVENT: aoPossuirDados
         mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoPossuirDados"));
-        await this.c.aoPossuirDados(this.dadosFull);
+        await this.c.aoPossuirDados(this.dadosFull, this);
         // Ordena a lista geral com base na primeira propriedade.
         mkt.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
         // Executa um filtro inicial e na sequencia processa a exibição.
@@ -617,7 +617,7 @@ class mkt {
         this.atualizarStatusListagem();
         //EVENT: aoConcluirFiltragem
         mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoConcluirFiltragem"));
-        await this.c.aoConcluirFiltragem(this.dadosFiltrado);
+        await this.c.aoConcluirFiltragem(this.dadosFiltrado, this);
         // Apenas executa a atualização do resumo, se a pagBotoes estiver presente na página.
         if (this.c.totalFiltrado > this.c.pagPorPagina)
             pagBotoes?.removeAttribute("hidden");
@@ -642,7 +642,7 @@ class mkt {
             mkt.Q(this.c.tbody)?.removeAttribute("hidden");
             //EVENT: aoAntesDePopularTabela
             mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoAntesDePopularTabela"));
-            await this.c.aoAntesDePopularTabela(this.dadosExibidos);
+            await this.c.aoAntesDePopularTabela(this.dadosExibidos, this);
             // Apenas se estiver configurado para exibir o botão de continuidade.
             if (this.c.exibeBotaoMais) {
                 // Apenas quando há mais dados a serem puxados:
@@ -669,7 +669,7 @@ class mkt {
             await mkt.mkMoldeOA(this.dadosExibidos, this.c.idmodelo, this.c.tbody);
             //EVENT: aoConcluirExibicao
             mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoConcluirExibicao"));
-            await this.c.aoConcluirExibicao();
+            await this.c.aoConcluirExibicao(this);
         }
     };
     // Atualiza o objeto que contem os dados desta instancia.
