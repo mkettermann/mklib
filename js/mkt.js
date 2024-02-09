@@ -123,6 +123,7 @@ class mktc {
     }
     ;
     // SET Exemplo: new mktc().set("dados",[]).set("url",null)
+    // new mkt(new mktc().set("dados", []).set("url", null).set("idmodelo", "#modeloRefPes").set("container", "#tabRefPessoais"));
     set = (propriedade, valor) => {
         if (propriedade in this) {
             this[propriedade] = valor;
