@@ -485,6 +485,11 @@ class mkt {
 							if (eAddMais) {
 								eAddMais.remove();
 							}
+						} else if (this.ultimoGet > this.solicitadoUltimoParametro) {
+							// Caso o BackEnd enviar a mais do que o solicitado,
+							//  então é possível que esteja configurado pra trazer tudo
+							// e nesse caso o botão não deve surgir
+							this.aindaTemMais = false;
 						} else {
 							// Quando o recebido é igual ou veio até mais do que o solicitado:
 							this.aindaTemMais = true;
