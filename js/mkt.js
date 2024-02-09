@@ -5571,7 +5571,7 @@ Object.defineProperty(mkt, "classof", {
 });
 Object.defineProperty(mkt, "toString", {
     value: () => {
-        return 'class mk() { /* classe gerenciadora de listagens */ }';
+        return 'class mkt { /* classe gerenciadora de listagens */ }';
     }, enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "Inicializar", {
