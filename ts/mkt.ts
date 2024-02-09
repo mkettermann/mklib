@@ -54,7 +54,7 @@ class mktc {
 	container_importar: boolean = false; // No container, executa importar dados baseados no atributo.
 	filtroExtra: Function | null = null; // modificaFiltro Retorna um booleano que permite um filtro configurado externamente do processo Filtragem.
 	filtro: string | null = ".iConsultas"; // Busca por esta classe para filtrar campos por nome do input.
-	filtroDinamico = false;; // Nessa listagem o filtro por tecla não é dinâmico por padrão.
+	filtroDinamico: boolean | null = null;; // Nessa listagem o filtro por tecla não é dinâmico por padrão.
 	headSort: boolean = true; // Indicador se ativará o ordenamento ao clicar no cabeçalho
 	headMenu: boolean = true; // Indicador se ativará o botãozinho que abre o filtro completo do campo.
 	exibeBotaoMais: boolean = true; // Indicador se ativará o botãozinho que abre o filtro completo do campo.
@@ -88,7 +88,7 @@ class mktc {
 	pag = ".pag"; // Indica o paginador atual de 0 a 8: ex: .pag7
 	pagBotao = ".pagBotao";
 	botaoAdicionarMaisClasse = "divListagemMaisItens";
-	botaoNovaConsulta: HTMLButtonElement | string | null = "#btnAbrirConsultar"; // Informando o botao. Ao modificar a variavel de fim de lista, trava o botao / destrava.
+	botaoNovaConsulta: HTMLButtonElement | string | null = "#btnConsultar"; // Informando o botao. Ao modificar a variavel de fim de lista, trava o botao / destrava.
 	dbInit = (store: IDBObjectStore) => { } // Funcao de contrução do design do banco de dados
 	// Alterar essas funções para modificar dados durante etapas.
 	aoIniciarListagem = async (i: mkt) => { }; // Recebe a própria instancia no parametro.
@@ -104,6 +104,10 @@ class mktc {
 		// Verifica existencia do valor padrão do botaoNovaConsulta.
 		if (!mkt.Q(this.botaoNovaConsulta)) {
 			this.botaoNovaConsulta = null;
+		}
+		// Se tem botão para consultar, então o padrão é filtroDinamico iniciar true.
+		if (this.botaoNovaConsulta = null) {
+			this.filtroDinamico = true; // Quando não tem botão, o filtro fica a cada tecla.
 		}
 	}
 	get [Symbol.toStringTag]() { return "mktc"; }
