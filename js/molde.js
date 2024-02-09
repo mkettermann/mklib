@@ -7,7 +7,7 @@ dados.push({
 	sobrenome: "dos Santos Silva",
 	data: { d: 31 },
 });
-mk.mkMoldeOA(dados, "#modelo333", "#exibir");
+mkt.mkMoldeOA(dados, "#modelo333", "#exibir");
 
 
 var objeto = {
@@ -24,20 +24,20 @@ var objeto = {
 
 function aoModificarInput(e) {
 	objeto[e.name] = e.value;
-	mk.mkMoldeOA(objeto, "#modelo", ".resultado");
+	mkt.mkMoldeOA(objeto, "#modelo", ".resultado");
 }
 
 function aoModificarObjeto(e) {
 	// Aqui já ocorre um problema de get encadeado
 	objeto.temp.temp = e.value;
-	mk.mkMoldeOA(objeto, "#modelo", ".resultado");
+	mkt.mkMoldeOA(objeto, "#modelo", ".resultado");
 }
 
 function aoModificarMulti(e) {
 	// Aqui já ocorre um problema de get encadeado
 	objeto.o.a.b.c = e.value;
-	mk.mkMoldeOA(objeto, "#modelo", ".resultado");
+	mkt.mkMoldeOA(objeto, "#modelo", ".resultado");
 }
 
 // Inicia executando
-aoModificarInput(mk.Q("#inputTeste"));
+aoModificarInput(mkt.Q("#inputTeste"));

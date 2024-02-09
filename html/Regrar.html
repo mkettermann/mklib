@@ -18,7 +18,7 @@
 2
 3
 4</textarea>
-		<textarea class="codigo" rows="2" cols="100" onfocus="mk.mkSelecionarInner(this)" readonly>
+		<textarea class="codigo" rows="2" cols="100" onfocus="mkt.mkSelecionarInner(this)" readonly>
 <div class="exemploRegrar">
 	<input name="nomPessoa" type="text" />
 	<span class="text-danger mkRegrar" data-valmsg-for="nomPessoa"></span>
@@ -33,8 +33,8 @@
 		<textarea class="regua" rows="2" cols="1" readonly>
 1
 2</textarea>
-		<textarea class="codigo" rows="2" cols="100" onfocus="mk.mkSelecionarInner(this)" readonly>
-mk.regrar(".exemploRegrar", "nomPessoa", { k: "obrigatorio" });
+		<textarea class="codigo" rows="2" cols="100" onfocus="mkt.mkSelecionarInner(this)" readonly>
+mkt.regrar(".exemploRegrar", "nomPessoa", { k: "obrigatorio" });
 </textarea>
 	</div>
 </div>
@@ -52,7 +52,7 @@ mk.regrar(".exemploRegrar", "nomPessoa", { k: "obrigatorio" });
 		<div class="quebra">
 			&nbsp; O regrar é executado ao modificar ou sair de um campo.
 			Várias regras estão disponíveis para o campo, inclusive regrar de mascarar o campo.
-			Para melhor entender, o regrar só associa a regra ao elemento e pode ser verificado pelo mk.estaValido
+			Para melhor entender, o regrar só associa a regra ao elemento e pode ser verificado pelo mkt.estaValido
 			<br />
 			<br />
 			&nbsp; A ideia principal é permitir validar todos os campos com regras dentro do container informado e saber se

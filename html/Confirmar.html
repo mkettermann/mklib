@@ -18,23 +18,15 @@
 6
 7
 8
-9</textarea
-		>
-		<textarea
-			class="codigo"
-			rows="8"
-			cols="100"
-			onfocus="mk.mkSelecionarInner(this)"
-			readonly
-		>
-mk.mkConfirma("Tem Certeza?").then((r) => {
+9</textarea>
+		<textarea class="codigo" rows="8" cols="100" onfocus="mkt.mkSelecionarInner(this)" readonly>
+mkt.mkConfirma("Tem Certeza?").then((r) => {
  if(r){
   console.log("Confirmou");
  }else{
   console.log("Você não confirmou");
  }
-});</textarea
-		>
+});</textarea>
 	</div>
 </div>
 <!-- O script está em Site, pois se eu colocar aqui, dará eval toda vez -->

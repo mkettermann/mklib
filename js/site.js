@@ -2,13 +2,13 @@ const menuAbrir = async (t) => {
 	if (!t) {
 		t = "zone";
 	}
-	let e = mk.Q("#" + t);
-	let destino = mk.QdataGet(e, "go");
+	let e = mkt.Q("#" + t);
+	let destino = mkt.QdataGet(e, "go");
 	if (destino != null) {
-		let pac = await mk.get.html("./html/" + destino + "?" + mk.uuid());
+		let pac = await mkt.get.html("./html/" + destino + "?" + mkt.uuid());
 		if (pac.retorno != null) {
-			mk.Q(".conteudo").innerHTML = pac.retorno;
-			mk.mkNodeToScript(mk.Q(".conteudo"));
+			mkt.Q(".conteudo").innerHTML = pac.retorno;
+			mkt.mkNodeToScript(mkt.Q(".conteudo"));
 		} else {
 			console.log("Falhou ao coletar dados");
 		}
@@ -26,7 +26,7 @@ const aoIncrementar = async (e) => {
 		return novoValor;
 	}
 	let alvo = e?.previousElementSibling;
-	mk.mkConfirma("Aumentar 1 unidade. Tem Certeza?").then((r) => {
+	mkt.mkConfirma("Aumentar 1 unidade. Tem Certeza?").then((r) => {
 		r ? edit(alvo, Number(alvo?.value) + 1) : console.log("Você não confirmou");
 	});
 };

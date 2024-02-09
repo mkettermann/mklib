@@ -44,7 +44,7 @@
 2
 3
 4</textarea>
-		<textarea class="codigo" rows="4" cols="100" onfocus="mk.mkSelecionarInner(this)" readonly>
+		<textarea class="codigo" rows="4" cols="100" onfocus="mkt.mkSelecionarInner(this)" readonly>
 <div id="exibir"></div>
 <template id="modelo">
 	Olá ${nome} ${sobrenome} (${data.d}/${data.m}/${data.a})!
@@ -60,10 +60,10 @@
 2
 3
 4</textarea>
-		<textarea class="codigo" rows="4" cols="100" onfocus="mk.mkSelecionarInner(this)" readonly>
+		<textarea class="codigo" rows="4" cols="100" onfocus="mkt.mkSelecionarInner(this)" readonly>
 var dados = [{ nome: "Marcos", sobrenome: "Kettermann" },{ nome: "Zé", data: { d: "31", m: "12", a: "2023" } },];
 dados.push({nome: "Fulano",sobrenome: "dos Santos Silva",data: { d: 31 },});
-mk.mkMoldeOA(dados, "#modelo333", "#exibir");</textarea>
+mkt.mkMoldeOA(dados, "#modelo333", "#exibir");</textarea>
 	</div>
 </div>
 <div>Resultado do script acima:</div>
@@ -116,7 +116,7 @@ mk.mkMoldeOA(dados, "#modelo333", "#exibir");</textarea>
 var objeto = { nome: "Seu Zé"};
 function aoModificarInput(e) {
 	objeto[e.name] = e.value;
-	mk.mkMoldeOA(objeto, "#modelo", ".resultado");
+	mkt.mkMoldeOA(objeto, "#modelo", ".resultado");
 }
 </pre>
 			<br />&nbsp; Um objeto chamado "objeto" é criado no navegador do cliente e
@@ -125,7 +125,7 @@ function aoModificarInput(e) {
 			. Você escreve no campo<br />
 			. Chamamos a função por evento.<br />
 			. Mudamos a propriedade que está escrita no atributo name.<br />
-			. Chamamos a função de molde mk.mkMoldeOA() passando o objeto com a
+			. Chamamos a função de molde mkt.mkMoldeOA() passando o objeto com a
 			propriedade já alterada.<br /><br />
 			&nbsp; A função mkMoldeOA recebe os parametros:
 			<br />1º Array de objetos / Objeto<br />2º String de identificação do

@@ -254,12 +254,12 @@ class mkt {
     solicitadoUltimoParametro = 0;
     aindaTemMais = true;
     totalappends = 0;
-    constructor(mkt_c) {
-        if (mkt_c == null) {
+    constructor(_mktc) {
+        if (_mktc == null) {
             this.c = new mktc([]);
         }
         else {
-            this.c = mkt_c;
+            this.c = _mktc;
         }
         let cs = this.c.container + " ";
         // Incrementa o container para garantir a seleção do elemento
@@ -293,7 +293,14 @@ class mkt {
         }
         // PRIMARY KEY ALERTA (Necessária para CRUDs)
         if (this.c.pk == null) {
-            mkt.w("Nenhuma Primary Key encontrada no Model.");
+            // No modelo não estava setado uma pk, tentar buscar no template.
+            let modelo = mkt.Q(this.c.idmodelo)?.getAttribute("pk");
+            if (modelo) {
+                this.c.pk = modelo;
+            }
+            else {
+                mkt.w("Nenhuma Primary Key encontrada no Config ou no Template)");
+            }
         }
         if (mkt.Q(this.c.container)) {
             this.autoStartConfig();
