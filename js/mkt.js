@@ -391,6 +391,10 @@ class mkt {
                 }
             }
         }
+        else {
+            // Quando não tiver url, ocultar botão de puxar mais
+            this.aindaTemMais = false;
+        }
         // Check e config da quantidade de download
         if (mkt.classof(this.c.qntSolicitada) != "Number") {
             this.c.qntSolicitada = 10000;
