@@ -108,6 +108,8 @@ class mktc {
 		// Se tem botão para consultar, então o padrão é filtroDinamico iniciar true.
 		if (this.botaoNovaConsulta = null) {
 			this.filtroDinamico = true; // Quando não tem botão, o filtro fica a cada tecla.
+		} else {
+			this.filtroDinamico = false;
 		}
 	}
 	get [Symbol.toStringTag]() { return "mktc"; }
