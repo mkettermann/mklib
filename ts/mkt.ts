@@ -232,6 +232,7 @@ class mkt {
 	static mkFormatarDataOA: Function;
 	static exeregra: Function;
 	static m: any;
+	static vibrar: Function;
 	static estaValido: Function;
 	static mkToValue: Function;
 	static mkRecUpdate: Function;
@@ -3904,6 +3905,18 @@ Object.defineProperty(mkt, "regrar", {
 	}, enumerable: false, writable: false, configurable: false,
 });
 
+Object.defineProperty(mkt, "vibrar", {
+	value: async (tipo: boolean | null) => {
+		if (tipo === false) {
+			navigator.vibrate([100, 30, 100, 30, 100]); // 3 tempos curtos com intervalo representando: "Não, Não, Não"
+		} else if (tipo === true) {
+			navigator.vibrate([300]); // 3 tempos sem intervalo representando: "Efetivado"
+		} else {
+			navigator.vibrate([200, 50, 200]) // 2 Tempos seguidos: "Talvez"
+		}
+	}, enumerable: false, writable: false, configurable: false,
+});
+
 Object.defineProperty(mkt, "estaValido", {
 	value: async (container: any) => {
 		container = mkt.Q(container);
@@ -3920,7 +3933,7 @@ Object.defineProperty(mkt, "estaValido", {
 		resultado = await Promise.all(promises);
 		validou = resultado.flat().length <= 0;
 		if (!validou) {
-			navigator.vibrate(300);
+			mkt.vibrar(false);
 			mkt.gc("Validou a ação? ", (validou ? "Sim." : "Não."));
 			resultado.flat().forEach((r: any) => {
 				mkt.gc("Regra:", r.k?.toString().toUpperCase(), "Campo: " + r.e?.name);
