@@ -1692,15 +1692,6 @@ Object.defineProperty(mkt, "isJson", {
         return true;
     }, enumerable: false, writable: false, configurable: false,
 });
-String.prototype.removeRaw = function () {
-    return this.replaceAll("\n", "")
-        .replaceAll("\r", "")
-        .replaceAll("\t", "")
-        .replaceAll("\b", "")
-        .replaceAll("\f", "")
-        .replaceAll("\\", "/");
-    // \u00E3 == ã, vira /u00E3
-};
 Object.defineProperty(mkt, "stringify", {
     value: (t) => {
         // Impedindo erros ao uma scring json dentro de outra propriedade Json.
@@ -1716,6 +1707,18 @@ Object.defineProperty(mkt, "stringify", {
             .replaceAll("'", "&#39;");
     }, enumerable: false, writable: false, configurable: false,
 });
+String.prototype.removeRaw = function () {
+    return this.replaceAll("&quot;", '"')
+        .replaceAll("&#39;", "'")
+        .replaceAll("&amp;", "&")
+        .replaceAll("\n", "")
+        .replaceAll("\r", "")
+        .replaceAll("\t", "")
+        .replaceAll("\b", "")
+        .replaceAll("\f", "")
+        .replaceAll("\\", "/");
+    // \u00E3 == ã, vira /u00E3
+};
 Object.defineProperty(mkt, "parseJSON", {
     value: (t, removeRaw = false) => {
         if (mkt.classof(t) == "String") {
