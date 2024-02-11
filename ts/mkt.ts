@@ -3569,6 +3569,7 @@ Object.defineProperty(mkt, "vars", {
 		mkCountValidate: 0,
 		debug: 0,
 		timers: [] as any, // Array para guardar timers em andamento ou finalizados
+		mkFaseAtual: 0, // Old Fase System
 	}, enumerable: false, writable: false, configurable: false,
 });
 
@@ -3912,7 +3913,7 @@ Object.defineProperty(mkt, "vibrar", {
 		} else if (tipo === true) {
 			navigator.vibrate([300]); // 3 tempos sem intervalo representando: "Efetivado"
 		} else {
-			navigator.vibrate([200, 50, 200]) // 2 Tempos seguidos: "Talvez"
+			navigator.vibrate([200, 50, 200]) // 2 Tempos seguidos representando: "Talvez"
 		}
 	}, enumerable: false, writable: false, configurable: false,
 });
@@ -5725,13 +5726,28 @@ Object.defineProperty(mkt, "importar", {
 	}, enumerable: false, writable: false, configurable: false,
 });
 
-Object.defineProperty(mkt, "uuid", {
+//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+//			AREA FASEADO (OLD)					\\
+//___________________________________\\
+Object.defineProperty(mkt, "fUIFaseUpdateLinkFase", {
 	value: () => {
-		// Padrão UUIDV4 - Gerador de identificador unico
-		return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, (c: any) => { // c = String
-			return (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16);
-		}
-		);
+		// FUNCAO PARA ATUALIZAR OS LINKS DE FASES
+		mkt.QAll("ul.mkUlFase li a").forEach((e) => {
+			e.parentElement?.classList.remove("mkFaseBack");
+			e.parentElement?.classList.remove("mkFaseAtivo");
+			e.parentElement?.classList.remove("disabled");
+			let eNumPag = Number(e.getAttribute("data-pag"));
+			let bLibera = e.getAttribute("data-libera");
+			if (mkt.vars.mkFaseAtual > eNumPag) {
+				e.parentElement?.classList.add("mkFaseBack");
+			}
+			if (mkt.vars.mkFaseAtual == eNumPag) {
+				e.parentElement?.classList.add("mkFaseAtivo");
+			}
+			if (bLibera == "false") {
+				e.parentElement?.classList.add("disabled");
+			}
+		});
 	}, enumerable: false, writable: false, configurable: false,
 });
 
@@ -5755,6 +5771,16 @@ Object.defineProperty(mkt, "classof", {
 Object.defineProperty(mkt, "toString", {
 	value: () => {
 		return 'class mkt { /* classe gerenciadora de listagens */ }';
+	}, enumerable: false, writable: false, configurable: false,
+});
+
+Object.defineProperty(mkt, "uuid", {
+	value: () => {
+		// Padrão UUIDV4 - Gerador de identificador unico
+		return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, (c: any) => { // c = String
+			return (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16);
+		}
+		);
 	}, enumerable: false, writable: false, configurable: false,
 });
 
