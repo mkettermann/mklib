@@ -566,13 +566,13 @@ class mkt {
         // Verificação de ChavesRepetidas
         mkt.addTask({ k: "ChavesRepetidas", v: this.dadosFull, target: this.c.pk }).then((r) => {
             if (r.v.length > 0) {
-                mkt.erro("URGENTE! ", this.c.nomeTabela, " possui CHAVES PRIMARIAS DUPLICADAS: ", r.v);
+                mkt.l("ALERTA!", this.c.nomeTabela, "possui CHAVES PRIMARIAS DUPLICADAS:", r.v);
             }
         });
         // Verificação de Duplices
         mkt.addTask({ k: "Duplices", v: this.dadosFull, target: this.c.pk }).then((r) => {
             if (r.v.length > 0) {
-                mkt.w("ALERTA! ", this.c.nomeTabela, " possui CONTEÚDO REPETIDO: ", r.v);
+                mkt.l("ALERTA!", this.c.nomeTabela, "possui CONTEÚDO REPETIDO:", r.v);
             }
         });
     };
@@ -3844,15 +3844,19 @@ Object.defineProperty(mkt, "estaValido", {
         let resultado = [];
         resultado = await Promise.all(promises);
         validou = resultado.flat().length <= 0;
-        mkt.gc("Validou? ", validou);
         if (!validou) {
+            navigator.vibrate(300);
+            mkt.gc("Validou a ação? ", (validou ? "Sim." : "Não."));
             resultado.flat().forEach((r) => {
-                mkt.gc("Regra: " + r.k?.toString().toUpperCase() + " >> Nome do campo: " + r.e?.name);
+                mkt.gc("Regra:", r.k?.toString().toUpperCase(), "Campo: " + r.e?.name);
                 mkt.l(r.e);
                 mkt.ge();
             });
+            mkt.ge();
         }
-        mkt.ge();
+        else {
+            mkt.l("Validou a ação? Sim.");
+        }
         return validou;
     }, enumerable: false, writable: false, configurable: false,
 });
