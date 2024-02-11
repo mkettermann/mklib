@@ -3496,11 +3496,10 @@ Object.defineProperty(mkt, "vars", {
         paginationAtual: 1,
         objetoSelecionado: {},
         sendObjFull: {},
-        mkFaseAtual: 1,
         mkCountValidate: 0,
         debug: 0,
         timers: [],
-        mkFaseAtual: 0, // Old Fase System
+        mkFaseAtual: 1, // Old Fase System
     }, enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "t", {
