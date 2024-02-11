@@ -1706,36 +1706,37 @@ Object.defineProperty(mkt, "isJson", {
 });
 
 Object.defineProperty(mkt, "stringify", {
-	value: (t: any) => {
+	value: (o: any) => {
 		// Impedindo erros ao uma scring json dentro de outra propriedade Json.
 		// Técnica de camadas de &amp;amp; no primeiro Replace.
-		let s = JSON.stringify(t);
-		return s.replaceAll("&", "&amp;")
-			.replaceAll("\n", "")
-			.replaceAll("\r", "")
-			.replaceAll("\t", "")
-			.replaceAll("\b", "")
-			.replaceAll("\f", "")
-			.replaceAll('"', "&quot;")
-			.replaceAll("'", "&#39;");
+		//let j = JSON.stringify(o);
+		return JSON.stringify(o)
+			?.replaceAll("\n", "")
+			?.replaceAll("\r", "")
+			?.replaceAll("\t", "")
+			?.replaceAll("\b", "")
+			?.replaceAll("\f", "")
+			?.replaceAll('&', "&amp;")
+			?.replaceAll('"', "&quot;")
+		//.replaceAll("'", "&#39;");
 	}, enumerable: false, writable: false, configurable: false,
 });
 
 (String.prototype as any).removeRaw = function () {
 	return this.replaceAll("&quot;", '"')
-		.replaceAll("&#39;", "'")
+		//.replaceAll("&#39;", "'")
 		.replaceAll("&amp;", "&")
 		.replaceAll("\n", "")
 		.replaceAll("\r", "")
 		.replaceAll("\t", "")
 		.replaceAll("\b", "")
 		.replaceAll("\f", "")
-		.replaceAll("\\", "/");
-	// \u00E3 == ã, vira /u00E3
+	//.replaceAll("\\", "/");
+	// \u00E3 == ã, viraria /u00E3
 };
 
 Object.defineProperty(mkt, "parseJSON", {
-	value: (t: any, removeRaw: boolean | null = false) => {
+	value: (t: any, removeRaw: boolean | null = true) => {
 		if (mkt.classof(t) == "String") {
 			if (removeRaw) {
 				t = t.removeRaw();
