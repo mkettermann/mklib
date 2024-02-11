@@ -130,6 +130,7 @@ class mktc {
 // CLASSE INSTANCIAVEL
 class mkt {
 	static vars: any;
+	static stringify: Function;
 	static Workers: Function;
 	static addTask: Function;
 	static classof: Function;
@@ -1445,7 +1446,7 @@ class mkt {
 	};
 
 	toString = () => {
-		return JSON.stringify(this.dadosFull, null, "\t");
+		return mkt.stringify(this.dadosFull);
 	};
 
 	valueOf = () => {
@@ -1711,27 +1712,31 @@ Object.defineProperty(mkt, "isJson", {
 		.replaceAll("\b", "")
 		.replaceAll("\f", "")
 		.replaceAll("\\", "/");
-	// \u
+	// \u00E3 == ã, vira /u00E3
 };
 
-Object.defineProperty(mkt, "jsonInsideJson", {
+Object.defineProperty(mkt, "stringify", {
 	value: (t: any) => {
+		// Impedindo erros ao uma scring json dentro de outra propriedade Json.
+		// Técnica de camadas de &amp;amp; no primeiro Replace.
 		let s = JSON.stringify(t);
-		return s.replaceAll("\n", "")
+		return s.replaceAll("&", "&amp;")
+			.replaceAll("\n", "")
 			.replaceAll("\r", "")
 			.replaceAll("\t", "")
 			.replaceAll("\b", "")
 			.replaceAll("\f", "")
 			.replaceAll('"', "&quot;")
-			.replaceAll("'", "&#39;")
-			.replaceAll("&", "&amp;");
+			.replaceAll("'", "&#39;");
 	}, enumerable: false, writable: false, configurable: false,
 });
 
 Object.defineProperty(mkt, "parseJSON", {
-	value: (t: any) => {
+	value: (t: any, removeRaw: boolean | null = false) => {
 		if (mkt.classof(t) == "String") {
-			t = t.removeRaw();
+			if (removeRaw) {
+				t = t.removeRaw();
+			}
 		}
 		if (t === "") return ""; // Vazio
 		if (mkt.isJson(t)) {
@@ -3018,7 +3023,7 @@ Object.defineProperty(mkt, "request", {
 		}
 		if (!config.quiet) config.quiet = false;
 		// TIPO DE ENVIO
-		config.json = JSON.stringify(config.dados);
+		config.json = mkt.stringify(config.dados);
 		if (config.metodo != mkt.t.G) {
 			if (config.tipo == mkt.t.J) {
 				config.body = config.json;
@@ -3074,7 +3079,7 @@ Object.defineProperty(mkt, "request", {
 				mkt.ge();
 				if (config.pacote.status >= 300) {
 					if (!localStorage.mktRequests) {
-						localStorage.mktRequests = JSON.stringify([]);
+						localStorage.mktRequests = mkt.stringify([]);
 					}
 
 					let erros = JSON.parse(localStorage.mktRequests);
@@ -3088,7 +3093,7 @@ Object.defineProperty(mkt, "request", {
 						erros.shift(1);
 					}
 
-					localStorage.mktRequests = JSON.stringify(erros);
+					localStorage.mktRequests = mkt.stringify(erros);
 				}
 			} else {
 				config.conectou = true;
@@ -5080,7 +5085,7 @@ Object.defineProperty(mkt, "mkSelDelRefillProcesso", {
 					if (p.retorno != null) {
 						let kv = p.retorno;
 						if (typeof p.retorno == "object") {
-							kv = JSON.stringify(p.retorno);
+							kv = mkt.stringify(p.retorno);
 						}
 						if (mkt.isJson(kv)) {
 							e.setAttribute("data-selarray", kv);
@@ -5180,7 +5185,7 @@ Object.defineProperty(mkt, "mkSelSelecionar", {
 			if (arraySelecionado.length == 0) {
 				ePrincipal.value = ePrincipal.defaultValue;
 			} else {
-				let string = JSON.stringify(arraySelecionado);
+				let string = mkt.stringify(arraySelecionado);
 				if (ePrincipal.type == "text") ePrincipal.value = string;
 				else
 					mkt.erro(
@@ -5558,7 +5563,7 @@ Object.defineProperty(mkt, "mkSelArraySetMap", {
 
 Object.defineProperty(mkt, "mkSelArraySetKV", {
 	value: (e: any, kv: any[]) => {
-		let kvj = JSON.stringify(kv);
+		let kvj = mkt.stringify(kv);
 		e.dataset.selarray = kvj;
 		e.classList.add("atualizarSemEvento");
 		return e;
