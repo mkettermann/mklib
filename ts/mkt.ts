@@ -5731,7 +5731,7 @@ Object.defineProperty(mkt, "importar", {
 Object.defineProperty(mkt, "fUIFaseUpdateLinkFase", {
 	value: () => {
 		// FUNCAO PARA ATUALIZAR OS LINKS DE FASES
-		mkt.QAll("ul.mkUlFase li a").forEach((e) => {
+		mkt.QAll("ul.mkUlFase li a").forEach((e: HTMLAnchorElement) => {
 			e.parentElement?.classList.remove("mkFaseBack");
 			e.parentElement?.classList.remove("mkFaseAtivo");
 			e.parentElement?.classList.remove("disabled");
