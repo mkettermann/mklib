@@ -2383,7 +2383,7 @@ Object.defineProperty(mkt, "ler", {
 
 Object.defineProperty(mkt, "clonar", {
 	value: (i: any) => {
-		return mkt.parseJSON(JSON.stringify(i));
+		return mkt.parseJSON(mkt.stringify(i));
 	}, enumerable: false, writable: false, configurable: false,
 });
 
