@@ -1696,9 +1696,11 @@ Object.defineProperty(mkt, "wait", {
 
 Object.defineProperty(mkt, "isJson", {
 	value: (s: any): boolean => {
-		let t = s.removeRaw();
+		if (mkt.classof(s) == "String") {
+			s = s.removeRaw();
+		}
 		try {
-			JSON.parse(t);
+			JSON.parse(s);
 		} catch (e) {
 			return false;
 		}
