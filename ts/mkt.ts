@@ -10,7 +10,6 @@
 // - Tentar tornar as funções de sobreescrever em Event Based.
 var mkz = null;
 
-declare const Popper: any;
 declare const appPath: any;
 
 // CLASSE Do Design das colunas para formar o mkt.
@@ -3557,7 +3556,6 @@ Object.defineProperty(mkt, "mascarar", {
 Object.defineProperty(mkt, "vars", {
 	value: {
 		exeTimer: 500,
-		poppers: [],
 		wpool: null as any | null, // WorkerPool quando iniciado
 		svgSquare: "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path d='M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z'/></svg>",
 		svgX: "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path d='M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708'/></svg>",
@@ -4833,21 +4831,10 @@ Object.defineProperty(mkt, "mkRecRenderizar", {
 					"autocomplete",
 					"off"
 				);
-				// Em vez de criar um Popper para a Lista seguir o Elemento durante o scroll,
-				// criei um Ao scroll
+				// Seguir o Elemento durante o scroll.
 				document.addEventListener("scroll", (event) => {
 					mkt.mkReposicionar(divMkRecList, false);
 				});
-				// const popperInstance: any = Popper.createPopper(
-				// 	e,
-				// 	divMkRecList,
-				// 	{
-				// 		placement: "bottom-start",
-				// 		strategy: "fixed",
-				// 		modifiers: [],
-				// 	}
-				// );
-				// mkt.vars.poppers.push(popperInstance);
 				mkt.mkRecUpdate(e);
 			} else {
 				if (!e.getAttribute("data-selarray") && e.getAttribute("data-refill")) {
@@ -5037,23 +5024,10 @@ Object.defineProperty(mkt, "mkSelRenderizar", {
 				if (e.getAttribute("data-dev") != "true") {
 					e.classList.add("mkSecreto");
 				}
-				// Em vez de criar um Popper para a Lista seguir o Elemento durante o scroll,
-				// criei um Ao scroll
+				// Segue o Elemento durante o scroll.
 				document.addEventListener("scroll", (event) => {
 					mkt.mkReposicionar(divMkSeletorList, true);
 				});
-
-				// v2
-				// const popperInstance: any = Popper.createPopper(
-				// 	divMkSeletorPesquisa,
-				// 	divMkSeletorList,
-				// 	{
-				// 		placement: "bottom-start",
-				// 		strategy: "fixed",
-				// 		modifiers: [],
-				// 	}
-				// );
-				// mkt.vars.poppers.push(popperInstance);
 			} else {
 				// Se não tem array, mas tem o refill e entrou para atualizar, faz o processo de refill genérico
 				if (!e.getAttribute("data-selarray") && e.getAttribute("data-refill")) {
@@ -5082,10 +5056,6 @@ Object.defineProperty(mkt, "mkSelRenderizar", {
 				e.setAttribute("tabindex", "-1");
 				mkt.mkSelTabIndex(e);
 			}
-		});
-		// Atualiza posição com a mesma frequencia que pesquisa os elementos.
-		mkt.vars.poppers.forEach((o: any) => {
-			o.update();
 		});
 	}, enumerable: false, writable: false, configurable: false,
 });
@@ -5834,12 +5804,6 @@ Object.defineProperty(mkt, "exeTimer", {
 		mkt.mkSelRenderizar();
 		mkt.mkRecRenderizar();
 		mkt.mkBotCheck();
-		// Itera sobre todos os Poppers para atualizar na mesma frequencia deste intervalo.
-		mkt.vars?.poppers?.forEach((o: any) => {
-			if (!o.state.elements.popper.classList.contains("oculto")) {
-				o.update();
-			}
-		});
 		// Recursiva
 		setTimeout(mkt.exeTimer, mkt.vars.exeTimer);
 	}, enumerable: false, writable: false, configurable: false,
