@@ -5029,6 +5029,12 @@ Object.defineProperty(mkt, "mkSelRenderizar", {
 				if (e.getAttribute("data-dev") != "true") {
 					e.classList.add("mkSecreto");
 				}
+				// Em vez de criar um Popper para a Lista seguir o Elemento durante o scroll,
+				// criei um Ao scroll
+				document.addEventListener("scroll", (event) => {
+					mkt.mkSelReposicionar(divMkSeletorList);
+				});
+
 				// v2
 				// const popperInstance: any = Popper.createPopper(
 				// 	divMkSeletorPesquisa,
@@ -5368,16 +5374,19 @@ Object.defineProperty(mkt, "getParentScrollTop", {
 Object.defineProperty(mkt, "mkSelReposicionar", {
 	value: (eList: any) => {
 		// Redimenciona a lista do tamanho do campo pesquisar
-		let ew = eList.previousElementSibling.offsetWidth;
-		let bloco = eList.parentElement;
+		let bloco = eList.previousElementSibling;
+		let oDinBloco = bloco.getBoundingClientRect();
+		let ew = bloco.offsetWidth;
 		eList.style.minWidth = ew + "px";
 		eList.style.maxWidth = ew + "px";
 		// mkt.l("List: ", eList.getBoundingClientRect());
-		mkt.l("Pai: ", bloco.getBoundingClientRect());
-		mkz = eList;
-		let difX = 0;
-		let difY = bloco.getBoundingClientRect().height;
-		eList.style.translate = difX + "px " + difY + "px";
+		//mkt.l("Pai: ", oDinBloco);
+		//mkz = eList;
+		// Formula: (Bloco Fixed Top) + Altura do Pai;
+		let difX = oDinBloco.left;
+		let difY = oDinBloco.top + oDinBloco.height;
+		eList.style.top = difY + "px";
+		eList.style.left = difX + "px ";
 	}, enumerable: false, writable: false, configurable: false,
 });
 
