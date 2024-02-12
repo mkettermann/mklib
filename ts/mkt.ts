@@ -4831,9 +4831,12 @@ Object.defineProperty(mkt, "mkRecRenderizar", {
 					"autocomplete",
 					"off"
 				);
-				// Seguir o Elemento durante o scroll.
+				// Seguir o Elemento durante o scroll e resize
 				document.addEventListener("scroll", (event) => {
 					mkt.mkReposicionar(divMkRecList, false);
+				});
+				window.addEventListener("resize", (event) => {
+					mkt.mkReposicionar(divMkRecList, true);
 				});
 				mkt.mkRecUpdate(e);
 			} else {
@@ -5026,6 +5029,9 @@ Object.defineProperty(mkt, "mkSelRenderizar", {
 				}
 				// Segue o Elemento durante o scroll.
 				document.addEventListener("scroll", (event) => {
+					mkt.mkReposicionar(divMkSeletorList, true);
+				});
+				window.addEventListener("resize", (event) => {
 					mkt.mkReposicionar(divMkSeletorList, true);
 				});
 			} else {
@@ -5361,7 +5367,14 @@ Object.defineProperty(mkt, "mkReposicionar", {
 		}
 		// Lista = Bloco Fixed Top + Altura do Pai;
 		eList.style.top = oDinBloco.top + oDinBloco.height + "px";
-		eList.style.left = oDinBloco.left + "px ";
+		//eList.style.left = oDinBloco.left + "px ";
+		mkz = eList;
+		mkt.l(oDinBloco)
+		if (oDinBloco.top <= 0) {
+			eList.classList.add("oculto");
+		} else {
+			eList.classList.remove("oculto");
+		}
 	}, enumerable: false, writable: false, configurable: false,
 });
 
