@@ -1719,16 +1719,17 @@ Object.defineProperty(mkt, "stringify", {
 			?.replaceAll("\t", "")
 			?.replaceAll("\b", "")
 			?.replaceAll("\f", "")
-			?.replaceAll('&', "&amp;")
-			?.replaceAll('"', "&quot;")
+		//?.replaceAll('&', "&amp;") // Post C# não identifica os campos do JSON
+		//?.replaceAll('"', "&quot;")
 		//.replaceAll("'", "&#39;");
 	}, enumerable: false, writable: false, configurable: false,
 });
 
 (String.prototype as any).removeRaw = function () {
-	return this.replaceAll("&quot;", '"')
+	return this
+		//.replaceAll("&quot;", '"')
 		//.replaceAll("&#39;", "'")
-		.replaceAll("&amp;", "&")
+		//.replaceAll("&amp;", "&")
 		.replaceAll("\n", "")
 		.replaceAll("\r", "")
 		.replaceAll("\t", "")
