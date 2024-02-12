@@ -4743,7 +4743,7 @@ Object.defineProperty(mkt, "mkRecRenderizar", {
                 // Em vez de criar um Popper para a Lista seguir o Elemento durante o scroll,
                 // criei um Ao scroll
                 document.addEventListener("scroll", (event) => {
-                    mkt.mkReposicionar(divMkRecList);
+                    mkt.mkReposicionar(divMkRecList, false);
                 });
                 // const popperInstance: any = Popper.createPopper(
                 // 	e,
@@ -4850,7 +4850,7 @@ Object.defineProperty(mkt, "mkRecFoco", {
             mkt.w("Não foi possível alterar o elemento: ", eList);
         }
         // Atualizar posição da Lista.
-        mkt.mkReposicionar(eList);
+        mkt.mkReposicionar(eList, false);
     }, enumerable: false, writable: false, configurable: false,
 });
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
@@ -4923,7 +4923,7 @@ Object.defineProperty(mkt, "mkSelRenderizar", {
                 // Em vez de criar um Popper para a Lista seguir o Elemento durante o scroll,
                 // criei um Ao scroll
                 document.addEventListener("scroll", (event) => {
-                    mkt.mkReposicionar(divMkSeletorList);
+                    mkt.mkReposicionar(divMkSeletorList, true);
                 });
                 // v2
                 // const popperInstance: any = Popper.createPopper(
@@ -5220,7 +5220,7 @@ Object.defineProperty(mkt, "mkSelPesquisaFocus", {
         eList.scrollTop =
             primeiroOffSet - 120 - (eList.offsetHeight - eList.clientHeight) / 2;
         // Atualizar posição da Lista.
-        mkt.mkReposicionar(e.parentElement.nextElementSibling);
+        mkt.mkReposicionar(e.parentElement.nextElementSibling, true);
     }, enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "getParentScrollTop", {
@@ -5235,13 +5235,15 @@ Object.defineProperty(mkt, "getParentScrollTop", {
     }, enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "mkReposicionar", {
-    value: (eList) => {
+    value: (eList, cover) => {
         // Atenção: Essa função precisa ser rápida.
         // Redimenciona e Reposiciona a lista durante focus ou scroll.
         let ePesquisa = eList.previousElementSibling;
         let oDinBloco = ePesquisa.getBoundingClientRect();
-        eList.style.minWidth = ePesquisa.offsetWidth + "px";
-        eList.style.maxWidth = ePesquisa.offsetWidth + "px";
+        if (cover) {
+            eList.style.minWidth = ePesquisa.offsetWidth + "px";
+            eList.style.maxWidth = ePesquisa.offsetWidth + "px";
+        }
         // Lista = Bloco Fixed Top + Altura do Pai;
         eList.style.top = oDinBloco.top + oDinBloco.height + "px";
         eList.style.left = oDinBloco.left + "px ";
