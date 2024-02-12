@@ -4910,12 +4910,16 @@ Object.defineProperty(mkt, "mkSelRenderizar", {
                     e.classList.add("mkSecreto");
                 }
                 // v2
-                const popperInstance = Popper.createPopper(divMkSeletorPesquisa, divMkSeletorList, {
-                    placement: "bottom-start",
-                    strategy: "fixed",
-                    modifiers: [],
-                });
-                mkt.vars.poppers.push(popperInstance);
+                // const popperInstance: any = Popper.createPopper(
+                // 	divMkSeletorPesquisa,
+                // 	divMkSeletorList,
+                // 	{
+                // 		placement: "bottom-start",
+                // 		strategy: "fixed",
+                // 		modifiers: [],
+                // 	}
+                // );
+                // mkt.vars.poppers.push(popperInstance);
             }
             else {
                 // Se não tem array, mas tem o refill e entrou para atualizar, faz o processo de refill genérico
@@ -5218,8 +5222,15 @@ Object.defineProperty(mkt, "mkSelReposicionar", {
     value: (eList) => {
         // Redimenciona a lista do tamanho do campo pesquisar
         let ew = eList.previousElementSibling.offsetWidth;
+        let bloco = eList.parentElement;
         eList.style.minWidth = ew + "px";
         eList.style.maxWidth = ew + "px";
+        // mkt.l("List: ", eList.getBoundingClientRect());
+        mkt.l("Pai: ", bloco.getBoundingClientRect());
+        mkz = eList;
+        let difX = 0;
+        let difY = bloco.getBoundingClientRect().height;
+        eList.style.translate = difX + "px " + difY + "px";
     }, enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "mkSelPesquisaBlur", {

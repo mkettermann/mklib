@@ -62,7 +62,7 @@
 	--FundoItensSelArrow: linear-gradient(0.25turn,
 			transparent,
 			var(--g5VerdeLima));
-	--FlexinhaCor: var(--g5AzulClaro66);
+	--FlexinhaCor: var(--scrollColor);
 	--CorItensHover: #000;
 	--CorSeletor: var(--CorItensHover);
 	--CorItens: var(--BordaItens);
@@ -319,7 +319,7 @@ ul {
 .mkSelList {
 	display: none;
 	flex-direction: column;
-	position: absolute;
+	position: fixed;
 	z-index: calc(var(--mkSelIndex));
 	text-align: left;
 	color: var(--CorItens);
