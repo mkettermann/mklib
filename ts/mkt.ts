@@ -5361,17 +5361,28 @@ Object.defineProperty(mkt, "mkReposicionar", {
 		// Redimenciona e Reposiciona a lista durante focus ou scroll.
 		let ePesquisa = eList.previousElementSibling;
 		let oDinBloco = ePesquisa.getBoundingClientRect();
+		let oDinList = eList.getBoundingClientRect();
+		// TAMANHO
 		if (cover) {
 			eList.style.minWidth = ePesquisa.offsetWidth + "px";
 			eList.style.maxWidth = ePesquisa.offsetWidth + "px";
 		}
+		// POSICAO e FUGA em Y (em baixo)
 		// Lista = Bloco Fixed Top + Altura do Pai;
-		eList.style.top = oDinBloco.top + oDinBloco.height + "px";
-		//eList.style.left = oDinBloco.left + "px ";
-		mkz = eList;
-		mkt.l(oDinBloco)
+		let novaPos = oDinBloco.top + oDinBloco.height;
+		//let telaX = window.innerWidth;
+		// SE PosicaoAtual + AlturaAtual estiver na tela
+		if ((novaPos + oDinList.height) <= window.innerHeight) {
+			eList.style.top = novaPos + "px";
+			eList.style.bottom = null;
+		} else {
+			eList.style.top = null;
+			eList.style.bottom = "0px";
+		}
+		// FUGA em Y (em cima)
 		if (oDinBloco.top <= 0) {
 			eList.classList.add("oculto");
+			//mkt.l(window.getComputedStyle(eList));
 		} else {
 			eList.classList.remove("oculto");
 		}
