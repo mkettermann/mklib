@@ -254,7 +254,7 @@ class mkt {
     static mkSelDelRefillProcesso;
     static mkSelGetKV;
     static mkSelSelecionar;
-    static mkSelReposicionar;
+    static mkReposicionar;
     static mkSelSetDisplay;
     static mkSelArraySetKV;
     static mkSelRenderizar;
@@ -4740,12 +4740,21 @@ Object.defineProperty(mkt, "mkRecRenderizar", {
                     e.setAttribute("onblur", onblur + ";mkt.mkRecFoco(this,false)");
                 }
                 e.setAttribute("autocomplete", "off");
-                const popperInstance = Popper.createPopper(e, divMkRecList, {
-                    placement: "bottom-start",
-                    strategy: "fixed",
-                    modifiers: [],
+                // Em vez de criar um Popper para a Lista seguir o Elemento durante o scroll,
+                // criei um Ao scroll
+                document.addEventListener("scroll", (event) => {
+                    mkt.mkReposicionar(divMkRecList);
                 });
-                mkt.vars.poppers.push(popperInstance);
+                // const popperInstance: any = Popper.createPopper(
+                // 	e,
+                // 	divMkRecList,
+                // 	{
+                // 		placement: "bottom-start",
+                // 		strategy: "fixed",
+                // 		modifiers: [],
+                // 	}
+                // );
+                // mkt.vars.poppers.push(popperInstance);
                 mkt.mkRecUpdate(e);
             }
             else {
@@ -4828,18 +4837,20 @@ Object.defineProperty(mkt, "mkRecChange", {
 });
 Object.defineProperty(mkt, "mkRecFoco", {
     value: (input, f) => {
-        let e = input?.nextElementSibling;
-        if (e) {
+        let eList = input?.nextElementSibling;
+        if (eList) {
             if (!f) {
-                e.classList.add("emFoco");
+                eList.classList.add("emFoco");
             }
             else {
-                e.classList.remove("emFoco");
+                eList.classList.remove("emFoco");
             }
         }
         else {
-            mkt.w("Não foi possível alterar o elemento: ", e);
+            mkt.w("Não foi possível alterar o elemento: ", eList);
         }
+        // Atualizar posição da Lista.
+        mkt.mkReposicionar(eList);
     }, enumerable: false, writable: false, configurable: false,
 });
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
@@ -4912,7 +4923,7 @@ Object.defineProperty(mkt, "mkSelRenderizar", {
                 // Em vez de criar um Popper para a Lista seguir o Elemento durante o scroll,
                 // criei um Ao scroll
                 document.addEventListener("scroll", (event) => {
-                    mkt.mkSelReposicionar(divMkSeletorList);
+                    mkt.mkReposicionar(divMkSeletorList);
                 });
                 // v2
                 // const popperInstance: any = Popper.createPopper(
@@ -5209,7 +5220,7 @@ Object.defineProperty(mkt, "mkSelPesquisaFocus", {
         eList.scrollTop =
             primeiroOffSet - 120 - (eList.offsetHeight - eList.clientHeight) / 2;
         // Atualizar posição da Lista.
-        mkt.mkSelReposicionar(e.parentElement.nextElementSibling);
+        mkt.mkReposicionar(e.parentElement.nextElementSibling);
     }, enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "getParentScrollTop", {
@@ -5223,22 +5234,17 @@ Object.defineProperty(mkt, "getParentScrollTop", {
         return soma;
     }, enumerable: false, writable: false, configurable: false,
 });
-Object.defineProperty(mkt, "mkSelReposicionar", {
+Object.defineProperty(mkt, "mkReposicionar", {
     value: (eList) => {
-        // Redimenciona a lista do tamanho do campo pesquisar
-        let bloco = eList.previousElementSibling;
-        let oDinBloco = bloco.getBoundingClientRect();
-        let ew = bloco.offsetWidth;
-        eList.style.minWidth = ew + "px";
-        eList.style.maxWidth = ew + "px";
-        // mkt.l("List: ", eList.getBoundingClientRect());
-        //mkt.l("Pai: ", oDinBloco);
-        //mkz = eList;
-        // Formula: (Bloco Fixed Top) + Altura do Pai;
-        let difX = oDinBloco.left;
-        let difY = oDinBloco.top + oDinBloco.height;
-        eList.style.top = difY + "px";
-        eList.style.left = difX + "px ";
+        // Atenção: Essa função precisa ser rápida.
+        // Redimenciona e Reposiciona a lista durante focus ou scroll.
+        let ePesquisa = eList.previousElementSibling;
+        let oDinBloco = ePesquisa.getBoundingClientRect();
+        eList.style.minWidth = ePesquisa.offsetWidth + "px";
+        eList.style.maxWidth = ePesquisa.offsetWidth + "px";
+        // Lista = Bloco Fixed Top + Altura do Pai;
+        eList.style.top = oDinBloco.top + oDinBloco.height + "px";
+        eList.style.left = oDinBloco.left + "px ";
     }, enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "mkSelPesquisaBlur", {
