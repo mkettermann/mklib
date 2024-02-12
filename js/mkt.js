@@ -1683,8 +1683,9 @@ Object.defineProperty(mkt, "wait", {
 });
 Object.defineProperty(mkt, "isJson", {
     value: (s) => {
+        let t = s.removeRaw();
         try {
-            JSON.parse(s);
+            JSON.parse(t);
         }
         catch (e) {
             return false;
@@ -4961,16 +4962,20 @@ Object.defineProperty(mkt, "mkSelDelRefillProcesso", {
                     let p = await mkt.get.json(url);
                     if (p.retorno != null) {
                         let kv = p.retorno;
-                        if (typeof p.retorno == "object") {
-                            kv = mkt.stringify(p.retorno);
-                        }
+                        // Se vier um Json em string, Tenta virar pra objeto pra ter certeza que o sistema vai conseguir fazer isso depois.
                         if (mkt.isJson(kv)) {
+                            kv = mkt.parseJSON(kv);
+                        }
+                        // Se o KV está em forma de objeto, então prepara para colocar no campo.
+                        let tipoKV = mkt.classof(kv);
+                        if (tipoKV == "Array") {
+                            kv = mkt.stringify(p.retorno);
                             e.setAttribute("data-selarray", kv);
                             e.classList.remove("refilling");
                             r(e);
                         }
                         else {
-                            mkt.erro("Resultado não é um JSON. (mkSelDlRefill)");
+                            mkt.erro("mkSelDelRefillProcesso() - Refill precisa receber uma Array de KVs: ", tipoKV);
                         }
                     }
                 } // Apenas 1 rewfill por vez
