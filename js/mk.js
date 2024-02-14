@@ -12,9 +12,10 @@ class mk {
     idContainer = 0;
     static infolog = true;
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-    //			CONSTRUTOR (contrutor)			\\
+    //		CONSTRUTOR (contrutor)	    \\
     //___________________________________\\
     // É possível construir o objeto usando undefined ou null para atingir os valores padrão.
+    // new mk([],".divListagemContainer","#modelo");
     constructor(urlOrigem = mk.delUrlQuery(window.location.href) + "/GetList", todaListagem = ".divListagemContainer", idModelo = "#modelo", filtro = ".iConsultas", arg = null) {
         this.thisListNum = ++mk.contaListas;
         if (idModelo == null || idModelo == "")
