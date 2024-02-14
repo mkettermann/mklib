@@ -1950,7 +1950,15 @@ Object.defineProperty(mkt, "QSetAll", {
 Object.defineProperty(mkt, "Qon", {
 	value: (query: any = "body") => {
 		return mkt.aCadaElemento(query, (e: any) => {
-			if (e instanceof HTMLButtonElement || e instanceof HTMLInputElement) {
+			let co = mkt.classof(e);
+			// INPUT - BUTTON - TEXTAREA - SELECT - OPTION - OPTGROUP - FIELDSET
+			if (co == 'HTMLTextAreaElement' ||
+				co == 'HTMLButtonElement' ||
+				co == 'HTMLSelectElement' ||
+				co == 'HTMLOptionElement' ||
+				co == 'HTMLOptGroupElement' ||
+				co == 'HTMLFieldSetElement' ||
+				co == 'HTMLInputElement') {
 				e.disabled = false;
 			}
 			e.classList.remove("disabled");
@@ -1962,7 +1970,15 @@ Object.defineProperty(mkt, "Qon", {
 Object.defineProperty(mkt, "Qoff", {
 	value: (query: any = "body") => {
 		return mkt.aCadaElemento(query, (e: any) => {
-			if (e instanceof HTMLButtonElement || e instanceof HTMLInputElement) {
+			let co = mkt.classof(e);
+			// INPUT - BUTTON - TEXTAREA - SELECT - OPTION - OPTGROUP - FIELDSET
+			if (co == 'HTMLTextAreaElement' ||
+				co == 'HTMLButtonElement' ||
+				co == 'HTMLSelectElement' ||
+				co == 'HTMLOptionElement' ||
+				co == 'HTMLOptGroupElement' ||
+				co == 'HTMLFieldSetElement' ||
+				co == 'HTMLInputElement') {
 				e.disabled = true;
 			}
 			e.classList.add("disabled");
