@@ -268,6 +268,7 @@ class mkt {
 	aindaTemMais = true;
 	totalappends = 0;
 
+	// CONSTRUTOR MKT
 	constructor(_mktc: mktc | null) {
 		if (_mktc == null) {
 			this.c = new mktc([]);
@@ -409,6 +410,25 @@ class mkt {
 			mkt.erro("A lista foi iniciada sem confirmação dos dados. Provavelmente ocorreu erro na coleta de dados.")
 			this.startListagem();
 		}
+	}
+
+	reset = async () => {
+		// Limpa as variaveis da instancia e solicita novamente o recomeço da listagem
+		this.dadosFull = [];
+		this.dadosFiltrado = [];
+		this.dadosExibidos = [];
+		this.alvo = {};
+		this.thisListNum = 0;
+		this.idContainer = 0;
+		this.exclusivos = [];
+		this.hmunsel = [];
+		this.ultimoGet = -1;
+		this.ultimoParametro = "";
+		this.cTotUltimoParametro = 0;
+		this.solicitadoUltimoParametro = 0;
+		this.aindaTemMais = true;
+		this.totalappends = 0;
+		await this.autoStartConfig();
 	}
 
 	mais = async (parametros: string | null = null, novaurl: string | null = null) => {
