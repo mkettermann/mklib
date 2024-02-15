@@ -261,6 +261,7 @@ class mkt {
     static mkReposicionar;
     static mkSelSetDisplay;
     static mkSelRenderizar;
+    static mkSelRenderizarElemento;
     static mkRecRenderizar;
     static mkBotCheck;
     c;
@@ -1713,14 +1714,13 @@ Object.defineProperty(mkt, "eToText", {
                 v = e.innerHTML;
             }
             if (mkt.classof(e) == "HTMLInputElement") {
-                if (e.closest(".mkSelBloco")) { // Se estiver dentro de um mkSelBloco
+                if (e.classList.contains("mkSel")) {
+                    if (!e.closest(".mkSelBloco")) { // Se estiver dentro de um mkSelBloco já renderizou
+                        mkt.mkSelRenderizarElemento(e);
+                    }
                     v = [...mkt.mkSelGetMap(e).values()].join(", ");
                     paiSimples = false;
                     ePai = e.closest(".mkSelBloco");
-                }
-                else if (e.classList.contains("mkSel")) {
-                    // Se não estiver no mkSelBloco e tem mkSel, provavelmente ainda não renderizou
-                    v = e.value;
                 }
                 else {
                     v = e.value;
@@ -4941,79 +4941,85 @@ Object.defineProperty(mkt, "mkRecFoco", {
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //			MK Seletor (mkSel)					\\
 //___________________________________\\
+Object.defineProperty(mkt, "mkSelRenderizarElemento", {
+    value: async (e) => {
+        // Transforma elemento se ele ainda não foi transformado
+        if (!e.parentElement?.classList.contains("mkSelBloco")) {
+            // COLETA
+            let ePai = e.parentElement;
+            let ePos = Array.from(ePai?.children).indexOf(e);
+            // ELEMENTO no BLOCO
+            let divMkSeletorBloco = document.createElement("div");
+            let divMkSeletorPesquisa = document.createElement("div");
+            let divMkSeletorInputExibe = document.createElement("input");
+            let divMkSeletorInputExibeArrow = document.createElement("div");
+            let divMkSeletorList = document.createElement("div");
+            // Nomeando Classes
+            divMkSeletorBloco.className = "mkSelBloco";
+            divMkSeletorPesquisa.className = "mkSelPesquisa";
+            divMkSeletorInputExibe.className = "mkSelInputExibe";
+            divMkSeletorInputExibeArrow.className = "mkSelInputExibeArrow";
+            divMkSeletorList.className = "mkSelList";
+            // ORDEM no DOM
+            ePai?.insertBefore(divMkSeletorBloco, ePai?.children[ePos]);
+            divMkSeletorBloco.appendChild(e);
+            divMkSeletorBloco.appendChild(divMkSeletorPesquisa);
+            divMkSeletorBloco.appendChild(divMkSeletorList);
+            divMkSeletorPesquisa.appendChild(divMkSeletorInputExibe);
+            divMkSeletorPesquisa.appendChild(divMkSeletorInputExibeArrow);
+            // Transfere style
+            divMkSeletorBloco.setAttribute("style", e.getAttribute("style") ?? "");
+            // Flexas que movem o selecionado quando há apenas 1 possibilidade de selecao.
+            if (e.getAttribute("data-selmovesel") == "true" &&
+                e.getAttribute("data-selapenas") == "1") {
+                let divMkSelArrowSelLeft = document.createElement("div");
+                let divMkSelArrowSelRight = document.createElement("div");
+                divMkSelArrowSelLeft.className = "mkSelArrowSelLeft microPos6";
+                divMkSelArrowSelRight.className = "mkSelArrowSelRight microPos4";
+                divMkSeletorPesquisa.appendChild(divMkSelArrowSelLeft);
+                divMkSeletorPesquisa.appendChild(divMkSelArrowSelRight);
+                divMkSelArrowSelLeft.setAttribute("onclick", "mkt.mkSelLeftSel(this)");
+                divMkSelArrowSelRight.setAttribute("onclick", "mkt.mkSelRightSel(this)");
+                divMkSeletorBloco.style.setProperty("--mkSelArrowSize", "24px");
+            }
+            // Seta atributos e Gatilhos
+            e.removeAttribute("style");
+            e.setAttribute("readonly", "true");
+            e.setAttribute("tabindex", "-1");
+            mkt.mkSelTabIndex(e);
+            divMkSeletorInputExibe.setAttribute("placeholder", "Filtro \u{1F50D}");
+            divMkSeletorInputExibe.setAttribute("onfocus", "mkt.mkSelPesquisaFocus(this)");
+            divMkSeletorInputExibe.setAttribute("onblur", "mkt.mkSelPesquisaBlur(this)");
+            divMkSeletorInputExibe.setAttribute("oninput", "mkt.mkSelPesquisaInput(this)");
+            divMkSeletorInputExibe.setAttribute("onkeydown", "mkt.mkSelPesquisaKeyDown(event)");
+            divMkSeletorInputExibe.setAttribute("autocomplete", "off");
+            divMkSeletorList.addEventListener("scroll", (ev) => {
+                mkt.mkSelMoveu(ev.target);
+            });
+            // Popular Lista
+            mkt.mkSelPopularLista(e);
+            // Seleciona baseado no value do input
+            mkt.mkSelUpdate(e);
+            // Deixar Elemento de forma visivel, mas inacessivel.
+            if (e.getAttribute("data-dev") != "true") {
+                e.classList.add("mkSecreto");
+            }
+            // Segue o Elemento durante o scroll.
+            document.addEventListener("scroll", (event) => {
+                mkt.mkReposicionar(divMkSeletorList, true);
+            });
+            window.addEventListener("resize", (event) => {
+                mkt.mkReposicionar(divMkSeletorList, true);
+            });
+        }
+    }, enumerable: false, writable: false, configurable: false,
+});
 Object.defineProperty(mkt, "mkSelRenderizar", {
     value: async () => {
         mkt.QAll("input.mkSel").forEach(async (e) => {
+            mkt.mkSelRenderizarElemento(e);
             // Transforma elemento se ele ainda não foi transformado
-            if (!e.parentElement?.classList.contains("mkSelBloco")) {
-                // COLETA
-                let ePai = e.parentElement;
-                let ePos = Array.from(ePai?.children).indexOf(e);
-                // ELEMENTO no BLOCO
-                let divMkSeletorBloco = document.createElement("div");
-                let divMkSeletorPesquisa = document.createElement("div");
-                let divMkSeletorInputExibe = document.createElement("input");
-                let divMkSeletorInputExibeArrow = document.createElement("div");
-                let divMkSeletorList = document.createElement("div");
-                // Nomeando Classes
-                divMkSeletorBloco.className = "mkSelBloco";
-                divMkSeletorPesquisa.className = "mkSelPesquisa";
-                divMkSeletorInputExibe.className = "mkSelInputExibe";
-                divMkSeletorInputExibeArrow.className = "mkSelInputExibeArrow";
-                divMkSeletorList.className = "mkSelList";
-                // ORDEM no DOM
-                ePai?.insertBefore(divMkSeletorBloco, ePai?.children[ePos]);
-                divMkSeletorBloco.appendChild(e);
-                divMkSeletorBloco.appendChild(divMkSeletorPesquisa);
-                divMkSeletorBloco.appendChild(divMkSeletorList);
-                divMkSeletorPesquisa.appendChild(divMkSeletorInputExibe);
-                divMkSeletorPesquisa.appendChild(divMkSeletorInputExibeArrow);
-                // Transfere style
-                divMkSeletorBloco.setAttribute("style", e.getAttribute("style") ?? "");
-                // Flexas que movem o selecionado quando há apenas 1 possibilidade de selecao.
-                if (e.getAttribute("data-selmovesel") == "true" &&
-                    e.getAttribute("data-selapenas") == "1") {
-                    let divMkSelArrowSelLeft = document.createElement("div");
-                    let divMkSelArrowSelRight = document.createElement("div");
-                    divMkSelArrowSelLeft.className = "mkSelArrowSelLeft microPos6";
-                    divMkSelArrowSelRight.className = "mkSelArrowSelRight microPos4";
-                    divMkSeletorPesquisa.appendChild(divMkSelArrowSelLeft);
-                    divMkSeletorPesquisa.appendChild(divMkSelArrowSelRight);
-                    divMkSelArrowSelLeft.setAttribute("onclick", "mkt.mkSelLeftSel(this)");
-                    divMkSelArrowSelRight.setAttribute("onclick", "mkt.mkSelRightSel(this)");
-                    divMkSeletorBloco.style.setProperty("--mkSelArrowSize", "24px");
-                }
-                // Seta atributos e Gatilhos
-                e.removeAttribute("style");
-                e.setAttribute("readonly", "true");
-                e.setAttribute("tabindex", "-1");
-                mkt.mkSelTabIndex(e);
-                divMkSeletorInputExibe.setAttribute("placeholder", "Filtro \u{1F50D}");
-                divMkSeletorInputExibe.setAttribute("onfocus", "mkt.mkSelPesquisaFocus(this)");
-                divMkSeletorInputExibe.setAttribute("onblur", "mkt.mkSelPesquisaBlur(this)");
-                divMkSeletorInputExibe.setAttribute("oninput", "mkt.mkSelPesquisaInput(this)");
-                divMkSeletorInputExibe.setAttribute("onkeydown", "mkt.mkSelPesquisaKeyDown(event)");
-                divMkSeletorInputExibe.setAttribute("autocomplete", "off");
-                divMkSeletorList.addEventListener("scroll", (ev) => {
-                    mkt.mkSelMoveu(ev.target);
-                });
-                // Popular Lista
-                mkt.mkSelPopularLista(e);
-                // Seleciona baseado no value do input
-                mkt.mkSelUpdate(e);
-                // Deixar Elemento de forma visivel, mas inacessivel.
-                if (e.getAttribute("data-dev") != "true") {
-                    e.classList.add("mkSecreto");
-                }
-                // Segue o Elemento durante o scroll.
-                document.addEventListener("scroll", (event) => {
-                    mkt.mkReposicionar(divMkSeletorList, true);
-                });
-                window.addEventListener("resize", (event) => {
-                    mkt.mkReposicionar(divMkSeletorList, true);
-                });
-            }
-            else {
+            if (e.parentElement?.classList.contains("mkSelBloco")) {
                 // Se não tem array, mas tem o refill e entrou para atualizar, faz o processo de refill genérico
                 if (!e.getAttribute("data-selarray") && e.getAttribute("data-refill")) {
                     await mkt.mkSelDelRefillProcesso(e);
