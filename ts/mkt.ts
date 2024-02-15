@@ -3165,7 +3165,7 @@ Object.defineProperty(mkt, "request", {
 			mkt.gc("(" + config.statusCode + ") HTTP ERRO:");
 			// Se bateu no catch, expoem trace error do JS
 			if (config.catch && !config.quiet) {
-				mkt.l("Config: " + config);
+				mkt.l("Config: ", config);
 				mkt.erro("Erro: ", config.catch);
 			}
 			// Executa funcao de erro externa.
