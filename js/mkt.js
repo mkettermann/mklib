@@ -481,7 +481,7 @@ class mkt {
                 // Passa LIST REQUEST e LIST HAVE.
                 // Incrementa o lh e lr após o "?", se tiver
                 let urlTemp = "";
-                if (!data_url.includes("?")) { // Caso a url já contenha Query, não sobreescrever
+                if (data_url.includes("?")) { // Caso a url já contenha Query, não sobreescrever
                     urlTemp = data_url + "&lr=" + solicitar + "&lh=" + this.cTotUltimoParametro;
                 }
                 else { // Caso não tenha, acrescenta o Query
