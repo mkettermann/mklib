@@ -53,7 +53,7 @@ class mktc {
 	container_importar: boolean = false; // No container, executa importar dados baseados no atributo.
 	filtroExtra: Function | null = null; // modificaFiltro Retorna um booleano que permite um filtro configurado externamente do processo Filtragem.
 	filtro: string | null = ".iConsultas"; // Busca por esta classe para filtrar campos por nome do input.
-	filtroDinamico: boolean | null = null;; // Nessa listagem o filtro por tecla não é dinâmico por padrão.
+	filtroDinamico: boolean | null = null; // Nessa listagem o filtro por tecla não é dinâmico por padrão.
 	headSort: boolean = true; // Indicador se ativará o ordenamento ao clicar no cabeçalho
 	headMenu: boolean = true; // Indicador se ativará o botãozinho que abre o filtro completo do campo.
 	exibeBotaoMais: boolean = true; // Indicador se ativará o botãozinho que abre o filtro completo do campo.
@@ -471,7 +471,13 @@ class mkt {
 				}
 				this.solicitadoUltimoParametro = solicitar;
 				// Passa LIST REQUEST e LIST HAVE.
-				let urlTemp = (data_url as string)?.split("?")[0] + "?lr=" + solicitar + "&lh=" + this.cTotUltimoParametro;
+				// Incrementa o lh e lr após o "?", se tiver
+				let urlTemp: string = "";
+				if (!data_url.includes("?")) { // Caso a url já contenha Query, não sobreescrever
+					urlTemp = (data_url as string) + "&lr=" + solicitar + "&lh=" + this.cTotUltimoParametro;
+				} else { // Caso não tenha, acrescenta o Query
+					urlTemp = (data_url as string)?.split("?")[0] + "?lr=" + solicitar + "&lh=" + this.cTotUltimoParametro;
+				}
 				if (!urlTemp.includes("://")) urlTemp = window.location.origin + urlTemp;
 				urlTemp += parametros;
 				//this.ultimaUrlComParametro = urlTemp; // Se for impedir chamadas iguais.

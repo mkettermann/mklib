@@ -59,8 +59,7 @@ class mktc {
     container_importar = false; // No container, executa importar dados baseados no atributo.
     filtroExtra = null; // modificaFiltro Retorna um booleano que permite um filtro configurado externamente do processo Filtragem.
     filtro = ".iConsultas"; // Busca por esta classe para filtrar campos por nome do input.
-    filtroDinamico = null;
-    ; // Nessa listagem o filtro por tecla não é dinâmico por padrão.
+    filtroDinamico = null; // Nessa listagem o filtro por tecla não é dinâmico por padrão.
     headSort = true; // Indicador se ativará o ordenamento ao clicar no cabeçalho
     headMenu = true; // Indicador se ativará o botãozinho que abre o filtro completo do campo.
     exibeBotaoMais = true; // Indicador se ativará o botãozinho que abre o filtro completo do campo.
@@ -480,7 +479,14 @@ class mkt {
                 }
                 this.solicitadoUltimoParametro = solicitar;
                 // Passa LIST REQUEST e LIST HAVE.
-                let urlTemp = data_url?.split("?")[0] + "?lr=" + solicitar + "&lh=" + this.cTotUltimoParametro;
+                // Incrementa o lh e lr após o "?", se tiver
+                let urlTemp = "";
+                if (!data_url.includes("?")) { // Caso a url já contenha Query, não sobreescrever
+                    urlTemp = data_url + "&lr=" + solicitar + "&lh=" + this.cTotUltimoParametro;
+                }
+                else { // Caso não tenha, acrescenta o Query
+                    urlTemp = data_url?.split("?")[0] + "?lr=" + solicitar + "&lh=" + this.cTotUltimoParametro;
+                }
                 if (!urlTemp.includes("://"))
                     urlTemp = window.location.origin + urlTemp;
                 urlTemp += parametros;
