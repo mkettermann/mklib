@@ -243,10 +243,14 @@ class mkt {
 	static mkSelUpdate: Function;
 	static mkSelDelRefillProcesso: Function;
 	static mkSelGetKV: Function;
+	static mkSelGetMap: Function;
+	static mkSelArrayGetKV: Function;
+	static mkSelArraySetKV: Function;
+	static mkSelArrayGetMap: Function;
+	static mkSelArraySetMap: Function;
 	static mkSelSelecionar: Function;
 	static mkReposicionar: Function;
 	static mkSelSetDisplay: Function;
-	static mkSelArraySetKV: Function;
 	static mkSelRenderizar: Function;
 	static mkRecRenderizar: Function;
 	static mkBotCheck: Function;
@@ -1699,6 +1703,51 @@ Object.defineProperty(mkt, "atribuir", {
 				}
 			} else { mkt.w("mkt.atribuir() - Precisa de um gatilho: ", gatilho) }
 		} else { mkt.w("mkt.atribuir() - Precisa de um elemento: ", e) }
+	}, enumerable: false, writable: false, configurable: false,
+});
+
+Object.defineProperty(mkt, "eToText", {
+	value: (query: any) => {
+		// - Pega o Valor ou Inner do elemento e as classes,
+		// - Remove o Elemento
+		// - Coloca o conteudo dentro duma Div
+		// - Mantem as classes
+		let e = mkt.Q(query);
+		let v = "";
+		let classes = "";
+		let div = document.createElement("div");
+		if (e) {
+			let paiSimples = true;
+			let ePai: any = e.parentElement;
+			classes = e.classList.toString();
+			if (mkt.classof(e) == "HTMLTextAreaElement") {
+				v = e.innerHTML;
+			}
+			if (mkt.classof(e) == "HTMLInputElement") {
+				if (e.classList.contains("mkSel")) {
+					v = [...mkt.mkSelGetMap(e).values()].join(", ");
+					paiSimples = false;
+
+					ePai = e.closest(".mkSelBloco");
+				} else {
+					v = e.value;
+				}
+			}
+			div.innerHTML = v;
+			div.setAttribute("class", classes);
+
+			if (paiSimples) {
+				ePai?.insertBefore(div, ePai?.children[Array.from(ePai?.children).indexOf(e) + 1]);
+			} else {
+				div.classList.remove("mkSel");
+				div.classList.remove("mkSecreto");
+				e = ePai;
+				ePai = e.parentElement;
+				ePai?.insertBefore(div, ePai?.children[Array.from(ePai?.children).indexOf(e) + 1]);
+			}
+			e.remove();
+		}
+		return div;
 	}, enumerable: false, writable: false, configurable: false,
 });
 
