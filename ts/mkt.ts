@@ -1729,7 +1729,11 @@ Object.defineProperty(mkt, "eToText", {
 					paiSimples = false;
 
 					ePai = e.closest(".mkSelBloco");
-				} else {
+				} else if (e.classList.contains("mkSel")) {
+					// Se não estiver no mkSelBloco e tem mkSel, provavelmente ainda não renderizou
+					v = e.value;
+				}
+				else {
 					v = e.value;
 				}
 			}
@@ -1746,8 +1750,9 @@ Object.defineProperty(mkt, "eToText", {
 				ePai?.insertBefore(div, ePai?.children[Array.from(ePai?.children).indexOf(e) + 1]);
 			}
 			e.remove();
+			return div;
 		}
-		return div;
+		return null;
 	}, enumerable: false, writable: false, configurable: false,
 });
 
