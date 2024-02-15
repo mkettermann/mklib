@@ -1713,7 +1713,7 @@ Object.defineProperty(mkt, "eToText", {
                 v = e.innerHTML;
             }
             if (mkt.classof(e) == "HTMLInputElement") {
-                if (e.classList.contains("mkSel")) {
+                if (e.closest(".mkSelBloco")) { // Se estiver dentro de um mkSelBloco
                     v = [...mkt.mkSelGetMap(e).values()].join(", ");
                     paiSimples = false;
                     ePai = e.closest(".mkSelBloco");
