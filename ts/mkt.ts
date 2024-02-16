@@ -357,19 +357,20 @@ class mkt {
 
 			//Adiciona eventos aos botões do filtro
 			this.setFiltroListener();
-
-			// Inicial SortBy
-			if (!this.c.sortBy)
-				this.c.sortBy = this.c.pk; // Padrão PK
-			// Inicial SortDir
-			if (!this.c.sortDir)
-				this.c.sortDir = 1; // Padrão 0 Decrescente por ID Deixando a Ultima ID no topo
-
-			// Inicial Sort
-			this.setDirSort(this.c.sortBy, Number(this.c.sortDir));
 		}
 
 		// A partir daqui o New e o Reset seguem iguais
+
+		// Inicial SortBy
+		if (!this.c.sortBy)
+			this.c.sortBy = this.c.pk; // Padrão PK
+		// Inicial SortDir
+		if (!this.c.sortDir)
+			this.c.sortDir = 1; // Padrão 0 Decrescente por ID Deixando a Ultima ID no topo
+
+		// Inicial Sort
+		this.setDirSort(this.c.sortBy, Number(this.c.sortDir));
+
 		if (this.c.dados != null) {
 			if (mkt.classof(this.c.dados) == "Array") {
 				if (await this.appendList(this.c.dados) != null) {
@@ -437,6 +438,7 @@ class mkt {
 		this.aindaTemMais = true;
 		this.totalappends = 0;
 		await this.autoStartConfig();
+		this.startListagem()
 	}
 
 	mais = async (parametros: string | null = null, novaurl: string | null = null) => {
