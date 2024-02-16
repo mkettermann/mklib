@@ -257,6 +257,7 @@ class mkt {
 	static mkBotCheck: Function;
 
 	c: mktc;
+	started: boolean = false;
 	db: IDBDatabase | null = null;
 	dadosFull: any = []; // Todos os dados sem filtro, mas ordenaveis.
 	dadosFiltrado: any = []; // Mesmos dadosFull, mas após filtro.
@@ -325,52 +326,54 @@ class mkt {
 	}
 
 	autoStartConfig = async (arg: any = {}) => {
-		// SE for importar: Espera o container para então continuar.
-		if (this.c.container_importar) { await mkt.importar(this.c.container); }
-		// SE GATILHO EXTERNO inicialmente bloqueado
-		if (mkt.Q(this.c.botaoNovaConsulta)) {
-			if (this.c.qntInicial > 0) { // Se há consulta inicial, então o consultar já vem travado até modificar.
-				mkt.Qoff(this.c.botaoNovaConsulta);
+		if (!this.started) { // <= Previne que Reset duplique os Listners
+			// SE for importar: Espera o container para então continuar.
+			if (this.c.container_importar) { await mkt.importar(this.c.container); }
+			// SE GATILHO EXTERNO inicialmente bloqueado
+			if (mkt.Q(this.c.botaoNovaConsulta)) {
+				if (this.c.qntInicial > 0) { // Se há consulta inicial, então o consultar já vem travado até modificar.
+					mkt.Qoff(this.c.botaoNovaConsulta);
+				}
 			}
-		}
-		// GATILHOS do Container da tabela (Paginação e Limite por Página)
-		// Seta Gatilho dos botoes de paginacao.
-		if (mkt.Q(this.c.pagBotao)) {
-			mkt.QAll(this.c.pagBotao).forEach((li: HTMLLIElement) => {
-				li.addEventListener("click", (ev) => {
-					this.mudaPag(ev.target);
+			// GATILHOS do Container da tabela (Paginação e Limite por Página)
+			// Seta Gatilho dos botoes de paginacao.
+			if (mkt.Q(this.c.pagBotao)) {
+				mkt.QAll(this.c.pagBotao).forEach((li: HTMLLIElement) => {
+					li.addEventListener("click", (ev) => {
+						this.mudaPag(ev.target);
+					});
 				});
-			});
+			}
+			// Seta Gatilho do indicador de quantidade por pagina.
+			if (mkt.Q(this.c.tablePorPagina)) {
+				mkt.Ao("input", this.c.tablePorPagina, async (e: HTMLInputElement) => {
+					mkt.l("TablePorPagina: ", this.c.tablePorPagina);
+					this.atualizaNaPaginaUm();
+				});
+			}
+
+			// Ativar THEAD funcionalidades
+			this.headAtivar();
+
+			//Adiciona eventos aos botões do filtro
+			this.setFiltroListener();
+
+			// Inicial SortBy
+			if (!this.c.sortBy)
+				this.c.sortBy = this.c.pk; // Padrão PK
+			// Inicial SortDir
+			if (!this.c.sortDir)
+				this.c.sortDir = 1; // Padrão 0 Decrescente por ID Deixando a Ultima ID no topo
+
+			// Inicial Sort
+			this.setDirSort(this.c.sortBy, Number(this.c.sortDir));
 		}
-		// Seta Gatilho do indicador de quantidade por pagina.
-		if (mkt.Q(this.c.tablePorPagina)) {
-			mkt.Ao("input", this.c.tablePorPagina, async (e: HTMLInputElement) => {
-				mkt.l("TablePorPagina: ", this.c.tablePorPagina);
-				this.atualizaNaPaginaUm();
-			});
-		}
 
-		// Ativar THEAD funcionalidades
-		this.headAtivar();
-
-		//Adiciona eventos aos botões do filtro
-		this.setFiltroListener();
-
-		// Inicial SortBy
-		if (!this.c.sortBy)
-			this.c.sortBy = this.c.pk; // Padrão PK
-		// Inicial SortDir
-		if (!this.c.sortDir)
-			this.c.sortDir = 1; // Padrão 0 Decrescente por ID Deixando a Ultima ID no topo
-
-		// Inicial Sort
-		this.setDirSort(this.c.sortBy, Number(this.c.sortDir));
-
-		let started = false;
+		// A partir daqui o New e o Reset seguem iguais
 		if (this.c.dados != null) {
 			if (mkt.classof(this.c.dados) == "Array") {
 				if (await this.appendList(this.c.dados) != null) {
-					started = true;
+					this.started = true;
 					this.startListagem();
 				}
 			} else {
@@ -382,8 +385,8 @@ class mkt {
 			if (mkt.classof(this.c.url) == "String") {
 				this.c.urlOrigem = this.c.url;
 				if (await this.appendList(this.c.url) != null) {
-					if (!started) {
-						started = true;
+					if (!this.started) {
+						this.started = true;
 						this.startListagem();
 					} else {
 						this.atualizarListagem();
@@ -410,7 +413,7 @@ class mkt {
 		if (this.c.dados == null && this.c.url == null) {
 			mkt.w("Nenhuma fonte de dados encontrada. Não será possível popular a listagem sem dados.")
 		}
-		if (!started) {
+		if (!this.started) {
 			// Se chegar aqui sem iniciar, avança zerado.
 			mkt.erro("A lista foi iniciada sem confirmação dos dados. Provavelmente ocorreu erro na coleta de dados.")
 			this.startListagem();
