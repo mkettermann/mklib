@@ -1712,6 +1712,17 @@ Object.defineProperty(mkt, "atribuir", {
 	}, enumerable: false, writable: false, configurable: false,
 });
 
+
+Object.defineProperty(mkt, "formatadorDeTexto", {
+	value: (texto: string) => {
+		// Converte Tags como [b] e [/b] em <b> e </b>
+		// Impede que o usuário faça uso do html de forma descontrolada.
+		return texto
+			.replaceAll("[b]", "<b>")
+			.replaceAll("[/b]", "</b>");
+	}, enumerable: false, writable: false, configurable: false,
+});
+
 Object.defineProperty(mkt, "eToText", {
 	value: (query: any) => {
 		// - Pega o Valor ou Inner do elemento e as classes,
