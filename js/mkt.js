@@ -212,6 +212,8 @@ class mkt {
         if (mkt.Q(this.c.container)) {
             this.autoStartConfig();
         }
+        // Guarda a instância para facilitar o acesso aos métodos.
+        mkt.a.build.push(this);
     }
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //  INICIO DOS MÉTODOS MKT          \\
@@ -800,17 +802,18 @@ class mkt {
     // Função que cria, exibe e seta as funções para filtrar baseado na coluna.
     headMenuAbrir = async (colName) => {
         let eHead = mkt.Q(this.c.container + " .sort-" + colName);
+        // CRIA A ESTRUTURA
         if (mkt.Q("body .mkHeadMenu") == null) {
             let ehm = document.createElement("div");
             ehm.className = "mkHeadMenu oculto";
             ehm.innerHTML = `
 			<div class='hmin fimsecao'>
 				<div class='i htit'>
-					<div class='col10 microPos5' onclick='mkt.a.hm.Previous()'>${mkt.a.SVGINI}${mkt.a.svgLeft}${mkt.a.SVGFIM}</div>
+					<div class='col10 microPos5 botao hmPrevious'>${mkt.a.SVGINI}${mkt.a.svgLeft}${mkt.a.SVGFIM}</div>
 					<div class='col70 hmTitulo'>
 						Filtro
 					</div>
-					<div class='col10 microPos5' onclick='mkt.headMenuNext()'>${mkt.a.SVGINI}${mkt.a.svgRight}${mkt.a.SVGFIM}</div>
+					<div class='col10 microPos5 botao hmNext' onclick='mkt.headMenuNext()'>${mkt.a.SVGINI}${mkt.a.svgRight}${mkt.a.SVGFIM}</div>
 					<div class='col10 fechar botao nosel' onclick='mkt.headMenuHideX()'>
 					${mkt.a.SVGINI}${mkt.a.svgFecha}${mkt.a.SVGFIM}
 					</div>
@@ -826,7 +829,18 @@ class mkt {
 				</ul>
 			</div>`;
             document.body.appendChild(ehm);
+            // GATILHOS Só no ato a contrução do elemento
+            mkt.Ao("click", ".mkHeadMenu .hmPrevious", (e) => {
+                mkt.a.hm.Previous(e.closest(".mkHeadMenu")?.getAttribute("data-mkt"));
+            });
+            // GATILHOS Só no ato a contrução do elemento
+            mkt.Ao("click", ".mkHeadMenu .hmPrevious", (e) => {
+                mkt.a.hm.Next(e.closest(".mkHeadMenu")?.getAttribute("data-mkt"));
+            });
         }
+        // Conecta Elemento a Lista
+        mkt.Q("body .mkHeadMenu").setAttribute("data-mkt", this.getIndexOf().toString());
+        // FUNCOES
         if (this.c.objFiltro[colName]?.formato == "string") {
             mkt.Q(".mkHeadMenu input[name='filtrarCampo']").value = this.c.objFiltro[colName]?.conteudo;
         }
@@ -974,22 +988,6 @@ class mkt {
             this.atualizaNaPaginaUm();
             // Limpar outros filtros
             mkt.Q(".mkHeadMenu input[name='filtrarCampo']").value = "";
-        };
-        mkt.a.hm.Previous = () => {
-            // Sempre que abre o menu, da o replace do this na estática.
-            let opcoes = this.getModel().map(o => { if (o.f)
-                return o.k; }).filter(r => { return r != null; });
-            let posAtual = opcoes.indexOf(colName);
-            let posAnterior = 0;
-            if (posAtual >= 0) { // Se o atual existe
-                posAnterior = posAtual - 1;
-            }
-            if (posAnterior < 0) { // Era o primeiro
-                posAnterior = opcoes.length - 1; //Vira Última Posição
-            }
-            //mkt.l("Atual: ", colName, "| Anterior: ", opcoes[posAnterior], "| Opções: ", opcoes);
-            if (opcoes[posAnterior])
-                this.headMenuAbrir(opcoes[posAnterior]);
         };
         mkt.headMenuNext = () => {
             let opcoes = this.getModel().map(o => { if (o.f)
@@ -1298,6 +1296,14 @@ class mkt {
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //  DEFINIÇÕES DA CLASSE MKT        \\
     //___________________________________\\
+    // Retorna a Posição do container local
+    getIndexOf = () => {
+        return mkt.a.build.indexOf(this);
+    };
+    // Retorna a instância da posicao
+    static getThis = (build) => {
+        return mkt.a.build[build];
+    };
     // Return Json
     toJSON = () => {
         return this.dadosFull;
@@ -1345,6 +1351,7 @@ class mkt {
         POST: "POST",
         SVGINI: "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'>",
         SVGFIM: "</svg>",
+        build: [],
         clacre: "Classificar Crescente",
         cladec: "Classificar Decrescente",
         contaListas: 0,
@@ -1363,7 +1370,28 @@ class mkt {
                     ehm?.classList.add("oculto");
                 }
             },
-            Previous: () => { },
+            Previous: (iof) => {
+                if (mkt.classof(iof) == "String") {
+                    mkt.l(iof);
+                    // Sempre que abre o menu, da o replace do this na estática.
+                    let opcoes = this.getModel().map(o => { if (o.f)
+                        return o.k; }).filter(r => { return r != null; });
+                    let posAtual = opcoes.indexOf(colName);
+                    let posAnterior = 0;
+                    if (posAtual >= 0) { // Se o atual existe
+                        posAnterior = posAtual - 1;
+                    }
+                    if (posAnterior < 0) { // Era o primeiro
+                        posAnterior = opcoes.length - 1; //Vira Última Posição
+                    }
+                    //mkt.l("Atual: ", colName, "| Anterior: ", opcoes[posAnterior], "| Opções: ", opcoes);
+                    if (opcoes[posAnterior])
+                        this.headMenuAbrir(opcoes[posAnterior]);
+                }
+                else {
+                    mkt.w("mkt.a.hm.Previous() - Parametro precisa ser uma string: ", iof);
+                }
+            },
             Next: () => { },
             Crescente: Function,
             Decrescente: Function,
