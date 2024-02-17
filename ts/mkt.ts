@@ -816,7 +816,8 @@ class mkt {
 		}
 	}
 
-	// HM (MK HEAD MENU)
+	// HEAD MENU (O mesmo por documento)
+	// Função que cria, exibe e seta as funções para filtrar baseado na coluna.
 	headMenuAbrir = async (colName: any) => {
 		let eHead = mkt.Q(this.c.container + " .sort-" + colName);
 		if (mkt.Q("body .mkHeadMenu") == null) {
@@ -825,13 +826,13 @@ class mkt {
 			ehm.innerHTML = `
 			<div class='hmin fimsecao'>
 				<div class='i htit'>
-					<div class='col10 microPos5' onclick='mkt.headMenuPrevious()'>${mkt.a.SVGINI}${mkt.a.svgLeft}${mkt.a.SVGFIM}</div>
+					<div class='col10 microPos5' onclick='mkt.a.hm.Previous()'>${mkt.a.SVGINI}${mkt.a.svgLeft}${mkt.a.SVGFIM}</div>
 					<div class='col70 hmTitulo'>
 						Filtro
 					</div>
 					<div class='col10 microPos5' onclick='mkt.headMenuNext()'>${mkt.a.SVGINI}${mkt.a.svgRight}${mkt.a.SVGFIM}</div>
 					<div class='col10 fechar botao nosel' onclick='mkt.headMenuHideX()'>
-					  ${mkt.a.SVGINI}${mkt.a.svgFecha}${mkt.a.SVGFIM}
+					${mkt.a.SVGINI}${mkt.a.svgFecha}${mkt.a.SVGFIM}
 					</div>
 				</div>
 				<ul>
@@ -983,7 +984,8 @@ class mkt {
 			// Limpar outros filtros
 			mkt.Q(".mkHeadMenu input[name='filtrarCampo']").value = "";
 		};
-		mkt.headMenuPrevious = () => {
+		mkt.a.hm.Previous = () => {
+			// Sempre que abre o menu, da o replace do this na estática.
 			let opcoes = this.getModel().map(o => { if (o.f) return o.k; }).filter(r => { return r != null });
 			let posAtual = opcoes.indexOf(colName);
 			let posAnterior = 0;
@@ -1037,7 +1039,7 @@ class mkt {
 			mkt.headMenuFiltraExclusivo("");
 		};
 
-		mkt.atribuir(mkt.Q("body"), () => { mkt.headMenuHide(event) }, "onclick");
+		mkt.atribuir(mkt.Q("body"), () => { mkt.a.hm.Hide(event) }, "onclick");
 		let colNameLabel = colName;
 		let esteLabel = this.getModel()?.filter((f) => { return f.k == colName })?.[0]?.l;
 		if (esteLabel) {
@@ -1376,6 +1378,27 @@ class mkt {
 		debug: 0,
 		espaco: "&nbsp;",
 		exeTimer: 500,
+		hm: { // Representa o Head Menu
+			Hide: (ev: any) => {
+				// Ocultar ao clicar fora.
+				let ehm = mkt.Q("body .mkHeadMenu");
+				let ethm = ev.target.closest('.mkHeadMenu');
+				if (!ethm) {
+					ehm?.classList.add("oculto");
+				}
+			},
+			Previous: () => { },
+			Next: () => { },
+			Crescente: Function,
+			Decrescente: Function,
+			Limpar: Function,
+			LimparTodos: Function,
+			ContemInput: Function,
+			FiltraExclusivo: Function,
+			MarcarExclusivos: Function,
+			HideX: Function,
+
+		},
 		limparIndivisual: "Limpar filtros de",
 		limparTodos: "Limpar todos filtros",
 		log: true, // Desliga / Liga Log do console
@@ -1478,28 +1501,28 @@ class mkt {
 	//  EM ORDEM ALFABETICA             \\
 	//___________________________________\\
 
-	static addTask: Function;
+	// WORKERS: Atalho de tarefa. Já constroi se necessário
+	// mkt.addTask({ k: "MKT_INCLUDE", v: ["a","b"], target: "a" }).then(r=>{mkt.l("Main Recebeu: ",r)})
+	static addTask: Function = (msg: any, numWorkers: number | undefined) => {
+		return new Promise((r) => {
+			if (!mkt.a.wpool) {
+				mkt.Workers(numWorkers).then(() => {
+					r(mkt.a.wpool.addTask(msg));
+				});
+			} else {
+				r(mkt.a.wpool.addTask(msg));
+			}
+		});
+	};
+
 
 	static regras: any = [];
-
-
 	static stringify: Function;
 	static Workers: Function;
 	static classof: Function;
 	static Inicializar: Function;
 	static mkClicarNaAba: Function;
 	static exeTimer: Function;
-	static headMenuHide: Function;
-	static headMenuPrevious: Function;
-	static headMenuNext: Function;
-	static headMenuCrescente: Function;
-	static headMenuDecrescente: Function;
-	static headMenuLimpar: Function;
-	static headMenuLimparTodos: Function;
-	static headMenuContemInput: Function;
-	static headMenuFiltraExclusivo: Function;
-	static headMenuMarcarExclusivos: Function;
-	static headMenuHideX: Function;
 	static toString: Function;
 	static mascarar: Function;
 	static Q: Function;
@@ -3663,24 +3686,11 @@ Object.defineProperty(mkt, "headMenuHideX", {
 	}, enumerable: false, writable: false, configurable: false,
 });
 
-Object.defineProperty(mkt, "headMenuHide", {
-	value: (ev: any) => {
-		let ehm = mkt.Q("body .mkHeadMenu");
-		// if (ehm?.classList.contains("lock")) {
-		// 	ehm.classList.remove("lock");
-		// } else {
-		let ethm = ev.target.closest('.mkHeadMenu');
-		if (!ethm) {
-			ehm?.classList.add("oculto");
-		}
-		// }
-	}, enumerable: false, writable: false, configurable: false,
-});
 
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //   WORKERS                        \\
 //___________________________________\\
-// Atalho de tarefa. Já constroi se necessário
+// WORKERS: Atalho de tarefa. Já constroi se necessário
 // mkt.addTask({ k: "MKT_INCLUDE", v: ["a","b"], target: "a" }).then(r=>{mkt.l("Main Recebeu: ",r)})
 Object.defineProperty(mkt, "addTask", {
 	value: (msg: any, numWorkers: number | undefined) => {
