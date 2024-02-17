@@ -852,16 +852,20 @@ class mkt {
 			document.body.appendChild(ehm);
 			// GATILHOS Só no ato a construção do elemento
 			mkt.Ao("click", ".mkHeadMenu .hmPrevious", (e: HTMLDivElement) => {
-				mkt.a.hm.Previous(colName, e.closest(".mkHeadMenu")?.getAttribute("data-mkt"));
+				let eHmenu = mkt.Q("body .mkHeadMenu");
+				mkt.a.hm.Previous(eHmenu?.getAttribute("data-colname"), eHmenu?.getAttribute("data-mkt"));
 			})
 			mkt.Ao("click", ".mkHeadMenu .hmNext", (e: HTMLDivElement) => {
-				mkt.a.hm.Next(colName, e.closest(".mkHeadMenu")?.getAttribute("data-mkt"));
+				let eHmenu = mkt.Q("body .mkHeadMenu");
+				mkt.a.hm.Next(eHmenu?.getAttribute("data-colname"), eHmenu?.getAttribute("data-mkt"));
 			})
 			mkt.Ao("click", ".mkHeadMenu .hmCrescente", (e: HTMLLIElement) => {
-				mkt.a.hm.Crescente(colName, e.closest(".mkHeadMenu")?.getAttribute("data-mkt"));
+				let eHmenu = mkt.Q("body .mkHeadMenu");
+				mkt.a.hm.Crescente(eHmenu?.getAttribute("data-colname"), eHmenu?.getAttribute("data-mkt"));
 			})
 			mkt.Ao("click", ".mkHeadMenu .hmDecrescente", (e: HTMLLIElement) => {
-				mkt.a.hm.Decrescente(colName, e.closest(".mkHeadMenu")?.getAttribute("data-mkt"));
+				let eHmenu = mkt.Q("body .mkHeadMenu");
+				mkt.a.hm.Decrescente(eHmenu?.getAttribute("data-colname"), eHmenu?.getAttribute("data-mkt"));
 			})
 			mkt.Ao("input", ".mkHeadMenu .hmFiltraExclusivo", (e: HTMLInputElement) => {
 				mkt.a.hm.FiltraExclusivo(e.value, e.closest(".mkHeadMenu")?.getAttribute("data-mkt"));
