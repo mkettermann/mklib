@@ -1347,12 +1347,14 @@ class mkt {
         cladec: "Classificar Decrescente",
         contaListas: 0,
         contaOrdena: 0,
+        contaImportados: 0,
         contem: "Contém...",
         debug: 0,
         espaco: "&nbsp;",
         exeTimer: 500,
         limparIndivisual: "Limpar filtros de",
         limparTodos: "Limpar todos filtros",
+        log: true,
         mkFaseAtual: 1,
         svgAB: "<path fill-rule='evenodd' d='M10.082 5.629 9.664 7H8.598l1.789-5.332h1.234L13.402 7h-1.12l-.419-1.371zm1.57-.785L11 2.687h-.047l-.652 2.157z'/><path d='M12.96 14H9.028v-.691l2.579-3.72v-.054H9.098v-.867h3.785v.691l-2.567 3.72v.054h2.645zM4.5 2.5a.5.5 0 0 0-1 0v9.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L4.5 12.293z'/>",
         svgBA: "<path fill-rule='evenodd' d='M10.082 5.629 9.664 7H8.598l1.789-5.332h1.234L13.402 7h-1.12l-.419-1.371zm1.57-.785L11 2.687h-.047l-.652 2.157z'/><path d='M12.96 14H9.028v-.691l2.579-3.72v-.054H9.098v-.867h3.785v.691l-2.567 3.72v.054h2.645zm-8.46-.5a.5.5 0 0 1-1 0V3.707L2.354 4.854a.5.5 0 1 1-.708-.708l2-1.999.007-.007a.5.5 0 0 1 .7.006l2 2a.5.5 0 1 1-.707.708L4.5 3.707z'/>",
@@ -1471,11 +1473,13 @@ class mkt {
         },
         wpool: null, // WorkerPool quando iniciado
     };
-    static log = true; // Desliga / Liga Log do console
+    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+    //  EM ORDEM ALFABETICA             \\
+    //___________________________________\\
+    static addTask;
     static regras = [];
     static stringify;
     static Workers;
-    static addTask;
     static classof;
     static Inicializar;
     static mkClicarNaAba;
@@ -1493,8 +1497,6 @@ class mkt {
     static headMenuHideX;
     static toString;
     static mascarar;
-    static elementoDuranteUpload;
-    static contaImportados = 0;
     static Q;
     static QAll;
     static l;
@@ -1672,21 +1674,21 @@ Object.defineProperty(mkt, "fromMoeda", {
 // Classes do Console.
 Object.defineProperty(mkt, "w", {
     value: (...s) => {
-        if (mkt.log) {
+        if (mkt.a.log) {
             console.warn(...s);
         }
     }, enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "erro", {
     value: (...s) => {
-        if (mkt.log) {
+        if (mkt.a.log) {
             console.error(...s);
         }
     }, enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "l", {
     value: (...s) => {
-        if (mkt.log) {
+        if (mkt.a.log) {
             console.log(...s);
         }
     }, enumerable: false, writable: false, configurable: false,
@@ -1698,14 +1700,14 @@ Object.defineProperty(mkt, "cls", {
 });
 Object.defineProperty(mkt, "gc", {
     value: (...s) => {
-        if (mkt.log) {
+        if (mkt.a.log) {
             console.groupCollapsed(...s);
         }
     }, enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "ge", {
     value: () => {
-        if (mkt.log) {
+        if (mkt.a.log) {
             console.groupEnd();
         }
     }, enumerable: false, writable: false, configurable: false,
@@ -5565,7 +5567,7 @@ Object.defineProperty(mkt, "importar", {
     value: async (tagBuscar = ".divListagemContainer", tipo = "race", quiet = true) => {
         // IMPORTAR - Classe - Coleta o html externo
         return new Promise((r, x) => {
-            let num = mkt.contaImportados++;
+            let num = mkt.a.contaImportados++;
             if (!quiet) {
                 mkt.gc("\t(" + num + ") Executando Importador no modo: ", tipo);
             }
