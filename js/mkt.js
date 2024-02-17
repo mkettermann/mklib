@@ -1,16 +1,14 @@
 "use strict";
 //
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-//   Master Key Tools               \\
-//___________________________________\\
-// Recriando a partir da mk para:
-// - Tornar um construtor unico. (Estava ficando difícel de manter organizado no outro formato)
-// - Separar as tarefas de contrução e ordenamento em um worker.
-// - Implementação de banco de dados indexavel.
-// - Implementação de Design de colunas.
-// - Tentar tornar as funções de sobreescrever em Event Based.
+//  MK - MASTER KEY LIBRARY         \\
+//______By_Marcos_Kettermann_________\\
+// Variável de teste:
 var mkz = null;
-// CLASSE Do Design das colunas para formar o mkt.
+//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+//  MODELO DOS DADOS DA LISTA       \\
+//___________________________________\\
+// CLASSE Do Design das colunas para formar a listagem da classe mktm.
 class mktm {
     pk = false; // Este campo é Primary Key?
     k = null; // Key / Chave (Propriedade do objeto)
@@ -46,7 +44,10 @@ class mktm {
     }
     get [Symbol.toStringTag]() { return "mktm"; }
 }
-// CLASSE DE CONFIG (Construtor único)
+//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+//  PRÉ CONFIGURAÇÃO DA LISTAGEM    \\
+//___________________________________\\
+// CLASSE que de configuração para que a listagem seja iniciada de forma personalizada.
 class mktc {
     url = window.location.href.split("?")[0] + "/GetList"; // Requer a URL para o fetch dos dados. Se não tiver, passar os dados no parametros dados e tornar esse null.
     dados = null; // Caso a tela já tenha os dados, podem ser passador por aqui, se não deixar 
@@ -69,6 +70,7 @@ class mktc {
     objFiltro = {}; // Itens Filtrados
     urlOrigem = ""; // URL de origem dos dados a serem populados
     pagAtual = 1; // Representa a pagina
+    pk = null; // Primary Key: Possivel setar o nome do campo que é único já na construcao
     totalFull = 0;
     totalFiltrado = 0;
     totalExibidos = 0;
@@ -78,7 +80,6 @@ class mktc {
     totPags = 0;
     ativarDbCliente = false; // Quando ativo, salva o dado consultado por um worker em um indexedDb formando um cache rápido de dados no cliente.
     versaoDb = 1;
-    pk = null; // Possivel setar o nome do campo que é primary key já na construcao
     tbody = "tbody";
     ths = "th";
     pagBotoes = ".pagBotoes";
@@ -135,135 +136,11 @@ class mktc {
     };
     get [Symbol.toStringTag]() { return "mktc"; }
 }
-// CLASSE INSTANCIAVEL
+//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+//  CLASSE  ESTÁTICA e LISTAGEM     \\
+//___________________________________\\
+// Classe contendo uma grande ferramenta de gerenciamento de dados em massa é construida e diveras funções estáticas facilitadoras.
 class mkt {
-    static vars;
-    static stringify;
-    static Workers;
-    static addTask;
-    static classof;
-    static Inicializar;
-    static mkClicarNaAba;
-    static exeTimer;
-    static log = true; // Desliga / Liga Log do console
-    static headMenuHide;
-    static headMenuPrevious;
-    static headMenuNext;
-    static headMenuCrescente;
-    static headMenuDecrescente;
-    static headMenuLimpar;
-    static headMenuLimparTodos;
-    static headMenuContemInput;
-    static headMenuFiltraExclusivo;
-    static headMenuMarcarExclusivos;
-    static headMenuHideX;
-    static toString;
-    static regras = [];
-    static t;
-    static MESES;
-    static CORES;
-    static util;
-    static mascarar;
-    static elementoDuranteUpload;
-    static contaImportados = 0;
-    static Q;
-    static QAll;
-    static l;
-    static w;
-    static erro;
-    static gc;
-    static ge;
-    static ct;
-    static cte;
-    static importar;
-    static Ao;
-    static mkLimparOA;
-    static mkExecutaNoObj;
-    static mkMoldeOA;
-    static get;
-    static post;
-    static sortDir;
-    static QverOff;
-    static QverOn;
-    static Qoff;
-    static Qon;
-    static html;
-    static wait;
-    static ordenar;
-    static processoFiltragem;
-    static getV;
-    static clonar;
-    static allSubPropriedades;
-    static removeEspecias;
-    static toLocale;
-    static removerAspas;
-    static AoConfig;
-    static request;
-    static getMs;
-    static getDia;
-    static getMes;
-    static getAno;
-    static getFullData;
-    static atribuir;
-    static mkDuasCasas;
-    static regraDisplay;
-    static isInside;
-    static TerremotoErros;
-    static contem;
-    static isJson;
-    static apenasNumeros;
-    static apenasLetras;
-    static apenasNumerosLetras;
-    static toMoeda;
-    static fromMoeda;
-    static toNumber;
-    static fromNumber;
-    static CarregarON;
-    static CarregarOFF;
-    static errosLog;
-    static delObjetoFromId;
-    static setObjetoFromId;
-    static aCadaElemento;
-    static cadaExe;
-    static detectedServerOn;
-    static detectedServerOff;
-    static mkFloat;
-    static parseJSON;
-    static hojeMkData;
-    static hojeMkHora;
-    static hoje;
-    static getDiasDiferenca;
-    static transMsEmDias;
-    static mkNodeToScript;
-    static frequencia;
-    static mkYYYYMMDDtoDDMMYYYY;
-    static mkBoolToSimNaoOA;
-    static mkFormatarDataOA;
-    static exeregra;
-    static m;
-    static vibrar;
-    static estaValido;
-    static mkToValue;
-    static mkRecUpdate;
-    static like;
-    static mkSelTabIndex;
-    static mkSelMoveu;
-    static mkSelPopularLista;
-    static mkSelUpdate;
-    static mkSelDelRefillProcesso;
-    static mkSelGetKV;
-    static mkSelGetMap;
-    static mkSelArrayGetKV;
-    static mkSelArraySetKV;
-    static mkSelArrayGetMap;
-    static mkSelArraySetMap;
-    static mkSelSelecionar;
-    static mkReposicionar;
-    static mkSelSetDisplay;
-    static mkSelRenderizar;
-    static mkSelRenderizarElemento;
-    static mkRecRenderizar;
-    static mkBotCheck;
     c;
     started = false;
     db = null;
@@ -281,7 +158,9 @@ class mkt {
     solicitadoUltimoParametro = 0;
     aindaTemMais = true;
     totalappends = 0;
-    // CONSTRUTOR MKT
+    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+    //  CONSTRUTOR DA GRANDE LISTAGEM   \\
+    //___________________________________\\
     constructor(_mktc) {
         if (_mktc == null) {
             this.c = new mktc([]);
@@ -334,6 +213,9 @@ class mkt {
             this.autoStartConfig();
         }
     }
+    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+    //  INICIO DOS MÉTODOS MKT          \\
+    //___________________________________\\
     autoStartConfig = async (arg = {}) => {
         if (!this.started) { // <= Previne que Reset duplique os Listners
             // SE for importar: Espera o container para então continuar.
@@ -612,9 +494,7 @@ class mkt {
             }
         });
     };
-    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-    //			MK DB Client-Side						\\
-    //___________________________________\\
+    // Gera uma instancia de conexão ao banco de dados Client-Side indexavel
     dbCon = async () => {
         return new Promise((r) => {
             if (mkt.classof(this.c.nomeTabela) == "String") {
@@ -909,7 +789,7 @@ class mkt {
         if (!e.querySelector(".mkhmHeadIco")) {
             let mkhmIco = document.createElement("div");
             mkhmIco.className = "mkhmHeadIco";
-            mkhmIco.innerHTML = mkt.vars.svgF;
+            mkhmIco.innerHTML = mkt.a.SVGINI + mkt.a.svgFiltro + mkt.a.SVGFIM;
             mkt.Ao("click", mkhmIco, () => {
                 this.headMenuAbrir(colName);
             });
@@ -925,21 +805,21 @@ class mkt {
             ehm.innerHTML = `
 			<div class='hmin fimsecao'>
 				<div class='i htit'>
-					<div class='col10 microPos5' onclick='mkt.headMenuPrevious()'>${mkt.vars.svgL}</div>
+					<div class='col10 microPos5' onclick='mkt.headMenuPrevious()'>${mkt.a.SVGINI}${mkt.a.svgLeft}${mkt.a.SVGFIM}</div>
 					<div class='col70 hmTitulo'>
 						Filtro
 					</div>
-					<div class='col10 microPos5' onclick='mkt.headMenuNext()'>${mkt.vars.svgR}</div>
+					<div class='col10 microPos5' onclick='mkt.headMenuNext()'>${mkt.a.SVGINI}${mkt.a.svgRight}${mkt.a.SVGFIM}</div>
 					<div class='col10 fechar botao nosel' onclick='mkt.headMenuHideX()'>
-						${mkt.vars.svgX}
+					  ${mkt.a.SVGINI}${mkt.a.svgFecha}${mkt.a.SVGFIM}
 					</div>
 				</div>
 				<ul>
-					<li onclick='mkt.headMenuCrescente()' class='claico botao nosel'>${mkt.vars.svgAB}${mkt.vars.espaco}${mkt.vars.clacre}</li>
-					<li onclick='mkt.headMenuDecrescente()' class='claico botao nosel fimsecao'>${mkt.vars.svgBA}${mkt.vars.espaco}${mkt.vars.cladec}</li>
-					<li><input class='nosel' type='text' name='filtrarCampo' oninput='mkt.headMenuContemInput(this.value)' placeholder='${mkt.vars.contem}'></li>
-					<li onclick='mkt.headMenuLimpar()' class='limpar botao nosel'>${mkt.vars.svgF}${mkt.vars.espaco}${mkt.vars.limparIndivisual}${mkt.vars.espaco}<span class='hmTitulo'></span></li>
-					<li onclick='mkt.headMenuLimparTodos()' class='limpar botao nosel fimsecao'>${mkt.vars.svgF}${mkt.vars.espaco}${mkt.vars.limparTodos}</li>
+					<li onclick='mkt.headMenuCrescente()' class='claico botao nosel'>${mkt.a.SVGINI}${mkt.a.svgAB}${mkt.a.SVGFIM}${mkt.a.espaco}${mkt.a.clacre}</li>
+					<li onclick='mkt.headMenuDecrescente()' class='claico botao nosel fimsecao'>${mkt.a.SVGINI}${mkt.a.svgBA}${mkt.a.SVGFIM}${mkt.a.espaco}${mkt.a.cladec}</li>
+					<li><input class='nosel' type='text' name='filtrarCampo' oninput='mkt.headMenuContemInput(this.value)' placeholder='${mkt.a.contem}'></li>
+					<li onclick='mkt.headMenuLimpar()' class='limpar botao nosel'>${mkt.a.SVGINI}${mkt.a.svgFiltro}${mkt.a.SVGFIM}${mkt.a.espaco}${mkt.a.limparIndivisual}${mkt.a.espaco}<span class='hmTitulo'></span></li>
+					<li onclick='mkt.headMenuLimparTodos()' class='limpar botao nosel fimsecao'>${mkt.a.SVGINI}${mkt.a.svgFiltro}${mkt.a.SVGFIM}${mkt.a.espaco}${mkt.a.limparTodos}</li>
 					<li><input type='search' oninput='mkt.headMenuFiltraExclusivo(this.value)' name='filtrarPossibilidades' placeholder='Pesquisar'></li>
 					<li><div class='possibilidades'></div></li>
 				</ul>
@@ -1000,7 +880,7 @@ class mkt {
                 if (mkt.Q("body .mkHeadMenu .possibilidades").classList.contains("st")) {
                     fullsel = "";
                 }
-                htmlPossiveis += "<li class='nosel botao " + fullsel + "' id='headMenuTodos' onclick='mkt.headMenuMarcarExclusivos()'>" + mkt.vars.svgSquare + mkt.vars.espaco + mkt.vars.selectAll + " (" + exFiltrado.length + ")";
+                htmlPossiveis += "<li class='nosel botao " + fullsel + "' id='headMenuTodos' onclick='mkt.headMenuMarcarExclusivos()'>" + mkt.a.SVGINI + mkt.a.svgSquare + mkt.a.SVGFIM + mkt.a.espaco + "Selecionar Todos (" + exFiltrado.length + ")";
                 if (v != "") {
                     htmlPossiveis += " Pesquisados";
                 }
@@ -1015,17 +895,17 @@ class mkt {
                     });
                     // Tratamento das possíveis saída de dados diferentes.
                     let vOut = v;
-                    if (mkt.util.data[1].test(vOut)) {
+                    if (mkt.a.util.data[1].test(vOut)) {
                         vOut = mkt.toLocale(vOut);
                     }
-                    else if (mkt.util.dataIso8601[1].test(vOut)) {
+                    else if (mkt.a.util.dataIso8601[1].test(vOut)) {
                         vOut = mkt.toLocale(vOut);
                     }
                     vOut = vOut.toString();
                     if (vOut.length > 40) {
                         vOut = vOut.slice(0, 37) + "...";
                     }
-                    htmlPossiveis += "<li name='" + mkt.removerAspas(v2) + "' class='nosel botao " + sel + "' onclick='mkt.headMenuMarcarExclusivos(this)'>" + mkt.vars.svgSquare + mkt.vars.espaco + vOut + "</li>";
+                    htmlPossiveis += "<li name='" + mkt.removerAspas(v2) + "' class='nosel botao " + sel + "' onclick='mkt.headMenuMarcarExclusivos(this)'>" + mkt.a.SVGINI + mkt.a.svgSquare + mkt.a.SVGFIM + mkt.a.espaco + vOut + "</li>";
                 });
             }
             htmlPossiveis += "</ul>";
@@ -1348,54 +1228,9 @@ class mkt {
         }
         return temp;
     };
-    // Modelo de Chaves e Propriedades do Modelo, podendo conter todo o design e estrutura dos dados da lista
-    // Formato M K V L R (Chave, Valor, Label, Regex) V é vazio/nulo, pois não recebe objeto nessa função.
-    // m		Mascara do valor da coluna
-    // k		Key (Nome chave da Coluna)
-    // v		Valor (Conteudo da coluna)
-    // l		Label (Descrição Curta do campo)
-    // r		Regex (Para validar os valores)
-    // tag	Tag (Nome do campo)
-    // atr	Attributos (Atributos associados a essa tag)
-    // tar	Target JS (Método para modificar o campo value/innerHTML)
-    // cla	Classes
-    // pk		Primary Key
-    // ****** ESTE FORMATO FOI APERFEICOADO NA CLASSE mktm
-    // Retornar o con
+    // Verifique mais na classe mktm
     getModel = () => {
         return this.c.model; // <= Classe mktm
-    };
-    // KVLR (E mais...)
-    // K (Chave)	- V (Valor) - L (Label) - R (REGEX)	- TAG (TAG Html) - ATR (Attributos Tag) - target (Value no Inner)
-    // keys.push({ k: "mDat", v: "", l: "Data", r: mkt.util.data[1], tag: "input", atr: "type='text'" });
-    // keys.push({ k: "mDes", v: "", l: "Descrição", r: "", tag: "textarea", atr: "cols='50' rows='10'", i: true });
-    // Recebendo o objeto da lista, traz o getUsedKeys juntamente aos Values deste objeto;
-    // ****** ESTE FORMATO FOI APERFEICOADO NA CLASSE mktm
-    getKVLR = (obj) => {
-        let models = this.getModel();
-        if (models.length == 0)
-            models = this.getUsedKeys(true);
-        let kvlr = [];
-        models.forEach((p) => {
-            // A cada Propriedade do Modelo
-            let o = { ...p };
-            if (obj?.[p.k]) {
-                if (o.i == true) {
-                    o.i = obj?.[p.k];
-                    o.v = "";
-                }
-                else {
-                    o.i = null;
-                    o.v = obj?.[p.k];
-                }
-            }
-            else {
-                o.i = null;
-                o.v = "";
-            }
-            kvlr.push(o);
-        });
-        return kvlr;
     };
     // Cria um Set retorna um array de Keys Usadas
     getUsedKeys = (formatoKV = false) => {
@@ -1458,16 +1293,24 @@ class mkt {
     find = (k, v) => {
         return this.dadosFull.find((o) => o[k] == v);
     };
+    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+    //  DEFINIÇÕES DA CLASSE MKT        \\
+    //___________________________________\\
+    // Return Json
     toJSON = () => {
         return this.dadosFull;
     };
+    // Return String
     toString = () => {
         return mkt.stringify(this.dadosFull);
     };
+    // Return Number
     valueOf = () => {
         return this.dadosFull;
     };
+    // Get
     get [Symbol.toStringTag]() { return "mkt"; }
+    // Iterator
     [Symbol.iterator]() {
         let iteratorArray = this.dadosFull[Symbol.iterator]();
         // Iteration result
@@ -1481,9 +1324,278 @@ class mkt {
             },
         };
     }
+    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+    //  FIM DOS MÉTODOS MKT             \\
+    //___________________________________\\
+    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+    //  INÍCIO FUNCÕES ESTÁTICAS        \\
+    //___________________________________\\
+    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+    //  ARMAZENADORES ESTÁTICOS         \\
+    //___________________________________\\
+    static a = {
+        // Armazenadores / Constantes
+        ALL: "*/*",
+        FORMDATA: "multipart/form-data",
+        GET: "GET",
+        HTML: "text/html",
+        JSON: "application/json",
+        POST: "POST",
+        SVGINI: "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'>",
+        SVGFIM: "</svg>",
+        clacre: "Classificar Crescente",
+        cladec: "Classificar Decrescente",
+        contaListas: 0,
+        contaOrdena: 0,
+        contem: "Contém...",
+        debug: 0,
+        espaco: "&nbsp;",
+        exeTimer: 500,
+        limparIndivisual: "Limpar filtros de",
+        limparTodos: "Limpar todos filtros",
+        mkFaseAtual: 1,
+        svgAB: "<path fill-rule='evenodd' d='M10.082 5.629 9.664 7H8.598l1.789-5.332h1.234L13.402 7h-1.12l-.419-1.371zm1.57-.785L11 2.687h-.047l-.652 2.157z'/><path d='M12.96 14H9.028v-.691l2.579-3.72v-.054H9.098v-.867h3.785v.691l-2.567 3.72v.054h2.645zM4.5 2.5a.5.5 0 0 0-1 0v9.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L4.5 12.293z'/>",
+        svgBA: "<path fill-rule='evenodd' d='M10.082 5.629 9.664 7H8.598l1.789-5.332h1.234L13.402 7h-1.12l-.419-1.371zm1.57-.785L11 2.687h-.047l-.652 2.157z'/><path d='M12.96 14H9.028v-.691l2.579-3.72v-.054H9.098v-.867h3.785v.691l-2.567 3.72v.054h2.645zm-8.46-.5a.5.5 0 0 1-1 0V3.707L2.354 4.854a.5.5 0 1 1-.708-.708l2-1.999.007-.007a.5.5 0 0 1 .7.006l2 2a.5.5 0 1 1-.707.708L4.5 3.707z'/>",
+        svgFecha: "<path d='M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708'/>",
+        svgFiltro: "<path d='M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5z'/>",
+        svgLeft: "<path fill-rule='evenodd' d='M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0'/>",
+        svgRight: "<path fill-rule='evenodd' d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708'/>",
+        svgSquare: "<path d='M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z'/>",
+        timers: [],
+        util: {
+            cpf: ["000.000.000-00", /^([0-9]{3}([\.]?[0-9]{3}){2}[-]?[0-9]{2})$/, (cpf) => {
+                    let m1 = [10, 9, 8, 7, 6, 5, 4, 3, 2];
+                    let m2 = [11, 10, 9, 8, 7, 6, 5, 4, 3, 2];
+                    if (!cpf) {
+                        return false;
+                    }
+                    cpf = mkt.apenasNumeros(cpf);
+                    if (cpf.length != 11) {
+                        return false;
+                    }
+                    let temp = cpf.slice(0, 9);
+                    let c = 0;
+                    for (let i = 0; i < 9; i++) {
+                        c += Number(temp.charAt(i)) * m1[i];
+                    }
+                    let r = c % 11;
+                    (r < 2) ? r = 0 : r = 11 - r;
+                    temp += r.toString();
+                    c = 0;
+                    for (let i = 0; i < 10; i++) {
+                        c += Number(temp.charAt(i)) * m2[i];
+                    }
+                    r = c % 11;
+                    (r < 2) ? r = 0 : r = 11 - r;
+                    return cpf.charAt(10) == r.toString();
+                }],
+            cep: ["00.000-000", /^([0-9]{2}[\.]?[0-9]{3}[-]?[0-9]{3})$/, (cep) => {
+                    if (!cep) {
+                        return false;
+                    }
+                    cep = mkt.apenasNumeros(cep);
+                    if (cep.length != 8) {
+                        return false;
+                    }
+                    return true;
+                }],
+            cnpj: [
+                "00.000.000/0000-00",
+                /^([0-9]{2}([\.]?[0-9]{3}){2}[\/]?[0-9]{4}[-]?[0-9]{2})$/, (cnpj) => {
+                    let m1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+                    let m2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+                    if (!cnpj) {
+                        return false;
+                    }
+                    cnpj = mkt.apenasNumeros(cnpj);
+                    if (cnpj.length != 14) {
+                        return false;
+                    }
+                    let temp = cnpj.slice(0, 12);
+                    let c = 0;
+                    for (let i = 0; i < 12; i++) {
+                        c += Number(temp.charAt(i)) * m1[i];
+                    }
+                    let r = (c % 11);
+                    (r < 2) ? r = 0 : r = 11 - r;
+                    temp += r.toString();
+                    c = 0;
+                    for (let i = 0; i < 13; i++) {
+                        c += Number(temp.charAt(i)) * m2[i];
+                    }
+                    r = (c % 11);
+                    (r < 2) ? r = 0 : r = 11 - r;
+                    return cnpj.charAt(13) == r.toString();
+                }
+            ],
+            cpf_cnpj: [
+                "00.000.000/0000-00",
+                /^([0-9]{2}([\.]?[0-9]{3}){2}[\/]?[0-9]{4}[-]?[0-9]{2})|([0-9]{3}([\.]?[0-9]{3}){2}[-]?[0-9]{2})$/, (cpf_cnpj) => {
+                    return mkt.a.util.cpf[2](cpf_cnpj) || mkt.a.util.cnpj[2](cpf_cnpj);
+                }
+            ],
+            cnh: ["00000000000", /^([0-9]{11})$/, (cnh) => {
+                    if (!cnh) {
+                        return false;
+                    }
+                    cnh = mkt.apenasNumeros(cnh);
+                    if (cnh.length != 11) {
+                        return false;
+                    }
+                    return true;
+                }],
+            placa: ["AAA-0S00", /^([A-Za-z]{3}[-]?[0-9]{1}[A-Za-z0-9]{1}[0-9]{2})$/],
+            placaAntesMercosul: ["AAA-0000", /^([A-Za-z]{3}[-]?[0-9]{4})$/],
+            placaMercosul: [
+                "AAA-0A00",
+                /^([A-Za-z]{3}[-]?[0-9]{1}[A-Za-z]{1}[0-9]{2})$/,
+            ],
+            pis: [
+                "000.00000.00-0",
+                /^([0-9]{3}[\.]?[0-9]{5}[\.]?[0-9]{2}[-]?[0-9]{1})$/,
+            ],
+            money: ["#0.000.000.000.000.000,00"],
+            dia: ["00", /^([0-3]?[0-9])$/],
+            mes: ["00", /^([0-1]?[0-9])$/],
+            ano: ["0000", /^([0-2]?([0-9]){3})$/],
+            anoRecente: ["0000", /^(1[8-9]([0-9]){2})|(20([0-9]){2})$/],
+            ip: ["000.000.000.000", /^([0-2]?[0-9]?[0-9]([\.][0-2]?[0-9]?[0-9]){3})$/],
+            data: ["0000-00-00", /^([0-9]{4}(-[0-9]{2}){2})$/],
+            dataIso8601: [
+                "0000-00-00T00:00:00.000Z",
+                /^([0-9]{4}(-[0-9]{2}){2}T[0-9]{2}(:[0-9]{2})\.[0-9]{3}Z)$/,
+            ],
+            numeros: ["0", /^[0-9]*$/],
+            letras: ["A", /^[A-Za-z]*$/],
+            telefone_ddd: ["(00) 000000000", /^[0-9]{11}$/],
+        },
+        wpool: null, // WorkerPool quando iniciado
+    };
+    static log = true; // Desliga / Liga Log do console
+    static regras = [];
+    static stringify;
+    static Workers;
+    static addTask;
+    static classof;
+    static Inicializar;
+    static mkClicarNaAba;
+    static exeTimer;
+    static headMenuHide;
+    static headMenuPrevious;
+    static headMenuNext;
+    static headMenuCrescente;
+    static headMenuDecrescente;
+    static headMenuLimpar;
+    static headMenuLimparTodos;
+    static headMenuContemInput;
+    static headMenuFiltraExclusivo;
+    static headMenuMarcarExclusivos;
+    static headMenuHideX;
+    static toString;
+    static mascarar;
+    static elementoDuranteUpload;
+    static contaImportados = 0;
+    static Q;
+    static QAll;
+    static l;
+    static w;
+    static erro;
+    static gc;
+    static ge;
+    static ct;
+    static cte;
+    static importar;
+    static Ao;
+    static mkLimparOA;
+    static mkExecutaNoObj;
+    static mkMoldeOA;
+    static get;
+    static post;
+    static sortDir;
+    static QverOff;
+    static QverOn;
+    static Qoff;
+    static Qon;
+    static html;
+    static wait;
+    static ordenar;
+    static processoFiltragem;
+    static getV;
+    static clonar;
+    static allSubPropriedades;
+    static removeEspecias;
+    static toLocale;
+    static removerAspas;
+    static AoConfig;
+    static request;
+    static getMs;
+    static getDia;
+    static getMes;
+    static getAno;
+    static getFullData;
+    static atribuir;
+    static mkDuasCasas;
+    static regraDisplay;
+    static isInside;
+    static TerremotoErros;
+    static contem;
+    static isJson;
+    static apenasNumeros;
+    static apenasLetras;
+    static apenasNumerosLetras;
+    static toMoeda;
+    static fromMoeda;
+    static toNumber;
+    static fromNumber;
+    static CarregarON;
+    static CarregarOFF;
+    static errosLog;
+    static delObjetoFromId;
+    static setObjetoFromId;
+    static aCadaElemento;
+    static cadaExe;
+    static detectedServerOn;
+    static detectedServerOff;
+    static mkFloat;
+    static parseJSON;
+    static hojeMkData;
+    static hojeMkHora;
+    static hoje;
+    static getDiasDiferenca;
+    static transMsEmDias;
+    static mkNodeToScript;
+    static frequencia;
+    static mkYYYYMMDDtoDDMMYYYY;
+    static mkBoolToSimNaoOA;
+    static mkFormatarDataOA;
+    static exeregra;
+    static m;
+    static vibrar;
+    static estaValido;
+    static mkToValue;
+    static mkRecUpdate;
+    static like;
+    static mkSelTabIndex;
+    static mkSelMoveu;
+    static mkSelPopularLista;
+    static mkSelUpdate;
+    static mkSelDelRefillProcesso;
+    static mkSelGetKV;
+    static mkSelGetMap;
+    static mkSelArrayGetKV;
+    static mkSelArraySetKV;
+    static mkSelArrayGetMap;
+    static mkSelArraySetMap;
+    static mkSelSelecionar;
+    static mkReposicionar;
+    static mkSelSetDisplay;
+    static mkSelRenderizar;
+    static mkSelRenderizarElemento;
+    static mkRecRenderizar;
+    static mkBotCheck;
 } // FIM CLASSE MKT
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-//	 FUNCOES BASICAS / ATALHOS   		\\
+//  FUNCOES BASICAS / ATALHOS       \\
 //___________________________________\\
 Object.defineProperty(mkt, "toNumber", {
     value: (valor, c = {}) => {
@@ -1498,12 +1610,12 @@ Object.defineProperty(mkt, "toNumber", {
                 if (posPonto >= 0) {
                     let i = valor.slice(0, posPonto);
                     let d = valor.slice(posPonto + 1).slice(0, 2).padEnd(2, "0");
-                    i = [...i.toString()].filter(a => { return mkt.util.numeros[1].test(a); }).join("");
-                    d = [...d.toString()].filter(a => { return mkt.util.numeros[1].test(a); }).join("");
+                    i = [...i.toString()].filter(a => { return mkt.a.util.numeros[1].test(a); }).join("");
+                    d = [...d.toString()].filter(a => { return mkt.a.util.numeros[1].test(a); }).join("");
                     valor = i + "." + d;
                 }
                 else {
-                    valor = [...valor.toString()].filter(a => { return mkt.util.numeros[1].test(a); }).join("").padStart(3, "0");
+                    valor = [...valor.toString()].filter(a => { return mkt.a.util.numeros[1].test(a); }).join("").padStart(3, "0");
                     valor = valor.slice(0, -(c.casas)) + "." + valor.slice(-(c.casas));
                 }
             }
@@ -1525,7 +1637,7 @@ Object.defineProperty(mkt, "fromNumber", {
         if (!c.locale)
             c.locale = "pt-BR";
         if (valor != null) {
-            let d = [...valor.toString()].filter(a => { return mkt.util.numeros[1].test(a); }).join("").padStart(3, "0");
+            let d = [...valor.toString()].filter(a => { return mkt.a.util.numeros[1].test(a); }).join("").padStart(3, "0");
             valor = Number(d.slice(0, -2) + "." + d.slice(-2));
         }
         else {
@@ -1541,7 +1653,7 @@ Object.defineProperty(mkt, "toMoeda", {
             if (typeof valor == "number") {
                 valor = valor.toFixed(2);
             }
-            let d = [...valor.toString()].filter(a => { return mkt.util.numeros[1].test(a); }).join("").padStart(3, "0");
+            let d = [...valor.toString()].filter(a => { return mkt.a.util.numeros[1].test(a); }).join("").padStart(3, "0");
             return new Intl.NumberFormat("pt-BR", { style: 'currency', currency: 'BRL' }).format(Number(d.slice(0, -2) + "." + d.slice(-2)));
         }
         return "";
@@ -1551,7 +1663,7 @@ Object.defineProperty(mkt, "fromMoeda", {
     value: (texto) => {
         // Retorna um float de duas casas / 0 a partir de um valor monetario 
         if (texto) {
-            let d = [...texto.toString()].filter(a => { return mkt.util.numeros[1].test(a); }).join("").padStart(3, "0");
+            let d = [...texto.toString()].filter(a => { return mkt.a.util.numeros[1].test(a); }).join("").padStart(3, "0");
             return Number(d.slice(0, -2) + "." + d.slice(-2));
         }
         return 0;
@@ -1600,9 +1712,9 @@ Object.defineProperty(mkt, "ge", {
 });
 Object.defineProperty(mkt, "ct", {
     value: (s) => {
-        let t = mkt.vars.timers.find((t) => t.name == s);
+        let t = mkt.a.timers.find((t) => t.name == s);
         if (!t) {
-            mkt.vars.timers.push({
+            mkt.a.timers.push({
                 name: s,
                 ini: mkt.getMs(),
                 fim: 0,
@@ -1613,7 +1725,7 @@ Object.defineProperty(mkt, "ct", {
 });
 Object.defineProperty(mkt, "cte", {
     value: (s, quietMode = false) => {
-        let t = mkt.vars.timers.find((t) => t.name == s);
+        let t = mkt.a.timers.find((t) => t.name == s);
         if (t.fim == 0) {
             t.fim = mkt.getMs();
             t.tempo = t.fim - t.ini;
@@ -2569,7 +2681,7 @@ Object.defineProperty(mkt, "encheArrayUltimos", {
 });
 Object.defineProperty(mkt, "isData", {
     value: (i) => {
-        return mkt.util.data[1].test(i);
+        return mkt.a.util.data[1].test(i);
     }, enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "getMs", {
@@ -2637,47 +2749,6 @@ Object.defineProperty(mkt, "getAno", {
             return Number(mkt.getFullData(ms).split("-")[0]);
         else
             return Number(mkt.getFullData().split("-")[0]);
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "geraMeses", {
-    value: (config) => {
-        // config: {ini: mkt.getMs("2022-08-01"),fim:mkt.getMs()}
-        if (typeof config != "object")
-            config = { ini: config };
-        if (!config.ini)
-            config.ini = mkt.getMs();
-        if (!config.fim)
-            config.fim = mkt.getMs();
-        if (!config.limit)
-            config.limit = 100;
-        if (!config.tipo)
-            config.tipo = '2';
-        if (!config.ano)
-            config.ano = true;
-        if (!config.anoCaracteres)
-            config.anoCaracteres = 2;
-        if (!config.separador && config.separador != "")
-            config.separador = "-";
-        let r = [];
-        let mesAtual = mkt.getMes(config.ini);
-        let anoAtual = mkt.getAno(config.ini);
-        let mesFim = mkt.getMes(config.fim);
-        let anoFim = mkt.getAno(config.fim);
-        let c = 0;
-        while (((anoAtual < anoFim) || (anoAtual == anoFim && mesAtual <= mesFim)) && (c < config.limit)) {
-            let gerado = mkt.MESES[(mesAtual % 13) - 1]?.[config.tipo];
-            let anoFormatado = anoAtual.toString().slice((4 - config.anoCaracteres), 4);
-            if (config.ano)
-                gerado = gerado + config.separador + anoFormatado;
-            r.push(gerado);
-            mesAtual++;
-            if (mesAtual > 12) {
-                mesAtual = 1;
-                anoAtual++;
-            }
-            c++;
-        }
-        return r;
     }, enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "getTempoDiferenca", {
@@ -2923,23 +2994,23 @@ Object.defineProperty(mkt, "get", {
         json: async (config) => {
             if (typeof config != "object")
                 config = { url: config };
-            config.metodo = mkt.t.G;
-            config.tipo = mkt.t.J;
+            config.metodo = mkt.a.GET;
+            config.tipo = mkt.a.JSON;
             return await mkt.request(config);
         },
         html: async (config) => {
             if (typeof config != "object")
                 config = { url: config };
-            config.metodo = mkt.t.G;
-            config.tipo = mkt.t.H;
+            config.metodo = mkt.a.GET;
+            config.tipo = mkt.a.HTML;
             let retorno = await mkt.request(config);
             return retorno;
         },
         blob: async (config) => {
             if (typeof config != "object")
                 config = { url: config };
-            config.metodo = mkt.t.G;
-            config.tipo = mkt.t.B;
+            config.metodo = mkt.a.GET;
+            config.tipo = mkt.a.ALL;
             let retorno = await mkt.request(config);
             return retorno;
         }
@@ -2950,8 +3021,8 @@ Object.defineProperty(mkt, "post", {
         json: async (config, json) => {
             if (typeof config != "object")
                 config = { url: config };
-            config.metodo = mkt.t.P;
-            config.tipo = mkt.t.J;
+            config.metodo = mkt.a.POST;
+            config.tipo = mkt.a.JSON;
             config.dados = json;
             let retorno = await mkt.request(config);
             return retorno;
@@ -2959,8 +3030,8 @@ Object.defineProperty(mkt, "post", {
         html: async (config, text) => {
             if (typeof config != "object")
                 config = { url: config };
-            config.metodo = mkt.t.P;
-            config.tipo = mkt.t.H;
+            config.metodo = mkt.a.POST;
+            config.tipo = mkt.a.HTML;
             config.dados = text;
             let retorno = await mkt.request(config);
             return retorno;
@@ -2968,8 +3039,8 @@ Object.defineProperty(mkt, "post", {
         form: async (config, formdata) => {
             if (typeof config != "object")
                 config = { url: config };
-            config.metodo = mkt.t.P;
-            config.tipo = mkt.t.F;
+            config.metodo = mkt.a.POST;
+            config.tipo = mkt.a.FORMDATA;
             config.dados = formdata;
             let retorno = await mkt.request(config);
             return retorno;
@@ -3024,13 +3095,13 @@ Object.defineProperty(mkt, "request", {
         mkt.ct("Request: " + nomeRequest);
         // JSON / FORM / *
         if (!config?.tipo) {
-            mkt.w("Nenhum tipo de dado informado. Avançando com " + mkt.t.J);
-            config.tipo = mkt.t.J;
+            mkt.w("Nenhum tipo de dado informado. Avançando com " + mkt.a.JSON);
+            config.tipo = mkt.a.JSON;
         }
         if (!config?.headers) {
             config.headers = new Headers();
             // CONTENT TYPE
-            if (config.tipo == mkt.t.J) {
+            if (config.tipo == mkt.a.JSON) {
                 config.headers.append("Content-Type", config.tipo);
             }
             // TOKEN Baseado neste primeiro input
@@ -3041,11 +3112,11 @@ Object.defineProperty(mkt, "request", {
             config.quiet = false;
         // TIPO DE ENVIO
         config.json = mkt.stringify(config.dados);
-        if (config.metodo != mkt.t.G) {
-            if (config.tipo == mkt.t.J) {
+        if (config.metodo != mkt.a.GET) {
+            if (config.tipo == mkt.a.JSON) {
                 config.body = config.json;
             }
-            else if (config.tipo == mkt.t.F) {
+            else if (config.tipo == mkt.a.FORMDATA) {
                 config.body = config.dados;
             }
         }
@@ -3057,7 +3128,7 @@ Object.defineProperty(mkt, "request", {
                 mkt.l("Header: ", Object.fromEntries(config.headers.entries()));
                 mkt.l("Config: ", config);
             }
-            if (config.metodo == mkt.t.P) {
+            if (config.metodo == mkt.a.POST) {
                 mkt.l("DADOS: ", config.dados);
                 mkt.gc("JSON: ");
                 mkt.l(config.json);
@@ -3114,16 +3185,16 @@ Object.defineProperty(mkt, "request", {
                 config.conectou = true;
                 config.statusCode = config.pacote.status;
                 // 200 DONE (Retorna baseado no tipo de envio)
-                if (config.tipo == mkt.t.J) {
+                if (config.tipo == mkt.a.JSON) {
                     config.retorno = await config.pacote.json();
                 }
-                else if (config.tipo == mkt.t.H) {
+                else if (config.tipo == mkt.a.HTML) {
                     config.retorno = await config.pacote.text();
                 }
-                else if (config.tipo == mkt.t.B) {
+                else if (config.tipo == mkt.a.ALL) {
                     config.retorno = await config.pacote.blob();
                 }
-                else if (config.tipo == mkt.t.F) {
+                else if (config.tipo == mkt.a.FORMDATA) {
                     config.retorno = await config.pacote.json();
                 }
                 if (!config.quiet) {
@@ -3398,17 +3469,17 @@ Object.defineProperty(mkt, "ordenar", {
             }
             return -1;
         });
-        if (!mkt.vars.contaOrdena) {
-            mkt.vars.contaOrdena = 0;
+        if (!mkt.a.contaOrdena) {
+            mkt.a.contaOrdena = 0;
         }
-        mkt.vars.contaOrdena++;
+        mkt.a.contaOrdena++;
         // 1 - Decrescente
         if (sortDir === 1) {
             array = array.reverse();
         }
         else if (sortDir === 2) {
             // 2 - Toogle 
-            if (mkt.vars.contaOrden % 2 == 0) {
+            if (mkt.a.contaOrdena % 2 == 0) {
                 array = array.reverse();
             }
         }
@@ -3418,115 +3489,6 @@ Object.defineProperty(mkt, "ordenar", {
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //	 MASCARAS, REGEX E	VALIDADOR		\\
 //___________________________________\\
-Object.defineProperty(mkt, "util", {
-    value: {
-        cpf: ["000.000.000-00", /^([0-9]{3}([\.]?[0-9]{3}){2}[-]?[0-9]{2})$/, (cpf) => {
-                let m1 = [10, 9, 8, 7, 6, 5, 4, 3, 2];
-                let m2 = [11, 10, 9, 8, 7, 6, 5, 4, 3, 2];
-                if (!cpf) {
-                    return false;
-                }
-                cpf = mkt.apenasNumeros(cpf);
-                if (cpf.length != 11) {
-                    return false;
-                }
-                let temp = cpf.slice(0, 9);
-                let c = 0;
-                for (let i = 0; i < 9; i++) {
-                    c += Number(temp.charAt(i)) * m1[i];
-                }
-                let r = c % 11;
-                (r < 2) ? r = 0 : r = 11 - r;
-                temp += r.toString();
-                c = 0;
-                for (let i = 0; i < 10; i++) {
-                    c += Number(temp.charAt(i)) * m2[i];
-                }
-                r = c % 11;
-                (r < 2) ? r = 0 : r = 11 - r;
-                return cpf.charAt(10) == r.toString();
-            }],
-        cep: ["00.000-000", /^([0-9]{2}[\.]?[0-9]{3}[-]?[0-9]{3})$/, (cep) => {
-                if (!cep) {
-                    return false;
-                }
-                cep = mkt.apenasNumeros(cep);
-                if (cep.length != 8) {
-                    return false;
-                }
-                return true;
-            }],
-        cnpj: [
-            "00.000.000/0000-00",
-            /^([0-9]{2}([\.]?[0-9]{3}){2}[\/]?[0-9]{4}[-]?[0-9]{2})$/, (cnpj) => {
-                let m1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
-                let m2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
-                if (!cnpj) {
-                    return false;
-                }
-                cnpj = mkt.apenasNumeros(cnpj);
-                if (cnpj.length != 14) {
-                    return false;
-                }
-                let temp = cnpj.slice(0, 12);
-                let c = 0;
-                for (let i = 0; i < 12; i++) {
-                    c += Number(temp.charAt(i)) * m1[i];
-                }
-                let r = (c % 11);
-                (r < 2) ? r = 0 : r = 11 - r;
-                temp += r.toString();
-                c = 0;
-                for (let i = 0; i < 13; i++) {
-                    c += Number(temp.charAt(i)) * m2[i];
-                }
-                r = (c % 11);
-                (r < 2) ? r = 0 : r = 11 - r;
-                return cnpj.charAt(13) == r.toString();
-            }
-        ],
-        cpf_cnpj: [
-            "00.000.000/0000-00",
-            /^([0-9]{2}([\.]?[0-9]{3}){2}[\/]?[0-9]{4}[-]?[0-9]{2})|([0-9]{3}([\.]?[0-9]{3}){2}[-]?[0-9]{2})$/, (cpf_cnpj) => {
-                return mkt.util.cpf[2](cpf_cnpj) || mkt.util.cnpj[2](cpf_cnpj);
-            }
-        ],
-        cnh: ["00000000000", /^([0-9]{11})$/, (cnh) => {
-                if (!cnh) {
-                    return false;
-                }
-                cnh = mkt.apenasNumeros(cnh);
-                if (cnh.length != 11) {
-                    return false;
-                }
-                return true;
-            }],
-        placa: ["AAA-0S00", /^([A-Za-z]{3}[-]?[0-9]{1}[A-Za-z0-9]{1}[0-9]{2})$/],
-        placaAntesMercosul: ["AAA-0000", /^([A-Za-z]{3}[-]?[0-9]{4})$/],
-        placaMercosul: [
-            "AAA-0A00",
-            /^([A-Za-z]{3}[-]?[0-9]{1}[A-Za-z]{1}[0-9]{2})$/,
-        ],
-        pis: [
-            "000.00000.00-0",
-            /^([0-9]{3}[\.]?[0-9]{5}[\.]?[0-9]{2}[-]?[0-9]{1})$/,
-        ],
-        money: ["#0.000.000.000.000.000,00"],
-        dia: ["00", /^([0-3]?[0-9])$/],
-        mes: ["00", /^([0-1]?[0-9])$/],
-        ano: ["0000", /^([0-2]?([0-9]){3})$/],
-        anoRecente: ["0000", /^(1[8-9]([0-9]){2})|(20([0-9]){2})$/],
-        ip: ["000.000.000.000", /^([0-2]?[0-9]?[0-9]([\.][0-2]?[0-9]?[0-9]){3})$/],
-        data: ["0000-00-00", /^([0-9]{4}(-[0-9]{2}){2})$/],
-        dataIso8601: [
-            "0000-00-00T00:00:00.000Z",
-            /^([0-9]{4}(-[0-9]{2}){2}T[0-9]{2}(:[0-9]{2})\.[0-9]{3}Z)$/,
-        ],
-        numeros: ["0", /^[0-9]*$/],
-        letras: ["A", /^[A-Za-z]*$/],
-        telefone_ddd: ["(00) 000000000", /^[0-9]{11}$/],
-    }, enumerable: false, writable: false, configurable: false,
-});
 Object.defineProperty(mkt, "mascarar", {
     value: (texto, mascara) => {
         // Mascaras: 0=Numero, A=Letra, Outros repete.
@@ -3592,82 +3554,7 @@ Object.defineProperty(mkt, "mascarar", {
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //   Variaveis Estáticas            \\
 //___________________________________\\
-Object.defineProperty(mkt, "vars", {
-    value: {
-        exeTimer: 500,
-        wpool: null,
-        svgSquare: "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path d='M11 2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zM5 1a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4z'/></svg>",
-        svgX: "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path d='M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708'/></svg>",
-        svgAB: "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M10.082 5.629 9.664 7H8.598l1.789-5.332h1.234L13.402 7h-1.12l-.419-1.371zm1.57-.785L11 2.687h-.047l-.652 2.157z'/><path d='M12.96 14H9.028v-.691l2.579-3.72v-.054H9.098v-.867h3.785v.691l-2.567 3.72v.054h2.645zM4.5 2.5a.5.5 0 0 0-1 0v9.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L4.5 12.293z'/></svg>",
-        svgBA: "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M10.082 5.629 9.664 7H8.598l1.789-5.332h1.234L13.402 7h-1.12l-.419-1.371zm1.57-.785L11 2.687h-.047l-.652 2.157z'/><path d='M12.96 14H9.028v-.691l2.579-3.72v-.054H9.098v-.867h3.785v.691l-2.567 3.72v.054h2.645zm-8.46-.5a.5.5 0 0 1-1 0V3.707L2.354 4.854a.5.5 0 1 1-.708-.708l2-1.999.007-.007a.5.5 0 0 1 .7.006l2 2a.5.5 0 1 1-.707.708L4.5 3.707z'/></svg>",
-        svgF: "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path d='M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5z'/></svg>",
-        svgL: "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-chevron-left' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0'/></svg>",
-        svgR: "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-chevron-right' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708'/></svg>",
-        clacre: "Classificar Crescente",
-        cladec: "Classificar Decrescente",
-        contem: "Contém...",
-        espaco: "&nbsp;",
-        limparIndivisual: "Limpar filtros de",
-        limparTodos: "Limpar todos filtros",
-        selectAll: "Selecionar Todos",
-        contaListas: 0,
-        contaOrdena: 0,
-        paginationAtual: 1,
-        objetoSelecionado: {},
-        sendObjFull: {},
-        mkCountValidate: 0,
-        debug: 0,
-        timers: [],
-        mkFaseAtual: 1, // Old Fase System
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "t", {
-    value: {
-        G: "GET",
-        P: "POST",
-        J: "application/json",
-        B: "*/*",
-        H: "text/html",
-        F: "multipart/form-data", // ContentType FORM
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "MESES", {
-    value: [
-        [1, "Janeiro", "JAN", "01"],
-        [2, "Fevereiro", "FEV", "02"],
-        [3, "Março", "MAR", "03"],
-        [4, "Abril", "ABR", "04"],
-        [5, "Maio", "MAI", "05"],
-        [6, "Junho", "JUN", "06"],
-        [7, "Julho", "JUL", "07"],
-        [8, "Agosto", "AGO", "08"],
-        [9, "Setembro", "SET", "09"],
-        [10, "Outubro", "OUT", "10"],
-        [11, "Novembro", "NOV", "11"],
-        [12, "Dezembro", "DEZ", "12"],
-    ], enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "CORES", {
-    value: {
-        VERMELHO: "#F00",
-        VERDE: "#0F0",
-        AZUL: "#00F",
-        BRANCO: "#FFF",
-        PRETO: "#000",
-        VERDEFLORESTA: "#070",
-        VERDEFOLHA: "#0A0",
-        VERDEABACATE: "#9F0",
-        AMARELO: "#FF0",
-        LARANJA: "#F90",
-        AZULESCURO: "#009",
-        AZULPISCINA: "#0FF",
-        AZULCEU: "#09F",
-        ROSA: "#F0F",
-        ROXO: "#70F",
-        MAGENTA: "#F09",
-        OURO: "#FB1",
-    }, enumerable: false, writable: false, configurable: false,
-});
+Object.defineProperty(mkt, "a", { enumerable: false, writable: false, configurable: false });
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //   HEAD MENU                      \\
 //___________________________________\\
@@ -3697,13 +3584,13 @@ Object.defineProperty(mkt, "headMenuHide", {
 Object.defineProperty(mkt, "addTask", {
     value: (msg, numWorkers) => {
         return new Promise((r) => {
-            if (!mkt.vars.wpool) {
+            if (!mkt.a.wpool) {
                 mkt.Workers(numWorkers).then(() => {
-                    r(mkt.vars.wpool.addTask(msg));
+                    r(mkt.a.wpool.addTask(msg));
                 });
             }
             else {
-                r(mkt.vars.wpool.addTask(msg));
+                r(mkt.a.wpool.addTask(msg));
             }
         });
     }, enumerable: true, writable: false, configurable: false,
@@ -3863,8 +3750,8 @@ Object.defineProperty(mkt, "Workers", {
                     });
                 }
             } // FIM WorkerPool class
-            mkt.vars.wpool = new WorkerPool(numWorkers, workerBlob);
-            r(mkt.vars.wpool);
+            mkt.a.wpool = new WorkerPool(numWorkers, workerBlob);
+            r(mkt.a.wpool);
         });
     }, enumerable: true, writable: false, configurable: false,
 });
@@ -4077,7 +3964,7 @@ Object.defineProperty(mkt, "exeregra", {
                                     prom(re.k);
                                     break;
                                 case "apenasnumeros": // EXE
-                                    if (!(mkt.util.numeros[1].test(e[re.target]))) {
+                                    if (!(mkt.a.util.numeros[1].test(e[re.target]))) {
                                         if (!re.m)
                                             re.m = mkt.m.apenasnumeros;
                                         erros.push(re);
@@ -4086,7 +3973,7 @@ Object.defineProperty(mkt, "exeregra", {
                                     prom(re.k);
                                     break;
                                 case "apenasletras": // EXE
-                                    if (!(mkt.util.letras[1].test(e[re.target]))) {
+                                    if (!(mkt.a.util.letras[1].test(e[re.target]))) {
                                         if (!re.m)
                                             re.m = mkt.m.apenasletras;
                                         erros.push(re);
@@ -5730,10 +5617,10 @@ Object.defineProperty(mkt, "fUIFaseUpdateLinkFase", {
             e.parentElement?.classList.remove("disabled");
             let eNumPag = Number(e.getAttribute("data-pag"));
             let bLibera = e.getAttribute("data-libera");
-            if (mkt.vars.mkFaseAtual > eNumPag) {
+            if (mkt.a.mkFaseAtual > eNumPag) {
                 e.parentElement?.classList.add("mkFaseBack");
             }
-            if (mkt.vars.mkFaseAtual == eNumPag) {
+            if (mkt.a.mkFaseAtual == eNumPag) {
                 e.parentElement?.classList.add("mkFaseAtivo");
             }
             if (bLibera == "false") {
@@ -5783,7 +5670,7 @@ Object.defineProperty(mkt, "exeTimer", {
         mkt.mkRecRenderizar();
         mkt.mkBotCheck();
         // Recursiva
-        setTimeout(mkt.exeTimer, mkt.vars.exeTimer);
+        setTimeout(mkt.exeTimer, mkt.a.exeTimer);
     }, enumerable: false, writable: false, configurable: false,
 });
 //Object.defineProperty(mkt , undefined ,{enumerable: false, writable: false, configurable: false});
