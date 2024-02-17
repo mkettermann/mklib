@@ -819,8 +819,8 @@ class mkt {
 					</div>
 				</div>
 				<ul>
-					<li onclick='mkt.headMenuCrescente()' class='claico botao nosel'>${mkt.a.SVGINI}${mkt.a.svgAB}${mkt.a.SVGFIM}${mkt.a.espaco}${mkt.a.clacre}</li>
-					<li onclick='mkt.headMenuDecrescente()' class='claico botao nosel fimsecao'>${mkt.a.SVGINI}${mkt.a.svgBA}${mkt.a.SVGFIM}${mkt.a.espaco}${mkt.a.cladec}</li>
+					<li class='hmCrescente claico botao nosel'>${mkt.a.SVGINI}${mkt.a.svgAB}${mkt.a.SVGFIM}${mkt.a.espaco}${mkt.a.clacre}</li>
+					<li class='hmDecrescente claico botao nosel fimsecao'>${mkt.a.SVGINI}${mkt.a.svgBA}${mkt.a.SVGFIM}${mkt.a.espaco}${mkt.a.cladec}</li>
 					<li><input class='nosel' type='text' name='filtrarCampo' oninput='mkt.headMenuContemInput(this.value)' placeholder='${mkt.a.contem}'></li>
 					<li onclick='mkt.headMenuLimpar()' class='limpar botao nosel'>${mkt.a.SVGINI}${mkt.a.svgFiltro}${mkt.a.SVGFIM}${mkt.a.espaco}${mkt.a.limparIndivisual}${mkt.a.espaco}<span class='hmTitulo'></span></li>
 					<li onclick='mkt.headMenuLimparTodos()' class='limpar botao nosel fimsecao'>${mkt.a.SVGINI}${mkt.a.svgFiltro}${mkt.a.SVGFIM}${mkt.a.espaco}${mkt.a.limparTodos}</li>
@@ -831,11 +831,16 @@ class mkt {
             document.body.appendChild(ehm);
             // GATILHOS Só no ato a contrução do elemento
             mkt.Ao("click", ".mkHeadMenu .hmPrevious", (e) => {
-                mkt.a.hm.Previous(e.closest(".mkHeadMenu")?.getAttribute("data-mkt"));
+                mkt.a.hm.Previous(colName, e.closest(".mkHeadMenu")?.getAttribute("data-mkt"));
             });
-            // GATILHOS Só no ato a contrução do elemento
             mkt.Ao("click", ".mkHeadMenu .hmPrevious", (e) => {
-                mkt.a.hm.Next(e.closest(".mkHeadMenu")?.getAttribute("data-mkt"));
+                mkt.a.hm.Next(colName, e.closest(".mkHeadMenu")?.getAttribute("data-mkt"));
+            });
+            mkt.Ao("click", ".mkHeadMenu .hmCrescente", (e) => {
+                mkt.a.hm.Crescente(colName, e.closest(".mkHeadMenu")?.getAttribute("data-mkt"));
+            });
+            mkt.Ao("click", ".mkHeadMenu .hmDecrescente", (e) => {
+                mkt.a.hm.Decrescente(colName, e.closest(".mkHeadMenu")?.getAttribute("data-mkt"));
             });
         }
         // Conecta Elemento a Lista
@@ -989,7 +994,7 @@ class mkt {
             // Limpar outros filtros
             mkt.Q(".mkHeadMenu input[name='filtrarCampo']").value = "";
         };
-        mkt.headMenuNext = () => {
+        mkt.a.hm.Next = () => {
             let opcoes = this.getModel().map(o => { if (o.f)
                 return o.k; }).filter(r => { return r != null; });
             let posAtual = opcoes.indexOf(colName);
@@ -1004,8 +1009,6 @@ class mkt {
             if (opcoes[posSeguinte])
                 this.headMenuAbrir(opcoes[posSeguinte]);
         };
-        mkt.headMenuCrescente = () => { this.orderBy(colName, 0); };
-        mkt.headMenuDecrescente = () => { this.orderBy(colName, 1); };
         mkt.headMenuLimpar = () => {
             mkt.Q(".mkHeadMenu input[name='filtrarCampo']").value = "";
             this.hmunsel = [];
@@ -1370,11 +1373,11 @@ class mkt {
                     ehm?.classList.add("oculto");
                 }
             },
-            Previous: (iof) => {
-                if (mkt.classof(iof) == "String") {
-                    mkt.l(iof);
+            Previous: (colName, iof) => {
+                // iof == indexOf mkt.a.build
+                if ((mkt.classof(iof) == "String") && (mkt.classof(colName) == "String")) {
                     // Sempre que abre o menu, da o replace do this na estática.
-                    let opcoes = this.getModel().map(o => { if (o.f)
+                    let opcoes = mkt.getThis(Number(iof)).getModel().map(o => { if (o.f)
                         return o.k; }).filter(r => { return r != null; });
                     let posAtual = opcoes.indexOf(colName);
                     let posAnterior = 0;
@@ -1384,17 +1387,48 @@ class mkt {
                     if (posAnterior < 0) { // Era o primeiro
                         posAnterior = opcoes.length - 1; //Vira Última Posição
                     }
-                    //mkt.l("Atual: ", colName, "| Anterior: ", opcoes[posAnterior], "| Opções: ", opcoes);
                     if (opcoes[posAnterior])
-                        this.headMenuAbrir(opcoes[posAnterior]);
+                        mkt.getThis(Number(iof)).headMenuAbrir(opcoes[posAnterior]);
                 }
                 else {
-                    mkt.w("mkt.a.hm.Previous() - Parametro precisa ser uma string: ", iof);
+                    mkt.w("mkt.a.hm.Previous() - Parametros precisam ser duas string: ", iof);
                 }
             },
-            Next: () => { },
-            Crescente: Function,
-            Decrescente: Function,
+            Next: (colName, iof) => {
+                if (mkt.classof(iof) == "String") {
+                    let opcoes = mkt.getThis(Number(iof)).getModel().map(o => { if (o.f)
+                        return o.k; }).filter(r => { return r != null; });
+                    let posAtual = opcoes.indexOf(colName);
+                    let posSeguinte = 0;
+                    if (posAtual >= 0) { // Se o atual existe
+                        posSeguinte = posAtual + 1;
+                    }
+                    if (posSeguinte >= opcoes.length) { // Era o último
+                        posSeguinte = 0; //Vira Primeira Posição
+                    }
+                    if (opcoes[posSeguinte])
+                        mkt.getThis(Number(iof)).headMenuAbrir(opcoes[posSeguinte]);
+                }
+                else {
+                    mkt.w("mkt.a.hm.Next() - Parametro precisa ser uma string: ", iof);
+                }
+            },
+            Crescente: (colName, iof) => {
+                if (mkt.classof(iof) == "String") {
+                    mkt.getThis(Number(iof)).orderBy(colName, 0);
+                }
+                else {
+                    mkt.w("mkt.a.hm.Crescente() - Parametro precisa ser uma string: ", iof);
+                }
+            },
+            Decrescente: (colName, iof) => {
+                if (mkt.classof(iof) == "String") {
+                    mkt.getThis(Number(iof)).orderBy(colName, 1);
+                }
+                else {
+                    mkt.w("mkt.a.hm.Decrescente() - Parametro precisa ser uma string: ", iof);
+                }
+            },
             Limpar: Function,
             LimparTodos: Function,
             ContemInput: Function,
