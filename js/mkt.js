@@ -802,8 +802,9 @@ class mkt {
     // Função que cria, exibe e seta as funções para filtrar baseado na coluna.
     headMenuAbrir = async (colName) => {
         let eHead = mkt.Q(this.c.container + " .sort-" + colName);
+        let eHm = mkt.Q("body .mkHeadMenu");
         // CRIA A ESTRUTURA
-        if (mkt.Q("body .mkHeadMenu") == null) {
+        if (eHm == null) {
             let ehm = document.createElement("div");
             ehm.className = "mkHeadMenu oculto";
             ehm.innerHTML = `
@@ -813,7 +814,7 @@ class mkt {
 					<div class='col70 hmTitulo'>
 						Filtro
 					</div>
-					<div class='col10 microPos5 botao hmNext' onclick='mkt.headMenuNext()'>${mkt.a.SVGINI}${mkt.a.svgRight}${mkt.a.SVGFIM}</div>
+					<div class='col10 microPos5 botao hmNext'>${mkt.a.SVGINI}${mkt.a.svgRight}${mkt.a.SVGFIM}</div>
 					<div class='col10 fechar botao nosel' onclick='mkt.headMenuHideX()'>
 					${mkt.a.SVGINI}${mkt.a.svgFecha}${mkt.a.SVGFIM}
 					</div>
@@ -824,16 +825,16 @@ class mkt {
 					<li><input class='nosel' type='text' name='filtrarCampo' oninput='mkt.headMenuContemInput(this.value)' placeholder='${mkt.a.contem}'></li>
 					<li onclick='mkt.headMenuLimpar()' class='limpar botao nosel'>${mkt.a.SVGINI}${mkt.a.svgFiltro}${mkt.a.SVGFIM}${mkt.a.espaco}${mkt.a.limparIndivisual}${mkt.a.espaco}<span class='hmTitulo'></span></li>
 					<li onclick='mkt.headMenuLimparTodos()' class='limpar botao nosel fimsecao'>${mkt.a.SVGINI}${mkt.a.svgFiltro}${mkt.a.SVGFIM}${mkt.a.espaco}${mkt.a.limparTodos}</li>
-					<li><input type='search' oninput='mkt.headMenuFiltraExclusivo(this.value)' name='filtrarPossibilidades' placeholder='Pesquisar'></li>
+					<li><input class='hmFiltraExclusivo' type='search' name='filtrarPossibilidades' placeholder='Pesquisar'></li>
 					<li><div class='possibilidades'></div></li>
 				</ul>
 			</div>`;
             document.body.appendChild(ehm);
-            // GATILHOS Só no ato a contrução do elemento
+            // GATILHOS Só no ato a construção do elemento
             mkt.Ao("click", ".mkHeadMenu .hmPrevious", (e) => {
                 mkt.a.hm.Previous(colName, e.closest(".mkHeadMenu")?.getAttribute("data-mkt"));
             });
-            mkt.Ao("click", ".mkHeadMenu .hmPrevious", (e) => {
+            mkt.Ao("click", ".mkHeadMenu .hmNext", (e) => {
                 mkt.a.hm.Next(colName, e.closest(".mkHeadMenu")?.getAttribute("data-mkt"));
             });
             mkt.Ao("click", ".mkHeadMenu .hmCrescente", (e) => {
@@ -842,16 +843,22 @@ class mkt {
             mkt.Ao("click", ".mkHeadMenu .hmDecrescente", (e) => {
                 mkt.a.hm.Decrescente(colName, e.closest(".mkHeadMenu")?.getAttribute("data-mkt"));
             });
+            mkt.Ao("input", ".mkHeadMenu .hmFiltraExclusivo", (e) => {
+                mkt.a.hm.FiltraExclusivo(e.value, e.closest(".mkHeadMenu")?.getAttribute("data-mkt"));
+            });
         }
         // Conecta Elemento a Lista
-        mkt.Q("body .mkHeadMenu").setAttribute("data-mkt", this.getIndexOf().toString());
-        // FUNCOES
+        let thisList = this.getIndexOf().toString();
+        eHm.setAttribute("data-colname", colName);
+        eHm.setAttribute("data-mkt", thisList);
+        // Zera ou popula Filtro atual do Contem
         if (this.c.objFiltro[colName]?.formato == "string") {
             mkt.Q(".mkHeadMenu input[name='filtrarCampo']").value = this.c.objFiltro[colName]?.conteudo;
         }
         else {
             mkt.Q(".mkHeadMenu input[name='filtrarCampo']").value = "";
         }
+        // Limpar pesquisa do Exclusivo
         mkt.Q(".mkHeadMenu input[name='filtrarPossibilidades']").value = "";
         if (this.c.objFiltro[colName]?.formato == "mkHeadMenuSel") {
             this.hmunsel = this.c.objFiltro[colName].conteudo;
@@ -859,6 +866,7 @@ class mkt {
         else {
             this.hmunsel = [];
         }
+        // Atualiza Lista de exclusivos
         this.exclusivos = await mkt.addTask({ k: "Exclusivos", v: this.dadosFull });
         this.exclusivos = this.exclusivos.v[colName.split(".")[0]];
         let exclusivosProcessado = [];
@@ -873,65 +881,8 @@ class mkt {
             this.exclusivos = [];
         }
         ;
-        // this.exclusivos = this.exclusivos.map(i => {
-        // 	return mkt.removeEspecias(i).toLowerCase().trim();
-        // });
-        mkt.headMenuFiltraExclusivo = (v) => {
-            let vProcessado = mkt.removeEspecias(v).toLowerCase().trim();
-            let exFiltrado = this.exclusivos?.filter((f) => {
-                return mkt.removeEspecias(f).toLowerCase().trim().includes(vProcessado);
-            });
-            let muitosExclusivos = false;
-            if (exFiltrado) {
-                if (exFiltrado.length > 100) {
-                    muitosExclusivos = true;
-                }
-            }
-            else {
-                exFiltrado = [];
-            }
-            ;
-            if (this.hmunsel.length <= 0) {
-                mkt.Q("body .mkHeadMenu .possibilidades").classList.remove("st");
-            }
-            let htmlPossiveis = "<ul class='filtravel'>";
-            if (exFiltrado.length > 0) {
-                let fullsel = "sel";
-                if (mkt.Q("body .mkHeadMenu .possibilidades").classList.contains("st")) {
-                    fullsel = "";
-                }
-                htmlPossiveis += "<li class='nosel botao " + fullsel + "' id='headMenuTodos' onclick='mkt.headMenuMarcarExclusivos()'>" + mkt.a.SVGINI + mkt.a.svgSquare + mkt.a.SVGFIM + mkt.a.espaco + "Selecionar Todos (" + exFiltrado.length + ")";
-                if (v != "") {
-                    htmlPossiveis += " Pesquisados";
-                }
-                htmlPossiveis += "</li>";
-                exFiltrado.forEach((v) => {
-                    let sel = "sel";
-                    let v2 = mkt.removeEspecias(v).toLowerCase().trim();
-                    this.hmunsel.forEach((hm) => {
-                        if (mkt.removeEspecias(hm).toLowerCase().trim() == v2) {
-                            sel = "";
-                        }
-                    });
-                    // Tratamento das possíveis saída de dados diferentes.
-                    let vOut = v;
-                    if (mkt.a.util.data[1].test(vOut)) {
-                        vOut = mkt.toLocale(vOut);
-                    }
-                    else if (mkt.a.util.dataIso8601[1].test(vOut)) {
-                        vOut = mkt.toLocale(vOut);
-                    }
-                    vOut = vOut.toString();
-                    if (vOut.length > 40) {
-                        vOut = vOut.slice(0, 37) + "...";
-                    }
-                    htmlPossiveis += "<li name='" + mkt.removerAspas(v2) + "' class='nosel botao " + sel + "' onclick='mkt.headMenuMarcarExclusivos(this)'>" + mkt.a.SVGINI + mkt.a.svgSquare + mkt.a.SVGFIM + mkt.a.espaco + vOut + "</li>";
-                });
-            }
-            htmlPossiveis += "</ul>";
-            mkt.Q("body .mkHeadMenu .possibilidades").innerHTML = htmlPossiveis;
-        };
-        mkt.headMenuFiltraExclusivo("");
+        // Popula .possibilidades usando a Lista de exclusivos
+        mkt.a.hm.FiltraExclusivo("", thisList);
         // Marca de Desmarca
         mkt.headMenuMarcarExclusivos = (e) => {
             if (e) {
@@ -1046,8 +997,7 @@ class mkt {
         mkt.QAll("body .mkHeadMenu .hmTitulo").forEach((e) => {
             e.innerHTML = colNameLabel;
         });
-        mkt.Q("body .mkHeadMenu").classList.remove("oculto");
-        mkt.Q("body .mkHeadMenu").classList.add("lock");
+        eHm.classList.remove("oculto");
         mkt.Q(".mkHeadMenu input[name='filtrarCampo']").focus();
     };
     // Gera Listeners na THEAD da tabela (Requer classe: "sort-campo")
@@ -1391,7 +1341,7 @@ class mkt {
                         mkt.getThis(Number(iof)).headMenuAbrir(opcoes[posAnterior]);
                 }
                 else {
-                    mkt.w("mkt.a.hm.Previous() - Parametros precisam ser duas string: ", iof);
+                    mkt.w("mkt.a.hm.Previous() - Parametros precisam ser duas string: ", colName, iof);
                 }
             },
             Next: (colName, iof) => {
@@ -1410,7 +1360,7 @@ class mkt {
                         mkt.getThis(Number(iof)).headMenuAbrir(opcoes[posSeguinte]);
                 }
                 else {
-                    mkt.w("mkt.a.hm.Next() - Parametro precisa ser uma string: ", iof);
+                    mkt.w("mkt.a.hm.Next() - Parametros precisam ser uma string: ", colName, iof);
                 }
             },
             Crescente: (colName, iof) => {
@@ -1418,7 +1368,7 @@ class mkt {
                     mkt.getThis(Number(iof)).orderBy(colName, 0);
                 }
                 else {
-                    mkt.w("mkt.a.hm.Crescente() - Parametro precisa ser uma string: ", iof);
+                    mkt.w("mkt.a.hm.Crescente() - Parametros precisam ser string: ", colName, iof);
                 }
             },
             Decrescente: (colName, iof) => {
@@ -1426,13 +1376,72 @@ class mkt {
                     mkt.getThis(Number(iof)).orderBy(colName, 1);
                 }
                 else {
-                    mkt.w("mkt.a.hm.Decrescente() - Parametro precisa ser uma string: ", iof);
+                    mkt.w("mkt.a.hm.Decrescente() - Parametros precisam ser string: ", colName, iof);
                 }
             },
             Limpar: Function,
             LimparTodos: Function,
             ContemInput: Function,
-            FiltraExclusivo: Function,
+            FiltraExclusivo: (v, iof) => {
+                if (mkt.classof(iof) == "String") {
+                    let vProcessado = mkt.removeEspecias(v).toLowerCase().trim();
+                    let exFiltrado = mkt.getThis(Number(iof)).exclusivos?.filter((f) => {
+                        return mkt.removeEspecias(f).toLowerCase().trim().includes(vProcessado);
+                    });
+                    let muitosExclusivos = false;
+                    if (exFiltrado) {
+                        if (exFiltrado.length > 100) {
+                            muitosExclusivos = true;
+                        }
+                    }
+                    else {
+                        exFiltrado = [];
+                    }
+                    ;
+                    if (mkt.getThis(Number(iof)).hmunsel.length <= 0) {
+                        mkt.Q("body .mkHeadMenu .possibilidades").classList.remove("st");
+                    }
+                    let htmlPossiveis = "<ul class='filtravel'>";
+                    if (exFiltrado.length > 0) {
+                        let fullsel = "sel";
+                        if (mkt.Q("body .mkHeadMenu .possibilidades").classList.contains("st")) {
+                            fullsel = "";
+                        }
+                        htmlPossiveis += "<li class='nosel botao " + fullsel + "' id='headMenuTodos' onclick='mkt.headMenuMarcarExclusivos()'>" + mkt.a.SVGINI + mkt.a.svgSquare + mkt.a.SVGFIM + mkt.a.espaco + "Selecionar Todos (" + exFiltrado.length + ")";
+                        if (v != "") {
+                            htmlPossiveis += " Pesquisados";
+                        }
+                        htmlPossiveis += "</li>";
+                        exFiltrado.forEach((v) => {
+                            let sel = "sel";
+                            let v2 = mkt.removeEspecias(v).toLowerCase().trim();
+                            mkt.getThis(Number(iof)).hmunsel.forEach((hm) => {
+                                if (mkt.removeEspecias(hm).toLowerCase().trim() == v2) {
+                                    sel = "";
+                                }
+                            });
+                            // Tratamento das possíveis saída de dados diferentes.
+                            let vOut = v;
+                            if (mkt.a.util.data[1].test(vOut)) {
+                                vOut = mkt.toLocale(vOut);
+                            }
+                            else if (mkt.a.util.dataIso8601[1].test(vOut)) {
+                                vOut = mkt.toLocale(vOut);
+                            }
+                            vOut = vOut.toString();
+                            if (vOut.length > 40) {
+                                vOut = vOut.slice(0, 37) + "...";
+                            }
+                            htmlPossiveis += "<li name='" + mkt.removerAspas(v2) + "' class='nosel botao " + sel + "' onclick='mkt.headMenuMarcarExclusivos(this)'>" + mkt.a.SVGINI + mkt.a.svgSquare + mkt.a.SVGFIM + mkt.a.espaco + vOut + "</li>";
+                        });
+                    }
+                    htmlPossiveis += "</ul>";
+                    mkt.Q("body .mkHeadMenu .possibilidades").innerHTML = htmlPossiveis;
+                }
+                else {
+                    mkt.w("mkt.a.hm.FiltraExclusivo() - Parametros precisam ser string: ", v, iof);
+                }
+            },
             MarcarExclusivos: Function,
             HideX: Function,
         },
