@@ -3479,6 +3479,12 @@ class mkt {
         }
         return null;
     };
+    static uuid = () => {
+        // Padrão UUIDV4 - Gerador de identificador unico
+        return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, (c) => {
+            return (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16);
+        });
+    };
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //                     Gerenciamento Monetário / Numérico                  \\
     //==========================================================================\\
@@ -4532,12 +4538,6 @@ Object.defineProperty(mkt, "mkMedia", {
         return mkt.mkDuasCasas((mkt.mkFloat(menor) + mkt.mkFloat(maior)) / 2);
     }, enumerable: false, writable: false, configurable: false,
 });
-Object.defineProperty(mkt, "mkFloat", {
-    enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "mkDuasCasas", {
-    enumerable: false, writable: false, configurable: false,
-});
 Object.defineProperty(mkt, "mkNCasas", {
     value: (num, nCasas = 2) => {
         return mkt.mkFloat(num).toFixed(nCasas).replaceAll(".", ","); // 2000,?
@@ -4610,9 +4610,6 @@ Object.defineProperty(mkt, "ler", {
         });
     }, enumerable: false, writable: false, configurable: false,
 });
-Object.defineProperty(mkt, "clonar", {
-    enumerable: false, writable: false, configurable: false,
-});
 Object.defineProperty(mkt, "getModelo", {
     value: (array) => {
         let chaves = new Set();
@@ -4650,9 +4647,6 @@ Object.defineProperty(mkt, "mkMerge", {
         }
         return o;
     }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "isInside", {
-    enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "encheArray", {
     value: (arrTemplate, inicio = 1, total) => {
@@ -4779,9 +4773,6 @@ Object.defineProperty(mkt, "getTempoDiferenca", {
         return strTempo;
     }, enumerable: false, writable: false, configurable: false,
 });
-Object.defineProperty(mkt, "getDiasDiferenca", {
-    enumerable: false, writable: false, configurable: false,
-});
 Object.defineProperty(mkt, "transMsEmSegundos", {
     value: (ms) => {
         return Math.trunc(ms / 1000); // 1000 ms == 1s
@@ -4796,9 +4787,6 @@ Object.defineProperty(mkt, "transMsEmHoras", {
     value: (ms) => {
         return Math.trunc(ms / 3600000); // 1000 * 3600
     }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "transMsEmDias", {
-    enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "transSegundosEmMs", {
     value: (s) => {
@@ -4829,60 +4817,11 @@ Object.defineProperty(mkt, "mkFormatarOA", {
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //			Carregador									\\
 //___________________________________\\
-Object.defineProperty(mkt, "CarregarON", {
-    enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "CarregarOFF", {
-    enumerable: false, writable: false, configurable: false,
-});
 Object.defineProperty(mkt, "CarregarHtml", {
     value: (estilo = "", classe = "relative") => {
         return `<div class="CarregadorMk ${classe}" style="${estilo}"></div>`;
     }, enumerable: false, writable: false, configurable: false,
 });
-//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-//			REQUEST											\\
-//___________________________________\\
-Object.defineProperty(mkt, "get", {
-    enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "post", {
-    enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "request", {
-    enumerable: false, writable: false, configurable: false,
-});
-//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-//			LISTAGEM										\\
-//___________________________________\\
-Object.defineProperty(mkt, "getObjetoFromId", {
-    enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "setObjetoFromId", {
-    enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "delObjetoFromId", {
-    enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "processoFiltragem", {
-    enumerable: false, writable: false, configurable: false,
-});
-//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-//			ORDER LIST									\\
-//___________________________________\\
-Object.defineProperty(mkt, "ordenar", {
-    enumerable: false, writable: false, configurable: false,
-});
-//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-//	 MASCARAS, REGEX E	VALIDADOR		\\
-//___________________________________\\
-Object.defineProperty(mkt, "mascarar", {
-    enumerable: false, writable: false, configurable: false,
-});
-//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-//   Variaveis Estáticas            \\
-//___________________________________\\
-Object.defineProperty(mkt, "a", { enumerable: false, writable: false, configurable: false });
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //   HEAD MENU                      \\
 //___________________________________\\
@@ -4890,12 +4829,6 @@ Object.defineProperty(mkt, "headMenuHideX", {
     value: () => {
         mkt.Q("body .mkHeadMenu")?.classList.add("oculto");
     }, enumerable: false, writable: false, configurable: false,
-});
-//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-//   ABA                            \\
-//___________________________________\\
-Object.defineProperty(mkt, "mkClicarNaAba", {
-    enumerable: false, writable: false, configurable: false,
 });
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //			REGRAR E VALIDAR						\\
@@ -4950,27 +4883,6 @@ Object.defineProperty(mkt, "regrar", {
             mkt.w("Regrar Requer Elemento (" + nome + "): ", e, " Container: ", container);
         }
     }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "vibrar", {
-    enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "estaValido", {
-    enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "exeregra", {
-    enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "regraDisplay", {
-    enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "regraClear", {
-    enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "desregrar", {
-    enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "TerremotoErros", {
-    enumerable: false, writable: false, configurable: false,
 });
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //			FASEADOR / FasearMK (OBJ)		\\
@@ -5141,21 +5053,6 @@ Object.defineProperty(mkt, "fase", {
         }
         return new FasearMK(possiveis, config);
     }, enumerable: false, writable: false, configurable: false,
-});
-//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-//			MK Molde (Template/Modelo)	\\
-//___________________________________\\
-Object.defineProperty(mkt, "removerAspas", {
-    enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "getV", {
-    enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "mkToValue", {
-    enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "mkMoldeOA", {
-    enumerable: false, writable: false, configurable: false,
 });
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //			MK Include									\\
@@ -5384,9 +5281,6 @@ Object.defineProperty(mkt, "getParentScrollTop", {
         return soma;
     }, enumerable: false, writable: false, configurable: false,
 });
-Object.defineProperty(mkt, "Reposicionar", {
-    enumerable: false, writable: false, configurable: false,
-});
 Object.defineProperty(mkt, "mkSelPesquisaBlur", {
     value: (e) => {
         mkt.mkSelUpdate(e.parentElement.previousElementSibling);
@@ -5524,18 +5418,6 @@ Object.defineProperty(mkt, "mkSelMoveBaixo", {
     }, enumerable: false, writable: false, configurable: false,
 });
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-//   Erros do LocalStorage          \\
-//___________________________________\\
-Object.defineProperty(mkt, "errosLog", {
-    enumerable: false, writable: false, configurable: false,
-});
-//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-//   IMPORTAR                       \\
-//___________________________________\\
-Object.defineProperty(mkt, "importar", {
-    enumerable: false, writable: false, configurable: false,
-});
-//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //			AREA FASEADO (OLD)					\\
 //___________________________________\\
 Object.defineProperty(mkt, "fUIFaseUpdateLinkFase", {
@@ -5559,30 +5441,6 @@ Object.defineProperty(mkt, "fUIFaseUpdateLinkFase", {
         });
     }, enumerable: false, writable: false, configurable: false,
 });
-//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-//   UTEIS                          \\
-//___________________________________\\
-Object.defineProperty(mkt, "classof", {
-    enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "toString", {
-    enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "uuid", {
-    value: () => {
-        // Padrão UUIDV4 - Gerador de identificador unico
-        return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, (c) => {
-            return (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16);
-        });
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "Inicializar", {
-    enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "exeTimer", {
-    enumerable: false, writable: false, configurable: false,
-});
-//Object.defineProperty(mkt , undefined ,{enumerable: false, writable: false, configurable: false});
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //   Auto Inicializar               \\
 //___________________________________\\
