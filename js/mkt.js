@@ -3685,24 +3685,587 @@ class mkt {
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //                     Web Components                                      \\
     //==========================================================================\\
-    static mkSelTabIndex;
-    static mkSelMoveu;
-    static mkSelPopularLista;
-    static mkSelUpdate;
-    static mkSelDelRefillProcesso;
-    static mkSelGetKV;
-    static mkSelGetMap;
-    static mkSelArrayGetKV;
-    static mkSelArraySetKV;
-    static mkSelArrayGetMap;
-    static mkSelArraySetMap;
-    static mkSelSelecionar;
-    static mkSelSetDisplay;
-    static mkSelRenderizar;
-    static mkSelRenderizarElemento;
-    static mkRecRenderizar;
-    static mkRecUpdate;
-    static mkBotCheck;
+    static mkSelTabIndex = (e) => {
+        // Se elemento estiver DISABLED atualiza TABINDEX
+        if (e.classList.contains("disabled")) {
+            let pes = e.nextElementSibling;
+            if (pes) {
+                if (pes.classList.contains("mkSelPesquisa")) {
+                    pes.firstElementChild?.setAttribute("tabindex", "-1");
+                }
+            }
+        }
+        else {
+            let pes = e.nextElementSibling;
+            if (pes) {
+                if (pes.classList.contains("mkSelPesquisa")) {
+                    pes.firstElementChild?.removeAttribute("tabindex");
+                }
+            }
+        }
+    };
+    static mkSelMoveu = (e) => {
+        if (e.firstElementChild.classList.contains("mkSelItemDeCima")) {
+            e.firstElementChild.style.display = "";
+            e.lastElementChild.style.display = "";
+        }
+    };
+    static mkSelPopularLista = (e) => {
+        // GERA CADA ITEM DA LISTA COM BASE NO JSON
+        if (e.getAttribute("data-selarray") != "") {
+            let eList = e.nextElementSibling.nextElementSibling;
+            eList.innerHTML = "";
+            try {
+                let seletorArray = mkt.parseJSON(e.getAttribute("data-selarray"));
+                if (seletorArray != null) {
+                    let c = 0;
+                    /* ITENS */
+                    seletorArray.forEach((o) => {
+                        if (o.k != null) {
+                            c++;
+                            let divMkSeletorItem = document.createElement("div");
+                            let divMkSeletorItemTexto = document.createElement("span");
+                            let divMkSeletorItemArrow = document.createElement("div");
+                            divMkSeletorItem.className = "mkSelItem";
+                            divMkSeletorItemArrow.className = "mkSelItemArrow";
+                            divMkSeletorItem.setAttribute("data-k", o.k);
+                            divMkSeletorItem.setAttribute("onmousedown", "mkt.mkSelSelecionar(this)");
+                            divMkSeletorItemTexto.innerHTML = o.v;
+                            divMkSeletorItem.appendChild(divMkSeletorItemTexto);
+                            divMkSeletorItem.appendChild(divMkSeletorItemArrow);
+                            eList.appendChild(divMkSeletorItem);
+                        }
+                    });
+                    if (c <= 0) {
+                        eList.innerHTML = "Nenhuma opção";
+                    }
+                    else if (c > 10) {
+                        if (e.getAttribute("data-selmove") != "false") {
+                            let divMkSelCima = document.createElement("div");
+                            divMkSelCima.className = "mkSelItemDeCima microPos2";
+                            divMkSelCima.setAttribute("onmousemove", "mkt.mkSelMoveCima(this);");
+                            divMkSelCima.innerHTML = "↑ ↑ ↑";
+                            eList.insertBefore(divMkSelCima, eList.firstElementChild);
+                            let divMkSelBaixo = document.createElement("div");
+                            divMkSelBaixo.className = "mkSelItemDeBaixo microPos8";
+                            divMkSelBaixo.setAttribute("onmousemove", "mkt.mkSelMoveBaixo(this);");
+                            divMkSelBaixo.innerHTML = "↓ ↓ ↓";
+                            eList.appendChild(divMkSelBaixo);
+                        }
+                    }
+                }
+            }
+            catch {
+                mkt.erro("Erro durante conversao para Json:" + e.getAttribute("data-selarray"));
+            }
+        }
+    };
+    static mkSelUpdate = (e, KV = null) => {
+        if (KV == null) {
+            KV = mkt.mkSelGetKV(e);
+        }
+        // Desmarcar todos mkSelItem pra 0
+        Array.from(e.nextElementSibling.nextElementSibling.children).forEach((el) => {
+            el.setAttribute("data-s", "0");
+        });
+        KV?.forEach((o) => {
+            /* Marcar mkSelItem pra 1 onde tem K selecionado */
+            Array.from(e.nextElementSibling.nextElementSibling.children).forEach((item) => {
+                if (item.getAttribute("data-k") == o.k) {
+                    item.setAttribute("data-s", "1");
+                }
+            });
+        });
+        // Seta Valor do display
+        mkt.mkSelSetDisplay(e, KV);
+    };
+    static mkSelDelRefillProcesso = async (eName, cod = null) => {
+        return new Promise(async (r) => {
+            let e = mkt.Q(eName);
+            if (e) {
+                // Se há o elemento, e para evitar puxar várias veses a mesma lista, adiciona-se uma classe no inicio e tira-se quando concluiu. Se já tem, não refaz.
+                if (!e.classList.contains("refilling")) {
+                    e.classList.add("refilling");
+                    let url = appPath + e.getAttribute("data-refill");
+                    cod != null ? (url += cod) : null;
+                    let p = await mkt.get.json(url);
+                    if (p.retorno != null) {
+                        let kv = p.retorno;
+                        // Se vier um Json em string, Tenta virar pra objeto pra ter certeza que o sistema vai conseguir fazer isso depois.
+                        if (mkt.isJson(kv)) {
+                            kv = mkt.parseJSON(kv);
+                        }
+                        // Se o KV está em forma de objeto, então prepara para colocar no campo.
+                        let tipoKV = mkt.classof(kv);
+                        if (tipoKV == "Array") {
+                            kv = mkt.stringify(p.retorno);
+                            e.setAttribute("data-selarray", kv);
+                            e.classList.remove("refilling");
+                            r(e);
+                        }
+                        else {
+                            mkt.erro("mkSelDelRefillProcesso() - Refill precisa receber uma Array de KVs: ", tipoKV);
+                        }
+                    }
+                } // Apenas 1 rewfill por vez
+            }
+            else {
+                mkt.w("Função (mkSelDlRefill) solicitou Refill em um campo inexistente (JS)");
+            }
+        });
+    };
+    static mkSelGetKV = (e) => {
+        let kSels;
+        let kOpcoes;
+        // Lista de Selecoes vira K do KV
+        if (mkt.isJson(e.value)) {
+            kSels = mkt.parseJSON(e.value);
+            if (!Array.isArray(kSels)) {
+                kSels = [{ k: kSels }];
+            }
+            else {
+                kSels = [];
+                mkt.parseJSON(e.value).forEach((kSel) => {
+                    kSels.push({ k: kSel });
+                });
+            }
+        }
+        else
+            kSels = [{ k: e.value }];
+        // Prepara lista de Opções para iterar
+        if (mkt.isJson(e.dataset.selarray)) {
+            kOpcoes = mkt.parseJSON(e.dataset.selarray);
+            if (!Array.isArray(kOpcoes)) {
+                kOpcoes = [{ k: kOpcoes, v: "\u{2209} Opções" }];
+            }
+        }
+        else
+            kOpcoes = null;
+        if (kOpcoes != null) {
+            // Acrescentar V ao KV
+            kSels.forEach((objKv) => {
+                kOpcoes.forEach((opcao) => {
+                    if (opcao.k == objKv.k) {
+                        objKv.v = opcao.v;
+                    }
+                });
+            });
+        }
+        return kSels;
+    };
+    static mkSelGetMap = (e) => {
+        let kv = mkt.mkSelGetKV(e);
+        let map = [];
+        kv.forEach((o) => {
+            map.push([o.k, o.v]);
+        });
+        return new Map(map);
+    };
+    static mkSelArrayGetKV = (e) => {
+        let kv = e.dataset.selarray;
+        if (mkt.isJson(kv)) {
+            kv = mkt.parseJSON(kv);
+        }
+        return kv;
+    };
+    static mkSelArraySetKV = (e, kv) => {
+        let kvj = mkt.stringify(kv);
+        e.dataset.selarray = kvj;
+        e.classList.add("atualizarSemEvento");
+        return e;
+    };
+    static mkSelArrayGetMap = (e) => {
+        let kvs = e.dataset.selarray;
+        let map = [];
+        if (mkt.isJson(kvs)) {
+            let kv = mkt.parseJSON(kvs);
+            kv.forEach((o) => {
+                map.push([o.k, o.v]);
+            });
+        }
+        return new Map(map);
+    };
+    static mkSelArraySetMap = (e, map) => {
+        if (e) {
+            if (map instanceof Map) {
+                let kv = [];
+                for (let [k, v] of map) {
+                    kv.push({
+                        k: k,
+                        v: v,
+                    });
+                }
+                mkt.mkSelArraySetKV(e, kv);
+            }
+            else {
+                mkt.w("Função mkSelArraySetMap() precisa receber um objeto formato Map no segundo parametro");
+            }
+            return e;
+        }
+        else {
+            mkt.w("Função mkSelArraySetMap() precisa receber o elemento no primeiro parametro");
+            return null;
+        }
+    };
+    static mkSelSelecionar = (eItem) => {
+        let ePrincipal = eItem.parentElement?.parentElement?.firstElementChild;
+        let KV = mkt.mkSelGetKV(ePrincipal);
+        // Obtem limite de seleções
+        let selapenas = ePrincipal?.getAttribute("data-selapenas") || 1;
+        let selLimit = Number(selapenas);
+        // QUANDO O LIMITE é 1
+        if (selLimit == 1) {
+            // Muda valor do input pelo clicado e Gera o evento
+            ePrincipal.value = eItem.getAttribute("data-k");
+            ePrincipal?.dispatchEvent(new Event("input"));
+            // Transfere valor para o Display (Exibe)
+            (eItem?.parentElement?.previousElementSibling?.firstElementChild).value =
+                eItem.innerHTML;
+        }
+        else if (selLimit > 1 || selLimit < 0) {
+            let itemK = eItem.getAttribute("data-k");
+            let jaSelecionado = 0;
+            // Forma um array caso ainda não seja, pois pode seleconar mais de um.
+            let arraySelecionado = [];
+            // Verifica se algum KV.k é o K clicado. (Para saber se vai adicionar ou remover)
+            KV.forEach((ObjKV) => {
+                arraySelecionado.push(ObjKV.k.toString());
+                if (ObjKV.k == itemK)
+                    jaSelecionado++;
+            });
+            if (jaSelecionado > 0) {
+                // Remove valor da lista selecionada
+                arraySelecionado.splice(arraySelecionado.indexOf(itemK), 1);
+            }
+            else {
+                // Verifica se é possivel selecionar mais (Se estiver negativo, pode selecionar infinito)
+                if (arraySelecionado.length < selLimit || selLimit < 0) {
+                    // Acrescenta valor
+                    arraySelecionado.push(itemK);
+                }
+            }
+            // Limpar seleções vazias
+            arraySelecionado.forEach((item) => {
+                if (item == "") {
+                    arraySelecionado.splice(arraySelecionado.indexOf(item), 1);
+                }
+            });
+            // Quando estiver vazio, reseta o campo.
+            // Seta o valor no campo de input
+            if (arraySelecionado.length == 0) {
+                ePrincipal.value = ePrincipal.defaultValue;
+            }
+            else {
+                let string = mkt.stringify(arraySelecionado);
+                if (ePrincipal.type == "text")
+                    ePrincipal.value = string;
+                else
+                    mkt.erro("Erro durante o Set/Conversão do campo. É necessário que este campo seja tipo string.");
+            }
+            // Gera o Evento
+            ePrincipal.dispatchEvent(new Event("input"));
+            // Mantem foco no Display, pois pode selecionar mais de um
+            setTimeout(() => {
+                eItem.parentElement.previousElementSibling.firstElementChild.focus();
+            }, 1);
+        }
+        mkt.mkSelUpdate(ePrincipal);
+        // Evento change apos terminar a atualizacao
+        ePrincipal.dispatchEvent(new Event("change"));
+    };
+    static mkSelSetDisplay = (e, KV) => {
+        if (KV.length <= 0) {
+            mkt.w("Não foi possível encontrar os itens selecionados.");
+            e.nextElementSibling.firstElementChild.value = "Opções \u{2209}";
+        }
+        else {
+            if (KV.length == 1) {
+                let display = "-- Selecione --";
+                if (KV[0].v != null) {
+                    display = KV[0].v;
+                }
+                if (display == "-- Selecione --") {
+                    // Criado um argumento indicando que o VALOR do campo está dessincronizado com as POSSIBILIDADDES em kv.
+                    e.dataset.selerror = "true";
+                    e.dataset.selerrorMsg =
+                        "O item selecionado não está na lista de possibilidades";
+                }
+                else {
+                    e.dataset.selerror = "false";
+                    e.dataset.selerrorMsg = "";
+                }
+                e.nextElementSibling.firstElementChild.value = display;
+            }
+            else if (KV.length > 1) {
+                e.nextElementSibling.firstElementChild.value =
+                    "[" + KV.length + "] Selecionados";
+            }
+        }
+    };
+    static mkSelRenderizar = async () => {
+        mkt.QAll("input.mkSel").forEach(async (e) => {
+            mkt.mkSelRenderizarElemento(e);
+            // Transforma elemento se ele ainda não foi transformado
+            if (e.parentElement?.classList.contains("mkSelBloco")) {
+                // Se não tem array, mas tem o refill e entrou para atualizar, faz o processo de refill genérico
+                if (!e.getAttribute("data-selarray") && e.getAttribute("data-refill")) {
+                    await mkt.mkSelDelRefillProcesso(e);
+                }
+                // Atualiza a lista com base na classe "atualizar" (Gera Evento input e change)
+                if (e.classList.contains("atualizar")) {
+                    e.classList.remove("atualizar");
+                    e.classList.add("atualizando");
+                    mkt.mkSelPopularLista(e);
+                    mkt.mkSelUpdate(e);
+                    // Executa evento, em todos atualizar.
+                    // O evento serve para que ao trocar o 1, o 2 execute input para então o 3 tb ter como saber que é pra atualizar
+                    e.dispatchEvent(new Event("input"));
+                    e.dispatchEvent(new Event("change"));
+                    e.classList.remove("atualizando");
+                }
+                if (e.classList.contains("atualizarSemEvento")) {
+                    e.classList.remove("atualizarSemEvento");
+                    e.classList.add("atualizando");
+                    mkt.mkSelPopularLista(e);
+                    mkt.mkSelUpdate(e);
+                    e.classList.remove("atualizando");
+                }
+                // Manter index em -1 para não chegar até esse campo
+                e.setAttribute("tabindex", "-1");
+                mkt.mkSelTabIndex(e);
+            }
+        });
+    };
+    static mkSelRenderizarElemento = async (e) => {
+        // Transforma elemento se ele ainda não foi transformado
+        if (!e.parentElement?.classList.contains("mkSelBloco")) {
+            // COLETA
+            let ePai = e.parentElement;
+            let ePos = Array.from(ePai?.children).indexOf(e);
+            // ELEMENTO no BLOCO
+            let divMkSeletorBloco = document.createElement("div");
+            let divMkSeletorPesquisa = document.createElement("div");
+            let divMkSeletorInputExibe = document.createElement("input");
+            let divMkSeletorInputExibeArrow = document.createElement("div");
+            let divMkSeletorList = document.createElement("div");
+            // Nomeando Classes
+            divMkSeletorBloco.className = "mkSelBloco";
+            divMkSeletorPesquisa.className = "mkSelPesquisa";
+            divMkSeletorInputExibe.className = "mkSelInputExibe";
+            divMkSeletorInputExibeArrow.className = "mkSelInputExibeArrow";
+            divMkSeletorList.className = "mkSelList";
+            // ORDEM no DOM
+            ePai?.insertBefore(divMkSeletorBloco, ePai?.children[ePos]);
+            divMkSeletorBloco.appendChild(e);
+            divMkSeletorBloco.appendChild(divMkSeletorPesquisa);
+            divMkSeletorBloco.appendChild(divMkSeletorList);
+            divMkSeletorPesquisa.appendChild(divMkSeletorInputExibe);
+            divMkSeletorPesquisa.appendChild(divMkSeletorInputExibeArrow);
+            // Transfere style
+            divMkSeletorBloco.setAttribute("style", e.getAttribute("style") ?? "");
+            // Flexas que movem o selecionado quando há apenas 1 possibilidade de selecao.
+            if (e.getAttribute("data-selmovesel") == "true" &&
+                e.getAttribute("data-selapenas") == "1") {
+                let divMkSelArrowSelLeft = document.createElement("div");
+                let divMkSelArrowSelRight = document.createElement("div");
+                divMkSelArrowSelLeft.className = "mkSelArrowSelLeft microPos6";
+                divMkSelArrowSelRight.className = "mkSelArrowSelRight microPos4";
+                divMkSeletorPesquisa.appendChild(divMkSelArrowSelLeft);
+                divMkSeletorPesquisa.appendChild(divMkSelArrowSelRight);
+                divMkSelArrowSelLeft.setAttribute("onclick", "mkt.mkSelLeftSel(this)");
+                divMkSelArrowSelRight.setAttribute("onclick", "mkt.mkSelRightSel(this)");
+                divMkSeletorBloco.style.setProperty("--mkSelArrowSize", "24px");
+            }
+            // Seta atributos e Gatilhos
+            e.removeAttribute("style");
+            e.setAttribute("readonly", "true");
+            e.setAttribute("tabindex", "-1");
+            mkt.mkSelTabIndex(e);
+            divMkSeletorInputExibe.setAttribute("placeholder", "Filtro \u{1F50D}");
+            divMkSeletorInputExibe.setAttribute("onfocus", "mkt.mkSelPesquisaFocus(this)");
+            divMkSeletorInputExibe.setAttribute("onblur", "mkt.mkSelPesquisaBlur(this)");
+            divMkSeletorInputExibe.setAttribute("oninput", "mkt.mkSelPesquisaInput(this)");
+            divMkSeletorInputExibe.setAttribute("onkeydown", "mkt.mkSelPesquisaKeyDown(event)");
+            divMkSeletorInputExibe.setAttribute("autocomplete", "off");
+            divMkSeletorList.addEventListener("scroll", (ev) => {
+                mkt.mkSelMoveu(ev.target);
+            });
+            // Popular Lista
+            mkt.mkSelPopularLista(e);
+            // Seleciona baseado no value do input
+            mkt.mkSelUpdate(e);
+            // Deixar Elemento de forma visivel, mas inacessivel.
+            if (e.getAttribute("data-dev") != "true") {
+                e.classList.add("mkSecreto");
+            }
+            // Segue o Elemento durante o scroll.
+            document.addEventListener("scroll", (event) => {
+                mkt.Reposicionar(divMkSeletorList, true);
+            });
+            window.addEventListener("resize", (event) => {
+                mkt.Reposicionar(divMkSeletorList, true);
+            });
+        }
+    };
+    static mkRecRenderizar = async () => {
+        mkt.QAll("input.mkRec").forEach(async (e) => {
+            // Gerar Elemento de recomendações
+            if (!e.nextElementSibling?.classList.contains("mkRecList")) {
+                let ePai = e.parentElement;
+                let ePos = Array.from(ePai?.children).indexOf(e);
+                let divMkRecList = document.createElement("div");
+                divMkRecList.className = "mkRecList emFoco";
+                divMkRecList.setAttribute("tabindex", "-1");
+                ePai?.insertBefore(divMkRecList, ePai?.children[ePos + 1]);
+                // Incrementar Evento
+                let oninput = e.getAttribute("oninput");
+                if (!oninput || !oninput.includes(";mkt.mkRecUpdate(this)")) {
+                    e.setAttribute("oninput", oninput + ";mkt.mkRecUpdate(this)");
+                }
+                let onfocus = e.getAttribute("onfocus");
+                if (!onfocus || !onfocus.includes(";mkt.mkRecFoco(this,true)")) {
+                    e.setAttribute("onfocus", onfocus + ";mkt.mkRecFoco(this,true)");
+                }
+                let onblur = e.getAttribute("onblur");
+                if (!onblur || !onblur.includes(";mkt.mkRecFoco(this,false)")) {
+                    e.setAttribute("onblur", onblur + ";mkt.mkRecFoco(this,false)");
+                }
+                e.setAttribute("autocomplete", "off");
+                // Seguir o Elemento durante o scroll e resize
+                document.addEventListener("scroll", (event) => {
+                    mkt.Reposicionar(divMkRecList, false);
+                });
+                window.addEventListener("resize", (event) => {
+                    mkt.Reposicionar(divMkRecList, true);
+                });
+                mkt.mkRecUpdate(e);
+            }
+            else {
+                if (!e.getAttribute("data-selarray") && e.getAttribute("data-refill")) {
+                    // REC não foi implementado refill
+                    //await mkt.mkRecDelRefillProcesso(e as HTMLElement);
+                }
+                let geraEvento = false;
+                if (e.classList.contains("atualizar"))
+                    geraEvento = true;
+                // Atualiza a lista com base na classe "atualizar" (Gera Evento input e change)
+                if (e.classList.contains("atualizar") || e.classList.contains("atualizarSemEvento")) {
+                    e.classList.remove("atualizar");
+                    e.classList.remove("atualizarSemEvento");
+                    e.classList.add("atualizando");
+                    mkt.mkRecUpdate(e);
+                    e.classList.remove("atualizando");
+                }
+                if (geraEvento) {
+                    // Executa evento, em todos atualizar.
+                    // O evento serve para que ao trocar o 1, o 2 execute input para então o 3 tb ter como saber que é pra atualizar
+                    e.dispatchEvent(new Event("input"));
+                    e.dispatchEvent(new Event("change"));
+                }
+            }
+        });
+    };
+    static mkRecUpdate = (e) => {
+        // Recebe o elemento input principal.
+        // GERA CADA ITEM DA LISTA COM BASE NO JSON
+        if (e?.getAttribute("data-selarray") != "") {
+            let eList = e.nextElementSibling;
+            let array = e.dataset.selarray;
+            eList.innerHTML = "";
+            if (mkt.isJson(array)) {
+                let kvList = mkt.parseJSON(array);
+                let c = 0;
+                /* ITENS */
+                kvList.forEach((o) => {
+                    if (o.v != null && o.v != "") {
+                        if (mkt.like(e.value, o.v) && e.value.trim() != o.v.trim()) {
+                            c++;
+                            let item = document.createElement("div");
+                            let itemTexto = document.createElement("span");
+                            item.className = "recItem";
+                            item.setAttribute("data-k", o.k);
+                            item.setAttribute("onmousedown", "mkt.mkRecChange(this,'" + o.v + "')");
+                            itemTexto.innerHTML = o.v;
+                            item.appendChild(itemTexto);
+                            eList.appendChild(item);
+                        }
+                    }
+                });
+                if (c <= 0) {
+                    eList.innerHTML = "Sem recomendações";
+                }
+            }
+            else {
+                mkt.w("mkRecUpdate(e):  atributo selarray Não é um JSON válido: ", array);
+            }
+        }
+        else {
+            mkt.w("mkRecUpdate(e): Elemento não encontrado ou selarray dele está vazia.", e);
+        }
+    };
+    static mkBotCheck = async () => {
+        // Botao incluido uma imagem/pdf visualizavel e clicavel.
+        // Valor inicial no value, quando não presente, exibe data-value.
+        mkt.QAll("button.mkBot").forEach(async (e) => {
+            // Apenas quando contem Atualizar
+            let semEvento = e.classList.contains("atualizarSemEvento");
+            if (e.classList.contains("atualizar") || semEvento) {
+                e.classList.remove("atualizar");
+                e.classList.remove("atualizarSemEvento");
+                e.classList.add("atualizando");
+                // - Remove conteudo
+                e.innerHTML = "";
+                // - Coleta value do campo (ex: botao tem value="/img/teste.jpg")
+                let v = e.getAttribute("value");
+                // - Caso Nulo, Tentar pelo dataset
+                if (v == null || v == "") {
+                    v = e.dataset.value;
+                }
+                let clicavel = e.dataset.clicavel;
+                let exibirbarra = e.dataset.exibirbarra;
+                if (v != null && v != "") {
+                    let tipo = null;
+                    let terminacao = v.slice(v.length - 3, v.length).toString().toLowerCase();
+                    // Verificar aqui se trata-se de um link ou de uma base64 direto no elemento.					
+                    // - Verifica se terminacao do arquivo é PDF ou OUTRO,
+                    if ((v.includes("application/pdf")) || (terminacao == "pdf")) {
+                        tipo = "pdf";
+                    }
+                    // << Inicio do conteúdo
+                    let retornar = "<";
+                    // FORMATOS DE ARQUIVO
+                    if (tipo == "pdf") {
+                        retornar += "embed type='application/pdf' class='mkCem mkBotEmbed' src='" + v;
+                    }
+                    else {
+                        retornar +=
+                            e.innerHTML = "img class='mkCem' src='" + v;
+                    }
+                    if (exibirbarra) {
+                        retornar += "#toolbar=0";
+                    }
+                    // << Fim o conteúdo
+                    retornar += "'>";
+                    // Se é ou não clicavel
+                    if (!clicavel) {
+                        retornar += "<div class='mkBotSobre'></div>";
+                    }
+                    // Set
+                    e.innerHTML = retornar;
+                    // Ao concluir, tenta executar atributo onchange, se houver
+                    if (!semEvento) {
+                        if (e.onchange) {
+                            e.onchange();
+                        }
+                    }
+                }
+                else {
+                    mkt.w("Elemento com 'value' nulo. Esperava-se conteudo: ", v);
+                }
+                e.classList.remove("atualizando");
+            }
+        });
+    };
 } // FIM CLASSE MKT
 // Object.keys(mkt).forEach((n) => {
 // 	Object.defineProperty(mkt, n, { enumerable: false, writable: false, configurable: false });
@@ -4706,177 +5269,6 @@ Object.defineProperty(mkt, "mkConfirma", {
         });
     }, enumerable: false, writable: false, configurable: false,
 });
-//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-//			MK Botao Imagem (mkBot)			\\
-//___________________________________\\
-Object.defineProperty(mkt, "mkBotCheck", {
-    value: async () => {
-        // Botao incluido uma imagem/pdf visualizavel e clicavel.
-        // Valor inicial no value, quando não presente, exibe data-value.
-        mkt.QAll("button.mkBot").forEach(async (e) => {
-            // Apenas quando contem Atualizar
-            let semEvento = e.classList.contains("atualizarSemEvento");
-            if (e.classList.contains("atualizar") || semEvento) {
-                e.classList.remove("atualizar");
-                e.classList.remove("atualizarSemEvento");
-                e.classList.add("atualizando");
-                // - Remove conteudo
-                e.innerHTML = "";
-                // - Coleta value do campo (ex: botao tem value="/img/teste.jpg")
-                let v = e.getAttribute("value");
-                // - Caso Nulo, Tentar pelo dataset
-                if (v == null || v == "") {
-                    v = e.dataset.value;
-                }
-                let clicavel = e.dataset.clicavel;
-                let exibirbarra = e.dataset.exibirbarra;
-                if (v != null && v != "") {
-                    let tipo = null;
-                    let terminacao = v.slice(v.length - 3, v.length).toString().toLowerCase();
-                    // Verificar aqui se trata-se de um link ou de uma base64 direto no elemento.					
-                    // - Verifica se terminacao do arquivo é PDF ou OUTRO,
-                    if ((v.includes("application/pdf")) || (terminacao == "pdf")) {
-                        tipo = "pdf";
-                    }
-                    // << Inicio do conteúdo
-                    let retornar = "<";
-                    // FORMATOS DE ARQUIVO
-                    if (tipo == "pdf") {
-                        retornar += "embed type='application/pdf' class='mkCem mkBotEmbed' src='" + v;
-                    }
-                    else {
-                        retornar +=
-                            e.innerHTML = "img class='mkCem' src='" + v;
-                    }
-                    if (exibirbarra) {
-                        retornar += "#toolbar=0";
-                    }
-                    // << Fim o conteúdo
-                    retornar += "'>";
-                    // Se é ou não clicavel
-                    if (!clicavel) {
-                        retornar += "<div class='mkBotSobre'></div>";
-                    }
-                    // Set
-                    e.innerHTML = retornar;
-                    // Ao concluir, tenta executar atributo onchange, se houver
-                    if (!semEvento) {
-                        if (e.onchange) {
-                            e.onchange();
-                        }
-                    }
-                }
-                else {
-                    mkt.w("Elemento com 'value' nulo. Esperava-se conteudo: ", v);
-                }
-                e.classList.remove("atualizando");
-            }
-        });
-    }, enumerable: false, writable: false, configurable: false,
-});
-//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-//			MK Recomendador (mkRec)			\\
-//___________________________________\\
-Object.defineProperty(mkt, "mkRecRenderizar", {
-    value: async () => {
-        mkt.QAll("input.mkRec").forEach(async (e) => {
-            // Gerar Elemento de recomendações
-            if (!e.nextElementSibling?.classList.contains("mkRecList")) {
-                let ePai = e.parentElement;
-                let ePos = Array.from(ePai?.children).indexOf(e);
-                let divMkRecList = document.createElement("div");
-                divMkRecList.className = "mkRecList emFoco";
-                divMkRecList.setAttribute("tabindex", "-1");
-                ePai?.insertBefore(divMkRecList, ePai?.children[ePos + 1]);
-                // Incrementar Evento
-                let oninput = e.getAttribute("oninput");
-                if (!oninput || !oninput.includes(";mkt.mkRecUpdate(this)")) {
-                    e.setAttribute("oninput", oninput + ";mkt.mkRecUpdate(this)");
-                }
-                let onfocus = e.getAttribute("onfocus");
-                if (!onfocus || !onfocus.includes(";mkt.mkRecFoco(this,true)")) {
-                    e.setAttribute("onfocus", onfocus + ";mkt.mkRecFoco(this,true)");
-                }
-                let onblur = e.getAttribute("onblur");
-                if (!onblur || !onblur.includes(";mkt.mkRecFoco(this,false)")) {
-                    e.setAttribute("onblur", onblur + ";mkt.mkRecFoco(this,false)");
-                }
-                e.setAttribute("autocomplete", "off");
-                // Seguir o Elemento durante o scroll e resize
-                document.addEventListener("scroll", (event) => {
-                    mkt.Reposicionar(divMkRecList, false);
-                });
-                window.addEventListener("resize", (event) => {
-                    mkt.Reposicionar(divMkRecList, true);
-                });
-                mkt.mkRecUpdate(e);
-            }
-            else {
-                if (!e.getAttribute("data-selarray") && e.getAttribute("data-refill")) {
-                    // REC não foi implementado refill
-                    //await mkt.mkRecDelRefillProcesso(e as HTMLElement);
-                }
-                let geraEvento = false;
-                if (e.classList.contains("atualizar"))
-                    geraEvento = true;
-                // Atualiza a lista com base na classe "atualizar" (Gera Evento input e change)
-                if (e.classList.contains("atualizar") || e.classList.contains("atualizarSemEvento")) {
-                    e.classList.remove("atualizar");
-                    e.classList.remove("atualizarSemEvento");
-                    e.classList.add("atualizando");
-                    mkt.mkRecUpdate(e);
-                    e.classList.remove("atualizando");
-                }
-                if (geraEvento) {
-                    // Executa evento, em todos atualizar.
-                    // O evento serve para que ao trocar o 1, o 2 execute input para então o 3 tb ter como saber que é pra atualizar
-                    e.dispatchEvent(new Event("input"));
-                    e.dispatchEvent(new Event("change"));
-                }
-            }
-        });
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "mkRecUpdate", {
-    value: (e) => {
-        // Recebe o elemento input principal.
-        // GERA CADA ITEM DA LISTA COM BASE NO JSON
-        if (e?.getAttribute("data-selarray") != "") {
-            let eList = e.nextElementSibling;
-            let array = e.dataset.selarray;
-            eList.innerHTML = "";
-            if (mkt.isJson(array)) {
-                let kvList = mkt.parseJSON(array);
-                let c = 0;
-                /* ITENS */
-                kvList.forEach((o) => {
-                    if (o.v != null && o.v != "") {
-                        if (mkt.like(e.value, o.v) && e.value.trim() != o.v.trim()) {
-                            c++;
-                            let item = document.createElement("div");
-                            let itemTexto = document.createElement("span");
-                            item.className = "recItem";
-                            item.setAttribute("data-k", o.k);
-                            item.setAttribute("onmousedown", "mkt.mkRecChange(this,'" + o.v + "')");
-                            itemTexto.innerHTML = o.v;
-                            item.appendChild(itemTexto);
-                            eList.appendChild(item);
-                        }
-                    }
-                });
-                if (c <= 0) {
-                    eList.innerHTML = "Sem recomendações";
-                }
-            }
-            else {
-                mkt.w("mkRecUpdate(e):  atributo selarray Não é um JSON válido: ", array);
-            }
-        }
-        else {
-            mkt.w("mkRecUpdate(e): Elemento não encontrado ou selarray dele está vazia.", e);
-        }
-    }, enumerable: false, writable: false, configurable: false,
-});
 Object.defineProperty(mkt, "mkRecChange", {
     value: (recItem, texto) => {
         let e = recItem?.parentElement?.previousElementSibling;
@@ -4907,155 +5299,6 @@ Object.defineProperty(mkt, "mkRecFoco", {
         mkt.Reposicionar(eList, false);
     }, enumerable: false, writable: false, configurable: false,
 });
-//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-//			MK Seletor (mkSel)					\\
-//___________________________________\\
-Object.defineProperty(mkt, "mkSelRenderizarElemento", {
-    value: async (e) => {
-        // Transforma elemento se ele ainda não foi transformado
-        if (!e.parentElement?.classList.contains("mkSelBloco")) {
-            // COLETA
-            let ePai = e.parentElement;
-            let ePos = Array.from(ePai?.children).indexOf(e);
-            // ELEMENTO no BLOCO
-            let divMkSeletorBloco = document.createElement("div");
-            let divMkSeletorPesquisa = document.createElement("div");
-            let divMkSeletorInputExibe = document.createElement("input");
-            let divMkSeletorInputExibeArrow = document.createElement("div");
-            let divMkSeletorList = document.createElement("div");
-            // Nomeando Classes
-            divMkSeletorBloco.className = "mkSelBloco";
-            divMkSeletorPesquisa.className = "mkSelPesquisa";
-            divMkSeletorInputExibe.className = "mkSelInputExibe";
-            divMkSeletorInputExibeArrow.className = "mkSelInputExibeArrow";
-            divMkSeletorList.className = "mkSelList";
-            // ORDEM no DOM
-            ePai?.insertBefore(divMkSeletorBloco, ePai?.children[ePos]);
-            divMkSeletorBloco.appendChild(e);
-            divMkSeletorBloco.appendChild(divMkSeletorPesquisa);
-            divMkSeletorBloco.appendChild(divMkSeletorList);
-            divMkSeletorPesquisa.appendChild(divMkSeletorInputExibe);
-            divMkSeletorPesquisa.appendChild(divMkSeletorInputExibeArrow);
-            // Transfere style
-            divMkSeletorBloco.setAttribute("style", e.getAttribute("style") ?? "");
-            // Flexas que movem o selecionado quando há apenas 1 possibilidade de selecao.
-            if (e.getAttribute("data-selmovesel") == "true" &&
-                e.getAttribute("data-selapenas") == "1") {
-                let divMkSelArrowSelLeft = document.createElement("div");
-                let divMkSelArrowSelRight = document.createElement("div");
-                divMkSelArrowSelLeft.className = "mkSelArrowSelLeft microPos6";
-                divMkSelArrowSelRight.className = "mkSelArrowSelRight microPos4";
-                divMkSeletorPesquisa.appendChild(divMkSelArrowSelLeft);
-                divMkSeletorPesquisa.appendChild(divMkSelArrowSelRight);
-                divMkSelArrowSelLeft.setAttribute("onclick", "mkt.mkSelLeftSel(this)");
-                divMkSelArrowSelRight.setAttribute("onclick", "mkt.mkSelRightSel(this)");
-                divMkSeletorBloco.style.setProperty("--mkSelArrowSize", "24px");
-            }
-            // Seta atributos e Gatilhos
-            e.removeAttribute("style");
-            e.setAttribute("readonly", "true");
-            e.setAttribute("tabindex", "-1");
-            mkt.mkSelTabIndex(e);
-            divMkSeletorInputExibe.setAttribute("placeholder", "Filtro \u{1F50D}");
-            divMkSeletorInputExibe.setAttribute("onfocus", "mkt.mkSelPesquisaFocus(this)");
-            divMkSeletorInputExibe.setAttribute("onblur", "mkt.mkSelPesquisaBlur(this)");
-            divMkSeletorInputExibe.setAttribute("oninput", "mkt.mkSelPesquisaInput(this)");
-            divMkSeletorInputExibe.setAttribute("onkeydown", "mkt.mkSelPesquisaKeyDown(event)");
-            divMkSeletorInputExibe.setAttribute("autocomplete", "off");
-            divMkSeletorList.addEventListener("scroll", (ev) => {
-                mkt.mkSelMoveu(ev.target);
-            });
-            // Popular Lista
-            mkt.mkSelPopularLista(e);
-            // Seleciona baseado no value do input
-            mkt.mkSelUpdate(e);
-            // Deixar Elemento de forma visivel, mas inacessivel.
-            if (e.getAttribute("data-dev") != "true") {
-                e.classList.add("mkSecreto");
-            }
-            // Segue o Elemento durante o scroll.
-            document.addEventListener("scroll", (event) => {
-                mkt.Reposicionar(divMkSeletorList, true);
-            });
-            window.addEventListener("resize", (event) => {
-                mkt.Reposicionar(divMkSeletorList, true);
-            });
-        }
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "mkSelRenderizar", {
-    value: async () => {
-        mkt.QAll("input.mkSel").forEach(async (e) => {
-            mkt.mkSelRenderizarElemento(e);
-            // Transforma elemento se ele ainda não foi transformado
-            if (e.parentElement?.classList.contains("mkSelBloco")) {
-                // Se não tem array, mas tem o refill e entrou para atualizar, faz o processo de refill genérico
-                if (!e.getAttribute("data-selarray") && e.getAttribute("data-refill")) {
-                    await mkt.mkSelDelRefillProcesso(e);
-                }
-                // Atualiza a lista com base na classe "atualizar" (Gera Evento input e change)
-                if (e.classList.contains("atualizar")) {
-                    e.classList.remove("atualizar");
-                    e.classList.add("atualizando");
-                    mkt.mkSelPopularLista(e);
-                    mkt.mkSelUpdate(e);
-                    // Executa evento, em todos atualizar.
-                    // O evento serve para que ao trocar o 1, o 2 execute input para então o 3 tb ter como saber que é pra atualizar
-                    e.dispatchEvent(new Event("input"));
-                    e.dispatchEvent(new Event("change"));
-                    e.classList.remove("atualizando");
-                }
-                if (e.classList.contains("atualizarSemEvento")) {
-                    e.classList.remove("atualizarSemEvento");
-                    e.classList.add("atualizando");
-                    mkt.mkSelPopularLista(e);
-                    mkt.mkSelUpdate(e);
-                    e.classList.remove("atualizando");
-                }
-                // Manter index em -1 para não chegar até esse campo
-                e.setAttribute("tabindex", "-1");
-                mkt.mkSelTabIndex(e);
-            }
-        });
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "mkSelDelRefillProcesso", {
-    value: async (eName, cod = null) => {
-        return new Promise(async (r) => {
-            let e = mkt.Q(eName);
-            if (e) {
-                // Se há o elemento, e para evitar puxar várias veses a mesma lista, adiciona-se uma classe no inicio e tira-se quando concluiu. Se já tem, não refaz.
-                if (!e.classList.contains("refilling")) {
-                    e.classList.add("refilling");
-                    let url = appPath + e.getAttribute("data-refill");
-                    cod != null ? (url += cod) : null;
-                    let p = await mkt.get.json(url);
-                    if (p.retorno != null) {
-                        let kv = p.retorno;
-                        // Se vier um Json em string, Tenta virar pra objeto pra ter certeza que o sistema vai conseguir fazer isso depois.
-                        if (mkt.isJson(kv)) {
-                            kv = mkt.parseJSON(kv);
-                        }
-                        // Se o KV está em forma de objeto, então prepara para colocar no campo.
-                        let tipoKV = mkt.classof(kv);
-                        if (tipoKV == "Array") {
-                            kv = mkt.stringify(p.retorno);
-                            e.setAttribute("data-selarray", kv);
-                            e.classList.remove("refilling");
-                            r(e);
-                        }
-                        else {
-                            mkt.erro("mkSelDelRefillProcesso() - Refill precisa receber uma Array de KVs: ", tipoKV);
-                        }
-                    }
-                } // Apenas 1 rewfill por vez
-            }
-            else {
-                mkt.w("Função (mkSelDlRefill) solicitou Refill em um campo inexistente (JS)");
-            }
-        });
-    }, enumerable: false, writable: false, configurable: false,
-});
 Object.defineProperty(mkt, "mkSelDlRefill", {
     value: async (eName, cod, clear = true) => {
         mkt.mkSelDelRefillProcesso(eName, cod).then((e) => {
@@ -5063,94 +5306,6 @@ Object.defineProperty(mkt, "mkSelDlRefill", {
                 e.value = "";
             e.classList.add("atualizar");
         });
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "mkSelTabIndex", {
-    value: (e) => {
-        if (e.classList.contains("disabled")) {
-            let pes = e.nextElementSibling;
-            if (pes) {
-                if (pes.classList.contains("mkSelPesquisa")) {
-                    pes.firstElementChild?.setAttribute("tabindex", "-1");
-                }
-            }
-        }
-        else {
-            let pes = e.nextElementSibling;
-            if (pes) {
-                if (pes.classList.contains("mkSelPesquisa")) {
-                    pes.firstElementChild?.removeAttribute("tabindex");
-                }
-            }
-        }
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "mkSelSelecionar", {
-    value: (eItem) => {
-        let ePrincipal = eItem.parentElement?.parentElement?.firstElementChild;
-        let KV = mkt.mkSelGetKV(ePrincipal);
-        // Obtem limite de seleções
-        let selapenas = ePrincipal?.getAttribute("data-selapenas") || 1;
-        let selLimit = Number(selapenas);
-        // QUANDO O LIMITE é 1
-        if (selLimit == 1) {
-            // Muda valor do input pelo clicado e Gera o evento
-            ePrincipal.value = eItem.getAttribute("data-k");
-            ePrincipal?.dispatchEvent(new Event("input"));
-            // Transfere valor para o Display (Exibe)
-            (eItem?.parentElement?.previousElementSibling?.firstElementChild).value =
-                eItem.innerHTML;
-        }
-        else if (selLimit > 1 || selLimit < 0) {
-            let itemK = eItem.getAttribute("data-k");
-            let jaSelecionado = 0;
-            // Forma um array caso ainda não seja, pois pode seleconar mais de um.
-            let arraySelecionado = [];
-            // Verifica se algum KV.k é o K clicado. (Para saber se vai adicionar ou remover)
-            KV.forEach((ObjKV) => {
-                arraySelecionado.push(ObjKV.k.toString());
-                if (ObjKV.k == itemK)
-                    jaSelecionado++;
-            });
-            if (jaSelecionado > 0) {
-                // Remove valor da lista selecionada
-                arraySelecionado.splice(arraySelecionado.indexOf(itemK), 1);
-            }
-            else {
-                // Verifica se é possivel selecionar mais (Se estiver negativo, pode selecionar infinito)
-                if (arraySelecionado.length < selLimit || selLimit < 0) {
-                    // Acrescenta valor
-                    arraySelecionado.push(itemK);
-                }
-            }
-            // Limpar seleções vazias
-            arraySelecionado.forEach((item) => {
-                if (item == "") {
-                    arraySelecionado.splice(arraySelecionado.indexOf(item), 1);
-                }
-            });
-            // Quando estiver vazio, reseta o campo.
-            // Seta o valor no campo de input
-            if (arraySelecionado.length == 0) {
-                ePrincipal.value = ePrincipal.defaultValue;
-            }
-            else {
-                let string = mkt.stringify(arraySelecionado);
-                if (ePrincipal.type == "text")
-                    ePrincipal.value = string;
-                else
-                    mkt.erro("Erro durante o Set/Conversão do campo. É necessário que este campo seja tipo string.");
-            }
-            // Gera o Evento
-            ePrincipal.dispatchEvent(new Event("input"));
-            // Mantem foco no Display, pois pode selecionar mais de um
-            setTimeout(() => {
-                eItem.parentElement.previousElementSibling.firstElementChild.focus();
-            }, 1);
-        }
-        mkt.mkSelUpdate(ePrincipal);
-        // Evento change apos terminar a atualizacao
-        ePrincipal.dispatchEvent(new Event("change"));
     }, enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "mkSelLeftSel", {
@@ -5192,58 +5347,6 @@ Object.defineProperty(mkt, "mkSelRightSel", {
                     ?.nextElementSibling;
             }
             mkt.mkSelSelecionar(eAlvo);
-        }
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "mkSelPopularLista", {
-    value: (e) => {
-        // GERA CADA ITEM DA LISTA COM BASE NO JSON
-        if (e.getAttribute("data-selarray") != "") {
-            let eList = e.nextElementSibling.nextElementSibling;
-            eList.innerHTML = "";
-            try {
-                let seletorArray = mkt.parseJSON(e.getAttribute("data-selarray"));
-                if (seletorArray != null) {
-                    let c = 0;
-                    /* ITENS */
-                    seletorArray.forEach((o) => {
-                        if (o.k != null) {
-                            c++;
-                            let divMkSeletorItem = document.createElement("div");
-                            let divMkSeletorItemTexto = document.createElement("span");
-                            let divMkSeletorItemArrow = document.createElement("div");
-                            divMkSeletorItem.className = "mkSelItem";
-                            divMkSeletorItemArrow.className = "mkSelItemArrow";
-                            divMkSeletorItem.setAttribute("data-k", o.k);
-                            divMkSeletorItem.setAttribute("onmousedown", "mkt.mkSelSelecionar(this)");
-                            divMkSeletorItemTexto.innerHTML = o.v;
-                            divMkSeletorItem.appendChild(divMkSeletorItemTexto);
-                            divMkSeletorItem.appendChild(divMkSeletorItemArrow);
-                            eList.appendChild(divMkSeletorItem);
-                        }
-                    });
-                    if (c <= 0) {
-                        eList.innerHTML = "Nenhuma opção";
-                    }
-                    else if (c > 10) {
-                        if (e.getAttribute("data-selmove") != "false") {
-                            let divMkSelCima = document.createElement("div");
-                            divMkSelCima.className = "mkSelItemDeCima microPos2";
-                            divMkSelCima.setAttribute("onmousemove", "mkt.mkSelMoveCima(this);");
-                            divMkSelCima.innerHTML = "↑ ↑ ↑";
-                            eList.insertBefore(divMkSelCima, eList.firstElementChild);
-                            let divMkSelBaixo = document.createElement("div");
-                            divMkSelBaixo.className = "mkSelItemDeBaixo microPos8";
-                            divMkSelBaixo.setAttribute("onmousemove", "mkt.mkSelMoveBaixo(this);");
-                            divMkSelBaixo.innerHTML = "↓ ↓ ↓";
-                            eList.appendChild(divMkSelBaixo);
-                        }
-                    }
-                }
-            }
-            catch {
-                mkt.erro("Erro durante conversao para Json:" + e.getAttribute("data-selarray"));
-            }
         }
     }, enumerable: false, writable: false, configurable: false,
 });
@@ -5406,14 +5509,6 @@ Object.defineProperty(mkt, "mkSelPesquisaInput", {
         mkt.Reposicionar(eList, true);
     }, enumerable: false, writable: false, configurable: false,
 });
-Object.defineProperty(mkt, "mkSelMoveu", {
-    value: (e) => {
-        if (e.firstElementChild.classList.contains("mkSelItemDeCima")) {
-            e.firstElementChild.style.display = "";
-            e.lastElementChild.style.display = "";
-        }
-    }, enumerable: false, writable: false, configurable: false,
-});
 Object.defineProperty(mkt, "mkSelMoveCima", {
     value: (e) => {
         let eList = e.parentElement;
@@ -5426,163 +5521,6 @@ Object.defineProperty(mkt, "mkSelMoveBaixo", {
         let eList = e.parentElement;
         eList.scrollTop = eList.scrollTop + 5;
         mkt.mkSelMoveu(eList);
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "mkSelUpdate", {
-    value: (e, KV = null) => {
-        if (KV == null) {
-            KV = mkt.mkSelGetKV(e);
-        }
-        // Desmarcar todos mkSelItem pra 0
-        Array.from(e.nextElementSibling.nextElementSibling.children).forEach((el) => {
-            el.setAttribute("data-s", "0");
-        });
-        KV?.forEach((o) => {
-            /* Marcar mkSelItem pra 1 onde tem K selecionado */
-            Array.from(e.nextElementSibling.nextElementSibling.children).forEach((item) => {
-                if (item.getAttribute("data-k") == o.k) {
-                    item.setAttribute("data-s", "1");
-                }
-            });
-        });
-        // Seta Valor do display
-        mkt.mkSelSetDisplay(e, KV);
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "mkSelArraySetMap", {
-    value: (e, map) => {
-        if (e) {
-            if (map instanceof Map) {
-                let kv = [];
-                for (let [k, v] of map) {
-                    kv.push({
-                        k: k,
-                        v: v,
-                    });
-                }
-                mkt.mkSelArraySetKV(e, kv);
-            }
-            else {
-                mkt.w("Função mkSelArraySetMap() precisa receber um objeto formato Map no segundo parametro");
-            }
-            return e;
-        }
-        else {
-            mkt.w("Função mkSelArraySetMap() precisa receber o elemento no primeiro parametro");
-            return null;
-        }
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "mkSelArraySetKV", {
-    value: (e, kv) => {
-        let kvj = mkt.stringify(kv);
-        e.dataset.selarray = kvj;
-        e.classList.add("atualizarSemEvento");
-        return e;
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "mkSelArrayGetMap", {
-    value: (e) => {
-        let kvs = e.dataset.selarray;
-        let map = [];
-        if (mkt.isJson(kvs)) {
-            let kv = mkt.parseJSON(kvs);
-            kv.forEach((o) => {
-                map.push([o.k, o.v]);
-            });
-        }
-        return new Map(map);
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "mkSelArrayGetKV", {
-    value: (e) => {
-        let kv = e.dataset.selarray;
-        if (mkt.isJson(kv)) {
-            kv = mkt.parseJSON(kv);
-        }
-        return kv;
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "mkSelGetMap", {
-    value: (e) => {
-        let kv = mkt.mkSelGetKV(e);
-        let map = [];
-        kv.forEach((o) => {
-            map.push([o.k, o.v]);
-        });
-        return new Map(map);
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "mkSelGetKV", {
-    value: (e) => {
-        let kSels;
-        let kOpcoes;
-        // Lista de Selecoes vira K do KV
-        if (mkt.isJson(e.value)) {
-            kSels = mkt.parseJSON(e.value);
-            if (!Array.isArray(kSels)) {
-                kSels = [{ k: kSels }];
-            }
-            else {
-                kSels = [];
-                mkt.parseJSON(e.value).forEach((kSel) => {
-                    kSels.push({ k: kSel });
-                });
-            }
-        }
-        else
-            kSels = [{ k: e.value }];
-        // Prepara lista de Opções para iterar
-        if (mkt.isJson(e.dataset.selarray)) {
-            kOpcoes = mkt.parseJSON(e.dataset.selarray);
-            if (!Array.isArray(kOpcoes)) {
-                kOpcoes = [{ k: kOpcoes, v: "\u{2209} Opções" }];
-            }
-        }
-        else
-            kOpcoes = null;
-        if (kOpcoes != null) {
-            // Acrescentar V ao KV
-            kSels.forEach((objKv) => {
-                kOpcoes.forEach((opcao) => {
-                    if (opcao.k == objKv.k) {
-                        objKv.v = opcao.v;
-                    }
-                });
-            });
-        }
-        return kSels;
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "mkSelSetDisplay", {
-    value: (e, KV) => {
-        if (KV.length <= 0) {
-            mkt.w("Não foi possível encontrar os itens selecionados.");
-            e.nextElementSibling.firstElementChild.value = "Opções \u{2209}";
-        }
-        else {
-            if (KV.length == 1) {
-                let display = "-- Selecione --";
-                if (KV[0].v != null) {
-                    display = KV[0].v;
-                }
-                if (display == "-- Selecione --") {
-                    // Criado um argumento indicando que o VALOR do campo está dessincronizado com as POSSIBILIDADDES em kv.
-                    e.dataset.selerror = "true";
-                    e.dataset.selerrorMsg =
-                        "O item selecionado não está na lista de possibilidades";
-                }
-                else {
-                    e.dataset.selerror = "false";
-                    e.dataset.selerrorMsg = "";
-                }
-                e.nextElementSibling.firstElementChild.value = display;
-            }
-            else if (KV.length > 1) {
-                e.nextElementSibling.firstElementChild.value =
-                    "[" + KV.length + "] Selecionados";
-            }
-        }
     }, enumerable: false, writable: false, configurable: false,
 });
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
