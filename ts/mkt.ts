@@ -1255,6 +1255,7 @@ class mkt {
 	//                     ARMAZENADORES ESTÁTICOS                             \\
 	//==========================================================================\\
 
+	// mkt.a.
 	static a = {
 		// Armazenadores / Constantes
 		ALL: "*/*", // ContentType Blob
@@ -1403,9 +1404,9 @@ class mkt {
 							// Tratamento das possíveis saída de dados diferentes.
 							let vOut: any = v;
 							if (mkt.a.util.data[1].test(vOut)) {
-								vOut = mkt.toLocale(vOut);
+								vOut = mkt.dataToLocale(vOut);
 							} else if (mkt.a.util.dataIso8601[1].test(vOut)) {
-								vOut = mkt.toLocale(vOut);
+								vOut = mkt.dataToLocale(vOut);
 							}
 							vOut = vOut.toString();
 							if (vOut.length > 40) {
@@ -2953,19 +2954,27 @@ class mkt {
 				if (erros.length > 0) {
 					let mensagens = erros.map((a: any) => {
 						if (Array.isArray(a.vmfail)) {
-							// Aqui dá pra evoluir se houver um template nos padrões.
+							// Se 1 regra gerar varios erros, junta por virgula.
 							a.m = mkt.a.msg.some + a.vmfail.join(", ");
 						}
 						return a.m;
 					}).join("<br/>");
 					mkt.regraDisplay(e, true, eDisplay, mensagens);
-					mkt.TerremotoErros("");
+					mkt.TerremotoErros(e);
 				} else {
 					mkt.regraDisplay(e, false, eDisplay, "");
 				}
 				resolver(erros);
-			});
-		});
+			}); // Promise All
+		}); // Return Promise exeRegra
+	};
+
+	static TerremotoErros = (e: any = null): void => {
+		// Efeito de terremoto apenas no elemento passado via exeRegra
+		e.nextElementSibling?.classList.add("mkTerremoto");
+		setTimeout(() => {
+			e.nextElementSibling?.classList.remove("mkTerremoto");
+		}, 500);
 	};
 
 	static estaValido = async (container: any) => {
@@ -3001,11 +3010,13 @@ class mkt {
 	static regraDisplay = (e: any, erro: boolean, eDisplay: any, mensagem: string = "") => {
 		// Reagindo similar ao Unobtrusive, mas usando oculto no span.
 		if (erro) {
+			// EXIBE ERRO
 			e.classList.remove("valid");
 			e.classList.add("input-validation-error");
 			eDisplay?.classList.remove("oculto");
 			eDisplay?.classList.add("field-validation-error");
 		} else {
+			// OCULTA ERRO
 			if (e.offsetParent && !e.classList.contains("disabled")) { // Não setar valido nos desativados/invisiveis
 				e.classList.add("valid");
 			}
@@ -3014,6 +3025,33 @@ class mkt {
 		}
 		if (eDisplay) eDisplay.innerHTML = mensagem;
 	};
+
+	static regraClear = (container: any) => {
+		container = mkt.Q(container);
+		// A cada regra envia um OCULTAR ERROS
+		mkt.regras.forEach((r: any) => {
+			let e = r.e;
+			let eDisplay = r.c.querySelector(".mkRegrar[data-valmsg-for='" + r.n + "']")
+			if (container) {
+				if (mkt.isInside(e, container)) {
+					mkt.regraDisplay(e, false, eDisplay);
+				}
+			} else {
+				mkt.regraDisplay(e, false, eDisplay);
+			}
+		})
+	};
+
+	static desregrar = async (container: any) => {
+		// Remove as regras de um determinado container
+		container = mkt.Q(container);
+
+		mkt.regras.forEach((r: any) => {
+			if (mkt.isInside(r.e, container)) {
+				mkt.regras.splice(mkt.regras.indexOf(r), 1);
+			}
+		});
+	}
 
 	static mascarar = (texto: any, mascara: any) => {
 		// Informando uma máscara e um texto, retorna dado mascarado.
@@ -3243,7 +3281,7 @@ class mkt {
 		});
 	};
 
-	static addTask: Function = (msg: any, numWorkers: number | undefined) => {
+	static addTask = (msg: any, numWorkers: number | undefined = undefined) => {
 		// WORKERS: Atalho de tarefa. Já constroi se necessário
 		// mkt.addTask({ k: "MKT_INCLUDE", v: ["a","b"], target: "a" }).then(r=>{mkt.l("Main Recebeu: ",r)})
 		return new Promise((r) => {
@@ -3320,201 +3358,107 @@ class mkt {
 		return node;
 	};
 
-	static isInside: Function;
-	static isJson: Function;
-	static TerremotoErros: Function;
-	static mkReposicionar: Function;
-	static frequencia: Function;
-	static mkBoolToSimNaoOA: Function;
-
-	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-	//                     Gerenciamento Monetário / Numérico                  \\
-	//==========================================================================\\
-
-	static mkFloat: Function;
-	static mkDuasCasas: Function;
-	static toMoeda: Function;
-	static fromMoeda: Function;
-	static toNumber: Function;
-	static fromNumber: Function;
-
-	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-	//                     Gerenciamento de Data                               \\
-	//==========================================================================\\
-
-	static getMs: Function;
-	static getDia: Function;
-	static getMes: Function;
-	static getAno: Function;
-	static getFullData: Function;
-	static hojeMkData: Function;
-	static hojeMkHora: Function;
-	static hoje: Function;
-	static mkYYYYMMDDtoDDMMYYYY: Function;
-	static mkFormatarDataOA: Function;
-	static toLocale: Function;
-	static getDiasDiferenca: Function;
-	static transMsEmDias: Function;
-
-	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-	//                     Web Components                                      \\
-	//==========================================================================\\
-
-	static mkSelTabIndex: Function;
-	static mkSelMoveu: Function;
-	static mkSelPopularLista: Function;
-	static mkSelUpdate: Function;
-	static mkSelDelRefillProcesso: Function;
-	static mkSelGetKV: Function;
-	static mkSelGetMap: Function;
-	static mkSelArrayGetKV: Function;
-	static mkSelArraySetKV: Function;
-	static mkSelArrayGetMap: Function;
-	static mkSelArraySetMap: Function;
-	static mkSelSelecionar: Function;
-	static mkSelSetDisplay: Function;
-	static mkSelRenderizar: Function;
-	static mkSelRenderizarElemento: Function;
-	static mkRecRenderizar: Function;
-	static mkRecUpdate: Function;
-	static mkBotCheck: Function;
-
-
-	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-	//  FIM DAS FUNCÕES ESTÁTICAS       \\
-	//___________________________________\\
-
-} // FIM CLASSE MKT
-
-//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-//  FUNCOES BASICAS / ATALHOS       \\
-//___________________________________\\
-Object.defineProperty(mkt, "toNumber", {
-	value: (valor: any, c: any = {}): number => {
-		// Valor em Texto / Número, convertido para Float de no máximo 2 casas.
-		if (!c.casas) c.casas = 2; // Limite de casas apenas para o valor retornado.
-		if (valor != null) {
-			if (typeof valor == "string") {
-				// Possiveis separadores
-				let us = [".", ","].reduce((x, y) => (valor.lastIndexOf(x) > valor.lastIndexOf(y)) ? x : y);
-				let posPonto = valor.lastIndexOf(us)
-				if (posPonto >= 0) {
-					let i = valor.slice(0, posPonto);
-					let d = valor.slice(posPonto + 1).slice(0, 2).padEnd(2, "0");
-					i = [...i.toString()].filter(a => { return mkt.a.util.numeros[1].test(a) }).join("");
-					d = [...d.toString()].filter(a => { return mkt.a.util.numeros[1].test(a) }).join("");
-					valor = i + "." + d;
+	static isInside = (e: any, container: any) => {
+		// Retorna o elemento está dentro do container.
+		// Similar ao closest, mas itera sobre os objetos em vez do query.
+		let resultado = false;
+		if (e) {
+			let ePai = e;
+			let c = 0;
+			while (ePai != mkt.Q("BODY") && c < 100) {
+				if (ePai) {
+					ePai = ePai?.parentElement;
+					if (ePai == container) {
+						resultado = true;
+						break;
+					}
 				} else {
-					valor = [...valor.toString()].filter(a => { return mkt.a.util.numeros[1].test(a) }).join("").padStart(3, "0")
-					valor = valor.slice(0, -(c.casas)) + "." + valor.slice(-(c.casas));
+					return false;
 				}
-			} else if (typeof valor == "number") {
-				valor = valor.toFixed(c.casas);
-			} else {
-				mkt.w("toFloat() - Formato não implementado: ", typeof valor);
+				c++;
 			}
-			return Number(valor);
-		}
-		return 0;
-	}, enumerable: false, writable: false, configurable: false,
-});
-
-Object.defineProperty(mkt, "fromNumber", {
-	value: (valor: any, c: any = {}): string => {
-		// Retorna um string de duas casas "0,00" a partir de um valor numerico
-		//if (!c.s) c.s = ","; // OUTPUT SEPARADOR de decimal numérico do país atual para dados.
-		if (!c.locale) c.locale = "pt-BR";
-		if (valor != null) {
-			let d = [...valor.toString()].filter(a => { return mkt.a.util.numeros[1].test(a) }).join("").padStart(3, "0");
-			valor = Number(d.slice(0, -2) + "." + d.slice(-2));
 		} else {
-			valor = 0;
+			mkt.w("isInside() requer ao menos o Elemento: ", e, " Container: ", container);
 		}
-		return new Intl.NumberFormat(c.locale, { minimumFractionDigits: 2 }).format(valor);
-	}, enumerable: false, writable: false, configurable: false,
-});
+		return resultado;
+	};
 
-Object.defineProperty(mkt, "toMoeda", {
-	value: (valor: any): string => {
-		// Texto / Número convertido em Reais
-		if (valor != null) {
-			if (typeof valor == "number") {
-				valor = valor.toFixed(2);
+	static isJson = (s: any): boolean => {
+		// Se conseguir efetuar o parse sem erros, então é um JSON
+		// if (mkt.classof(s) == "String") {
+		// 	s = s.removeRaw();
+		// }
+		try {
+			JSON.parse(s);
+		} catch (e) {
+			return false;
+		}
+		return true;
+	};
+
+	static Reposicionar = (e: any, largura: boolean | null = null) => {
+		// REPOSICIONA o elemento E abaixo do elemento anterior.
+		// Precisa de position: fixed;
+		// Atenção: Essa função precisa ser rápida.
+		// Redimenciona e Reposiciona a lista durante focus ou scroll.
+		let eAnterior = e.previousElementSibling;
+		let oDinBloco = eAnterior.getBoundingClientRect();
+		let oDinList = e.getBoundingClientRect();
+		// TAMANHO (min e max with baseado no pai)
+		if (largura) {
+			e.style.minWidth = eAnterior.offsetWidth + "px";
+			e.style.maxWidth = eAnterior.offsetWidth + "px";
+		}
+		// POSICAO e FUGA em Y (em baixo)
+		// Lista = Bloco Fixed Top + Altura do Pai;
+		let novaPos = oDinBloco.top + oDinBloco.height;
+		// SE PosicaoAtual + AlturaAtual estiver na tela
+		if ((novaPos + oDinList.height) <= window.innerHeight) {
+			e.style.top = novaPos + "px";
+			e.style.bottom = null;
+		} else {
+			e.style.top = null;
+			e.style.bottom = "0px";
+		}
+		// FUGA em Y (em cima)
+		if (oDinBloco.top <= 0) {
+			e.classList.add("oculto");
+		} else {
+			e.classList.remove("oculto");
+		}
+	};
+
+	static BoolToSimNaoOA = (oa: object | object[]) => {
+		// Converter (OBJ / ARRAY) Formato Booleano em Sim/Não
+		function BoolToSimNaoOA_Execute(o: any) {
+			for (var propName in o) {
+				if (
+					o[propName].toString().toLowerCase() === "true" ||
+					o[propName] === true
+				) {
+					o[propName] = "Sim";
+				}
+				if (
+					o[propName].toString().toLowerCase() === "false" ||
+					o[propName] === false
+				) {
+					o[propName] = "N&atilde;o";
+				}
 			}
-			let d = [...valor.toString()].filter(a => { return mkt.a.util.numeros[1].test(a) }).join("").padStart(3, "0");
-			return new Intl.NumberFormat("pt-BR", { style: 'currency', currency: 'BRL' }).format(Number(d.slice(0, -2) + "." + d.slice(-2)));
+			return o;
 		}
-		return "";
-	}, enumerable: false, writable: false, configurable: false,
-});
+		return mkt.aCadaObjExecuta(oa, BoolToSimNaoOA_Execute);
+	};
 
-Object.defineProperty(mkt, "fromMoeda", {
-	value: (texto: string): Number => {
-		// Retorna um float de duas casas / 0 a partir de um valor monetario 
-		if (texto) {
-			let d = [...texto.toString()].filter(a => { return mkt.a.util.numeros[1].test(a) }).join("").padStart(3, "0");
-			return Number(d.slice(0, -2) + "." + d.slice(-2));
-		}
-		return 0;
-	}, enumerable: false, writable: false, configurable: false,
-});
-
-// Classes do Console.
-Object.defineProperty(mkt, "w", {
-	enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "erro", {
-	enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "l", {
-	enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "cls", {
-	value: () => {
-		console.clear();
-	}, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "gc", {
-	enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "ge", {
-	enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "ct", {
-	enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "cte", {
-	enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "Q", {
-	enumerable: false, writable: false, configurable: false,
-});
-
-Object.defineProperty(mkt, "QAll", {
-	enumerable: false, writable: false, configurable: false,
-});
-
-Object.defineProperty(mkt, "Ao", {
-	enumerable: false, writable: false, configurable: false,
-});
-
-Object.defineProperty(mkt, "atribuir", {
-	enumerable: false, writable: false, configurable: false,
-});
-
-
-Object.defineProperty(mkt, "formatadorDeTexto", {
-	value: (texto: string) => {
+	static formatadorDeTexto = (texto: string) => {
 		// Converte Tags como [b] e [/b] em <b> e </b>
 		// Impede que o usuário faça uso do html de forma descontrolada.
 		return texto
 			.replaceAll("[b]", "<b>")
 			.replaceAll("[/b]", "</b>");
-	}, enumerable: false, writable: false, configurable: false,
-});
+	}
 
-Object.defineProperty(mkt, "eToText", {
-	value: (query: any) => {
+	static eToText = (query: any) => {
 		// - Pega o Valor ou Inner do elemento e as classes,
 		// - Remove o Elemento
 		// - Coloca o conteudo dentro duma Div
@@ -3560,34 +3504,252 @@ Object.defineProperty(mkt, "eToText", {
 			return div;
 		}
 		return null;
-	}, enumerable: false, writable: false, configurable: false,
-});
+	}
 
-Object.defineProperty(mkt, "html", {
-	enumerable: false, writable: false, configurable: false,
-});
+	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+	//                     Gerenciamento Monetário / Numérico                  \\
+	//==========================================================================\\
 
-Object.defineProperty(mkt, "wait", {
-	enumerable: false, writable: false, configurable: false,
-});
-
-Object.defineProperty(mkt, "isJson", {
-	value: (s: any): boolean => {
-		if (mkt.classof(s) == "String") {
-			s = s.removeRaw();
+	static mkFloat = (num: any): number => {
+		// Tenta deixar em formato Number sem bugar
+		let ret: number;
+		if (typeof num != "number") {
+			if (num)
+				ret = parseFloat(
+					num.toString().replaceAll(".", "").replaceAll(",", ".")
+				);
+			else ret = 0;
+		} else {
+			ret = num;
 		}
-		try {
-			JSON.parse(s);
-		} catch (e) {
-			return false;
+		if (isNaN(ret)) {
+			ret = 0;
 		}
-		return true;
-	}, enumerable: false, writable: false, configurable: false,
-});
+		return ret;
+	};
 
-Object.defineProperty(mkt, "stringify", {
-	enumerable: false, writable: false, configurable: false,
-});
+	static mkDuasCasas = (num: number): string => {
+		// Formato antigo de retornar duas casas
+		return mkt.mkFloat(num).toFixed(2).replaceAll(".", ","); // 2000,00
+		// .toLocaleString('pt-br', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); // 2.000,00
+	};
+
+	static toMoeda = (valor: any): string => {
+		// Texto / Número convertido em Reais
+		if (valor != null) {
+			if (mkt.classof(valor) == "Number") {
+				valor = valor.toFixed(2);
+			}
+			let d = [...valor.toString()].filter(a => { return mkt.a.util.numeros[1].test(a) }).join("").padStart(3, "0");
+			return new Intl.NumberFormat("pt-BR", { style: 'currency', currency: 'BRL' }).format(Number(d.slice(0, -2) + "." + d.slice(-2)));
+		}
+		return "";
+	};
+
+	static fromMoeda = (texto: string): Number => {
+		// Retorna um float de duas casas / 0 a partir de um valor monetario 
+		if (texto) {
+			let d = [...texto.toString()].filter(a => { return mkt.a.util.numeros[1].test(a) }).join("").padStart(3, "0");
+			return Number(d.slice(0, -2) + "." + d.slice(-2));
+		}
+		return 0;
+	};
+
+	static toNumber = (valor: any, c: any = {}): number => {
+		// Valor em Texto / Número, convertido para Float de no máximo 2 casas.
+		if (!c.casas) c.casas = 2; // Limite de casas apenas para o valor retornado.
+		if (valor != null) {
+			if (typeof valor == "string") {
+				// Possiveis separadores
+				let us = [".", ","].reduce((x, y) => (valor.lastIndexOf(x) > valor.lastIndexOf(y)) ? x : y);
+				let posPonto = valor.lastIndexOf(us)
+				if (posPonto >= 0) {
+					let i = valor.slice(0, posPonto);
+					let d = valor.slice(posPonto + 1).slice(0, 2).padEnd(2, "0");
+					i = [...i.toString()].filter(a => { return mkt.a.util.numeros[1].test(a) }).join("");
+					d = [...d.toString()].filter(a => { return mkt.a.util.numeros[1].test(a) }).join("");
+					valor = i + "." + d;
+				} else {
+					valor = [...valor.toString()].filter(a => { return mkt.a.util.numeros[1].test(a) }).join("").padStart(3, "0")
+					valor = valor.slice(0, -(c.casas)) + "." + valor.slice(-(c.casas));
+				}
+			} else if (typeof valor == "number") {
+				valor = valor.toFixed(c.casas);
+			} else {
+				mkt.w("toFloat() - Formato não implementado: ", typeof valor);
+			}
+			return Number(valor);
+		}
+		return 0;
+	};
+
+	static fromNumber = (valor: any, c: any = {}): string => {
+		// Retorna um string de duas casas "0,00" a partir de um valor numerico
+		//if (!c.s) c.s = ","; // OUTPUT SEPARADOR de decimal numérico do país atual para dados.
+		if (!c.locale) c.locale = "pt-BR";
+		if (valor != null) {
+			let d = [...valor.toString()].filter(a => { return mkt.a.util.numeros[1].test(a) }).join("").padStart(3, "0");
+			valor = Number(d.slice(0, -2) + "." + d.slice(-2));
+		} else {
+			valor = 0;
+		}
+		return new Intl.NumberFormat(c.locale, { minimumFractionDigits: 2 }).format(valor);
+	};
+
+	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+	//                     Gerenciamento de Data                               \\
+	//==========================================================================\\
+
+	static getMs = (dataYYYYMMDD: string | null = null): number => {
+		// Retorna Milisegundos da data no formato Javascript
+		if (dataYYYYMMDD != null) {
+			let dataCortada = dataYYYYMMDD.split("-");
+			let oDia: number = Number(dataCortada[2]);
+			let oMes: number = Number(dataCortada[1]) - 1;
+			let oAno: number = Number(dataCortada[0]);
+			return new Date(oAno, oMes, oDia).getTime();
+		} else return new Date().getTime();
+	};
+
+	static getDia = (ms = null) => {
+		// GET UTC Dia - '18'
+		if (ms != null) return Number(mkt.getFullData(ms).split("-")[2]);
+		else return Number(mkt.getFullData().split("-")[2]);
+	};
+
+	static getMes = (ms = null) => {
+		// GET UTC Ano - '02'
+		if (ms != null) return Number(mkt.getFullData(ms).split("-")[1]);
+		else return Number(mkt.getFullData().split("-")[1]);
+	};
+
+	static getAno = (ms = null) => {
+		// GET UTC Ano - '2024'
+		if (ms != null) return Number(mkt.getFullData(ms).split("-")[0]);
+		else return Number(mkt.getFullData().split("-")[0]);
+	};
+
+	static getFullData = (ms = null) => {
+		// GET UTC Data - '2024-02-18'
+		let ano = new Date().getUTCFullYear();
+		let mes = new Date().getUTCMonth() + 1;
+		let dia = new Date().getUTCDate();
+		if (ms != null) {
+			ano = new Date(ms).getUTCFullYear();
+			mes = new Date(ms).getUTCMonth() + 1;
+			dia = new Date(ms).getUTCDate();
+		}
+		return ano.toString().padStart(4, "0") + "-" + mes.toString().padStart(2, "0") + "-" + dia.toString().padStart(2, "0");
+	};
+
+	static hojeMkData = () => {
+		// Data Local: '18/02/2024'
+		return new Date(mkt.getMs()).toLocaleDateString();
+	};
+
+	static hojeMkHora = () => {
+		// Hora Local: '19:06:07'
+		return new Date(Number(mkt.getMs())).toLocaleTimeString();
+	};
+
+	static hoje = () => {
+		// Data e Hora Local: '18/02/2024 19:06:47'
+		return mkt.hojeMkData() + " " + mkt.hojeMkHora();
+	};
+
+	static mkYYYYMMDDtoDDMMYYYY = (dataYYYYMMDD: string): string => {
+		// Converter de YYYY-MM-DD para DD/MM/YYYY
+		let arrayData = dataYYYYMMDD.split("-");
+		let stringRetorno = "";
+		if (arrayData.length >= 3) {
+			// Tenta evitar bug de conversao
+			stringRetorno = arrayData[2] + "/" + arrayData[1] + "/" + arrayData[0];
+		} else {
+			stringRetorno = dataYYYYMMDD;
+		}
+		return stringRetorno;
+	};
+
+	static mkFormatarDataOA = (oa: object | object[]) => {
+		// Converter (OBJ / ARRAY) Formato Booleano em Sim/Não
+		function mkFormatarDataOA_Execute(o: any) {
+			let busca = new RegExp("^[0-2][0-9]{3}[-][0-1][0-9][-][0-3][0-9]$"); // Entre 0000-00-00 a 2999-19-39
+			let busca2 = new RegExp("^[0-2][0-9]{3}[-][0-1][0-9][-][0-3][0-9]T[0-2][0-9]:[0-5][0-9]"); // Entre 0000-00-00T00:00 a 2999-19-39T29:59 (Se iniciar nesse formato de ISO)
+			for (var propName in o) {
+				if (busca.test(o[propName])) {
+					o[propName] = mkt.mkYYYYMMDDtoDDMMYYYY(o[propName]);
+				}
+				if (busca2.test(o[propName])) {
+					o[propName] = mkt.dataToLocale(o[propName]);
+				}
+			}
+			return o;
+		}
+		return mkt.aCadaObjExecuta(oa, mkFormatarDataOA_Execute);
+	};
+
+	static dataToLocale = (data: string): string => {
+		// com Objeto DATA, STRING ou MS, retorna data BR.
+		// '2023-12-27T12:01:16.158' => '22/12/2023, 11:18:33'
+		let dataNum: string | number = Number(data);
+		if (mkt.classof(dataNum) != "Number") {
+			dataNum = data
+		}
+		if (mkt.classof(data) == "Date") {
+			return data.toLocaleString();
+		}
+		return new Date(dataNum).toLocaleString();
+	};
+
+	static getDiasDiferenca = (
+		msOld: number,
+		msNew: number | null = null
+	): number => {
+		// Retorna a diferença de dias entre dois MS
+		if (msNew == null) msNew = mkt.getMs();
+		return mkt.transMsEmDias(msNew! - msOld);
+	};
+
+	static transMsEmDias = (ms: number) => {
+		// 1000 * 3600 * 24 Considerando todo dia tiver 24 horas (~23h 56m 4.1s)
+		// (360º translacao / 86400000) = ~4.1
+		// Então o erro de 1 dia ocorre 1x ao ano (Dia represeta 1436min).
+		return Math.trunc(ms / 86400000);
+	};
+
+	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+	//                     Web Components                                      \\
+	//==========================================================================\\
+
+	static mkSelTabIndex: Function;
+	static mkSelMoveu: Function;
+	static mkSelPopularLista: Function;
+	static mkSelUpdate: Function;
+	static mkSelDelRefillProcesso: Function;
+	static mkSelGetKV: Function;
+	static mkSelGetMap: Function;
+	static mkSelArrayGetKV: Function;
+	static mkSelArraySetKV: Function;
+	static mkSelArrayGetMap: Function;
+	static mkSelArraySetMap: Function;
+	static mkSelSelecionar: Function;
+	static mkSelSetDisplay: Function;
+	static mkSelRenderizar: Function;
+	static mkSelRenderizarElemento: Function;
+	static mkRecRenderizar: Function;
+	static mkRecUpdate: Function;
+	static mkBotCheck: Function;
+
+
+	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+	//  FIM DAS FUNCÕES ESTÁTICAS       \\
+	//___________________________________\\
+
+} // FIM CLASSE MKT
+
+// Object.keys(mkt).forEach((n) => {
+// 	Object.defineProperty(mkt, n, { enumerable: false, writable: false, configurable: false });
+// });
 
 (String.prototype as any).removeRaw = function () {
 	return this
@@ -3603,13 +3765,6 @@ Object.defineProperty(mkt, "stringify", {
 	// \u00E3 == ã, viraria /u00E3
 };
 
-Object.defineProperty(mkt, "parseJSON", {
-	enumerable: false, writable: false, configurable: false,
-});
-
-Object.defineProperty(mkt, "removeEspecias", {
-	enumerable: false, writable: false, configurable: false,
-});
 
 Object.defineProperty(mkt, "cursorFim", {
 	value: (e: any) => {
@@ -3621,23 +3776,6 @@ Object.defineProperty(mkt, "cursorFim", {
 	}, enumerable: false, writable: false, configurable: false,
 });
 
-Object.defineProperty(mkt, "like", {
-	enumerable: false, writable: false, configurable: false,
-});
-
-Object.defineProperty(mkt, "contem", {
-	enumerable: false, writable: false, configurable: false,
-});
-
-Object.defineProperty(mkt, "allSubPropriedades", {
-	enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "aCadaObjExecuta", {
-	enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "mkLimparOA", {
-	enumerable: false, writable: false, configurable: false,
-});
 Object.defineProperty(mkt, "mkGerarObjeto", {
 	value: (este: any) => {
 		// Gerar Objeto a partir de um Form Entries
@@ -3654,6 +3792,7 @@ Object.defineProperty(mkt, "mkGerarObjeto", {
 		return rObjeto;
 	}, enumerable: false, writable: false, configurable: false,
 });
+
 Object.defineProperty(mkt, "QSet", {
 	value: (
 		query: HTMLElement | string = "body",
@@ -3673,6 +3812,7 @@ Object.defineProperty(mkt, "QSet", {
 		}
 	}, enumerable: false, writable: false, configurable: false,
 });
+
 Object.defineProperty(mkt, "QSetAll", {
 	value: (
 		query: string = "input[name='#PROP#']",
@@ -3706,13 +3846,6 @@ Object.defineProperty(mkt, "QSetAll", {
 	}, enumerable: false, writable: false, configurable: false,
 });
 
-Object.defineProperty(mkt, "Qon", {
-	enumerable: false, writable: false, configurable: false,
-});
-
-Object.defineProperty(mkt, "Qoff", {
-	enumerable: false, writable: false, configurable: false,
-});
 
 Object.defineProperty(mkt, "Qison", {
 	value: (query: any = "body") => {
@@ -3726,13 +3859,6 @@ Object.defineProperty(mkt, "Qison", {
 	}, enumerable: false, writable: false, configurable: false,
 });
 
-Object.defineProperty(mkt, "QverOn", {
-	enumerable: false, writable: false, configurable: false,
-});
-
-Object.defineProperty(mkt, "QverOff", {
-	enumerable: false, writable: false, configurable: false,
-});
 
 Object.defineProperty(mkt, "QverToggle", {
 	value: (query: HTMLElement | string | null = "body") => {
@@ -3742,13 +3868,6 @@ Object.defineProperty(mkt, "QverToggle", {
 	}, enumerable: false, writable: false, configurable: false,
 });
 
-Object.defineProperty(mkt, "aCadaElemento", {
-	enumerable: false, writable: false, configurable: false,
-});
-
-Object.defineProperty(mkt, "AllFromCadaExe", {
-	enumerable: false, writable: false, configurable: false,
-});
 
 Object.defineProperty(mkt, "QScrollTo", {
 	value: (query: HTMLElement | string = "body") => {
@@ -3814,17 +3933,6 @@ Object.defineProperty(mkt, "isVisible", {
 	}, enumerable: false, writable: false, configurable: false,
 });
 
-Object.defineProperty(mkt, "apenasNumerosLetras", {
-	enumerable: false, writable: false, configurable: false,
-});
-
-Object.defineProperty(mkt, "apenasNumeros", {
-	enumerable: false, writable: false, configurable: false,
-});
-
-Object.defineProperty(mkt, "apenasLetras", {
-	enumerable: false, writable: false, configurable: false,
-});
 
 Object.defineProperty(mkt, "isFloat", {
 	value: (x: any): boolean => {
@@ -3878,14 +3986,6 @@ Object.defineProperty(mkt, "getServerOn", {
 			mkt.detectedServerOff();
 		}
 	}, enumerable: false, writable: false, configurable: false,
-});
-
-Object.defineProperty(mkt, "detectedServerOff", {
-	enumerable: false, writable: false, configurable: false,
-});
-
-Object.defineProperty(mkt, "detectedServerOn", {
-	enumerable: false, writable: false, configurable: false,
 });
 
 Object.defineProperty(mkt, "mkOnlyFloatKeys", {
@@ -3955,29 +4055,11 @@ Object.defineProperty(mkt, "mkMedia", {
 });
 
 Object.defineProperty(mkt, "mkFloat", {
-	value: (num: any): number => {
-		let ret: number;
-		if (typeof num != "number") {
-			if (num)
-				ret = parseFloat(
-					num.toString().replaceAll(".", "").replaceAll(",", ".")
-				);
-			else ret = 0;
-		} else {
-			ret = num;
-		}
-		if (isNaN(ret)) {
-			ret = 0;
-		}
-		return ret;
-	}, enumerable: false, writable: false, configurable: false,
+	enumerable: false, writable: false, configurable: false,
 });
 
 Object.defineProperty(mkt, "mkDuasCasas", {
-	value: (num: number): string => {
-		return mkt.mkFloat(num).toFixed(2).replaceAll(".", ","); // 2000,00
-		//        .toLocaleString('pt-br', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); // 2.000,00
-	}, enumerable: false, writable: false, configurable: false,
+	enumerable: false, writable: false, configurable: false,
 });
 
 Object.defineProperty(mkt, "mkNCasas", {
@@ -4081,7 +4163,7 @@ Object.defineProperty(mkt, "getModelo", {
 
 Object.defineProperty(mkt, "getExclusivos", {
 	value: async (array: any) => {
-		let res = await mkt.addTask({ k: "Exclusivos", v: array });
+		let res: any = await mkt.addTask({ k: "Exclusivos", v: array });
 		return res.v;
 	}, enumerable: false, writable: false, configurable: false,
 });
@@ -4100,28 +4182,7 @@ Object.defineProperty(mkt, "mkMerge", {
 });
 
 Object.defineProperty(mkt, "isInside", {
-	value: (e: any, container: any) => {
-		let resultado = false;
-		if (e) {
-			let ePai = e;
-			let c = 0;
-			while (ePai != mkt.Q("BODY") && c < 100) {
-				if (ePai) {
-					ePai = ePai?.parentElement;
-					if (ePai == container) {
-						resultado = true;
-						break;
-					}
-				} else {
-					return false;
-				}
-				c++;
-			}
-		} else {
-			mkt.w("isInside: E: ", e, " Container: ", container);
-		}
-		return resultado;
-	}, enumerable: false, writable: false, configurable: false,
+	enumerable: false, writable: false, configurable: false,
 });
 
 Object.defineProperty(mkt, "encheArray", {
@@ -4220,73 +4281,6 @@ Object.defineProperty(mkt, "isData", {
 	}, enumerable: false, writable: false, configurable: false,
 });
 
-Object.defineProperty(mkt, "getMs", {
-	value: (dataYYYYMMDD: string | null = null): number => {
-		// Retorna Milisegundos da data no formato Javascript
-		if (dataYYYYMMDD != null) {
-			let dataCortada = dataYYYYMMDD.split("-");
-			let oDia: number = Number(dataCortada[2]);
-			let oMes: number = Number(dataCortada[1]) - 1;
-			let oAno: number = Number(dataCortada[0]);
-			return new Date(oAno, oMes, oDia).getTime();
-		} else return new Date().getTime();
-	}, enumerable: false, writable: false, configurable: false,
-});
-
-Object.defineProperty(mkt, "hojeMkData", {
-	value: () => {
-		return new Date(mkt.getMs()).toLocaleDateString();
-	}, enumerable: false, writable: false, configurable: false,
-});
-
-Object.defineProperty(mkt, "hojeMkHora", {
-	value: () => {
-		return new Date(Number(mkt.getMs())).toLocaleTimeString();
-	}, enumerable: false, writable: false, configurable: false,
-});
-
-Object.defineProperty(mkt, "hoje", {
-	value: () => {
-		let mkFullData = mkt.hojeMkData() + " " + mkt.hojeMkHora();
-		return mkFullData;
-	}, enumerable: false, writable: false, configurable: false,
-});
-
-Object.defineProperty(mkt, "getFullData", {
-	value: (ms = null) => {
-		let ano = new Date().getUTCFullYear();
-		let mes = new Date().getUTCMonth() + 1;
-		let dia = new Date().getUTCDate();
-		if (ms != null) {
-			ano = new Date(ms).getUTCFullYear();
-			mes = new Date(ms).getUTCMonth() + 1;
-			dia = new Date(ms).getUTCDate();
-		}
-		return ano.toString().padStart(4, "0") + "-" + mes.toString().padStart(2, "0") + "-" + dia.toString().padStart(2, "0");
-	}, enumerable: false, writable: false, configurable: false,
-});
-
-Object.defineProperty(mkt, "getDia", {
-	value: (ms = null) => {
-		if (ms != null) return Number(mkt.getFullData(ms).split("-")[2]);
-		else return Number(mkt.getFullData().split("-")[2]);
-	}, enumerable: false, writable: false, configurable: false,
-});
-
-Object.defineProperty(mkt, "getMes", {
-	value: (ms = null) => {
-		if (ms != null) return Number(mkt.getFullData(ms).split("-")[1]);
-		else return Number(mkt.getFullData().split("-")[1]);
-	}, enumerable: false, writable: false, configurable: false,
-});
-
-Object.defineProperty(mkt, "getAno", {
-	value: (ms = null) => {
-		if (ms != null) return Number(mkt.getFullData(ms).split("-")[0]);
-		else return Number(mkt.getFullData().split("-")[0]);
-	}, enumerable: false, writable: false, configurable: false,
-});
-
 
 Object.defineProperty(mkt, "getTempoDiferenca", {
 	value: (msOld: number, msNew: number | null = null) => {
@@ -4330,13 +4324,7 @@ Object.defineProperty(mkt, "getTempoDiferenca", {
 });
 
 Object.defineProperty(mkt, "getDiasDiferenca", {
-	value: (
-		msOld: number,
-		msNew: number | null = null
-	): number => {
-		if (msNew == null) msNew = mkt.getMs();
-		return mkt.transMsEmDias(msNew! - msOld);
-	}, enumerable: false, writable: false, configurable: false,
+	enumerable: false, writable: false, configurable: false,
 });
 
 Object.defineProperty(mkt, "transMsEmSegundos", {
@@ -4358,12 +4346,7 @@ Object.defineProperty(mkt, "transMsEmHoras", {
 });
 
 Object.defineProperty(mkt, "transMsEmDias", {
-	value: (ms: number) => {
-		// 1000 * 3600 * 24 Considerando todo dia tiver 24 horas (~23h 56m 4.1s)
-		// (360º translacao / 86400000) = ~4.1
-		// Então o erro de 1 dia ocorre 1x ao ano (Dia represeta 1436min).
-		return Math.trunc(ms / 86400000);
-	}, enumerable: false, writable: false, configurable: false,
+	enumerable: false, writable: false, configurable: false,
 });
 
 Object.defineProperty(mkt, "transSegundosEmMs", {
@@ -4390,94 +4373,11 @@ Object.defineProperty(mkt, "transDiasEmMs", {
 	}, enumerable: false, writable: false, configurable: false,
 });
 
-Object.defineProperty(mkt, "mkNodeToScript", {
-	enumerable: false, writable: false, configurable: false,
-});
-
-Object.defineProperty(mkt, "frequencia", {
-	value: (array: any): object => {
-		let f: any = {};
-		for (let e of array) {
-			f[e] ? f[e]++ : (f[e] = 1);
-		}
-		return f;
-	}, enumerable: false, writable: false, configurable: false,
-});
-
-Object.defineProperty(mkt, "mkYYYYMMDDtoDDMMYYYY", {
-	value: (dataYYYYMMDD: string): string => {
-		// Converter de YYYY-MM-DD para DD/MM/YYYY
-		let arrayData = dataYYYYMMDD.split("-");
-		let stringRetorno = "";
-		if (arrayData.length >= 3) {
-			// Tenta evitar bug de conversao
-			stringRetorno = arrayData[2] + "/" + arrayData[1] + "/" + arrayData[0];
-		} else {
-			stringRetorno = dataYYYYMMDD;
-		}
-		return stringRetorno;
-	}, enumerable: false, writable: false, configurable: false,
-});
-
-Object.defineProperty(mkt, "toLocale", {
-	value: (data: string): string => {
-		// '2023-12-27T12:01:16.158' => '22/12/2023, 11:18:33'
-		let dataNum: string | number = Number(data);
-		if (mkt.classof(dataNum) != "Number") {
-			dataNum = data
-		}
-		return new Date(dataNum).toLocaleString();
-	}, enumerable: false, writable: false, configurable: false,
-});
-
-Object.defineProperty(mkt, "mkFormatarDataOA", {
-	value: (oa: object | object[]) => {
-		// Converter (OBJ / ARRAY) Formato Booleano em Sim/Não
-		function mkFormatarDataOA_Execute(o: any) {
-			let busca = new RegExp("^[0-2][0-9]{3}[-][0-1][0-9][-][0-3][0-9]$"); // Entre 0000-00-00 a 2999-19-39
-			let busca2 = new RegExp("^[0-2][0-9]{3}[-][0-1][0-9][-][0-3][0-9]T[0-2][0-9]:[0-5][0-9]"); // Entre 0000-00-00T00:00 a 2999-19-39T29:59 (Se iniciar nesse formato de ISO)
-			for (var propName in o) {
-				if (busca.test(o[propName])) {
-					o[propName] = mkt.mkYYYYMMDDtoDDMMYYYY(o[propName]);
-				}
-				if (busca2.test(o[propName])) {
-					o[propName] = mkt.toLocale(o[propName]);
-				}
-			}
-			return o;
-		}
-		return mkt.aCadaObjExecuta(oa, mkFormatarDataOA_Execute);
-	}, enumerable: false, writable: false, configurable: false,
-});
-
-Object.defineProperty(mkt, "mkBoolToSimNaoOA", {
-	value: (oa: object | object[]) => {
-		// Converter (OBJ / ARRAY) Formato Booleano em Sim/Não
-		function mkBoolToSimNaoOA_Execute(o: any) {
-			for (var propName in o) {
-				if (
-					o[propName].toString().toLowerCase() === "true" ||
-					o[propName] === true
-				) {
-					o[propName] = "Sim";
-				}
-				if (
-					o[propName].toString().toLowerCase() === "false" ||
-					o[propName] === false
-				) {
-					o[propName] = "N&atilde;o";
-				}
-			}
-			return o;
-		}
-		return mkt.aCadaObjExecuta(oa, mkBoolToSimNaoOA_Execute);
-	}, enumerable: false, writable: false, configurable: false,
-});
 
 Object.defineProperty(mkt, "mkFormatarOA", {
 	value: (oa: object | object[]) => {
 		// Converter (OBJ / ARRAY) Formatar para normalizar com a exibicao ao usuario.
-		return mkt.mkBoolToSimNaoOA(mkt.mkFormatarDataOA(mkt.mkLimparOA(oa)));
+		return mkt.BoolToSimNaoOA(mkt.mkFormatarDataOA(mkt.mkLimparOA(oa)));
 	}, enumerable: false, writable: false, configurable: false,
 });
 
@@ -4569,32 +4469,6 @@ Object.defineProperty(mkt, "headMenuHideX", {
 
 
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-//   WORKERS                        \\
-//___________________________________\\
-// WORKERS: Atalho de tarefa. Já constroi se necessário
-// mkt.addTask({ k: "MKT_INCLUDE", v: ["a","b"], target: "a" }).then(r=>{mkt.l("Main Recebeu: ",r)})
-Object.defineProperty(mkt, "addTask", {
-	value: (msg: any, numWorkers: number | undefined) => {
-		return new Promise((r) => {
-			if (!mkt.a.wpool) {
-				mkt.Workers(numWorkers).then(() => {
-					r(mkt.a.wpool.addTask(msg));
-				});
-			} else {
-				r(mkt.a.wpool.addTask(msg));
-			}
-		});
-
-	}, enumerable: true, writable: false, configurable: false,
-});
-
-
-Object.defineProperty(mkt, "Workers", {
-	enumerable: true, writable: false, configurable: false,
-});
-
-
-//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //   ABA                            \\
 //___________________________________\\
 Object.defineProperty(mkt, "mkClicarNaAba", {
@@ -4672,40 +4546,15 @@ Object.defineProperty(mkt, "regraDisplay", {
 });
 
 Object.defineProperty(mkt, "regraClear", {
-	value: () => {
-		// A cada elemento
-		mkt.regras.forEach((r: any) => {
-			let e = r.e;
-			let eDisplay = r.c.querySelector(".mkRegrar[data-valmsg-for='" + r.n + "']")
-			mkt.regraDisplay(e, false, eDisplay);
-		})
-	}, enumerable: false, writable: false, configurable: false,
+	enumerable: false, writable: false, configurable: false,
 });
 
 Object.defineProperty(mkt, "desregrar", {
-	value: async (container: any) => {
-		// Remove as regras de um determinado container
-		container = mkt.Q(container);
-
-		mkt.regras.forEach((r: any) => {
-			if (mkt.isInside(r.e, container)) {
-				mkt.regras.splice(mkt.regras.indexOf(r), 1);
-			}
-		});
-	}, enumerable: false, writable: false, configurable: false,
+	enumerable: false, writable: false, configurable: false,
 });
 
 Object.defineProperty(mkt, "TerremotoErros", {
-	value: (form: string): void => {
-		// Efeito de terremoto em campos com erros no formulario informado
-		if (!form) form = "";
-		mkt.QAll(form + " input.input-validation-error").forEach((e: HTMLInputElement) => {
-			e.nextElementSibling?.classList.add("mkTerremoto");
-			setTimeout(() => {
-				e.nextElementSibling?.classList.remove("mkTerremoto");
-			}, 500);
-		});
-	}, enumerable: false, writable: false, configurable: false,
+	enumerable: false, writable: false, configurable: false,
 });
 
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
@@ -5110,10 +4959,10 @@ Object.defineProperty(mkt, "mkRecRenderizar", {
 				);
 				// Seguir o Elemento durante o scroll e resize
 				document.addEventListener("scroll", (event) => {
-					mkt.mkReposicionar(divMkRecList, false);
+					mkt.Reposicionar(divMkRecList, false);
 				});
 				window.addEventListener("resize", (event) => {
-					mkt.mkReposicionar(divMkRecList, true);
+					mkt.Reposicionar(divMkRecList, true);
 				});
 				mkt.mkRecUpdate(e);
 			} else {
@@ -5212,7 +5061,7 @@ Object.defineProperty(mkt, "mkRecFoco", {
 			mkt.w("Não foi possível alterar o elemento: ", eList);
 		}
 		// Atualizar posição da Lista.
-		mkt.mkReposicionar(eList, false);
+		mkt.Reposicionar(eList, false);
 	}, enumerable: false, writable: false, configurable: false,
 });
 
@@ -5305,10 +5154,10 @@ Object.defineProperty(mkt, "mkSelRenderizarElemento", {
 			}
 			// Segue o Elemento durante o scroll.
 			document.addEventListener("scroll", (event) => {
-				mkt.mkReposicionar(divMkSeletorList, true);
+				mkt.Reposicionar(divMkSeletorList, true);
 			});
 			window.addEventListener("resize", (event) => {
-				mkt.mkReposicionar(divMkSeletorList, true);
+				mkt.Reposicionar(divMkSeletorList, true);
 			});
 		}
 	}, enumerable: false, writable: false, configurable: false,
@@ -5624,7 +5473,7 @@ Object.defineProperty(mkt, "mkSelPesquisaFocus", {
 			primeiroOffSet - 120 - (eList.offsetHeight - eList.clientHeight) / 2;
 
 		// Atualizar posição da Lista.
-		mkt.mkReposicionar(e.parentElement.nextElementSibling, true);
+		mkt.Reposicionar(e.parentElement.nextElementSibling, true);
 	}, enumerable: false, writable: false, configurable: false,
 });
 
@@ -5640,38 +5489,8 @@ Object.defineProperty(mkt, "getParentScrollTop", {
 	}, enumerable: false, writable: false, configurable: false,
 });
 
-Object.defineProperty(mkt, "mkReposicionar", {
-	value: (eList: any, cover: boolean | null) => {
-		// Atenção: Essa função precisa ser rápida.
-		// Redimenciona e Reposiciona a lista durante focus ou scroll.
-		let ePesquisa = eList.previousElementSibling;
-		let oDinBloco = ePesquisa.getBoundingClientRect();
-		let oDinList = eList.getBoundingClientRect();
-		// TAMANHO
-		if (cover) {
-			eList.style.minWidth = ePesquisa.offsetWidth + "px";
-			eList.style.maxWidth = ePesquisa.offsetWidth + "px";
-		}
-		// POSICAO e FUGA em Y (em baixo)
-		// Lista = Bloco Fixed Top + Altura do Pai;
-		let novaPos = oDinBloco.top + oDinBloco.height;
-		//let telaX = window.innerWidth;
-		// SE PosicaoAtual + AlturaAtual estiver na tela
-		if ((novaPos + oDinList.height) <= window.innerHeight) {
-			eList.style.top = novaPos + "px";
-			eList.style.bottom = null;
-		} else {
-			eList.style.top = null;
-			eList.style.bottom = "0px";
-		}
-		// FUGA em Y (em cima)
-		if (oDinBloco.top <= 0) {
-			eList.classList.add("oculto");
-			//mkt.l(window.getComputedStyle(eList));
-		} else {
-			eList.classList.remove("oculto");
-		}
-	}, enumerable: false, writable: false, configurable: false,
+Object.defineProperty(mkt, "Reposicionar", {
+	enumerable: false, writable: false, configurable: false,
 });
 
 Object.defineProperty(mkt, "mkSelPesquisaBlur", {
@@ -5792,7 +5611,7 @@ Object.defineProperty(mkt, "mkSelPesquisaInput", {
 			eList.firstElementChild.style.display = "";
 			eList.lastElementChild.style.display = "";
 		}
-		mkt.mkReposicionar(eList, true);
+		mkt.Reposicionar(eList, true);
 	}, enumerable: false, writable: false, configurable: false,
 });
 

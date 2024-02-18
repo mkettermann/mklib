@@ -1,14 +1,35 @@
 <h1 class="microPos2 h1">Regrar</h1>
 <form id="regrarTeste">
-	<div class="i">
-		<div class="j exemploRegrar">
-			<label>Obrigatorio preenchimento:</label>
+	<div class="i exemploRegrar">
+		<div class="j">
+			<label>1 - Obrigatorio preenchimento:</label>
 			<input name="nomPessoa" type="text" />
 			<span class="text-danger mkRegrar" data-valmsg-for="nomPessoa"></span>
 		</div>
+		<div class="j">
+			<label>2 - Apenas números: (Impede)</label>
+			<input name="numIdade" type="text" />
+			<span class="text-danger mkRegrar" data-valmsg-for="numIdade"></span>
+		</div>
+		<div class="j">
+			<label>3 - Não tem regra</label>
+			<input name="numComplemento" type="text" />
+			<span class="text-danger mkRegrar" data-valmsg-for="numComplemento"></span>
+		</div>
 	</div>
-	<button class="btnTestarValidar" type="button">Validar</button>
+	<button class="btnTestarValidar" type="button">Validar ambos acima</button>
+	<button class="btnTestarValidarAll" type="button">Validar TODOS</button>
+	<button class="btnClearValidar" type="button">Limpar ambos acima</button>
+	<button class="btnClearValidarAll" type="button">Limpar TODOS</button>
 </form>
+<br>
+<div class="i exemploRegrar2">
+	<div class="j">
+		<label>4 - Obrigatório, Requer 1 espaço, Requer 1 número:</label>
+		<input name="nomCompleto" type="text" />
+		<span class="text-danger mkRegrar" data-valmsg-for="nomCompleto"></span>
+	</div>
+</div>
 <br /><br />
 <div class="fullCodigoContainer microPos5">
 	<div class="i codigoContainer">
