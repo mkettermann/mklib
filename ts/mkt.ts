@@ -842,9 +842,9 @@ class mkt {
 				<ul>
 					<li class='hmCrescente claico botao nosel'>${mkt.a.SVGINI}${mkt.a.svgAB}${mkt.a.SVGFIM}${mkt.a.espaco}${mkt.a.clacre}</li>
 					<li class='hmDecrescente claico botao nosel fimsecao'>${mkt.a.SVGINI}${mkt.a.svgBA}${mkt.a.SVGFIM}${mkt.a.espaco}${mkt.a.cladec}</li>
-					<li><input class='nosel' type='text' name='filtrarCampo' oninput='mkt.headMenuContemInput(this.value)' placeholder='${mkt.a.contem}'></li>
-					<li onclick='mkt.headMenuLimpar()' class='limpar botao nosel'>${mkt.a.SVGINI}${mkt.a.svgFiltro}${mkt.a.SVGFIM}${mkt.a.espaco}${mkt.a.limparIndivisual}${mkt.a.espaco}<span class='hmTitulo'></span></li>
-					<li onclick='mkt.headMenuLimparTodos()' class='limpar botao nosel fimsecao'>${mkt.a.SVGINI}${mkt.a.svgFiltro}${mkt.a.SVGFIM}${mkt.a.espaco}${mkt.a.limparTodos}</li>
+					<li><input class='hmContemInput nosel' type='text' name='filtrarCampo' placeholder='${mkt.a.contem}'></li>
+					<li class='hmLimpar limpar botao nosel'>${mkt.a.SVGINI}${mkt.a.svgFiltro}${mkt.a.SVGFIM}${mkt.a.espaco}${mkt.a.limparIndivisual}${mkt.a.espaco}<span class='hmTitulo'></span></li>
+					<li class='hmLimparTodos limpar botao nosel fimsecao'>${mkt.a.SVGINI}${mkt.a.svgFiltro}${mkt.a.SVGFIM}${mkt.a.espaco}${mkt.a.limparTodos}</li>
 					<li><input class='hmFiltraExclusivo' type='search' name='filtrarPossibilidades' placeholder='Pesquisar'></li>
 					<li><div class='possibilidades'></div></li>
 				</ul>
@@ -867,10 +867,24 @@ class mkt {
 				let eHmenu = mkt.Q("body .mkHeadMenu");
 				mkt.a.hm.Decrescente(eHmenu?.getAttribute("data-colname"), eHmenu?.getAttribute("data-mkt"));
 			})
+			mkt.Ao("click", ".mkHeadMenu .hmLimpar", (e: HTMLLIElement) => {
+				let eHmenu = mkt.Q("body .mkHeadMenu");
+				mkt.a.hm.Limpar(eHmenu?.getAttribute("data-colname"), eHmenu?.getAttribute("data-mkt"));
+			})
+			mkt.Ao("click", ".mkHeadMenu .hmLimparTodos", (e: HTMLLIElement) => {
+				let eHmenu = mkt.Q("body .mkHeadMenu");
+				mkt.a.hm.LimparTodos(eHmenu?.getAttribute("data-colname"), eHmenu?.getAttribute("data-mkt"));
+			})
 			mkt.Ao("input", ".mkHeadMenu .hmFiltraExclusivo", (e: HTMLInputElement) => {
 				mkt.a.hm.FiltraExclusivo(e.value, e.closest(".mkHeadMenu")?.getAttribute("data-mkt"));
 			})
+			mkt.Ao("input", ".mkHeadMenu .hmContemInput", (e: HTMLInputElement) => {
+				let eHmenu = mkt.Q("body .mkHeadMenu");
+				mkt.a.hm.ContemInput(e.value, eHmenu?.getAttribute("data-colname"), e.closest(".mkHeadMenu")?.getAttribute("data-mkt"));
+			})
 		}
+		// Reexecuta o query pois agora já criou.
+		eHm = mkt.Q("body .mkHeadMenu");
 		// Conecta Elemento a Lista
 		let thisList = this.getIndexOf().toString();
 		eHm.setAttribute("data-colname", colName);
@@ -903,102 +917,6 @@ class mkt {
 		if (!this.exclusivos) { this.exclusivos = [] };
 		// Popula .possibilidades usando a Lista de exclusivos
 		mkt.a.hm.FiltraExclusivo("", thisList);
-		// Marca de Desmarca
-		mkt.headMenuMarcarExclusivos = (e: HTMLElement) => {
-			if (e) {
-				let name = e.getAttribute("name");
-				if (name) {
-					if (this.hmunsel.includes(name)) {
-						e.classList.add("sel");
-						if (name != null) {
-							this.hmunsel.splice(this.hmunsel.indexOf(name), 1);
-							if (this.hmunsel.length == 0) {
-								mkt.Q("#headMenuTodos").classList.add("sel");
-								mkt.Q("body .mkHeadMenu .possibilidades").classList.toggle("st");
-							}
-						}
-					} else {
-						e.classList.remove("sel");
-						if (name != null) {
-							this.hmunsel.push(name);
-							if (this.hmunsel.length == this.exclusivos.length) {
-								mkt.Q("#headMenuTodos").classList.remove("sel");
-								mkt.Q("body .mkHeadMenu .possibilidades").classList.toggle("st");
-							}
-						}
-					}
-				} else {
-					mkt.w("headMenuMarcarExclusivos() - Atributo NAME não encontrado em: ", e);
-				}
-			} else {
-				mkt.Q("body .mkHeadMenu .possibilidades").classList.toggle("st");
-				if (mkt.Q("body .mkHeadMenu .possibilidades").classList.contains("st")) {
-					mkt.QAll(".mkHeadMenu .possibilidades li").forEach((el: HTMLLIElement) => {
-						let name = el.getAttribute("name");
-						el.classList.remove("sel");
-						if (name != null) {
-							if (!this.hmunsel.includes(name)) {
-								this.hmunsel.push(name);
-							}
-						}
-					})
-				} else {
-					mkt.QAll(".mkHeadMenu .possibilidades li").forEach((el: HTMLLIElement) => {
-						let name = el.getAttribute("name");
-						el.classList.add("sel");
-						if (name != null) {
-							this.hmunsel.splice(this.hmunsel.indexOf(name), 1);
-						}
-					})
-				}
-			}
-			this.c.objFiltro[colName] = {
-				formato: "mkHeadMenuSel",
-				operador: "",
-				conteudo: this.hmunsel,
-			};
-			this.atualizaNaPaginaUm();
-			// Limpar outros filtros
-			mkt.Q(".mkHeadMenu input[name='filtrarCampo']").value = "";
-		};
-		mkt.a.hm.Next = () => {
-			let opcoes = this.getModel().map(o => { if (o.f) return o.k; }).filter(r => { return r != null });
-			let posAtual = opcoes.indexOf(colName);
-			let posSeguinte = 0;
-			if (posAtual >= 0) { // Se o atual existe
-				posSeguinte = posAtual + 1;
-			}
-			if (posSeguinte >= opcoes.length) {// Era o último
-				posSeguinte = 0;//Vira Primeira Posição
-			}
-			//mkt.l("Atual: ", colName, "| Seguinte: ", opcoes[posSeguinte], "| Opções: ", opcoes);
-			if (opcoes[posSeguinte]) this.headMenuAbrir(opcoes[posSeguinte]);
-		};
-		mkt.headMenuLimpar = () => {
-			mkt.Q(".mkHeadMenu input[name='filtrarCampo']").value = "";
-			this.hmunsel = [];
-			mkt.headMenuFiltraExclusivo("");
-			this.clearFiltro(colName);
-			this.atualizarListagem();
-		};
-		mkt.headMenuLimparTodos = () => {
-			mkt.Q(".mkHeadMenu input[name='filtrarCampo']").value = "";
-			this.hmunsel = [];
-			mkt.headMenuFiltraExclusivo("");
-			this.clearFiltro();
-			this.atualizarListagem();
-		};
-		mkt.headMenuContemInput = (v: any) => {
-			this.c.objFiltro[colName] = {
-				formato: "string",
-				operador: "",
-				conteudo: v,
-			};
-			this.atualizaNaPaginaUm();
-			// Limpar outros filtros
-			this.hmunsel = [];
-			mkt.headMenuFiltraExclusivo("");
-		};
 
 		mkt.atribuir(mkt.Q("body"), () => { mkt.a.hm.Hide(event) }, "onclick");
 		let colNameLabel = colName;
@@ -1012,6 +930,7 @@ class mkt {
 		mkt.QAll("body .mkHeadMenu .hmTitulo").forEach((e: HTMLElement) => {
 			e.innerHTML = colNameLabel;
 		});
+		// Finalmente inicializa, Exibe e seta o foco.
 		eHm.classList.remove("oculto");
 		mkt.Q(".mkHeadMenu input[name='filtrarCampo']").focus();
 	}
@@ -1407,9 +1326,31 @@ class mkt {
 					mkt.w("mkt.a.hm.Decrescente() - Parametros precisam ser string: ", colName, iof);
 				}
 			},
-			Limpar: Function,
-			LimparTodos: Function,
-			ContemInput: Function,
+			Limpar: (colName: string, iof: string | null | undefined) => {
+				mkt.Q(".mkHeadMenu input[name='filtrarCampo']").value = "";
+				mkt.getThis(Number(iof)).hmunsel = [];
+				mkt.a.hm.FiltraExclusivo("", iof);
+				mkt.getThis(Number(iof)).clearFiltro(colName);
+				mkt.getThis(Number(iof)).atualizarListagem();
+			},
+			LimparTodos: (colName: string, iof: string | null | undefined) => {
+				mkt.Q(".mkHeadMenu input[name='filtrarCampo']").value = "";
+				mkt.getThis(Number(iof)).hmunsel = [];
+				mkt.a.hm.FiltraExclusivo("", iof);
+				mkt.getThis(Number(iof)).clearFiltro();
+				mkt.getThis(Number(iof)).atualizarListagem();
+			},
+			ContemInput: (v: any, colName: string, iof: string | null | undefined) => {
+				mkt.getThis(Number(iof)).c.objFiltro[colName] = {
+					formato: "string",
+					operador: "",
+					conteudo: v,
+				};
+				mkt.getThis(Number(iof)).atualizaNaPaginaUm();
+				// Limpar outros filtros
+				mkt.getThis(Number(iof)).hmunsel = [];
+				mkt.a.hm.FiltraExclusivo("", iof);
+			},
 			FiltraExclusivo: (v: string, iof: string | null | undefined) => {
 				if (mkt.classof(iof) == "String") {
 					let vProcessado = mkt.removeEspecias(v).toLowerCase().trim();
@@ -1434,7 +1375,7 @@ class mkt {
 						if (mkt.Q("body .mkHeadMenu .possibilidades").classList.contains("st")) {
 							fullsel = "";
 						}
-						htmlPossiveis += "<li class='nosel botao " + fullsel + "' id='headMenuTodos' onclick='mkt.headMenuMarcarExclusivos()'>" + mkt.a.SVGINI + mkt.a.svgSquare + mkt.a.SVGFIM + mkt.a.espaco + "Selecionar Todos (" + exFiltrado.length + ")";
+						htmlPossiveis += "<li class='hmMarcarExclusivos nosel botao " + fullsel + "' id='headMenuTodos'>" + mkt.a.SVGINI + mkt.a.svgSquare + mkt.a.SVGFIM + mkt.a.espaco + "Selecionar Todos (" + exFiltrado.length + ")";
 						if (v != "") {
 							htmlPossiveis += " Pesquisados";
 						}
@@ -1458,16 +1399,86 @@ class mkt {
 							if (vOut.length > 40) {
 								vOut = vOut.slice(0, 37) + "...";
 							}
-							htmlPossiveis += "<li name='" + mkt.removerAspas(v2) + "' class='nosel botao " + sel + "' onclick='mkt.headMenuMarcarExclusivos(this)'>" + mkt.a.SVGINI + mkt.a.svgSquare + mkt.a.SVGFIM + mkt.a.espaco + vOut + "</li>";
+							htmlPossiveis += "<li name='" + mkt.removerAspas(v2) + "' class='hmMarcarExclusivos nosel botao " + sel + "'>" + mkt.a.SVGINI + mkt.a.svgSquare + mkt.a.SVGFIM + mkt.a.espaco + vOut + "</li>";
 						})
 					}
 					htmlPossiveis += "</ul>"
 					mkt.Q("body .mkHeadMenu .possibilidades").innerHTML = htmlPossiveis;
+					// Gatilhos para as Possibilidades assim que inseridas;
+					mkt.Ao("click", ".mkHeadMenu .hmMarcarExclusivos", (e: HTMLInputElement | null) => {
+						let eHmenu = mkt.Q("body .mkHeadMenu");
+						if (e?.id == "headMenuTodos") {
+							e = null;
+						}
+						mkt.a.hm.MarcarExclusivos(e, eHmenu?.getAttribute("data-colname"), eHmenu?.getAttribute("data-mkt"));
+					})
 				} else {
 					mkt.w("mkt.a.hm.FiltraExclusivo() - Parametros precisam ser string: ", v, iof);
 				}
 			},
-			MarcarExclusivos: Function,
+			MarcarExclusivos: (e: HTMLElement | null, colName: string, iof: string | null | undefined) => {
+				// Marca de Desmarca
+				if (mkt.classof(iof) == "String") {
+					let este = mkt.getThis(Number(iof));
+					if (e) {
+						let name = e.getAttribute("name");
+						if (name) {
+							if (este.hmunsel.includes(name)) {
+								e.classList.add("sel");
+								if (name != null) {
+									este.hmunsel.splice(este.hmunsel.indexOf(name), 1);
+									if (este.hmunsel.length == 0) {
+										mkt.Q("#headMenuTodos").classList.add("sel");
+										mkt.Q("body .mkHeadMenu .possibilidades").classList.toggle("st");
+									}
+								}
+							} else {
+								e.classList.remove("sel");
+								if (name != null) {
+									este.hmunsel.push(name);
+									if (este.hmunsel.length == este.exclusivos.length) {
+										mkt.Q("#headMenuTodos").classList.remove("sel");
+										mkt.Q("body .mkHeadMenu .possibilidades").classList.toggle("st");
+									}
+								}
+							}
+						} else {
+							mkt.w("mkt.a.hm.MarcarExclusivos() - Atributo NAME não encontrado em: ", e);
+						}
+					} else {
+						mkt.Q("body .mkHeadMenu .possibilidades").classList.toggle("st");
+						if (mkt.Q("body .mkHeadMenu .possibilidades").classList.contains("st")) {
+							mkt.QAll(".mkHeadMenu .possibilidades li").forEach((el: HTMLLIElement) => {
+								let name = el.getAttribute("name");
+								el.classList.remove("sel");
+								if (name != null) {
+									if (!este.hmunsel.includes(name)) {
+										este.hmunsel.push(name);
+									}
+								}
+							})
+						} else {
+							mkt.QAll(".mkHeadMenu .possibilidades li").forEach((el: HTMLLIElement) => {
+								let name = el.getAttribute("name");
+								el.classList.add("sel");
+								if (name != null) {
+									este.hmunsel.splice(este.hmunsel.indexOf(name), 1);
+								}
+							})
+						}
+					}
+					este.c.objFiltro[colName] = {
+						formato: "mkHeadMenuSel",
+						operador: "",
+						conteudo: este.hmunsel,
+					};
+					este.atualizaNaPaginaUm();
+					// Limpar outros filtros
+					mkt.Q(".mkHeadMenu input[name='filtrarCampo']").value = "";
+				} else {
+					mkt.w("mkt.a.hm.MarcarExclusivos() - Parametros colName, iof precisam ser string: ", colName, iof);
+				}
+			},
 			HideX: Function,
 
 		},
