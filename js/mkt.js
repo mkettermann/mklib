@@ -582,7 +582,7 @@ class mkt {
                         if (!container.querySelector("." + this.c.botaoAdicionarMaisClasse)) {
                             let mklEFim = document.createElement("div");
                             mklEFim.className = this.c.botaoAdicionarMaisClasse;
-                            mklEFim.innerHTML = mkt.m.carregarmais;
+                            mklEFim.innerHTML = mkt.a.msg.carregarmais;
                             mkt.Ao("click", mklEFim, (e) => {
                                 this.mais();
                                 e.classList.add("disabled");
@@ -1462,6 +1462,25 @@ class mkt {
         limparIndivisual: "Limpar filtros de",
         limparTodos: "Limpar todos filtros",
         log: true,
+        msg: {
+            po: "Preenchimento Obrigatório",
+            so: "Seleção Obrigatória",
+            fi: "Formato Inválido",
+            in: "Indisponível",
+            negado: "Negado",
+            maxc: "Limite de caracteres atingido",
+            minc: "Mínimo de caracteres: ",
+            nummax: "Máximo: ",
+            nummin: "Mínimo: ",
+            some: "Requer: ",
+            datamax: "Data maior que o esperado",
+            charproibido: "Não utilize: ",
+            apenasnumeros: "Apenas Números",
+            apenasletras: "Apenas Letras",
+            datamaiorque: "Deve ser maior que hoje",
+            datamenorque: "Deve ser menor que hoje",
+            carregarmais: "Carregar Mais Resultados",
+        },
         mkFaseAtual: 1,
         svgAB: "<path fill-rule='evenodd' d='M10.082 5.629 9.664 7H8.598l1.789-5.332h1.234L13.402 7h-1.12l-.419-1.371zm1.57-.785L11 2.687h-.047l-.652 2.157z'/><path d='M12.96 14H9.028v-.691l2.579-3.72v-.054H9.098v-.867h3.785v.691l-2.567 3.72v.054h2.645zM4.5 2.5a.5.5 0 0 0-1 0v9.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L4.5 12.293z'/>",
         svgBA: "<path fill-rule='evenodd' d='M10.082 5.629 9.664 7H8.598l1.789-5.332h1.234L13.402 7h-1.12l-.419-1.371zm1.57-.785L11 2.687h-.047l-.652 2.157z'/><path d='M12.96 14H9.028v-.691l2.579-3.72v-.054H9.098v-.867h3.785v.691l-2.567 3.72v.054h2.645zm-8.46-.5a.5.5 0 0 1-1 0V3.707L2.354 4.854a.5.5 0 1 1-.708-.708l2-1.999.007-.007a.5.5 0 0 1 .7.006l2 2a.5.5 0 1 1-.707.708L4.5 3.707z'/>",
@@ -1580,9 +1599,79 @@ class mkt {
         },
         wpool: null, // WorkerPool quando iniciado
     };
-    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-    //  EM ORDEM ALFABETICA             \\
-    //___________________________________\\
+    static m;
+    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+    //                     ATALHOS PERSONALIZADOS                              \\
+    //==========================================================================\\
+    static Q;
+    static QAll;
+    static QverOff;
+    static QverOn;
+    static Qoff;
+    static Qon;
+    static Ao;
+    static AoConfig;
+    static atribuir;
+    static html;
+    static wait;
+    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+    //                     ERROS, LOGS E INFORMACOES                           \\
+    //==========================================================================\\
+    static l;
+    static w;
+    static gc;
+    static ge;
+    static erro;
+    static ct;
+    static cte;
+    static errosLog;
+    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+    //                     MKT Support / Component                             \\
+    //==========================================================================\\
+    static exeTimer;
+    static Inicializar;
+    static mkMoldeOA;
+    static getV;
+    static mkToValue;
+    static toString;
+    static processoFiltragem;
+    static sortDir;
+    static delObjetoFromId;
+    static setObjetoFromId;
+    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+    //                     Web Generic Component                               \\
+    //==========================================================================\\
+    static CarregarON;
+    static CarregarOFF;
+    static detectedServerOn;
+    static detectedServerOff;
+    static vibrar;
+    static importar;
+    static post;
+    static get;
+    static request;
+    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+    //                     TOOLS e JS HELPERS                                  \\
+    //==========================================================================\\
+    static contem;
+    static like;
+    static classof;
+    static clonar;
+    static ordenar;
+    static mkLimparOA;
+    static allSubPropriedades;
+    static mkExecutaNoObj;
+    static cadaExe;
+    static aCadaElemento;
+    static parseJSON;
+    static stringify;
+    static regras = [];
+    static exeregra;
+    static estaValido;
+    static regraDisplay;
+    static mascarar;
+    static mkClicarNaAba;
+    static Workers;
     // WORKERS: Atalho de tarefa. Já constroi se necessário
     // mkt.addTask({ k: "MKT_INCLUDE", v: ["a","b"], target: "a" }).then(r=>{mkt.l("Main Recebeu: ",r)})
     static addTask = (msg, numWorkers) => {
@@ -1597,95 +1686,46 @@ class mkt {
             }
         });
     };
-    static regras = [];
-    static stringify;
-    static Workers;
-    static classof;
-    static Inicializar;
-    static mkClicarNaAba;
-    static exeTimer;
-    static toString;
-    static mascarar;
-    static Q;
-    static QAll;
-    static l;
-    static w;
-    static erro;
-    static gc;
-    static ge;
-    static ct;
-    static cte;
-    static importar;
-    static Ao;
-    static mkLimparOA;
-    static mkExecutaNoObj;
-    static mkMoldeOA;
-    static get;
-    static post;
-    static sortDir;
-    static QverOff;
-    static QverOn;
-    static Qoff;
-    static Qon;
-    static html;
-    static wait;
-    static ordenar;
-    static processoFiltragem;
-    static getV;
-    static clonar;
-    static allSubPropriedades;
     static removeEspecias;
-    static toLocale;
     static removerAspas;
-    static AoConfig;
-    static request;
+    static apenasNumeros;
+    static apenasLetras;
+    static apenasNumerosLetras;
+    static mkNodeToScript;
+    static isInside;
+    static isJson;
+    static TerremotoErros;
+    static mkReposicionar;
+    static frequencia;
+    static mkBoolToSimNaoOA;
+    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+    //                     Gerenciamento Monetário / Numérico                  \\
+    //==========================================================================\\
+    static mkFloat;
+    static mkDuasCasas;
+    static toMoeda;
+    static fromMoeda;
+    static toNumber;
+    static fromNumber;
+    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+    //                     Gerenciamento de Data                               \\
+    //==========================================================================\\
     static getMs;
     static getDia;
     static getMes;
     static getAno;
     static getFullData;
-    static atribuir;
-    static mkDuasCasas;
-    static regraDisplay;
-    static isInside;
-    static TerremotoErros;
-    static contem;
-    static isJson;
-    static apenasNumeros;
-    static apenasLetras;
-    static apenasNumerosLetras;
-    static toMoeda;
-    static fromMoeda;
-    static toNumber;
-    static fromNumber;
-    static CarregarON;
-    static CarregarOFF;
-    static errosLog;
-    static delObjetoFromId;
-    static setObjetoFromId;
-    static aCadaElemento;
-    static cadaExe;
-    static detectedServerOn;
-    static detectedServerOff;
-    static mkFloat;
-    static parseJSON;
     static hojeMkData;
     static hojeMkHora;
     static hoje;
+    static mkYYYYMMDDtoDDMMYYYY;
+    static mkFormatarDataOA;
+    static toLocale;
     static getDiasDiferenca;
     static transMsEmDias;
-    static mkNodeToScript;
-    static frequencia;
-    static mkYYYYMMDDtoDDMMYYYY;
-    static mkBoolToSimNaoOA;
-    static mkFormatarDataOA;
-    static exeregra;
-    static m;
-    static vibrar;
-    static estaValido;
-    static mkToValue;
-    static mkRecUpdate;
-    static like;
+    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+    //                     Web Components                                      \\
+    //==========================================================================\\
     static mkSelTabIndex;
     static mkSelMoveu;
     static mkSelPopularLista;
@@ -1698,11 +1738,11 @@ class mkt {
     static mkSelArrayGetMap;
     static mkSelArraySetMap;
     static mkSelSelecionar;
-    static mkReposicionar;
     static mkSelSetDisplay;
     static mkSelRenderizar;
     static mkSelRenderizarElemento;
     static mkRecRenderizar;
+    static mkRecUpdate;
     static mkBotCheck;
 } // FIM CLASSE MKT
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
@@ -3978,27 +4018,6 @@ Object.defineProperty(mkt, "estaValido", {
         return validou;
     }, enumerable: false, writable: false, configurable: false,
 });
-Object.defineProperty(mkt, "m", {
-    value: {
-        po: "Preenchimento Obrigatório",
-        so: "Seleção Obrigatória",
-        fi: "Formato Inválido",
-        in: "Indisponível",
-        negado: "Negado",
-        maxc: "Limite de caracteres atingido",
-        minc: "Mínimo de caracteres: ",
-        nummax: "Máximo: ",
-        nummin: "Mínimo: ",
-        some: "Requer: ",
-        datamax: "Data maior que o esperado",
-        charproibido: "Não utilize: ",
-        apenasnumeros: "Apenas Números",
-        apenasletras: "Apenas Letras",
-        datamaiorque: "Deve ser maior que hoje",
-        datamenorque: "Deve ser menor que hoje",
-        carregarmais: "Carregar Mais Resultados",
-    }, enumerable: false, writable: false, configurable: false,
-});
 Object.defineProperty(mkt, "exeregra", {
     value: async (e, ev = null) => {
         // Função que executa as regras deste campo com base nos objetos salvos
@@ -4054,7 +4073,7 @@ Object.defineProperty(mkt, "exeregra", {
                                     for (let c of re.v) {
                                         if (e[re.target].includes(c)) {
                                             if (!re.m)
-                                                re.m = mkt.m.charproibido + c;
+                                                re.m = mkt.a.msg.charproibido + c;
                                             erros.push(re);
                                             e[re.target] = e[re.target].replaceAll(c, "");
                                         }
@@ -4064,7 +4083,7 @@ Object.defineProperty(mkt, "exeregra", {
                                 case "apenasnumeros": // EXE
                                     if (!(mkt.a.util.numeros[1].test(e[re.target]))) {
                                         if (!re.m)
-                                            re.m = mkt.m.apenasnumeros;
+                                            re.m = mkt.a.msg.apenasnumeros;
                                         erros.push(re);
                                         e[re.target] = e[re.target].replaceAll(/((?![0-9]).)/g, "");
                                     }
@@ -4073,7 +4092,7 @@ Object.defineProperty(mkt, "exeregra", {
                                 case "apenasletras": // EXE
                                     if (!(mkt.a.util.letras[1].test(e[re.target]))) {
                                         if (!re.m)
-                                            re.m = mkt.m.apenasletras;
+                                            re.m = mkt.a.msg.apenasletras;
                                         erros.push(re);
                                         e[re.target] = e[re.target].replaceAll(/((?![a-zA-Z]).)/g, "");
                                     }
@@ -4083,7 +4102,7 @@ Object.defineProperty(mkt, "exeregra", {
                                     e.setAttribute("maxlength", re.v);
                                     if (e[re.target].length > Number(re.v)) {
                                         if (!re.m)
-                                            re.m = mkt.m.maxc;
+                                            re.m = mkt.a.msg.maxc;
                                         erros.push(re);
                                         e[re.target] = e[re.target].slice(0, Number(re.v));
                                     }
@@ -4093,7 +4112,7 @@ Object.defineProperty(mkt, "exeregra", {
                                     e.setAttribute("minlength", re.v);
                                     if (e[re.target].length < Number(re.v)) {
                                         if (!re.m)
-                                            re.m = mkt.m.minc + re.v;
+                                            re.m = mkt.a.msg.minc + re.v;
                                         erros.push(re);
                                         let _a = [...e[re.target]];
                                         if (!re.fill)
@@ -4108,7 +4127,7 @@ Object.defineProperty(mkt, "exeregra", {
                                 case "datamax": // EXE
                                     if (mkt.getMs(e[re.target]) > mkt.getMs(re.v)) {
                                         if (!re.m)
-                                            re.m = mkt.m.datamax;
+                                            re.m = mkt.a.msg.datamax;
                                         erros.push(re);
                                         e[re.target] = re.v;
                                     }
@@ -4118,7 +4137,7 @@ Object.defineProperty(mkt, "exeregra", {
                                     e.setAttribute("min", re.v);
                                     if (mkt.mkFloat(e[re.target]) < Number(re.v)) {
                                         if (!re.m)
-                                            re.m = mkt.m.nummin + re.v;
+                                            re.m = mkt.a.msg.nummin + re.v;
                                         erros.push(re);
                                         e[re.target] = re.v;
                                     }
@@ -4128,7 +4147,7 @@ Object.defineProperty(mkt, "exeregra", {
                                     e.setAttribute("max", re.v);
                                     if (mkt.mkFloat(e[re.target]) > Number(re.v)) {
                                         if (!re.m)
-                                            re.m = mkt.m.nummax + re.v;
+                                            re.m = mkt.a.msg.nummax + re.v;
                                         erros.push(re);
                                         e[re.target] = re.v;
                                     }
@@ -4141,10 +4160,10 @@ Object.defineProperty(mkt, "exeregra", {
                                         if (e[re.target] == "") {
                                             if (!re.m) {
                                                 if (e.classList.contains("mkSel")) {
-                                                    re.m = mkt.m.so;
+                                                    re.m = mkt.a.msg.so;
                                                 }
                                                 else {
-                                                    re.m = mkt.m.po;
+                                                    re.m = mkt.a.msg.po;
                                                 }
                                             }
                                             erros.push(re);
@@ -4155,7 +4174,7 @@ Object.defineProperty(mkt, "exeregra", {
                                 case "regex": // INFO
                                     if (!(new RegExp(re.v).test(e[re.target]))) {
                                         if (!re.m)
-                                            re.m = mkt.m.fi;
+                                            re.m = mkt.a.msg.fi;
                                         erros.push(re);
                                     }
                                     prom(re.k);
@@ -4169,7 +4188,7 @@ Object.defineProperty(mkt, "exeregra", {
                                     for (let i = 0; i < _vs.length; i++) {
                                         if (!([...e[re.target]].some(le => new RegExp(_vs[i]).test(le)))) {
                                             if (!re.m) {
-                                                re.m = mkt.m.some;
+                                                re.m = mkt.a.msg.some;
                                             }
                                             re.vmfail.push(re.vm[i]);
                                             b = true;
@@ -4184,7 +4203,7 @@ Object.defineProperty(mkt, "exeregra", {
                                     e.setAttribute("minlength", re.v);
                                     if (e[re.target].length < Number(re.v)) {
                                         if (!re.m)
-                                            re.m = mkt.m.minc + re.v;
+                                            re.m = mkt.a.msg.minc + re.v;
                                         erros.push(re);
                                     }
                                     prom(re.k);
@@ -4192,7 +4211,7 @@ Object.defineProperty(mkt, "exeregra", {
                                 case "maxcharsinfo": // INFO
                                     if (e[re.target].length > Number(re.v)) {
                                         if (!re.m)
-                                            re.m = mkt.m.maxc + re.v;
+                                            re.m = mkt.a.msg.maxc + re.v;
                                         erros.push(re);
                                     }
                                     prom(re.k);
@@ -4200,7 +4219,7 @@ Object.defineProperty(mkt, "exeregra", {
                                 case "fn": // INFO
                                     if (!(re.v(e[re.target]))) {
                                         if (!re.m)
-                                            re.m = mkt.m.negado;
+                                            re.m = mkt.a.msg.negado;
                                         erros.push(re);
                                     }
                                     prom(re.k);
@@ -4208,7 +4227,7 @@ Object.defineProperty(mkt, "exeregra", {
                                 case "datamaiorque": // INFO
                                     if (mkt.getMs(e[re.target]) < mkt.getMs(re.v)) {
                                         if (!re.m)
-                                            re.m = mkt.m.datamaiorque;
+                                            re.m = mkt.a.msg.datamaiorque;
                                         erros.push(re);
                                     }
                                     prom(re.k);
@@ -4216,7 +4235,7 @@ Object.defineProperty(mkt, "exeregra", {
                                 case "datamenorque": // INFO
                                     if (mkt.getMs(e[re.target]) > mkt.getMs(re.v)) {
                                         if (!re.m)
-                                            re.m = mkt.m.datamenorque;
+                                            re.m = mkt.a.msg.datamenorque;
                                         erros.push(re);
                                     }
                                     prom(re.k);
@@ -4225,7 +4244,7 @@ Object.defineProperty(mkt, "exeregra", {
                                     //(Verificação remota, DB / API)
                                     if (ev) {
                                         if (!re.m)
-                                            re.m = mkt.m.in;
+                                            re.m = mkt.a.msg.in;
                                         if (e[re.target] != "") {
                                             e.classList.add("pending");
                                             let queryString = "?" + regrasDoE.n + "=" + e[re.target];
@@ -4278,7 +4297,7 @@ Object.defineProperty(mkt, "exeregra", {
                     let mensagens = erros.map((a) => {
                         if (Array.isArray(a.vmfail)) {
                             // Aqui dá pra evoluir se houver um template nos padrões.
-                            a.m = mkt.m.some + a.vmfail.join(", ");
+                            a.m = mkt.a.msg.some + a.vmfail.join(", ");
                         }
                         return a.m;
                     }).join("<br/>");
