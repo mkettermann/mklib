@@ -493,7 +493,6 @@ class mkt {
 		});
 	}
 
-
 	// Gera uma instancia de conexão ao banco de dados Client-Side indexavel
 	dbCon = async (): Promise<IDBDatabase | null> => {
 		return new Promise((r) => {
@@ -2161,18 +2160,345 @@ class mkt {
 		mkt.Q("body").classList.remove("CarregadorMkSemScrollY");
 	};
 
-	static vibrar: Function;
-	static importar: Function;
-	static post: any;
-	static get: any;
-	static request: Function;
+	static vibrar = async (tipo: boolean | null) => {
+		// Funcionalidade de vibrar celular baseado no tipo informado.
+		if (tipo === false) {
+			navigator.vibrate([100, 30, 100, 30, 100]); // 3 tempos curtos com intervalo representando: "Não, Não, Não"
+		} else if (tipo === true) {
+			navigator.vibrate([300]); // 3 tempos sem intervalo representando: "Efetivado"
+		} else {
+			navigator.vibrate([200, 50, 200]) // 2 Tempos seguidos representando: "Talvez"
+		}
+	};
+
+	static importar = async (tagBuscar = ".divListagemContainer", tipo: any = "race", quiet: boolean = true) => {
+		// IMPORTAR - Coleta o html externo através da classe mkImportar contendo a url.
+		return new Promise((r, x) => {
+			let num = mkt.a.contaImportados++;
+			if (!quiet) {
+				mkt.gc("\t(" + num + ") Executando Importador no modo: ", tipo)
+			}
+			let ps: any = [];
+			mkt.QAll(tagBuscar + " *").forEach((e: HTMLElement) => {
+				let destino = e.getAttribute("mkImportar");
+				if (destino != null) {
+					ps.push({ p: mkt.get.html({ url: destino, quiet: quiet, carregador: false }), e: e, n: num });
+				}
+			});
+			if (!quiet) {
+				mkt.l(ps);
+				mkt.ge();
+			}
+			(Promise as any)[tipo](ps.map((x: any) => { return x.p })).then((ret: any) => {
+				ps.forEach(async (o: any) => {
+					let re = await o.p;
+					if (re.retorno != null) {
+						o.e.removeAttribute("mkImportar");
+						o.e.innerHTML = re.retorno;
+						try {
+							mkt.mkNodeToScript(o.e);
+						} catch (error) {
+							mkt.gc("Auto Import por TAG lancou erros:");
+							mkt.erro("ERRO: ", error);
+							mkt.ge();
+						}
+					} else {
+						x(false);
+						mkt.l("Falhou ao coletar dados");
+					}
+				});
+				r(true);
+			});
+		});
+	};
+
+	static post = {
+		// Este objeto contém funções para enviar dados em um formato e espera-se que voltem no mesmo.
+		json: async (config: any, json: object) => { // post json object...
+			if (typeof config != "object") config = { url: config };
+			config.metodo = mkt.a.POST;
+			config.tipo = mkt.a.JSON;
+			config.dados = json;
+			let retorno = await mkt.request(config);
+			return retorno;
+		},
+		html: async (config: any, text: string) => { // post b64...
+			if (typeof config != "object") config = { url: config };
+			config.metodo = mkt.a.POST;
+			config.tipo = mkt.a.HTML;
+			config.dados = text;
+			let retorno = await mkt.request(config);
+			return retorno;
+		},
+		form: async (config: any, formdata: FormData) => {
+			if (typeof config != "object") config = { url: config };
+			config.metodo = mkt.a.POST;
+			config.tipo = mkt.a.FORMDATA;
+			config.dados = formdata;
+			let retorno = await mkt.request(config);
+			return retorno;
+		}
+	};
+
+	static get = {
+		// Este objeto contém funções para solicitar dados de um formato e espera-se que voltem neste formato.
+		// Exemplo: mkt.get.json({ url:"/GetList", done: (c)=>{console.log("done:",c)}})
+		json: async (config: any) => {
+			if (typeof config != "object") config = { url: config };
+			config.metodo = mkt.a.GET;
+			config.tipo = mkt.a.JSON;
+			return await mkt.request(config);
+		},
+		html: async (config: any) => {
+			if (typeof config != "object") config = { url: config };
+			config.metodo = mkt.a.GET;
+			config.tipo = mkt.a.HTML;
+			let retorno = await mkt.request(config);
+			return retorno;
+		},
+		blob: async (config: any) => {
+			if (typeof config != "object") config = { url: config };
+			config.metodo = mkt.a.GET;
+			config.tipo = mkt.a.ALL;
+			let retorno = await mkt.request(config);
+			return retorno;
+		}
+	};
+
+	static request = async (config: any) => {
+		// Função para transferencia HTTP que utiliza o FETCH e agrega um config do início da solicitação até o fim.
+		/** REQUEST
+		 * Se Utilizar o await, o config enviado retorna com o resultado e o pacote
+		 * Se definir o done e/ou o error no config, será executado como callback também.
+		 * @param config  Estes são as propriedades em uso do config:
+		 * {
+		 * 	url: "www.google.com",
+		 * 	metoto: "GET",
+		 * 	tipo: "application/json",
+		 * 	dados: ["a",1],
+		 * 	headers: new Headers(),
+		 * 	quiet: false,
+		 * 	dev: false,
+		 * 	carregador: false,
+		 * 	done: (c)=>{mkt.l("Deu Boa? ",c.pacote.ok)},
+		 * 	error: (c)=>{mkt.l("Deu Boa? ",c.pacote.ok)},
+		 *  //pacote: É populado com os dados do pacote.
+		 *  //retorno: É populado com os dados retornados.
+		 * }
+		 * @returns Sempre retorna o config preenchido (utilizar await para capturar o resultado)
+		 */
+		// CONFIG ! Necessário
+		if (typeof config != "object") {
+			mkt.w("É necessário informar o objeto de configuração com a URL.");
+			return { url: null, retorno: null }; // Não há config, Mas pra retornar sempre o config
+		}
+		// URL ! Necessário
+		if (!config?.url) {
+			mkt.w("Necessário informar uma URL nos requests.");
+			return { url: config?.url, retorno: null };
+		}
+		// GET ? POST, PUT, DELETE
+		if (!config?.metodo) {
+			mkt.w("Nenhum método informado. Avançando com GET");
+			config.metodo = "GET";
+		} else {
+			if (config.metodo == "POST" && config.dados == null) { // Todo POST requer dados a serem enviados.
+				mkt.w("Método POST, mas SEM DADOS informados. Enviando string vazia ''.");
+				config.dados = "";
+			}
+		}
+		// Name e Timer Start
+		let nomeRequest = config.metodo + ": " + config.url;
+		mkt.ct("Request: " + nomeRequest);
+		// JSON / FORM / *
+		if (!config?.tipo) {
+			mkt.w("Nenhum tipo de dado informado. Avançando com " + mkt.a.JSON);
+			config.tipo = mkt.a.JSON;
+		}
+		if (!config?.headers) {
+			config.headers = new Headers();
+			// CONTENT TYPE
+			if (config.tipo == mkt.a.JSON) {
+				config.headers.append("Content-Type", config.tipo);
+			}
+			// TOKEN Baseado neste primeiro input
+			let aft: any = mkt.Q("input[name='__RequestVerificationToken']")?.value;
+			config.headers.append("MKANTI-FORGERY-TOKEN", aft || "");
+		}
+		if (!config.quiet) config.quiet = false;
+		// TIPO DE ENVIO
+		config.json = mkt.stringify(config.dados);
+		if (config.metodo != mkt.a.GET) {
+			if (config.tipo == mkt.a.JSON) {
+				config.body = config.json;
+			} else if (config.tipo == mkt.a.FORMDATA) {
+				config.body = config.dados;
+			}
+		}
+		// config.dev = true;
+		// INFO
+		if (!config.quiet) {
+			mkt.gc(nomeRequest);
+			if (config.dev) {
+				mkt.l("Header: ", Object.fromEntries(config.headers.entries()));
+				mkt.l("Config: ", config);
+			}
+			if (config.metodo == mkt.a.POST) {
+				mkt.l("DADOS: ", config.dados);
+				mkt.gc("JSON: ");
+				mkt.l(config.json);
+				mkt.ge();
+				if (typeof config.dados == "object") {
+					if (config.dados.entries != null) {
+						mkt.gc("FORM OBJECT");
+						mkt.l(Object.fromEntries(config.dados.entries()));
+						mkt.ge();
+					}
+				}
+			}
+			mkt.ge(); // Fim do metodo
+		}
+		// Inicia o carregador 
+		if (config.carregador) {
+			mkt.CarregarON(nomeRequest);
+		}
+		// O EXECUTOR		
+		config.retorno = null;
+		config.statusCode = "SEM CONEXÃO";
+		try {
+			config.pacote = await fetch(config.url, {
+				method: config.metodo,
+				headers: config.headers,
+				body: config.body,
+			});
+			if (!config.pacote.ok) {
+				config.conectou = false;
+				config.statusCode = config.pacote.status;
+				// FALHA (NÂO 200)
+				mkt.gc(
+					"HTTP RETURNO: " + config.pacote.status + " " + config.pacote.statusText
+				);
+				let texto = await config.pacote.text();
+				mkt.l(texto);
+				mkt.ge();
+				if (config.pacote.status >= 300) {
+					if (!localStorage.mktRequests) {
+						localStorage.mktRequests = mkt.stringify([]);
+					}
+
+					let erros = JSON.parse(localStorage.mktRequests);
+					erros.push({
+						quando: mkt.hoje(),
+						status: config.pacote.status,
+						texto: texto,
+						url: config.url,
+					})
+					if (erros.length > 10) {
+						erros.shift(1);
+					}
+
+					localStorage.mktRequests = mkt.stringify(erros);
+				}
+			} else {
+				config.conectou = true;
+				config.statusCode = config.pacote.status;
+				// 200 DONE (Retorna baseado no tipo de envio)
+				if (config.tipo == mkt.a.JSON) {
+					config.retorno = await config.pacote.json();
+				} else if (config.tipo == mkt.a.HTML) {
+					config.retorno = await config.pacote.text();
+				} else if (config.tipo == mkt.a.ALL) {
+					config.retorno = await config.pacote.blob();
+				} else if (config.tipo == mkt.a.FORMDATA) {
+					config.retorno = await config.pacote.json();
+				}
+				if (!config.quiet) {
+					let tam = config.retorno?.length;
+					if (!tam) {
+						tam = "";
+					}
+					mkt.gc(
+						"Retorno " + config.pacote.status +
+						" (" + config.metodo + "):{" + config.retorno?.length + "} " +
+						config.url + " (" + config.tipo + ")"
+					);
+				}
+				mkt.cte("Request: " + nomeRequest, config.quiet);
+				if (!config.quiet) {
+					mkt.l(config.retorno);
+					mkt.ge();
+				}
+				if (config.done) { config.done(config); }
+			}
+		} catch (error) {
+			// Caso Conection_Refused, Não tem código de erro. Então cai aqui.
+			config.conectou = false;
+			config.catch = error;
+		}
+		// Aqui tem Status code se o erro foi no servidor, Mas não tem se o servidor não estiver online.
+		if (!config.conectou) {
+			mkt.gc("(" + config.statusCode + ") HTTP ERRO:");
+			// Se bateu no catch, expoem trace error do JS
+			if (config.catch && !config.quiet) {
+				mkt.l("Config: ", config);
+				mkt.erro("Erro: ", config.catch);
+			}
+			// Executa funcao de erro externa.
+			if (config.error) { config.error(config); }
+			mkt.ge();
+		}
+
+		// Finaliza o carregador 
+		if (config.carregador) {
+			mkt.CarregarOFF(nomeRequest);
+		}
+		// Sempre retorna o config
+		return config;
+	};
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 	//                     TOOLS e JS HELPERS                                  \\
 	//==========================================================================\\
 
-	static contem: Function;
-	static like: Function;
+	static contem = (
+		strMaior: string,
+		strMenor: string,
+	): boolean => {
+		// Comparardor de string CONTEM
+		strMaior = mkt.removeEspecias(strMaior).toLowerCase();
+		strMenor = mkt.removeEspecias(strMenor).toLowerCase();
+		return (strMaior.includes(strMenor));
+	};
+
+	static like = (
+		strMenor: string,
+		strMaior: string,
+	): boolean => {
+		// Comparardor de string LIKE
+		let result = false;
+		// Apenas Numeros e Letras está presente,
+		// pois se utilizar str.match(),
+		// não pode conter os caracteres reservados do regex.
+
+		let rmMaior = mkt.apenasNumerosLetras(mkt.removeEspecias(strMaior.toLowerCase().trim()));
+		let rmMenor = mkt.apenasNumerosLetras(mkt.removeEspecias(strMenor.toLowerCase().trim()));
+		if (rmMaior.match(rmMenor)) {
+			result = true;
+		}
+
+		// Desabilitei pois já estou removendo os especiais em cima. e a função precisa ser rápida.
+		// Internacionalizador de comparação... (Galês CH e DD e Latin ä))
+		// let likeMatcher = new Intl.Collator(undefined, {
+		// 	sensitivity: "base",
+		// 	ignorePunctuation: true,
+		// }).compare;
+		// if (likeMatcher(strMaior, strMenor) === 0) {
+		// 	result = true;
+		// }
+
+		return result;
+	};
+
 	static classof: Function;
 	static clonar: Function;
 	static ordenar: Function;
@@ -2552,45 +2878,11 @@ Object.defineProperty(mkt, "cursorFim", {
 });
 
 Object.defineProperty(mkt, "like", {
-	value: (
-		strMenor: string,
-		strMaior: string,
-	): boolean => {
-		// Comparardor de string LIKE
-		let result = false;
-		// Se utilizar match, não pode ter os reservados do reg-ex.
-		strMaior = mkt.apenasNumerosLetras(strMaior).toLowerCase().trim();
-		strMenor = mkt.apenasNumerosLetras(strMenor).toLowerCase().trim();
-
-		let rmMaior = strMaior.toLowerCase().trim();
-		let rmMenor = strMenor.toLowerCase().trim();
-		if (rmMaior.match(rmMenor)) {
-			result = true;
-		}
-
-		// Internacionalizador de comparação... (Galês CH e DD e Latin ä))
-		let likeMatcher = new Intl.Collator(undefined, {
-			sensitivity: "base",
-			ignorePunctuation: true,
-		}).compare;
-		if (likeMatcher(strMaior, strMenor) === 0) {
-			result = true;
-		}
-
-		return result;
-	}, enumerable: false, writable: false, configurable: false,
+	enumerable: false, writable: false, configurable: false,
 });
 
 Object.defineProperty(mkt, "contem", {
-	value: (
-		strMaior: string,
-		strMenor: string,
-	): boolean => {
-		// Comparardor de string CONTEM
-		strMaior = mkt.removeEspecias(strMaior).toLowerCase();
-		strMenor = mkt.removeEspecias(strMenor).toLowerCase();
-		return (strMaior.includes(strMenor));
-	}, enumerable: false, writable: false, configurable: false,
+	enumerable: false, writable: false, configurable: false,
 });
 
 Object.defineProperty(mkt, "allSubPropriedades", {
@@ -3581,251 +3873,15 @@ Object.defineProperty(mkt, "CarregarHtml", {
 //___________________________________\\
 
 Object.defineProperty(mkt, "get", {
-	value: {
-		// Formas pre formatadas de chamar o Request de forma simples.
-		// mkt.get.json({ url:"/GetList", done: (c)=>{console.log("done:",c)}})
-		json: async (config: any) => {
-			if (typeof config != "object") config = { url: config };
-			config.metodo = mkt.a.GET;
-			config.tipo = mkt.a.JSON;
-			return await mkt.request(config);
-		},
-		html: async (config: any) => {
-			if (typeof config != "object") config = { url: config };
-			config.metodo = mkt.a.GET;
-			config.tipo = mkt.a.HTML;
-			let retorno = await mkt.request(config);
-			return retorno;
-		},
-		blob: async (config: any) => {
-			if (typeof config != "object") config = { url: config };
-			config.metodo = mkt.a.GET;
-			config.tipo = mkt.a.ALL;
-			let retorno = await mkt.request(config);
-			return retorno;
-		}
-	}, enumerable: false, writable: false, configurable: false,
+	enumerable: false, writable: false, configurable: false,
 });
 
 Object.defineProperty(mkt, "post", {
-	value: {
-		json: async (config: any, json: object) => { // post json object...
-			if (typeof config != "object") config = { url: config };
-			config.metodo = mkt.a.POST;
-			config.tipo = mkt.a.JSON;
-			config.dados = json;
-			let retorno = await mkt.request(config);
-			return retorno;
-		},
-		html: async (config: any, text: string) => { // post b64...
-			if (typeof config != "object") config = { url: config };
-			config.metodo = mkt.a.POST;
-			config.tipo = mkt.a.HTML;
-			config.dados = text;
-			let retorno = await mkt.request(config);
-			return retorno;
-		},
-		form: async (config: any, formdata: FormData) => {
-			if (typeof config != "object") config = { url: config };
-			config.metodo = mkt.a.POST;
-			config.tipo = mkt.a.FORMDATA;
-			config.dados = formdata;
-			let retorno = await mkt.request(config);
-			return retorno;
-		}
-	}, enumerable: false, writable: false, configurable: false,
+	enumerable: false, writable: false, configurable: false,
 });
 
 Object.defineProperty(mkt, "request", {
-	value: async (config: any) => {
-		/** REQUEST
-		 * Se Utilizar o await, o config enviado retorna com o resultado e o pacote
-		 * Se definir o done e/ou o error no config, será executado como callback também.
-		 * @param config  Estes são as propriedades em uso do config:
-		 * {
-		 * 	url: "www.google.com",
-		 * 	metoto: "GET",
-		 * 	tipo: "application/json",
-		 * 	dados: ["a",1],
-		 * 	headers: new Headers(),
-		 * 	quiet: false,
-		 * 	dev: false,
-		 * 	carregador: false,
-		 * 	done: (c)=>{mkt.l("Deu Boa? ",c.pacote.ok)},
-		 * 	error: (c)=>{mkt.l("Deu Boa? ",c.pacote.ok)},
-		 *  //pacote: É populado com os dados do pacote.
-		 *  //retorno: É populado com os dados retornados.
-		 * }
-		 * @returns Sempre retorna o config preenchido (utilizar await para capturar o resultado)
-		 */
-		// CONFIG ! Necessário
-		if (typeof config != "object") {
-			mkt.w("É necessário informar o objeto de configuração com a URL.");
-			return { url: null, retorno: null }; // Não há config, Mas pra retornar sempre o config
-		}
-		// URL ! Necessário
-		if (!config?.url) {
-			mkt.w("Necessário informar uma URL nos requests.");
-			return { url: config?.url, retorno: null };
-		}
-		// GET ? POST, PUT, DELETE
-		if (!config?.metodo) {
-			mkt.w("Nenhum método informado. Avançando com GET");
-			config.metodo = "GET";
-		} else {
-			if (config.metodo == "POST" && config.dados == null) { // Todo POST requer dados a serem enviados.
-				mkt.w("Método POST, mas SEM DADOS informados. Enviando string vazia ''.");
-				config.dados = "";
-			}
-		}
-		// Name e Timer Start
-		let nomeRequest = config.metodo + ": " + config.url;
-		mkt.ct("Request: " + nomeRequest);
-		// JSON / FORM / *
-		if (!config?.tipo) {
-			mkt.w("Nenhum tipo de dado informado. Avançando com " + mkt.a.JSON);
-			config.tipo = mkt.a.JSON;
-		}
-		if (!config?.headers) {
-			config.headers = new Headers();
-			// CONTENT TYPE
-			if (config.tipo == mkt.a.JSON) {
-				config.headers.append("Content-Type", config.tipo);
-			}
-			// TOKEN Baseado neste primeiro input
-			let aft: any = mkt.Q("input[name='__RequestVerificationToken']")?.value;
-			config.headers.append("MKANTI-FORGERY-TOKEN", aft || "");
-		}
-		if (!config.quiet) config.quiet = false;
-		// TIPO DE ENVIO
-		config.json = mkt.stringify(config.dados);
-		if (config.metodo != mkt.a.GET) {
-			if (config.tipo == mkt.a.JSON) {
-				config.body = config.json;
-			} else if (config.tipo == mkt.a.FORMDATA) {
-				config.body = config.dados;
-			}
-		}
-		// config.dev = true;
-		// INFO
-		if (!config.quiet) {
-			mkt.gc(nomeRequest);
-			if (config.dev) {
-				mkt.l("Header: ", Object.fromEntries(config.headers.entries()));
-				mkt.l("Config: ", config);
-			}
-			if (config.metodo == mkt.a.POST) {
-				mkt.l("DADOS: ", config.dados);
-				mkt.gc("JSON: ");
-				mkt.l(config.json);
-				mkt.ge();
-				if (typeof config.dados == "object") {
-					if (config.dados.entries != null) {
-						mkt.gc("FORM OBJECT");
-						mkt.l(Object.fromEntries(config.dados.entries()));
-						mkt.ge();
-					}
-				}
-			}
-			mkt.ge(); // Fim do metodo
-		}
-		// Inicia o carregador 
-		if (config.carregador) {
-			mkt.CarregarON(nomeRequest);
-		}
-		// O EXECUTOR		
-		config.retorno = null;
-		config.statusCode = "SEM CONEXÃO";
-		try {
-			config.pacote = await fetch(config.url, {
-				method: config.metodo,
-				headers: config.headers,
-				body: config.body,
-			});
-			if (!config.pacote.ok) {
-				config.conectou = false;
-				config.statusCode = config.pacote.status;
-				// FALHA (NÂO 200)
-				mkt.gc(
-					"HTTP RETURNO: " + config.pacote.status + " " + config.pacote.statusText
-				);
-				let texto = await config.pacote.text();
-				mkt.l(texto);
-				mkt.ge();
-				if (config.pacote.status >= 300) {
-					if (!localStorage.mktRequests) {
-						localStorage.mktRequests = mkt.stringify([]);
-					}
-
-					let erros = JSON.parse(localStorage.mktRequests);
-					erros.push({
-						quando: mkt.hoje(),
-						status: config.pacote.status,
-						texto: texto,
-						url: config.url,
-					})
-					if (erros.length > 10) {
-						erros.shift(1);
-					}
-
-					localStorage.mktRequests = mkt.stringify(erros);
-				}
-			} else {
-				config.conectou = true;
-				config.statusCode = config.pacote.status;
-				// 200 DONE (Retorna baseado no tipo de envio)
-				if (config.tipo == mkt.a.JSON) {
-					config.retorno = await config.pacote.json();
-				} else if (config.tipo == mkt.a.HTML) {
-					config.retorno = await config.pacote.text();
-				} else if (config.tipo == mkt.a.ALL) {
-					config.retorno = await config.pacote.blob();
-				} else if (config.tipo == mkt.a.FORMDATA) {
-					config.retorno = await config.pacote.json();
-				}
-				if (!config.quiet) {
-					let tam = config.retorno?.length;
-					if (!tam) {
-						tam = "";
-					}
-					mkt.gc(
-						"Retorno " + config.pacote.status +
-						" (" + config.metodo + "):{" + config.retorno?.length + "} " +
-						config.url + " (" + config.tipo + ")"
-					);
-				}
-				mkt.cte("Request: " + nomeRequest, config.quiet);
-				if (!config.quiet) {
-					mkt.l(config.retorno);
-					mkt.ge();
-				}
-				if (config.done) { config.done(config); }
-			}
-		} catch (error) {
-			// Caso Conection_Refused, Não tem código de erro. Então cai aqui.
-			config.conectou = false;
-			config.catch = error;
-		}
-		// Aqui tem Status code se o erro foi no servidor, Mas não tem se o servidor não estiver online.
-		if (!config.conectou) {
-			mkt.gc("(" + config.statusCode + ") HTTP ERRO:");
-			// Se bateu no catch, expoem trace error do JS
-			if (config.catch && !config.quiet) {
-				mkt.l("Config: ", config);
-				mkt.erro("Erro: ", config.catch);
-			}
-			// Executa funcao de erro externa.
-			if (config.error) { config.error(config); }
-			mkt.ge();
-		}
-
-		// Finaliza o carregador 
-		if (config.carregador) {
-			mkt.CarregarOFF(nomeRequest);
-		}
-		// Sempre retorna o config
-		return config;
-	}, enumerable: false, writable: false, configurable: false,
+	enumerable: false, writable: false, configurable: false,
 });
 
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
@@ -4223,15 +4279,7 @@ Object.defineProperty(mkt, "regrar", {
 });
 
 Object.defineProperty(mkt, "vibrar", {
-	value: async (tipo: boolean | null) => {
-		if (tipo === false) {
-			navigator.vibrate([100, 30, 100, 30, 100]); // 3 tempos curtos com intervalo representando: "Não, Não, Não"
-		} else if (tipo === true) {
-			navigator.vibrate([300]); // 3 tempos sem intervalo representando: "Efetivado"
-		} else {
-			navigator.vibrate([200, 50, 200]) // 2 Tempos seguidos representando: "Talvez"
-		}
-	}, enumerable: false, writable: false, configurable: false,
+	enumerable: false, writable: false, configurable: false,
 });
 
 Object.defineProperty(mkt, "estaValido", {
@@ -5708,6 +5756,7 @@ Object.defineProperty(mkt, "mkSelPesquisaInput", {
 			eList.firstElementChild.style.display = "";
 			eList.lastElementChild.style.display = "";
 		}
+		mkt.mkReposicionar(eList, true);
 	}, enumerable: false, writable: false, configurable: false,
 });
 
@@ -5912,46 +5961,7 @@ Object.defineProperty(mkt, "errosLog", {
 //___________________________________\\
 
 Object.defineProperty(mkt, "importar", {
-	value: async (tagBuscar = ".divListagemContainer", tipo: any = "race", quiet: boolean = true) => {
-		// IMPORTAR - Classe - Coleta o html externo
-		return new Promise((r, x) => {
-			let num = mkt.a.contaImportados++;
-			if (!quiet) {
-				mkt.gc("\t(" + num + ") Executando Importador no modo: ", tipo)
-			}
-			let ps: any = [];
-			mkt.QAll(tagBuscar + " *").forEach((e: HTMLElement) => {
-				let destino = e.getAttribute("mkImportar");
-				if (destino != null) {
-					ps.push({ p: mkt.get.html({ url: destino, quiet: quiet, carregador: false }), e: e, n: num });
-				}
-			});
-			if (!quiet) {
-				mkt.l(ps);
-				mkt.ge();
-			}
-			(Promise as any)[tipo](ps.map((x: any) => { return x.p })).then((ret: any) => {
-				ps.forEach(async (o: any) => {
-					let re = await o.p;
-					if (re.retorno != null) {
-						o.e.removeAttribute("mkImportar");
-						o.e.innerHTML = re.retorno;
-						try {
-							mkt.mkNodeToScript(o.e);
-						} catch (error) {
-							mkt.gc("Auto Import por TAG lancou erros:");
-							mkt.erro("ERRO: ", error);
-							mkt.ge();
-						}
-					} else {
-						x(false);
-						mkt.l("Falhou ao coletar dados");
-					}
-				});
-				r(true);
-			});
-		});
-	}, enumerable: false, writable: false, configurable: false,
+	enumerable: false, writable: false, configurable: false,
 });
 
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
