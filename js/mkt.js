@@ -1223,6 +1223,11 @@ class mkt {
         POST: "POST",
         SVGINI: "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'>",
         SVGFIM: "</svg>",
+        AoConfig: {
+            capture: false,
+            once: false,
+            passive: true,
+        },
         build: [],
         clacre: "Classificar Crescente",
         cladec: "Classificar Decrescente",
@@ -1604,26 +1609,171 @@ class mkt {
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //                     ATALHOS PERSONALIZADOS                              \\
     //==========================================================================\\
-    static Q;
-    static QAll;
-    static QverOff;
-    static QverOn;
-    static Qoff;
-    static Qon;
-    static Ao;
-    static AoConfig;
-    static atribuir;
-    static html;
-    static wait;
+    static Q = (query) => {
+        // Atalho para QuerySelector que retorna apenas o primeiro elemento da query.
+        if (mkt.classof(query) != "String")
+            return query;
+        return document.querySelector(query);
+    };
+    static QAll = (query = "body") => {
+        // Atalho para QuerySelectorAll. List []
+        if (mkt.classof(query) == "String") {
+            return Array.from(document.querySelectorAll(query));
+        }
+        else if (mkt.classof(query).endsWith("Element")) {
+            return [query];
+        }
+        else {
+            mkt.w("QAll() - Requer String / Elemento. ClassOf: ", mkt.classof(query), " Query: ", query);
+            return [];
+        }
+    };
+    static QverOff = (query = "body") => {
+        // Oculta pela classe "oculto" todos elementos deste query.
+        return mkt.aCadaElemento(query, (e) => {
+            e?.classList.add("oculto");
+        });
+    };
+    static QverOn = (query = "body") => {
+        // Visualiza elemento removendo a classe "oculto";
+        return mkt.aCadaElemento(query, (e) => {
+            e?.classList.remove("oculto");
+        });
+    };
+    static Qoff = (query = "body") => {
+        // Coloca atributo disabled e classe disabled nos elementos do query e seta tab até o campo desativado.
+        return mkt.aCadaElemento(query, (e) => {
+            let co = mkt.classof(e);
+            // INPUT - BUTTON - TEXTAREA - SELECT - OPTION - OPTGROUP - FIELDSET
+            if (co == 'HTMLTextAreaElement' ||
+                co == 'HTMLButtonElement' ||
+                co == 'HTMLSelectElement' ||
+                co == 'HTMLOptionElement' ||
+                co == 'HTMLOptGroupElement' ||
+                co == 'HTMLFieldSetElement' ||
+                co == 'HTMLInputElement') {
+                e.disabled = true;
+            }
+            e.classList.add("disabled");
+            e.setAttribute("tabindex", "-1");
+        });
+    };
+    static Qon = (query = "body") => {
+        // Remove atributo disabled e classe disabled nos elementos do query e seta tab até o campo ativo.
+        return mkt.aCadaElemento(query, (e) => {
+            let co = mkt.classof(e);
+            // INPUT - BUTTON - TEXTAREA - SELECT - OPTION - OPTGROUP - FIELDSET
+            if (co == 'HTMLTextAreaElement' ||
+                co == 'HTMLButtonElement' ||
+                co == 'HTMLSelectElement' ||
+                co == 'HTMLOptionElement' ||
+                co == 'HTMLOptGroupElement' ||
+                co == 'HTMLFieldSetElement' ||
+                co == 'HTMLInputElement') {
+                e.disabled = false;
+            }
+            e.classList.remove("disabled");
+            e.removeAttribute("tabindex");
+        });
+    };
+    static Ao = (tipoEvento = "click", query, executar, config = mkt.a.AoConfig) => {
+        // Adiciona LISTNER em todos elementos do query usando uma config preventiva.
+        // Em QAll, pois o Filtro pega todos os .iConsultas
+        mkt.QAll(query).forEach((e) => {
+            e.addEventListener(tipoEvento, (ev) => {
+                if (ev)
+                    ev.stopPropagation(); // Não se reexecuta quando o botão está dentro do outro. (HM inside Sort por exemplo)
+                executar(e, ev);
+            }, config);
+        });
+    };
+    static atribuir = (e, gatilho, atributo = "oninput") => {
+        // Incrementa no ATRIBUTO do elemento E o texto do GATILHO.
+        if (e) {
+            if (atributo) {
+                let classof = mkt.classof(gatilho);
+                if (classof == "Function") {
+                    e[atributo] = gatilho;
+                }
+                else if (classof == "String") {
+                    let attr = e?.getAttribute(atributo);
+                    if (attr) {
+                        if (!attr.includes(gatilho)) {
+                            e?.setAttribute(atributo, attr + ";" + gatilho);
+                        }
+                    }
+                    else {
+                        e?.setAttribute(atributo, gatilho);
+                    }
+                }
+                else {
+                    mkt.w("mkt.atribuir() - Formato não implementado: ", classof);
+                }
+            }
+            else {
+                mkt.w("mkt.atribuir() - Precisa de um gatilho: ", gatilho);
+            }
+        }
+        else {
+            mkt.w("mkt.atribuir() - Precisa de um elemento: ", e);
+        }
+    };
+    static html = (query, conteudo) => {
+        // Atalho para innerHTML que retorna apenas o primeiro elemento da query.
+        let e = mkt.Q(query);
+        if (e) {
+            e.innerHTML = conteudo;
+        }
+        return e;
+    };
+    static wait = (ms) => {
+        return new Promise(r => setTimeout(r, ms));
+    };
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //                     ERROS, LOGS E INFORMACOES                           \\
     //==========================================================================\\
-    static l;
-    static w;
-    static gc;
-    static ge;
-    static erro;
-    static ct;
+    static l = (...s) => {
+        // Atalho e Redirect Log. Utilizar mkt.w para realizar trace route.
+        if (mkt.a.log) {
+            console.log(...s);
+        }
+    };
+    static w = (...s) => {
+        // Atalho e Redirect Warning com trace da origem.
+        if (mkt.a.log) {
+            console.warn(...s);
+        }
+    };
+    static gc = (...s) => {
+        // Group Collapsed INICIO. Termine com mkt.ge();
+        if (mkt.a.log) {
+            console.groupCollapsed(...s);
+        }
+    };
+    static ge = () => {
+        // Group End FIM. Inicie com mkt.gc("");
+        if (mkt.a.log) {
+            console.groupEnd();
+        }
+    };
+    static erro = (...s) => {
+        // Atalho e Redirect Error com trace da origem. 
+        if (mkt.a.log) {
+            console.error(...s);
+        }
+    };
+    static ct = (s) => {
+        //
+        let t = mkt.a.timers.find((t) => t.name == s);
+        if (!t) {
+            mkt.a.timers.push({
+                name: s,
+                ini: mkt.getMs(),
+                fim: 0,
+                tempo: -1,
+            });
+        }
+    };
     static cte;
     static errosLog;
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
@@ -1823,25 +1973,13 @@ Object.defineProperty(mkt, "fromMoeda", {
 });
 // Classes do Console.
 Object.defineProperty(mkt, "w", {
-    value: (...s) => {
-        if (mkt.a.log) {
-            console.warn(...s);
-        }
-    }, enumerable: false, writable: false, configurable: false,
+    enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "erro", {
-    value: (...s) => {
-        if (mkt.a.log) {
-            console.error(...s);
-        }
-    }, enumerable: false, writable: false, configurable: false,
+    enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "l", {
-    value: (...s) => {
-        if (mkt.a.log) {
-            console.log(...s);
-        }
-    }, enumerable: false, writable: false, configurable: false,
+    enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "cls", {
     value: () => {
@@ -1849,31 +1987,13 @@ Object.defineProperty(mkt, "cls", {
     }, enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "gc", {
-    value: (...s) => {
-        if (mkt.a.log) {
-            console.groupCollapsed(...s);
-        }
-    }, enumerable: false, writable: false, configurable: false,
+    enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "ge", {
-    value: () => {
-        if (mkt.a.log) {
-            console.groupEnd();
-        }
-    }, enumerable: false, writable: false, configurable: false,
+    enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "ct", {
-    value: (s) => {
-        let t = mkt.a.timers.find((t) => t.name == s);
-        if (!t) {
-            mkt.a.timers.push({
-                name: s,
-                ini: mkt.getMs(),
-                fim: 0,
-                tempo: -1,
-            });
-        }
-    }, enumerable: false, writable: false, configurable: false,
+    enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "cte", {
     value: (s, quietMode = false) => {
@@ -1888,81 +2008,16 @@ Object.defineProperty(mkt, "cte", {
     }, enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "Q", {
-    value: (query) => {
-        // Atalho para QuerySelector que retorna apenas o primeiro elemento da query.
-        if (typeof query != "string")
-            return query;
-        return document.querySelector(query);
-    }, enumerable: false, writable: false, configurable: false,
+    enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "QAll", {
-    value: (query = "body") => {
-        // Atalho para QuerySelectorAll. List []
-        //mkz = query;
-        if (mkt.classof(query) == "String") {
-            return Array.from(document.querySelectorAll(query));
-        }
-        else if (mkt.classof(query).endsWith("Element")) {
-            return [query];
-        }
-        else {
-            mkt.w("QAll() - Formato: ", mkt.classof(query), " TOF: ", typeof query, " Query: ", query);
-            return [];
-        }
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "AoConfig", {
-    value: {
-        capture: false,
-        once: false,
-        passive: true,
-    }, enumerable: false, writable: false, configurable: false,
+    enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "Ao", {
-    value: (tipoEvento = "click", query, executar) => {
-        // Adiciona evento em todos elementos encontrados
-        // Em QAll, pois o Filtro pega todos os .iConsultas
-        mkt.QAll(query).forEach((e) => {
-            e.addEventListener(tipoEvento, (ev) => {
-                if (ev)
-                    ev.stopPropagation(); // Quando o botão está dentro do outro.
-                executar(e, ev);
-            }, mkt.AoConfig);
-        });
-    }, enumerable: false, writable: false, configurable: false,
+    enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "atribuir", {
-    value: (e, gatilho, atributo = "oninput") => {
-        // Incrementa no ATRIBUTO do elemento E o texto do GATILHO.
-        if (e) {
-            if (atributo) {
-                let classof = mkt.classof(gatilho);
-                if (classof == "Function") {
-                    e[atributo] = gatilho;
-                }
-                else if (classof == "String") {
-                    let attr = e?.getAttribute(atributo);
-                    if (attr) {
-                        if (!attr.includes(gatilho)) {
-                            e?.setAttribute(atributo, attr + ";" + gatilho);
-                        }
-                    }
-                    else {
-                        e?.setAttribute(atributo, gatilho);
-                    }
-                }
-                else {
-                    mkt.w("mkt.atribuir() - Formato não implementado: ", classof);
-                }
-            }
-            else {
-                mkt.w("mkt.atribuir() - Precisa de um gatilho: ", gatilho);
-            }
-        }
-        else {
-            mkt.w("mkt.atribuir() - Precisa de um elemento: ", e);
-        }
-    }, enumerable: false, writable: false, configurable: false,
+    enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "formatadorDeTexto", {
     value: (texto) => {
@@ -2022,19 +2077,10 @@ Object.defineProperty(mkt, "eToText", {
     }, enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "html", {
-    value: (query, conteudo) => {
-        // Atalho para innerHTML que retorna apenas o primeiro elemento da query.
-        let e = mkt.Q(query);
-        if (e) {
-            e.innerHTML = conteudo;
-        }
-        return e;
-    }, enumerable: false, writable: false, configurable: false,
+    enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "wait", {
-    value: (ms) => {
-        return new Promise(r => setTimeout(r, ms));
-    }, enumerable: false, writable: false, configurable: false,
+    enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "isJson", {
     value: (s) => {
@@ -2271,42 +2317,10 @@ Object.defineProperty(mkt, "QSetAll", {
     }, enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "Qon", {
-    value: (query = "body") => {
-        return mkt.aCadaElemento(query, (e) => {
-            let co = mkt.classof(e);
-            // INPUT - BUTTON - TEXTAREA - SELECT - OPTION - OPTGROUP - FIELDSET
-            if (co == 'HTMLTextAreaElement' ||
-                co == 'HTMLButtonElement' ||
-                co == 'HTMLSelectElement' ||
-                co == 'HTMLOptionElement' ||
-                co == 'HTMLOptGroupElement' ||
-                co == 'HTMLFieldSetElement' ||
-                co == 'HTMLInputElement') {
-                e.disabled = false;
-            }
-            e.classList.remove("disabled");
-            e.removeAttribute("tabindex");
-        });
-    }, enumerable: false, writable: false, configurable: false,
+    enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "Qoff", {
-    value: (query = "body") => {
-        return mkt.aCadaElemento(query, (e) => {
-            let co = mkt.classof(e);
-            // INPUT - BUTTON - TEXTAREA - SELECT - OPTION - OPTGROUP - FIELDSET
-            if (co == 'HTMLTextAreaElement' ||
-                co == 'HTMLButtonElement' ||
-                co == 'HTMLSelectElement' ||
-                co == 'HTMLOptionElement' ||
-                co == 'HTMLOptGroupElement' ||
-                co == 'HTMLFieldSetElement' ||
-                co == 'HTMLInputElement') {
-                e.disabled = true;
-            }
-            e.classList.add("disabled");
-            e.setAttribute("tabindex", "-1");
-        });
-    }, enumerable: false, writable: false, configurable: false,
+    enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "Qison", {
     value: (query = "body") => {
@@ -2320,18 +2334,10 @@ Object.defineProperty(mkt, "Qison", {
     }, enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "QverOn", {
-    value: (query = "body") => {
-        return mkt.aCadaElemento(query, (e) => {
-            e?.classList.remove("oculto");
-        });
-    }, enumerable: false, writable: false, configurable: false,
+    enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "QverOff", {
-    value: (query = "body") => {
-        return mkt.aCadaElemento(query, (e) => {
-            e?.classList.add("oculto");
-        });
-    }, enumerable: false, writable: false, configurable: false,
+    enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "QverToggle", {
     value: (query = "body") => {
