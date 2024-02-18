@@ -1,7 +1,9 @@
 //
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //  MK - MASTER KEY LIBRARY         \\
-//______By_Marcos_Kettermann_________\\
+//      By Marcos Kettermann         \\
+//___________Desde 2023_______________\\
+//
 // Variável de teste:
 var mkz = null;
 declare const appPath: any;
@@ -1244,9 +1246,10 @@ class mkt {
 	//  INÍCIO FUNCÕES ESTÁTICAS        \\
 	//___________________________________\\
 
-	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-	//  ARMAZENADORES ESTÁTICOS         \\
-	//___________________________________\\
+
+	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+	//                     ARMAZENADORES ESTÁTICOS                             \\
+	//==========================================================================\\
 
 	static a = {
 		// Armazenadores / Constantes
@@ -1598,8 +1601,6 @@ class mkt {
 		} as any, // Util: Mascarar, Regex, Funcao Validadora
 		wpool: null as any | null, // WorkerPool quando iniciado
 	};
-
-	static m: any;
 
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
