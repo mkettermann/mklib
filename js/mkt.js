@@ -3423,7 +3423,8 @@ Object.defineProperty(mkt, "mkFormatarOA", {
 Object.defineProperty(mkt, "CarregarON", {
     enumerable: false, writable: false, configurable: false,
 });
-Object.defineProperty(mkt, "CarregarOFF", { enumerable: false, writable: false, configurable: false,
+Object.defineProperty(mkt, "CarregarOFF", {
+    enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "CarregarHtml", {
     value: (estilo = "", classe = "relative") => {
