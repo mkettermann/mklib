@@ -1832,7 +1832,7 @@ class mkt {
                 node = mkt.mkToValue(node, o);
                 listaNode += node;
             };
-            mkt.mkExecutaNoObj(dadosOA, mkMoldeOAA_Execute);
+            mkt.aCadaObjExecuta(dadosOA, mkMoldeOAA_Execute);
             //Allow Tags
             if (allowTags) {
                 listaNode = listaNode.replaceAll("&lt;", "<");
@@ -2035,7 +2035,7 @@ class mkt {
                             .toString()
                             .toLowerCase(); // k = Dado que estamos procurando
                         podeExibir = false; // Inverter para verificar se alguma prop do item possui a caracteristica
-                        mkt.allSubPropriedades(o, (v) => {
+                        mkt.aCadaSubPropriedade(o, (v) => {
                             if (v != null) {
                                 // <= Nao pode tentar filtrar em itens nulos
                                 v = v.toString().toLowerCase();
@@ -2475,14 +2475,129 @@ class mkt {
         // }
         return result;
     };
-    static classof;
-    static clonar;
-    static ordenar;
-    static mkLimparOA;
-    static allSubPropriedades;
-    static mkExecutaNoObj;
-    static cadaExe;
-    static aCadaElemento;
+    static classof = (o) => {
+        // Identifica a classe do argumento informado.
+        let nomeClasse = Object.prototype.toString.call(o).slice(8, -1);
+        // Exceção, apenas quando "Number" converter os NaN pra "NaN".
+        if (nomeClasse == "Number") {
+            if (o.toString() == "NaN") {
+                nomeClasse = "NaN";
+            }
+        }
+        ;
+        return nomeClasse;
+    };
+    static clonar = (i) => {
+        // Clona com a técnica de montar e desmontar string.
+        return mkt.parseJSON(mkt.stringify(i));
+    };
+    static ordenar = (array, nomeProp, sortDir) => {
+        // Efetua o ordenamento do array informando a propriedade e a direção (0,1,2)
+        // 0 - Crescente:
+        array.sort((oA, oB) => {
+            let a = nomeProp ? mkt.getV(nomeProp, oA) : null;
+            let b = nomeProp ? mkt.getV(nomeProp, oB) : null;
+            //let b = oB[nomeProp];
+            if (typeof a == "string")
+                a = a.toLowerCase().trim();
+            if (typeof b == "string")
+                b = b.toLowerCase().trim();
+            if (a !== b) {
+                if (a > b)
+                    return 1;
+                if (a < b)
+                    return -1;
+            }
+            if (!a || !b) { // Nulo
+                return 0;
+            }
+            return -1;
+        });
+        if (!mkt.a.contaOrdena) {
+            mkt.a.contaOrdena = 0;
+        }
+        mkt.a.contaOrdena++;
+        // 1 - Decrescente
+        if (sortDir === 1) {
+            array = array.reverse();
+        }
+        else if (sortDir === 2) {
+            // 2 - Toogle 
+            if (mkt.a.contaOrdena % 2 == 0) {
+                array = array.reverse();
+            }
+        }
+        return array;
+    };
+    static mkLimparOA = (oa) => {
+        // Converte (OBJ / ARRAY) Limpar Nulos e Vazios
+        let mkLimparOA_Execute = (o) => {
+            for (let propName in o) {
+                if (o[propName] === null ||
+                    o[propName] === "") {
+                    delete o[propName];
+                }
+            }
+            return o;
+        };
+        return mkt.aCadaObjExecuta(oa, mkLimparOA_Execute);
+    };
+    static aCadaSubPropriedade = (OA, funcao = null, exceto = "Object") => {
+        // Executa a FUNCAO em todas as propriedades deste OA. Inclusive Obj.Obj...
+        let c = 0;
+        for (let a in OA) {
+            if (mkt.classof(OA[a]) != exceto) {
+                if (funcao) {
+                    funcao(OA[a]);
+                }
+            }
+            c++;
+            // Se o atual é objeto, itera internamente
+            if (mkt.classof(OA[a]) == "Object") {
+                c += mkt.aCadaSubPropriedade(OA[a], funcao, exceto);
+            }
+        }
+        return c;
+    };
+    static aCadaObjExecuta = (oa, func) => {
+        // Verifica se ARRAY ou OBJETO e executa a função FUNC a cada objeto dentro de OA.
+        if (Array.isArray(oa)) {
+            for (let i = 0; i < oa.length; i++) {
+                func(oa[i]);
+            }
+        }
+        else {
+            func(oa);
+        }
+        return oa;
+    };
+    static aCadaElemento = (query, fn) => {
+        // 
+        // Query: String, Element, [Element,Element]
+        if (mkt.classof(query) == "String") {
+            let retorno;
+            let elementos = mkt.QAll(query);
+            if (elementos.length == 1)
+                retorno = elementos[0];
+            else
+                retorno = elementos;
+            elementos.forEach((e) => {
+                fn(e);
+            });
+            return retorno;
+        }
+        else if (mkt.classof(query) == "Array") {
+            query.forEach((e) => {
+                fn(e);
+            });
+            return query;
+        }
+        else {
+            let e = mkt.Q(query);
+            fn(e);
+            return e;
+        }
+    };
     static parseJSON;
     static stringify;
     static regras = [];
@@ -2492,6 +2607,27 @@ class mkt {
     static mascarar;
     static mkClicarNaAba;
     static Workers;
+    static AllFromCadaExe = (query, fn) => {
+        // Executa função aCada Elemento do QAll e junta os resultados.
+        // Retorna uma array de resultados de cada execucao.
+        let retorno = [];
+        if (typeof query == "string") {
+            let elementos = mkt.QAll(query);
+            elementos.forEach((e) => {
+                retorno.push(fn(e));
+            });
+        }
+        else if (Array.isArray(query)) {
+            query.forEach((e) => {
+                retorno.push(fn(e));
+            });
+        }
+        else {
+            let e = mkt.Q(query);
+            retorno.push(fn(e));
+        }
+        return retorno;
+    };
     // WORKERS: Atalho de tarefa. Já constroi se necessário
     // mkt.addTask({ k: "MKT_INCLUDE", v: ["a","b"], target: "a" }).then(r=>{mkt.l("Main Recebeu: ",r)})
     static addTask = (msg, numWorkers) => {
@@ -2837,54 +2973,13 @@ Object.defineProperty(mkt, "contem", {
     enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "allSubPropriedades", {
-    value: (OA, funcao = null, exceto = "object") => {
-        // Executa a FUNCAO em todas as propriedades deste OA
-        let c = 0;
-        for (let a in OA) {
-            let target = OA[a];
-            if (typeof target != exceto) {
-                if (funcao) {
-                    funcao(target);
-                }
-            }
-            c++;
-            // Se o atual é objeto, itera internamente
-            if (typeof target == "object") {
-                c += mkt.allSubPropriedades(target, funcao, exceto);
-            }
-        }
-        return c;
-    }, enumerable: false, writable: false, configurable: false,
+    enumerable: false, writable: false, configurable: false,
 });
-Object.defineProperty(mkt, "mkExecutaNoObj", {
-    value: (oa, func) => {
-        // Verifica se ARRAY ou OBJETO e executa a função FUNC a cada objeto dentro de OA.
-        if (Array.isArray(oa)) {
-            for (let i = 0; i < oa.length; i++) {
-                func(oa[i]);
-            }
-        }
-        else {
-            func(oa);
-        }
-        return oa;
-    }, enumerable: false, writable: false, configurable: false,
+Object.defineProperty(mkt, "aCadaObjExecuta", {
+    enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "mkLimparOA", {
-    value: (oa) => {
-        // Converter (OBJ / ARRAY) Limpar Nulos e Vazios
-        // Trocar para arrow
-        function mkLimparOA_Execute(o) {
-            for (var propName in o) {
-                if (o[propName] === null ||
-                    o[propName] === "") {
-                    delete o[propName];
-                }
-            }
-            return o;
-        }
-        return mkt.mkExecutaNoObj(oa, mkLimparOA_Execute);
-    }, enumerable: false, writable: false, configurable: false,
+    enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "mkGerarObjeto", {
     value: (este) => {
@@ -2959,7 +3054,7 @@ Object.defineProperty(mkt, "Qoff", {
 });
 Object.defineProperty(mkt, "Qison", {
     value: (query = "body") => {
-        return mkt.cadaExe(query, (e) => {
+        return mkt.AllFromCadaExe(query, (e) => {
             let b = false;
             if (!e.classList.contains("disabled")) {
                 b = true;
@@ -2982,54 +3077,10 @@ Object.defineProperty(mkt, "QverToggle", {
     }, enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "aCadaElemento", {
-    value: (query, fn) => {
-        // Query: String, Element, [Element,Element]
-        if (typeof query == "string") {
-            let retorno;
-            let elementos = mkt.QAll(query);
-            if (elementos.length == 1)
-                retorno = elementos[0];
-            else
-                retorno = elementos;
-            elementos.forEach((e) => {
-                fn(e);
-            });
-            return retorno;
-        }
-        else if (Array.isArray(query)) {
-            query.forEach((e) => {
-                fn(e);
-            });
-            return query;
-        }
-        else {
-            let e = mkt.Q(query);
-            fn(e);
-            return e;
-        }
-    }, enumerable: false, writable: false, configurable: false,
+    enumerable: false, writable: false, configurable: false,
 });
-Object.defineProperty(mkt, "cadaExe", {
-    value: (query, fn) => {
-        // Retorna uma array de resultados de cada execucao
-        let retorno = [];
-        if (typeof query == "string") {
-            let elementos = mkt.QAll(query);
-            elementos.forEach((e) => {
-                retorno.push(fn(e));
-            });
-        }
-        else if (Array.isArray(query)) {
-            query.forEach((e) => {
-                retorno.push(fn(e));
-            });
-        }
-        else {
-            let e = mkt.Q(query);
-            retorno.push(fn(e));
-        }
-        return retorno;
-    }, enumerable: false, writable: false, configurable: false,
+Object.defineProperty(mkt, "AllFromCadaExe", {
+    enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "QScrollTo", {
     value: (query = "body") => {
@@ -3309,9 +3360,7 @@ Object.defineProperty(mkt, "ler", {
     }, enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "clonar", {
-    value: (i) => {
-        return mkt.parseJSON(mkt.stringify(i));
-    }, enumerable: false, writable: false, configurable: false,
+    enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "getModelo", {
     value: (array) => {
@@ -3691,7 +3740,7 @@ Object.defineProperty(mkt, "mkFormatarDataOA", {
             }
             return o;
         }
-        return mkt.mkExecutaNoObj(oa, mkFormatarDataOA_Execute);
+        return mkt.aCadaObjExecuta(oa, mkFormatarDataOA_Execute);
     }, enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "mkBoolToSimNaoOA", {
@@ -3710,7 +3759,7 @@ Object.defineProperty(mkt, "mkBoolToSimNaoOA", {
             }
             return o;
         }
-        return mkt.mkExecutaNoObj(oa, mkBoolToSimNaoOA_Execute);
+        return mkt.aCadaObjExecuta(oa, mkBoolToSimNaoOA_Execute);
     }, enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "mkFormatarOA", {
@@ -3764,45 +3813,7 @@ Object.defineProperty(mkt, "processoFiltragem", {
 //			ORDER LIST									\\
 //___________________________________\\
 Object.defineProperty(mkt, "ordenar", {
-    value: (array, nomeProp, sortDir) => {
-        // Possibilidade de inverter a lista (Tentar deixar esse padrao)
-        // Essa funcção deveria ser da instancia atual para recever os atributos da instancia por padrao
-        // 0 - Crescente:
-        array.sort((oA, oB) => {
-            let a = nomeProp ? mkt.getV(nomeProp, oA) : null;
-            let b = nomeProp ? mkt.getV(nomeProp, oB) : null;
-            //let b = oB[nomeProp];
-            if (typeof a == "string")
-                a = a.toLowerCase().trim();
-            if (typeof b == "string")
-                b = b.toLowerCase().trim();
-            if (a !== b) {
-                if (a > b)
-                    return 1;
-                if (a < b)
-                    return -1;
-            }
-            if (!a || !b) { // Nulo
-                return 0;
-            }
-            return -1;
-        });
-        if (!mkt.a.contaOrdena) {
-            mkt.a.contaOrdena = 0;
-        }
-        mkt.a.contaOrdena++;
-        // 1 - Decrescente
-        if (sortDir === 1) {
-            array = array.reverse();
-        }
-        else if (sortDir === 2) {
-            // 2 - Toogle 
-            if (mkt.a.contaOrdena % 2 == 0) {
-                array = array.reverse();
-            }
-        }
-        return array;
-    }, enumerable: false, writable: false, configurable: false,
+    enumerable: false, writable: false, configurable: false,
 });
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //	 MASCARAS, REGEX E	VALIDADOR		\\
@@ -5778,17 +5789,7 @@ Object.defineProperty(mkt, "fUIFaseUpdateLinkFase", {
 //   UTEIS                          \\
 //___________________________________\\
 Object.defineProperty(mkt, "classof", {
-    value: (o) => {
-        let nomeClasse = Object.prototype.toString.call(o).slice(8, -1);
-        // Exceção, apenas quando "Number" converter os NaN pra "NaN".
-        if (nomeClasse == "Number") {
-            if (o.toString() == "NaN") {
-                nomeClasse = "NaN";
-            }
-        }
-        ;
-        return nomeClasse;
-    }, enumerable: false, writable: false, configurable: false,
+    enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "toString", {
     enumerable: false, writable: false, configurable: false,
