@@ -1763,7 +1763,7 @@ class mkt {
         }
     };
     static ct = (s) => {
-        //
+        // INICIO do CONTA TEMPO utillizado pra saber o tempo dos GET e POST.
         let t = mkt.a.timers.find((t) => t.name == s);
         if (!t) {
             mkt.a.timers.push({
@@ -1774,14 +1774,70 @@ class mkt {
             });
         }
     };
-    static cte;
-    static errosLog;
+    static cte = (s, quietMode = false) => {
+        // FIM do CONTA TEMPO utillizado pra saber o tempo dos GET e POST.
+        let t = mkt.a.timers.find((t) => t.name == s);
+        if (t.fim == 0) {
+            t.fim = mkt.getMs();
+            t.tempo = t.fim - t.ini;
+        }
+        if (!quietMode) {
+            mkt.l(s + " \t-> " + t.tempo + " ms");
+        }
+    };
+    static errosLog = () => {
+        // Utiliza o armazenamento local pra guardar erros, normalmente erros do Request Http.
+        let mktArmazenado = localStorage.mktRequests;
+        if (localStorage.mktRequests)
+            mktArmazenado = JSON.parse(localStorage.mktRequests);
+        return console.table(mktArmazenado);
+    };
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //                     MKT Support / Component                             \\
     //==========================================================================\\
-    static exeTimer;
-    static Inicializar;
-    static mkMoldeOA;
+    static exeTimer = () => {
+        // A um determinado tempo, reexecuta essas funções.
+        // Quando trocar essas funções para Web Component, será possivel manter observado por dentro da classe.
+        mkt.mkSelRenderizar();
+        mkt.mkRecRenderizar();
+        mkt.mkBotCheck();
+        // Recursiva
+        setTimeout(mkt.exeTimer, mkt.a.exeTimer);
+    };
+    static Inicializar = () => {
+        // Ao iniciar a biblioteca já executa essas funções
+        mkt.mkClicarNaAba(mkt.Q(".mkAbas a.active")); // Inicia no ativo
+        mkt.exeTimer();
+    };
+    static mkMoldeOA = async (dadosOA, modelo = "#modelo", repositorio = ".tableListagem .listBody", allowTags = false) => {
+        // MoldeOA é uma ferramenta do MKT que popula templates por demanda informando os dados a iterar, como devem se apresentar e onde colocar o resultado.
+        return new Promise((r) => {
+            let eModelo = mkt.Q(modelo);
+            if (!eModelo) {
+                mkt.erro("Template informado não encontrado: ", modelo);
+                return r(null);
+            }
+            let eRepositorio = mkt.Q(repositorio);
+            if (!eRepositorio) {
+                mkt.erro("Repositório informado não encontrado :", repositorio);
+                return r(null);
+            }
+            let listaNode = "";
+            let mkMoldeOAA_Execute = (o) => {
+                let node = eModelo.innerHTML;
+                node = mkt.mkToValue(node, o);
+                listaNode += node;
+            };
+            mkt.mkExecutaNoObj(dadosOA, mkMoldeOAA_Execute);
+            //Allow Tags
+            if (allowTags) {
+                listaNode = listaNode.replaceAll("&lt;", "<");
+                listaNode = listaNode.replaceAll("&gt;", ">");
+            }
+            eRepositorio.innerHTML = listaNode;
+            r(true);
+        });
+    };
     static getV;
     static mkToValue;
     static toString;
@@ -1996,16 +2052,7 @@ Object.defineProperty(mkt, "ct", {
     enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "cte", {
-    value: (s, quietMode = false) => {
-        let t = mkt.a.timers.find((t) => t.name == s);
-        if (t.fim == 0) {
-            t.fim = mkt.getMs();
-            t.tempo = t.fim - t.ini;
-        }
-        if (!quietMode) {
-            mkt.l(s + " \t-> " + t.tempo + " ms");
-        }
-    }, enumerable: false, writable: false, configurable: false,
+    enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "Q", {
     enumerable: false, writable: false, configurable: false,
@@ -4622,32 +4669,7 @@ Object.defineProperty(mkt, "mkToValue", {
     }, enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "mkMoldeOA", {
-    value: async (dadosOA, modelo = "#modelo", repositorio = ".tableListagem .listBody") => {
-        return new Promise((r) => {
-            let eModelo = mkt.Q(modelo);
-            if (eModelo == null) {
-                mkt.erro("Template informado (" + modelo + ") não encontrado.");
-                return r(null);
-            }
-            let eRepositorio = mkt.Q(repositorio);
-            if (eRepositorio == null) {
-                mkt.erro("Repositório informado (" + repositorio + ") não encontrado.");
-                return r(null);
-            }
-            let listaNode = "";
-            let mkMoldeOAA_Execute = (o) => {
-                let node = eModelo.innerHTML;
-                node = mkt.mkToValue(node, o);
-                listaNode += node;
-            };
-            mkt.mkExecutaNoObj(dadosOA, mkMoldeOAA_Execute);
-            //Allow Tags
-            listaNode = listaNode.replaceAll("&lt;", "<");
-            listaNode = listaNode.replaceAll("&gt;", ">");
-            eRepositorio.innerHTML = listaNode;
-            r(true);
-        });
-    }, enumerable: false, writable: false, configurable: false,
+    enumerable: false, writable: false, configurable: false,
 });
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //			MK Include									\\
@@ -5675,12 +5697,7 @@ Object.defineProperty(mkt, "mkSelSetDisplay", {
 //   Erros do LocalStorage          \\
 //___________________________________\\
 Object.defineProperty(mkt, "errosLog", {
-    value: () => {
-        let mktArmazenado = localStorage.mktRequests;
-        if (localStorage.mktRequests)
-            mktArmazenado = JSON.parse(localStorage.mktRequests);
-        return console.table(mktArmazenado);
-    }, enumerable: false, writable: false, configurable: false,
+    enumerable: false, writable: false, configurable: false,
 });
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //   IMPORTAR                       \\
@@ -5783,19 +5800,10 @@ Object.defineProperty(mkt, "uuid", {
     }, enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "Inicializar", {
-    value: () => {
-        mkt.mkClicarNaAba(mkt.Q(".mkAbas a.active")); // Inicia no ativo
-        mkt.exeTimer();
-    }, enumerable: false, writable: false, configurable: false,
+    enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "exeTimer", {
-    value: () => {
-        mkt.mkSelRenderizar();
-        mkt.mkRecRenderizar();
-        mkt.mkBotCheck();
-        // Recursiva
-        setTimeout(mkt.exeTimer, mkt.a.exeTimer);
-    }, enumerable: false, writable: false, configurable: false,
+    enumerable: false, writable: false, configurable: false,
 });
 //Object.defineProperty(mkt , undefined ,{enumerable: false, writable: false, configurable: false});
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\

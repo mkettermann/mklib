@@ -1767,7 +1767,7 @@ class mkt {
 	};
 
 	static ct = (s: any) => {
-		//
+		// INICIO do CONTA TEMPO utillizado pra saber o tempo dos GET e POST.
 		let t = mkt.a.timers.find((t: any) => t.name == s);
 		if (!t) {
 			mkt.a.timers.push({
@@ -1779,18 +1779,142 @@ class mkt {
 		}
 	};
 
-	static cte: Function;
-	static errosLog: Function;
+	static cte = (s: any, quietMode: any = false) => {
+		// FIM do CONTA TEMPO utillizado pra saber o tempo dos GET e POST.
+		let t = mkt.a.timers.find((t: any) => t.name == s);
+		if (t.fim == 0) {
+			t.fim = mkt.getMs();
+			t.tempo = t.fim - t.ini;
+		}
+		if (!quietMode) {
+			mkt.l(s + " \t-> " + t.tempo + " ms");
+		}
+	};
+
+	static errosLog = () => {
+		// Utiliza o armazenamento local pra guardar erros, normalmente erros do Request Http.
+		let mktArmazenado = localStorage.mktRequests;
+		if (localStorage.mktRequests) mktArmazenado = JSON.parse(localStorage.mktRequests);
+		return console.table(mktArmazenado);
+	};
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 	//                     MKT Support / Component                             \\
 	//==========================================================================\\
 
-	static exeTimer: Function;
-	static Inicializar: Function;
-	static mkMoldeOA: Function;
-	static getV: Function;
-	static mkToValue: Function;
+	static exeTimer = () => {
+		// A um determinado tempo, reexecuta essas funções.
+		// Quando trocar essas funções para Web Component, será possivel manter observado por dentro da classe.
+		mkt.mkSelRenderizar();
+		mkt.mkRecRenderizar();
+		mkt.mkBotCheck();
+		// Recursiva
+		setTimeout(mkt.exeTimer, mkt.a.exeTimer);
+	};
+
+	static Inicializar = () => {
+		// Ao iniciar a biblioteca já executa essas funções
+		mkt.mkClicarNaAba(mkt.Q(".mkAbas a.active")); // Inicia no ativo
+		mkt.exeTimer();
+	};
+
+	static mkMoldeOA = async (
+		dadosOA: object[] | object,
+		modelo: string = "#modelo",
+		repositorio: string = ".tableListagem .listBody",
+		allowTags: boolean = false
+	) => {
+		// MoldeOA é uma ferramenta do MKT que popula templates por demanda informando os dados a iterar, como devem se apresentar e onde colocar o resultado.
+		return new Promise((r) => {
+			let eModelo = mkt.Q(modelo);
+			if (!eModelo) {
+				mkt.erro("Template informado não encontrado: ", modelo);
+				return r(null);
+			}
+			let eRepositorio = mkt.Q(repositorio);
+			if (!eRepositorio) {
+				mkt.erro("Repositório informado não encontrado :", repositorio);
+				return r(null);
+			}
+			let listaNode = "";
+			let mkMoldeOAA_Execute = (o: any) => {
+				let node: any = eModelo.innerHTML;
+				node = mkt.mkToValue(node, o);
+				listaNode += node;
+			};
+			mkt.mkExecutaNoObj(dadosOA, mkMoldeOAA_Execute);
+			//Allow Tags
+			if (allowTags) {
+				listaNode = listaNode.replaceAll("&lt;", "<");
+				listaNode = listaNode.replaceAll("&gt;", ">");
+			}
+			eRepositorio.innerHTML = listaNode;
+			r(true);
+		});
+	};
+
+	static getV = (keys: string, objeto: any) => {
+		// Retorna o valor do chave informada, podendo ser obj.obj.chave
+		// mkt.getV("a.b.c",{a:{b:{c:"d"}}})
+		if (typeof objeto == "object") {
+			if (typeof keys == "string") {
+				if (keys.includes(".")) {
+					// Multi
+					let ks: string[] = keys.split(".");
+					let lastObj = objeto;
+					let lastV = {};
+					// Iterar o Keys, Ver Obj atual e Setar Conteudo;
+					ks.forEach((k) => {
+						lastV = lastObj[k];
+						if (typeof lastV == "object") {
+							lastObj = lastV;
+						}
+					});
+					return lastV;
+				} else {
+					// Simples
+					return objeto[keys];
+				}
+			} else {
+				mkt.w(
+					"getV() - Nome da propriedade precisa ser em string. (" + typeof keys + "):", keys
+				);
+			}
+		} else {
+			mkt.w(
+				"Para ver a chave, o parametro objeto precisa receber um objeto. (" +
+				typeof objeto +
+				")"
+			);
+		}
+		return null;
+	};
+
+	static mkToValue = (m: string, o: any) => {
+		// Conversor de "${obj.key}" em valor dentro de uma string.
+		let ret: string = "";
+		if (m.indexOf("${") >= 0) {
+			let ini = m.split("${");
+			ret = ini[0];
+			for (let i in ini) {
+				if (i == "0") continue;
+				let end: number = ini[i].indexOf("}");
+				let key: string = ini[i].slice(0, end).trim();
+				if ((mkt.classof(o) == "Object" || mkt.classof(o) == "Array") && o != null) {
+					// Quando é Objeto ou Array, entra na propriedade ou posição solicitada.
+					let v = mkt.removerAspas(mkt.getV(key, o));
+					if (v != null) {
+						ret += v;
+					}
+				}
+				ret += ini[i].slice(end + 1);
+			}
+		} else {
+			ret = m;
+		}
+		return ret;
+	};
+
 	static toString: Function;
 	static processoFiltragem: Function;
 	static sortDir: Function;
@@ -2018,16 +2142,7 @@ Object.defineProperty(mkt, "ct", {
 	enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "cte", {
-	value: (s: any, quietMode: any = false) => {
-		let t = mkt.a.timers.find((t: any) => t.name == s);
-		if (t.fim == 0) {
-			t.fim = mkt.getMs();
-			t.tempo = t.fim - t.ini;
-		}
-		if (!quietMode) {
-			mkt.l(s + " \t-> " + t.tempo + " ms");
-		}
-	}, enumerable: false, writable: false, configurable: false,
+	enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "Q", {
 	enumerable: false, writable: false, configurable: false,
@@ -4670,106 +4785,15 @@ Object.defineProperty(mkt, "removerAspas", {
 });
 
 Object.defineProperty(mkt, "getV", {
-	value: (keys: string, objeto: any) => {
-		// Retorna o valor do chave informada, podendo ser obj.obj.chave
-		// mkt.getV("a.b.c",{a:{b:{c:"d"}}})
-		if (typeof objeto == "object") {
-			if (typeof keys == "string") {
-				if (keys.includes(".")) {
-					// Multi
-					let ks: string[] = keys.split(".");
-					let lastObj = objeto;
-					let lastV = {};
-					// Iterar o Keys, Ver Obj atual e Setar Conteudo;
-					ks.forEach((k) => {
-						lastV = lastObj[k];
-						if (typeof lastV == "object") {
-							lastObj = lastV;
-						}
-					});
-					return lastV;
-				} else {
-					// Simples
-					return objeto[keys];
-				}
-			} else {
-				mkt.w(
-					"getV() - Nome da propriedade precisa ser em string. (" + typeof keys + "):", keys
-				);
-			}
-		} else {
-			mkt.w(
-				"Para ver a chave, o parametro objeto precisa receber um objeto. (" +
-				typeof objeto +
-				")"
-			);
-		}
-		return null;
-	}, enumerable: false, writable: false, configurable: false,
+	enumerable: false, writable: false, configurable: false,
 });
 
 Object.defineProperty(mkt, "mkToValue", {
-	value: (m: string, o: any) => {
-		// Conversor de "${obj.key}" em valor.
-		let ret: string = "";
-		if (m.indexOf("${") >= 0) {
-			let ini = m.split("${");
-			ret = ini[0];
-			for (let i in ini) {
-				if (i == "0") continue;
-				let end: number = ini[i].indexOf("}");
-				let key: string = ini[i].slice(0, end).trim();
-				if ((mkt.classof(o) == "Object" || mkt.classof(o) == "Array") && o != null) {
-					// Quando é Objeto ou Array, entra na propriedade ou posição solicitada.
-					let v = mkt.removerAspas(mkt.getV(key, o));
-					if (v != null) {
-						ret += v;
-					}
-				}
-				ret += ini[i].slice(end + 1);
-			}
-		} else {
-			ret = m;
-		}
-		return ret;
-	}, enumerable: false, writable: false, configurable: false,
+	enumerable: false, writable: false, configurable: false,
 });
 
 Object.defineProperty(mkt, "mkMoldeOA", {
-	value: async (
-		dadosOA: object[] | object,
-		modelo: string = "#modelo",
-		repositorio: string = ".tableListagem .listBody"
-	) => {
-		return new Promise((r) => {
-			let eModelo = mkt.Q(modelo);
-			if (eModelo == null) {
-				mkt.erro(
-					"Template informado (" + modelo + ") não encontrado."
-				);
-				return r(null);
-			}
-			let eRepositorio = mkt.Q(repositorio);
-			if (eRepositorio == null) {
-				mkt.erro(
-					"Repositório informado (" + repositorio + ") não encontrado."
-				);
-				return r(null);
-			}
-			let listaNode = "";
-			let mkMoldeOAA_Execute = (o: any) => {
-				let node: any = eModelo.innerHTML;
-				node = mkt.mkToValue(node, o);
-				listaNode += node;
-			};
-			mkt.mkExecutaNoObj(dadosOA, mkMoldeOAA_Execute);
-			//Allow Tags
-			listaNode = listaNode.replaceAll("&lt;", "<");
-			listaNode = listaNode.replaceAll("&gt;", ">");
-			eRepositorio.innerHTML = listaNode;
-			r(true);
-		});
-	}, enumerable: false, writable: false, configurable: false,
+	enumerable: false, writable: false, configurable: false,
 });
 
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
@@ -5878,11 +5902,7 @@ Object.defineProperty(mkt, "mkSelSetDisplay", {
 //___________________________________\\
 
 Object.defineProperty(mkt, "errosLog", {
-	value: () => {
-		let mktArmazenado = localStorage.mktRequests;
-		if (localStorage.mktRequests) mktArmazenado = JSON.parse(localStorage.mktRequests);
-		return console.table(mktArmazenado);
-	}, enumerable: false, writable: false, configurable: false,
+	enumerable: false, writable: false, configurable: false,
 });
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //   IMPORTAR                       \\
@@ -5990,21 +6010,11 @@ Object.defineProperty(mkt, "uuid", {
 });
 
 Object.defineProperty(mkt, "Inicializar", {
-	value: () => {
-		mkt.mkClicarNaAba(mkt.Q(".mkAbas a.active")); // Inicia no ativo
-		mkt.exeTimer();
-
-	}, enumerable: false, writable: false, configurable: false,
+	enumerable: false, writable: false, configurable: false,
 });
 
 Object.defineProperty(mkt, "exeTimer", {
-	value: () => {
-		mkt.mkSelRenderizar();
-		mkt.mkRecRenderizar();
-		mkt.mkBotCheck();
-		// Recursiva
-		setTimeout(mkt.exeTimer, mkt.a.exeTimer);
-	}, enumerable: false, writable: false, configurable: false,
+	enumerable: false, writable: false, configurable: false,
 });
 
 //Object.defineProperty(mkt , undefined ,{enumerable: false, writable: false, configurable: false});
