@@ -1180,9 +1180,13 @@ class mkt {
     toJSON = () => {
         return this.dadosFull;
     };
-    // Return String
+    // Return String Instancia
     toString = () => {
         return mkt.stringify(this.dadosFull);
+    };
+    // Return String Classe
+    static toString = () => {
+        return 'class mkt { /* classe gerenciadora de listagens */ }';
     };
     // Return Number
     valueOf = () => {
@@ -1838,20 +1842,302 @@ class mkt {
             r(true);
         });
     };
-    static getV;
-    static mkToValue;
-    static toString;
-    static processoFiltragem;
-    static sortDir;
-    static delObjetoFromId;
-    static setObjetoFromId;
+    static getV = (keys, objeto) => {
+        // Retorna o valor do chave informada, podendo ser obj.obj.chave
+        // mkt.getV("a.b.c",{a:{b:{c:"d"}}})
+        if (typeof objeto == "object") {
+            if (typeof keys == "string") {
+                if (keys.includes(".")) {
+                    // Multi
+                    let ks = keys.split(".");
+                    let lastObj = objeto;
+                    let lastV = {};
+                    // Iterar o Keys, Ver Obj atual e Setar Conteudo;
+                    ks.forEach((k) => {
+                        lastV = lastObj[k];
+                        if (typeof lastV == "object") {
+                            lastObj = lastV;
+                        }
+                    });
+                    return lastV;
+                }
+                else {
+                    // Simples
+                    return objeto[keys];
+                }
+            }
+            else {
+                mkt.w("getV() - Nome da propriedade precisa ser em string. (" + typeof keys + "):", keys);
+            }
+        }
+        else {
+            mkt.w("Para ver a chave, o parametro objeto precisa receber um objeto. (" +
+                typeof objeto +
+                ")");
+        }
+        return null;
+    };
+    static mkToValue = (m, o) => {
+        // Conversor de "${obj.key}" em valor dentro de uma string.
+        let ret = "";
+        if (m.indexOf("${") >= 0) {
+            let ini = m.split("${");
+            ret = ini[0];
+            for (let i in ini) {
+                if (i == "0")
+                    continue;
+                let end = ini[i].indexOf("}");
+                let key = ini[i].slice(0, end).trim();
+                if ((mkt.classof(o) == "Object" || mkt.classof(o) == "Array") && o != null) {
+                    // Quando é Objeto ou Array, entra na propriedade ou posição solicitada.
+                    let v = mkt.removerAspas(mkt.getV(key, o));
+                    if (v != null) {
+                        ret += v;
+                    }
+                }
+                ret += ini[i].slice(end + 1);
+            }
+        }
+        else {
+            ret = m;
+        }
+        return ret;
+    };
+    static processoFiltragem = (aTotal, objFiltro, inst) => {
+        // Atravéz de uma array completa e vários filtros, retorna uma array filtrada sobre as regras de cada objeto.
+        /**
+         * FullFiltroFull - processoFiltragem
+         * Executa a redução da listagem basedo no objFiltro.
+         * Usando filtroExtra(), pode-se filtrar o objeto da lista também.
+         * Atributos:
+         * 		data-mkfformato = "date"
+         * 		data-mkfoperador = "<="
+         */
+        let aFiltrada = [];
+        if (Array.isArray(aTotal)) {
+            let temp = [];
+            aTotal.forEach((o) => {
+                let podeExibir = true;
+                if (inst.c.filtroExtra != null)
+                    podeExibir = inst.c.filtroExtra(o); // true
+                if (mkt.classof(podeExibir) != "Boolean") {
+                    podeExibir = true;
+                    mkt.w("filtroExtra() precisa retornar boolean");
+                }
+                for (let propFiltro in objFiltro) {
+                    // Faz-se o cruzamento dos dados, quando encontrar a prorpiedade no outro objeto, seta pra executar o filtro.
+                    let m = null;
+                    if (o[propFiltro] != null) {
+                        m = o[propFiltro]; // m representa o dado do item
+                    }
+                    if (propFiltro.includes(".")) {
+                        m = mkt.getV(propFiltro, o); // m representa o dado do item
+                        //this.l("NoFIltro: ", objFiltro[propFiltro].conteudo.toString().toLowerCase(), " DadoItem: ", m)
+                    }
+                    //this.l("objFiltro[propFiltro]: ", objFiltro[propFiltro])
+                    // Cada Propriedade de Cada Item da Array
+                    if (m != null) {
+                        // Cruzar referencia com objFiltro e se so avancar se realmente for um objeto
+                        let k = objFiltro[propFiltro]; // k representa a config do filtro para essa propriedade
+                        if (k.formato === "string") {
+                            k.conteudo = k.conteudo.toString().toLowerCase();
+                            if (!mkt.contem(m, k.conteudo)) {
+                                podeExibir = false;
+                            }
+                        }
+                        else if (k.formato === "mkHeadMenuSel") {
+                            let item = mkt.removeEspecias(m).toString().toLowerCase().trim();
+                            if (k.conteudo.includes(item)) {
+                                podeExibir = false;
+                            }
+                        }
+                        else if (k.formato === "stringNumerosVirgula") {
+                            // Filtro por numero exado. Provavelmente sejam duas arrays (MultiSelect), O filtro precisa encontrar tudo no objeto.
+                            let filtroInvertido = false;
+                            if (mkt.isJson(k.conteudo)) {
+                                let arrayM = m.toString().split(","); // String de Numeros em Array de Strings
+                                let mayBeArrayK = mkt.parseJSON(k.conteudo); // << No objFiltro
+                                if (Array.isArray(mayBeArrayK)) {
+                                    mayBeArrayK.forEach((numeroK) => {
+                                        // A cada numero encontrado pos split na string do item verificado
+                                        filtroInvertido = arrayM.some((numeroM) => {
+                                            return Number(numeroM) == Number(numeroK);
+                                        });
+                                    });
+                                }
+                                else {
+                                    filtroInvertido = arrayM.some((numeroM) => {
+                                        return Number(numeroM) == Number(mayBeArrayK);
+                                    });
+                                }
+                                if (!filtroInvertido) {
+                                    podeExibir = false;
+                                }
+                            }
+                            else
+                                mkt.w("Não é um JSON");
+                        }
+                        else if (k.formato === "number") {
+                            // Filtro por numero exado. Apenas exibe este exato numero.
+                            // Ignorar filtro com 0
+                            if (Number(m) !== Number(k.conteudo) &&
+                                Number(k.conteudo) !== 0) {
+                                podeExibir = false;
+                            }
+                        }
+                        else if (k.formato === "date") {
+                            // Filtro por Data (Gera milissegundos e faz comparacao)
+                            let dateM = new Date(m).getTime();
+                            let dateK = new Date(k.conteudo).getTime();
+                            if (k.operador === ">=") {
+                                // MAIOR OU IGUAL
+                                if (!(dateM >= dateK)) {
+                                    podeExibir = false;
+                                }
+                            }
+                            else if (k.operador === "<=") {
+                                // MENOR OU IGUAL
+                                if (!(dateM <= dateK)) {
+                                    podeExibir = false;
+                                }
+                            }
+                            else if (k.operador === ">") {
+                                // MAIOR
+                                if (!(dateM > dateK)) {
+                                    podeExibir = false;
+                                }
+                            }
+                            else if (k.operador === "<") {
+                                // MENOR
+                                if (!(dateM < dateK)) {
+                                    podeExibir = false;
+                                }
+                            }
+                            else {
+                                // IGUAL ou nao informado
+                                if (!(dateM == dateK)) {
+                                    podeExibir = false;
+                                }
+                            }
+                        }
+                    }
+                    else {
+                        if (propFiltro != "mkFullFiltro") {
+                            podeExibir = false;
+                        }
+                    }
+                }
+                if (podeExibir) {
+                    // Verificara todas prop, logica da adicao por caracteristica buscada
+                    if (objFiltro["mkFullFiltro"]) {
+                        // Se houver pesquisa generica no filtro
+                        let k = objFiltro["mkFullFiltro"]["conteudo"]
+                            .toString()
+                            .toLowerCase(); // k = Dado que estamos procurando
+                        podeExibir = false; // Inverter para verificar se alguma prop do item possui a caracteristica
+                        mkt.allSubPropriedades(o, (v) => {
+                            if (v != null) {
+                                // <= Nao pode tentar filtrar em itens nulos
+                                v = v.toString().toLowerCase();
+                                if (v.match(k)) {
+                                    podeExibir = true;
+                                }
+                            }
+                        });
+                    }
+                }
+                if (podeExibir) {
+                    temp.push(o);
+                }
+            });
+            aFiltrada = temp;
+        }
+        else {
+            aFiltrada = [];
+        }
+        return aFiltrada;
+    };
+    static delObjetoFromId = (nomeKey, valorKey, listaDados) => {
+        // Remove um objeto quando uma chave e valor bater com o objeto.
+        let temp = [];
+        if (Array.isArray(listaDados)) {
+            listaDados.forEach((o) => {
+                if (o[nomeKey] != valorKey) {
+                    temp.push(o);
+                }
+            });
+        }
+        else {
+            temp = listaDados;
+        }
+        return temp;
+    };
+    static setObjetoFromId = (nomeKey, valorKey, itemModificado, listaDados) => {
+        // Troca o objeto encontrado pelo ItemModificado e retorna a lista modificada;
+        if (Array.isArray(listaDados)) {
+            for (let i = 0; i < listaDados.length; i++) {
+                if (listaDados[i][nomeKey] == valorKey) {
+                    listaDados[i] = itemModificado;
+                }
+            }
+        }
+        return listaDados;
+    };
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //                     Web Generic Component                               \\
     //==========================================================================\\
-    static CarregarON;
-    static CarregarOFF;
-    static detectedServerOn;
-    static detectedServerOff;
+    static CarregarON = (nomeDoRequest = "") => {
+        // Gera e exibe um sobreposto elemento que representa o carregamento com opção de ocultar.
+        if (!mkt.Q("body .CarregadorMkBlock")) {
+            let divCarregadorMkBlock = document.createElement("div");
+            divCarregadorMkBlock.className = "CarregadorMkBlock";
+            let divCarregadormkt = document.createElement("div");
+            divCarregadormkt.className = "CarregadorMk";
+            let buttonCarregadorMkTopoDireito = document.createElement("button");
+            buttonCarregadorMkTopoDireito.className = "CarregadorMkTopoDireito";
+            buttonCarregadorMkTopoDireito.setAttribute("type", "button");
+            buttonCarregadorMkTopoDireito.setAttribute("onClick", "mkt.CarregarOFF()");
+            buttonCarregadorMkTopoDireito.innerHTML =
+                `${mkt.a.SVGINI}<path d='M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z'/>${mkt.a.SVGFIM}`;
+            divCarregadorMkBlock.appendChild(divCarregadormkt);
+            divCarregadorMkBlock.appendChild(buttonCarregadorMkTopoDireito);
+            document.body.appendChild(divCarregadorMkBlock);
+        }
+        mkt.Q("body .CarregadorMkBlock").classList.remove("oculto");
+        mkt.Q("body").classList.add("CarregadorMkSemScrollY");
+    };
+    static CarregarOFF = (nomeDoRequest = "") => {
+        // Oculta o elemento do carregador criado pelo CarregarON.
+        if (mkt.Q("body .CarregadorMkBlock") != null) {
+            mkt.Q("body .CarregadorMkBlock").classList.add("oculto");
+        }
+        mkt.Q("body").classList.remove("CarregadorMkSemScrollY");
+    };
+    static detectedServerOff = (mensagem = "Servidor OFF-LINE") => {
+        // Gera e exibe um elemento que representa o servidor offline com opção de ocultar.
+        if (mkt.Q("body .offlineBlock") == null) {
+            let divOfflineBlock = document.createElement("div");
+            divOfflineBlock.className = "offlineBlock";
+            let divOfflineBlockInterna = document.createElement("div");
+            divOfflineBlockInterna.className = "text-center";
+            divOfflineBlockInterna.innerHTML = mensagem;
+            let buttonOfflineBlock = document.createElement("button");
+            buttonOfflineBlock.setAttribute("type", "button");
+            buttonOfflineBlock.setAttribute("onClick", "mkt.detectedServerOn()");
+            buttonOfflineBlock.innerHTML =
+                `${mkt.a.SVGINI}<path d='M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z'/>${mkt.a.SVGFIM}`;
+            divOfflineBlock.appendChild(divOfflineBlockInterna);
+            divOfflineBlock.appendChild(buttonOfflineBlock);
+            document.body.appendChild(divOfflineBlock);
+        }
+        mkt.Q("body .offlineBlock").classList.remove("oculto");
+        mkt.Q("body").classList.add("CarregadorMkSemScrollY");
+    };
+    static detectedServerOn = () => {
+        // Oculta o elemento de exibição de servidor offline
+        mkt.Q("body .offlineBlock")?.classList?.add("oculto");
+        mkt.Q("body").classList.remove("CarregadorMkSemScrollY");
+    };
     static vibrar;
     static importar;
     static post;
@@ -2558,31 +2844,10 @@ Object.defineProperty(mkt, "getServerOn", {
     }, enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "detectedServerOff", {
-    value: () => {
-        if (mkt.Q("body .offlineBlock") == null) {
-            let divOfflineBlock = document.createElement("div");
-            divOfflineBlock.className = "offlineBlock";
-            let divOfflineBlockInterna = document.createElement("div");
-            divOfflineBlockInterna.className = "text-center";
-            divOfflineBlockInterna.innerHTML = "Servidor OFF-LINE";
-            let buttonOfflineBlock = document.createElement("button");
-            buttonOfflineBlock.setAttribute("type", "button");
-            buttonOfflineBlock.setAttribute("onClick", "mkt.detectedServerOn()");
-            // let iOfflineBlock = document.createElement("i");
-            // iOfflineBlock.className = "bi bi-x-lg";
-            buttonOfflineBlock.innerHTML =
-                "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path d='M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z'/></svg>";
-            divOfflineBlock.appendChild(divOfflineBlockInterna);
-            divOfflineBlock.appendChild(buttonOfflineBlock);
-            document.body.appendChild(divOfflineBlock);
-        }
-        mkt.Q("body .offlineBlock").classList.remove("oculto");
-    }, enumerable: false, writable: false, configurable: false,
+    enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "detectedServerOn", {
-    value: () => {
-        mkt.Q("body .offlineBlock")?.classList?.add("oculto");
-    }, enumerable: false, writable: false, configurable: false,
+    enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "mkOnlyFloatKeys", {
     value: (ev) => {
@@ -3156,33 +3421,9 @@ Object.defineProperty(mkt, "mkFormatarOA", {
 //			Carregador									\\
 //___________________________________\\
 Object.defineProperty(mkt, "CarregarON", {
-    value: (nomeDoRequest = "") => {
-        if (mkt.Q("body .CarregadorMkBlock") == null) {
-            let divCarregadorMkBlock = document.createElement("div");
-            divCarregadorMkBlock.className = "CarregadorMkBlock";
-            let divCarregadormkt = document.createElement("div");
-            divCarregadormkt.className = "CarregadorMk";
-            let buttonCarregadorMkTopoDireito = document.createElement("button");
-            buttonCarregadorMkTopoDireito.className = "CarregadorMkTopoDireito";
-            buttonCarregadorMkTopoDireito.setAttribute("type", "button");
-            buttonCarregadorMkTopoDireito.setAttribute("onClick", "mkt.CarregarOFF()");
-            buttonCarregadorMkTopoDireito.innerHTML =
-                "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path d='M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z'/></svg>";
-            divCarregadorMkBlock.appendChild(divCarregadormkt);
-            divCarregadorMkBlock.appendChild(buttonCarregadorMkTopoDireito);
-            document.body.appendChild(divCarregadorMkBlock);
-        }
-        mkt.Q("body .CarregadorMkBlock").classList.remove("oculto");
-        mkt.Q("body").classList.add("CarregadorMkSemScrollY");
-    }, enumerable: false, writable: false, configurable: false,
+    enumerable: false, writable: false, configurable: false,
 });
-Object.defineProperty(mkt, "CarregarOFF", {
-    value: (nomeDoRequest = "") => {
-        if (mkt.Q("body .CarregadorMkBlock") != null) {
-            mkt.Q("body .CarregadorMkBlock").classList.add("oculto");
-        }
-        mkt.Q("body").classList.remove("CarregadorMkSemScrollY");
-    }, enumerable: false, writable: false, configurable: false,
+Object.defineProperty(mkt, "CarregarOFF", { enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "CarregarHtml", {
     value: (estilo = "", classe = "relative") => {
@@ -3452,200 +3693,16 @@ Object.defineProperty(mkt, "request", {
 //			LISTAGEM										\\
 //___________________________________\\
 Object.defineProperty(mkt, "getObjetoFromId", {
-    value: (nomeKey, valorKey, listaDados) => {
-        let temp = null;
-        if (Array.isArray(listaDados)) {
-            listaDados.forEach((o) => {
-                if (o[nomeKey] == valorKey) {
-                    temp = o;
-                }
-            });
-        }
-        return temp;
-    }, enumerable: false, writable: false, configurable: false,
+    enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "setObjetoFromId", {
-    value: (nomeKey, valorKey, itemModificado, listaDados) => {
-        if (Array.isArray(listaDados)) {
-            for (let i = 0; i < listaDados.length; i++) {
-                if (listaDados[i][nomeKey] == valorKey) {
-                    listaDados[i] = itemModificado;
-                }
-            }
-        }
-        return listaDados;
-    }, enumerable: false, writable: false, configurable: false,
+    enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "delObjetoFromId", {
-    value: (nomeKey, valorKey, listaDados) => {
-        let temp = [];
-        if (Array.isArray(listaDados)) {
-            listaDados.forEach((o) => {
-                if (o[nomeKey] != valorKey) {
-                    temp.push(o);
-                }
-            });
-        }
-        else {
-            temp = listaDados;
-        }
-        return temp;
-    }, enumerable: false, writable: false, configurable: false,
+    enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "processoFiltragem", {
-    value: (aTotal, objFiltro, inst) => {
-        /**
-         * FullFiltroFull - processoFiltragem
-         * Executa a redução da listagem basedo no objFiltro.
-         * Usando filtroExtra(), pode-se filtrar o objeto da lista também.
-         * Atributos:
-         * 		data-mkfformato = "date"
-         * 		data-mkfoperador = "<="
-         */
-        let aFiltrada = [];
-        if (Array.isArray(aTotal)) {
-            let temp = [];
-            aTotal.forEach((o) => {
-                let podeExibir = true;
-                if (inst.c.filtroExtra != null)
-                    podeExibir = inst.c.filtroExtra(o); // true
-                if (mkt.classof(podeExibir) != "Boolean") {
-                    podeExibir = true;
-                    mkt.w("filtroExtra() precisa retornar boolean");
-                }
-                for (let propFiltro in objFiltro) {
-                    // Faz-se o cruzamento dos dados, quando encontrar a prorpiedade no outro objeto, seta pra executar o filtro.
-                    let m = null;
-                    if (o[propFiltro] != null) {
-                        m = o[propFiltro]; // m representa o dado do item
-                    }
-                    if (propFiltro.includes(".")) {
-                        m = mkt.getV(propFiltro, o); // m representa o dado do item
-                        //this.l("NoFIltro: ", objFiltro[propFiltro].conteudo.toString().toLowerCase(), " DadoItem: ", m)
-                    }
-                    //this.l("objFiltro[propFiltro]: ", objFiltro[propFiltro])
-                    // Cada Propriedade de Cada Item da Array
-                    if (m != null) {
-                        // Cruzar referencia com objFiltro e se so avancar se realmente for um objeto
-                        let k = objFiltro[propFiltro]; // k representa a config do filtro para essa propriedade
-                        if (k.formato === "string") {
-                            k.conteudo = k.conteudo.toString().toLowerCase();
-                            if (!mkt.contem(m, k.conteudo)) {
-                                podeExibir = false;
-                            }
-                        }
-                        else if (k.formato === "mkHeadMenuSel") {
-                            let item = mkt.removeEspecias(m).toString().toLowerCase().trim();
-                            if (k.conteudo.includes(item)) {
-                                podeExibir = false;
-                            }
-                        }
-                        else if (k.formato === "stringNumerosVirgula") {
-                            // Filtro por numero exado. Provavelmente sejam duas arrays (MultiSelect), O filtro precisa encontrar tudo no objeto.
-                            let filtroInvertido = false;
-                            if (mkt.isJson(k.conteudo)) {
-                                let arrayM = m.toString().split(","); // String de Numeros em Array de Strings
-                                let mayBeArrayK = mkt.parseJSON(k.conteudo); // << No objFiltro
-                                if (Array.isArray(mayBeArrayK)) {
-                                    mayBeArrayK.forEach((numeroK) => {
-                                        // A cada numero encontrado pos split na string do item verificado
-                                        filtroInvertido = arrayM.some((numeroM) => {
-                                            return Number(numeroM) == Number(numeroK);
-                                        });
-                                    });
-                                }
-                                else {
-                                    filtroInvertido = arrayM.some((numeroM) => {
-                                        return Number(numeroM) == Number(mayBeArrayK);
-                                    });
-                                }
-                                if (!filtroInvertido) {
-                                    podeExibir = false;
-                                }
-                            }
-                            else
-                                mkt.w("Não é um JSON");
-                        }
-                        else if (k.formato === "number") {
-                            // Filtro por numero exado. Apenas exibe este exato numero.
-                            // Ignorar filtro com 0
-                            if (Number(m) !== Number(k.conteudo) &&
-                                Number(k.conteudo) !== 0) {
-                                podeExibir = false;
-                            }
-                        }
-                        else if (k.formato === "date") {
-                            // Filtro por Data (Gera milissegundos e faz comparacao)
-                            let dateM = new Date(m).getTime();
-                            let dateK = new Date(k.conteudo).getTime();
-                            if (k.operador === ">=") {
-                                // MAIOR OU IGUAL
-                                if (!(dateM >= dateK)) {
-                                    podeExibir = false;
-                                }
-                            }
-                            else if (k.operador === "<=") {
-                                // MENOR OU IGUAL
-                                if (!(dateM <= dateK)) {
-                                    podeExibir = false;
-                                }
-                            }
-                            else if (k.operador === ">") {
-                                // MAIOR
-                                if (!(dateM > dateK)) {
-                                    podeExibir = false;
-                                }
-                            }
-                            else if (k.operador === "<") {
-                                // MENOR
-                                if (!(dateM < dateK)) {
-                                    podeExibir = false;
-                                }
-                            }
-                            else {
-                                // IGUAL ou nao informado
-                                if (!(dateM == dateK)) {
-                                    podeExibir = false;
-                                }
-                            }
-                        }
-                    }
-                    else {
-                        if (propFiltro != "mkFullFiltro") {
-                            podeExibir = false;
-                        }
-                    }
-                }
-                if (podeExibir) {
-                    // Verificara todas prop, logica da adicao por caracteristica buscada
-                    if (objFiltro["mkFullFiltro"]) {
-                        // Se houver pesquisa generica no filtro
-                        let k = objFiltro["mkFullFiltro"]["conteudo"]
-                            .toString()
-                            .toLowerCase(); // k = Dado que estamos procurando
-                        podeExibir = false; // Inverter para verificar se alguma prop do item possui a caracteristica
-                        mkt.allSubPropriedades(o, (v) => {
-                            if (v != null) {
-                                // <= Nao pode tentar filtrar em itens nulos
-                                v = v.toString().toLowerCase();
-                                if (v.match(k)) {
-                                    podeExibir = true;
-                                }
-                            }
-                        });
-                    }
-                }
-                if (podeExibir) {
-                    temp.push(o);
-                }
-            });
-            aFiltrada = temp;
-        }
-        else {
-            aFiltrada = [];
-        }
-        return aFiltrada;
-    }, enumerable: false, writable: false, configurable: false,
+    enumerable: false, writable: false, configurable: false,
 });
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //			ORDER LIST									\\
@@ -4604,69 +4661,10 @@ Object.defineProperty(mkt, "removerAspas", {
     }, enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "getV", {
-    value: (keys, objeto) => {
-        // Retorna o valor do chave informada, podendo ser obj.obj.chave
-        // mkt.getV("a.b.c",{a:{b:{c:"d"}}})
-        if (typeof objeto == "object") {
-            if (typeof keys == "string") {
-                if (keys.includes(".")) {
-                    // Multi
-                    let ks = keys.split(".");
-                    let lastObj = objeto;
-                    let lastV = {};
-                    // Iterar o Keys, Ver Obj atual e Setar Conteudo;
-                    ks.forEach((k) => {
-                        lastV = lastObj[k];
-                        if (typeof lastV == "object") {
-                            lastObj = lastV;
-                        }
-                    });
-                    return lastV;
-                }
-                else {
-                    // Simples
-                    return objeto[keys];
-                }
-            }
-            else {
-                mkt.w("getV() - Nome da propriedade precisa ser em string. (" + typeof keys + "):", keys);
-            }
-        }
-        else {
-            mkt.w("Para ver a chave, o parametro objeto precisa receber um objeto. (" +
-                typeof objeto +
-                ")");
-        }
-        return null;
-    }, enumerable: false, writable: false, configurable: false,
+    enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "mkToValue", {
-    value: (m, o) => {
-        // Conversor de "${obj.key}" em valor.
-        let ret = "";
-        if (m.indexOf("${") >= 0) {
-            let ini = m.split("${");
-            ret = ini[0];
-            for (let i in ini) {
-                if (i == "0")
-                    continue;
-                let end = ini[i].indexOf("}");
-                let key = ini[i].slice(0, end).trim();
-                if ((mkt.classof(o) == "Object" || mkt.classof(o) == "Array") && o != null) {
-                    // Quando é Objeto ou Array, entra na propriedade ou posição solicitada.
-                    let v = mkt.removerAspas(mkt.getV(key, o));
-                    if (v != null) {
-                        ret += v;
-                    }
-                }
-                ret += ini[i].slice(end + 1);
-            }
-        }
-        else {
-            ret = m;
-        }
-        return ret;
-    }, enumerable: false, writable: false, configurable: false,
+    enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "mkMoldeOA", {
     enumerable: false, writable: false, configurable: false,
@@ -5787,9 +5785,7 @@ Object.defineProperty(mkt, "classof", {
     }, enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "toString", {
-    value: () => {
-        return 'class mkt { /* classe gerenciadora de listagens */ }';
-    }, enumerable: false, writable: false, configurable: false,
+    enumerable: false, writable: false, configurable: false,
 });
 Object.defineProperty(mkt, "uuid", {
     value: () => {
