@@ -8,6 +8,24 @@
 var mkz = null;
 declare const appPath: any;
 
+
+//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+//  FUNCOES EXTERNAS                \\
+//___________________________________\\
+(String.prototype as any).removeRaw = function () {
+	return this
+		//.replaceAll("&quot;", '"')
+		//.replaceAll("&#39;", "'")
+		//.replaceAll("&amp;", "&")
+		.replaceAll("\n", "")
+		.replaceAll("\r", "")
+		.replaceAll("\t", "")
+		.replaceAll("\b", "")
+		.replaceAll("\f", "")
+	//.replaceAll("\\", "/");
+	// \u00E3 == ã, viraria /u00E3
+};
+
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //  MODELO DOS DADOS DA LISTA       \\
 //___________________________________\\
@@ -2458,1062 +2476,6 @@ class mkt {
 	};
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-	//                     TOOLS e JS HELPERS                                  \\
-	//==========================================================================\\
-
-	static contem = (
-		strMaior: string,
-		strMenor: string,
-	): boolean => {
-		// Comparardor de string CONTEM
-		strMaior = mkt.removeEspecias(strMaior).toLowerCase();
-		strMenor = mkt.removeEspecias(strMenor).toLowerCase();
-		return (strMaior.includes(strMenor));
-	};
-
-	static like = (
-		strMenor: string,
-		strMaior: string,
-	): boolean => {
-		// Comparardor de string LIKE
-		let result = false;
-		// Apenas Numeros e Letras está presente,
-		// pois se utilizar str.match(),
-		// não pode conter os caracteres reservados do regex.
-
-		// RemoveEspeciais já inclui apenasNumerosELetras.
-		let rmMaior = mkt.removeEspecias(strMaior.toLowerCase().trim());
-		let rmMenor = mkt.removeEspecias(strMenor.toLowerCase().trim());
-		if (rmMaior.match(rmMenor)) {
-			result = true;
-		}
-
-		// Desabilitei pois já estou removendo os especiais em cima. e a função precisa ser rápida.
-		// Internacionalizador de comparação... (Galês CH e DD e Latin ä))
-		// let likeMatcher = new Intl.Collator(undefined, {
-		// 	sensitivity: "base",
-		// 	ignorePunctuation: true,
-		// }).compare;
-		// if (likeMatcher(strMaior, strMenor) === 0) {
-		// 	result = true;
-		// }
-
-		return result;
-	};
-
-	static classof = (o: any) => {
-		// Identifica a classe do argumento informado.
-		let nomeClasse = Object.prototype.toString.call(o).slice(8, -1);
-		// Exceção, apenas quando "Number" converter os NaN pra "NaN".
-		if (nomeClasse == "Number") {
-			if (o.toString() == "NaN") {
-				nomeClasse = "NaN";
-			}
-		};
-		return nomeClasse;
-	};
-
-	static clonar = (i: any) => {
-		// Clona com a técnica de montar e desmontar string.
-		return mkt.parseJSON(mkt.stringify(i));
-	};
-
-	static ordenar = (array: object[], nomeProp: string | null, sortDir: any) => {
-		// Efetua o ordenamento do array informando a propriedade e a direção (0,1,2)
-		if (nomeProp) {
-			// 0 - Crescente:
-			array.sort((oA: any, oB: any) => {
-				let a = nomeProp ? mkt.getV(nomeProp, oA) : null;
-				let b = nomeProp ? mkt.getV(nomeProp, oB) : null;
-				//let b = oB[nomeProp];
-				if (typeof a == "string") a = a.toLowerCase().trim();
-				if (typeof b == "string") b = b.toLowerCase().trim();
-				if (a !== b) {
-					if (a > b) return 1;
-					if (a < b) return -1;
-				}
-				if (!a || !b) { // Nulo
-					return 0;
-				}
-				return -1;
-			});
-			if (!mkt.a.contaOrdena) { mkt.a.contaOrdena = 0; }
-			mkt.a.contaOrdena++;
-			// 1 - Decrescente
-			if (sortDir === 1) {
-				array = array.reverse();
-			} else if (sortDir === 2) {
-				// 2 - Toogle 
-				if (mkt.a.contaOrdena % 2 == 0) {
-					array = array.reverse();
-				}
-			}
-		}
-		return array;
-	};
-
-	static mkLimparOA = (oa: object | object[]) => {
-		// Converte (OBJ / ARRAY) Limpar Nulos e Vazios
-		let mkLimparOA_Execute = (o: any) => {
-			for (let propName in o) {
-				if (
-					o[propName as keyof typeof o] === null ||
-					o[propName as keyof typeof o] === ""
-				) {
-					delete o[propName as keyof typeof o];
-				}
-			}
-			return o;
-		}
-		return mkt.aCadaObjExecuta(oa, mkLimparOA_Execute);
-	};
-
-	static aCadaSubPropriedade = (OA: any, funcao: Function | null = null, exceto: string = "Object") => {
-		// Executa a FUNCAO em todas as propriedades deste OA. Inclusive Obj.Obj...
-		let c = 0;
-		for (let a in OA) {
-			if (mkt.classof(OA[a]) != exceto) {
-				if (funcao) {
-					funcao(OA[a]);
-				}
-			}
-			c++;
-			// Se o atual é objeto, itera internamente
-			if (mkt.classof(OA[a]) == "Object") {
-				c += mkt.aCadaSubPropriedade(OA[a], funcao, exceto);
-			}
-		}
-		return c;
-	};
-
-	static aCadaObjExecuta = (
-		oa: object | object[],
-		func: any
-	): object | object[] => {
-		// Verifica se ARRAY ou OBJETO e executa a função FUNC a cada objeto dentro de OA.
-		if (Array.isArray(oa)) {
-			for (let i = 0; i < oa.length; i++) {
-				func(oa[i]);
-			}
-		} else {
-			func(oa);
-		}
-		return oa;
-	};
-
-	static aCadaElemento = (query: any, fn: Function) => {
-		// Executa a cada elemento, similar ao QAll.
-		// Query: String, Element, [Element,Element]
-		if (mkt.classof(query) == "String") {
-			let retorno;
-			let elementos = mkt.QAll(query);
-			if (elementos.length == 1) retorno = elementos[0];
-			else retorno = elementos;
-			elementos.forEach((e: any) => {
-				fn(e);
-			});
-			return retorno;
-		} else if (mkt.classof(query) == "Array") {
-			query.forEach((e: HTMLElement) => {
-				fn(e);
-			});
-			return query;
-		} else {
-			let e = mkt.Q(query);
-			fn(e);
-			return e;
-		}
-	};
-
-	static AllFromCadaExe = (query: any, fn: Function) => {
-		// Executa função aCada Elemento do QAll e junta os resultados.
-		// Retorna uma array de resultados de cada execucao.
-		let retorno: any = [];
-		if (typeof query == "string") {
-			let elementos = mkt.QAll(query);
-			elementos.forEach((e: any) => {
-				retorno.push(fn(e));
-			});
-		} else if (Array.isArray(query)) {
-			query.forEach((e) => {
-				retorno.push(fn(e));
-			});
-		} else {
-			let e = mkt.Q(query);
-			retorno.push(fn(e));
-		}
-		return retorno;
-	};
-
-	static parseJSON = (t: any, removeRaw: boolean | null = false) => {
-		// Se for um JSON válido. Retorna o objeto, se não null.
-		if (removeRaw) {
-			if (mkt.classof(t) == "String") {
-				t = t.removeRaw();
-			}
-		}
-		if (t === "") return ""; // Vazio
-		if (mkt.isJson(t)) {
-			return JSON.parse(t);
-		} else {
-			mkt.w("JSON Inválido: Não foi possível converter o JSON.");
-			return null;
-		}
-	};
-
-	static stringify = (o: any) => {
-		// Camada de tratamento de envio de JSON.
-		return JSON.stringify(o)
-			?.replaceAll("\n", "")
-			?.replaceAll("\r", "")
-			?.replaceAll("\t", "")
-			?.replaceAll("\b", "")
-			?.replaceAll("\f", "")
-		//?.replaceAll('&', "&amp;") // Post C# não identifica os campos do JSON
-		//?.replaceAll('"', "&quot;")
-		//.replaceAll("'", "&#39;");
-	};
-
-	static regras: any[] = [];
-
-	static exeregra = async (e: any, ev: any = null) => {
-		// Função que executa as regras deste campo com base nos objetos salvos
-		// Quando concluir (onChange), executar novamentepra remover erros já corrigidos (justamente no último caracter).
-		return new Promise((resolver) => {
-			let erros: any = [];
-			let regrasDoE = mkt.regras.find((o: any) => o.e == e);
-			let eDisplay = regrasDoE?.c.querySelector(".mkRegrar[data-valmsg-for='" + regrasDoE.n + "']")
-			let regras = regrasDoE?.r;
-			let promises: any = []
-			if (regras) {
-				regras.forEach((re: any) => {
-					if (!re.target) {
-						re.target = "value";
-					}
-					if (re.on == null) {
-						re.on = true;
-					}
-					let podeValidar = re.on; // Padrão validar, mas se regra estiver com o on=false, já inicia o giro sem validar;
-					if (!e.offsetParent) { // Invisivel, padrão sem validar
-						podeValidar = false;
-					}
-					if (e.classList.contains("disabled")) { // Desativado, padrão sem validar
-						podeValidar = false;
-					}
-					// Validar apenas quando i estiver true na regra OU  Visível e Não bloqueado
-					if (podeValidar || re.f) {
-						promises.push(new Promise((prom) => {
-							re.e = e;
-							let regraK = re.k?.toLowerCase();
-
-							switch (regraK) {
-
-								case "mascarar":  // EXE
-									if (e[re.target]) {
-										let mascarado = mkt.mascarar(e[re.target], re.v)
-										if (mascarado != null) e[re.target] = mascarado;
-									}
-									prom(re.k);
-									break;
-
-								case "moeda":  // EXE
-									if (e[re.target]) {
-										e[re.target] = mkt.toMoeda(e[re.target]);
-									}
-									prom(re.k);
-									break;
-
-								case "numero":  // EXE
-									if (e[re.target]) {
-										e[re.target] = mkt.fromNumber(e[re.target]);
-									}
-									prom(re.k);
-									break;
-
-								case "charproibido": // EXE
-									for (let c of re.v) {
-										if (e[re.target].includes(c)) {
-											if (!re.m) re.m = mkt.a.msg.charproibido + c;
-											erros.push(re);
-											e[re.target] = e[re.target].replaceAll(c, "");
-										}
-									}
-									prom(re.k);
-									break;
-
-								case "apenasnumeros": // EXE
-									if (!(mkt.a.util.numeros[1].test(e[re.target]))) {
-										if (!re.m) re.m = mkt.a.msg.apenasnumeros;
-										erros.push(re);
-										e[re.target] = e[re.target].replaceAll(/((?![0-9]).)/g, "")
-									}
-									prom(re.k);
-									break;
-
-								case "apenasletras": // EXE
-									if (!(mkt.a.util.letras[1].test(e[re.target]))) {
-										if (!re.m) re.m = mkt.a.msg.apenasletras;
-										erros.push(re);
-										e[re.target] = e[re.target].replaceAll(/((?![a-zA-Z]).)/g, "")
-									}
-									prom(re.k);
-									break;
-
-								case "maxchars": // EXE
-									e.setAttribute("maxlength", re.v);
-									if (e[re.target].length > Number(re.v)) {
-										if (!re.m) re.m = mkt.a.msg.maxc;
-										erros.push(re);
-										e[re.target] = e[re.target].slice(0, Number(re.v));
-									}
-									prom(re.k);
-									break;
-
-								case "minchars": // EXE
-									e.setAttribute("minlength", re.v);
-									if (e[re.target].length < Number(re.v)) {
-										if (!re.m) re.m = mkt.a.msg.minc + re.v;
-										erros.push(re);
-										let _a = [...e[re.target]];
-										if (!re.fill) re.fill = "0";
-										while (_a.length <= Number(re.v)) {
-											_a.unshift(re.fill.charAt(0));
-										}
-										e[re.target] = _a.join("");
-									}
-									prom(re.k);
-									break;
-
-								case "datamax": // EXE
-									if (mkt.getMs(e[re.target]) > mkt.getMs(re.v)) {
-										if (!re.m) re.m = mkt.a.msg.datamax;
-										erros.push(re);
-										e[re.target] = re.v;
-									}
-									prom(re.k);
-									break;
-
-								case "nummin": // EXE
-									e.setAttribute("min", re.v);
-									if (mkt.mkFloat(e[re.target]) < Number(re.v)) {
-										if (!re.m) re.m = mkt.a.msg.nummin + re.v;
-										erros.push(re);
-										e[re.target] = re.v;
-									}
-									prom(re.k);
-									break;
-
-								case "nummax": // EXE
-									e.setAttribute("max", re.v);
-									if (mkt.mkFloat(e[re.target]) > Number(re.v)) {
-										if (!re.m) re.m = mkt.a.msg.nummax + re.v;
-										erros.push(re);
-										e[re.target] = re.v;
-									}
-									prom(re.k);
-									break;
-
-								case "obrigatorio": // INFO
-									if (re.v == null) re.v = "true";
-									if (re.v == "true") {
-										if (e[re.target] == "") {
-											if (!re.m) {
-												if (e.classList.contains("mkSel")) {
-													re.m = mkt.a.msg.so;
-												} else {
-													re.m = mkt.a.msg.po;
-												}
-											}
-											erros.push(re);
-										}
-									}
-									prom(re.k);
-									break;
-
-								case "regex": // INFO
-									if (!(new RegExp(re.v).test(e[re.target]))) {
-										if (!re.m) re.m = mkt.a.msg.fi;
-										erros.push(re);
-									}
-									prom(re.k);
-									break;
-
-								case "some": // INFO 
-									// (Ao menos 1 ocorrencia do regex informado) (Pode gerar varios erros)
-									let _vs: any;
-									re.vmfail = [];
-									let b = false;
-									Array.isArray(re.v) ? _vs = re.v : _vs = [re.v];
-									for (let i = 0; i < _vs.length; i++) {
-										if (!([...e[re.target]].some(le => new RegExp(_vs[i]).test(le)))) {
-											if (!re.m) {
-												re.m = mkt.a.msg.some;
-											}
-											re.vmfail.push(re.vm[i]);
-											b = true;
-										}
-									}
-									if (b) {
-										erros.push(re);
-									}
-									prom(re.k);
-									break;
-
-								case "mincharsinfo": // INFO
-									e.setAttribute("minlength", re.v);
-									if (e[re.target].length < Number(re.v)) {
-										if (!re.m) re.m = mkt.a.msg.minc + re.v;
-										erros.push(re);
-									}
-									prom(re.k);
-									break;
-
-								case "maxcharsinfo": // INFO
-									if (e[re.target].length > Number(re.v)) {
-										if (!re.m) re.m = mkt.a.msg.maxc + re.v;
-										erros.push(re);
-									}
-									prom(re.k);
-									break;
-
-								case "fn": // INFO
-									if (!(re.v(e[re.target]))) {
-										if (!re.m) re.m = mkt.a.msg.negado;
-										erros.push(re);
-									}
-									prom(re.k);
-									break;
-
-								case "datamaiorque": // INFO
-									if (mkt.getMs(e[re.target]) < mkt.getMs(re.v)) {
-										if (!re.m) re.m = mkt.a.msg.datamaiorque;
-										erros.push(re);
-									}
-									prom(re.k);
-									break;
-
-								case "datamenorque": // INFO
-									if (mkt.getMs(e[re.target]) > mkt.getMs(re.v)) {
-										if (!re.m) re.m = mkt.a.msg.datamenorque;
-										erros.push(re);
-									}
-									prom(re.k);
-									break;
-
-								case "server": // INFO - ASYNC EVENT
-									//(Verificação remota, DB / API)
-									if (ev) {
-										if (!re.m) re.m = mkt.a.msg.in;
-										if (e[re.target] != "") {
-											e.classList.add("pending");
-											let queryString = "?" + regrasDoE.n + "=" + e[re.target];
-											// Anexar campos adicionais:
-											if (re.a) {
-												let arrAdd: Array<string> = re.a.split(",");
-												arrAdd.forEach((s: string) => {
-													let eAdd = regrasDoE.c.querySelector("*[name='" + s + "']");
-													if (eAdd) {
-														queryString += "&" + s + "=" + eAdd[re.target];
-													} else {
-														mkt.w("Regrar: Campo Adicional solicitado não encontrado: ", s);
-													}
-												});
-											}
-											mkt.get.json({ url: re.v + queryString, quiet: true }).then((p: any) => {
-												if (p.retorno != true) {
-													if (mkt.classof(p.retorno) == "String") {
-														re.m = p.retorno;
-													}
-													erros.push(re);
-												}
-												if (p.retorno != null) {
-													e.classList.remove("pending");
-												}
-												prom(re.k);
-											});
-										} else {
-											erros.push(re);
-											prom(re.k);
-										}
-									} else {
-										// Apenas executa quando não tem evento
-										prom(re.k);
-									}
-									break;
-
-								default:
-									mkt.w("Regrar() - Regra não encontrada: ", regraK)
-									prom(null);
-							} // fim switch regras possíveis
-
-						})); // <= Promessas push
-					} // <= Fim do PodeValidar
-				}); // <= A cada regra
-			} // Possui regra
-			Promise.all(promises).then(ok => {
-				if (erros.length > 0) {
-					let mensagens = erros.map((a: any) => {
-						if (Array.isArray(a.vmfail)) {
-							// Se 1 regra gerar varios erros, junta por virgula.
-							a.m = mkt.a.msg.some + a.vmfail.join(", ");
-						}
-						return a.m;
-					}).join("<br/>");
-					mkt.regraDisplay(e, true, eDisplay, mensagens);
-					mkt.TerremotoErros(e);
-				} else {
-					mkt.regraDisplay(e, false, eDisplay, "");
-				}
-				resolver(erros);
-			}); // Promise All
-		}); // Return Promise exeRegra
-	};
-
-	static TerremotoErros = (e: any = null): void => {
-		// Efeito de terremoto apenas no elemento passado via exeRegra
-		e.nextElementSibling?.classList.add("mkTerremoto");
-		setTimeout(() => {
-			e.nextElementSibling?.classList.remove("mkTerremoto");
-		}, 500);
-	};
-
-	static estaValido = async (container: any) => {
-		// Retorna um booleano indicando se este container está ok ou não.
-		container = mkt.Q(container);
-		let validou = false;
-		// Informando um container qualquer, executa apenas as regras dentro deles.
-		let promises: any = [];
-		mkt.regras.forEach((regra: any) => {
-			if (mkt.isInside(regra.e, container)) {
-				promises.push(mkt.exeregra(regra.e, "full"));
-			}
-		});
-		let resultado: any = [];
-		resultado = await Promise.all(promises);
-		validou = resultado.flat().length <= 0;
-		if (!validou) {
-			mkt.vibrar(false);
-			mkt.gc("Validou a ação? ", (validou ? "Sim." : "Não."));
-			resultado.flat().forEach((r: any) => {
-				mkt.gc("Regra:", r.k?.toString().toUpperCase(), "Campo: " + r.e?.name);
-				mkt.l(r.e);
-				mkt.ge();
-			});
-			mkt.ge();
-		} else {
-			mkt.l("Validou a ação? Sim.");
-		}
-
-		return validou;
-	};
-
-	static regraDisplay = (e: any, erro: boolean, eDisplay: any, mensagem: string = "") => {
-		// Reagindo similar ao Unobtrusive, mas usando oculto no span.
-		if (erro) {
-			// EXIBE ERRO
-			e.classList.remove("valid");
-			e.classList.add("input-validation-error");
-			eDisplay?.classList.remove("oculto");
-			eDisplay?.classList.add("field-validation-error");
-		} else {
-			// OCULTA ERRO
-			if (e.offsetParent && !e.classList.contains("disabled")) { // Não setar valido nos desativados/invisiveis
-				e.classList.add("valid");
-			}
-			e.classList.remove("input-validation-error");
-			eDisplay?.classList.add("oculto");
-		}
-		if (eDisplay) eDisplay.innerHTML = mensagem;
-	};
-
-	static regraClear = (container: any) => {
-		container = mkt.Q(container);
-		// A cada regra envia um OCULTAR ERROS
-		mkt.regras.forEach((r: any) => {
-			let e = r.e;
-			let eDisplay = r.c.querySelector(".mkRegrar[data-valmsg-for='" + r.n + "']")
-			if (container) {
-				if (mkt.isInside(e, container)) {
-					mkt.regraDisplay(e, false, eDisplay);
-				}
-			} else {
-				mkt.regraDisplay(e, false, eDisplay);
-			}
-		})
-	};
-
-	static desregrar = async (container: any) => {
-		// Remove as regras de um determinado container
-		container = mkt.Q(container);
-
-		mkt.regras.forEach((r: any) => {
-			if (mkt.isInside(r.e, container)) {
-				mkt.regras.splice(mkt.regras.indexOf(r), 1);
-			}
-		});
-	}
-
-	static mascarar = (texto: any, mascara: any) => {
-		// Informando uma máscara e um texto, retorna dado mascarado.
-		// Mascaras: 0=Numero, A=Letra, Outros repete.
-		if (mascara) {
-			if (texto) {
-				if (typeof texto != "string") texto = texto?.toString();
-				if (typeof mascara != "string") mascara = mascara?.toString();
-				let ms = [...mkt.clonar(mascara)];
-				let ss = [...mkt.clonar(texto)];
-				// this.l("ss: ", ss);
-				let ts: any = [];
-				let pm = 0;
-				ss.forEach(s => {
-					let t = null;
-					if (/[0-9]/.test(s)) {
-						t = "0";
-					} else if (/[a-zA-Z]/.test(s)) {
-						t = "A";
-					} else {
-						t = " ";
-					}
-					ts.push(t);
-					pm++;
-				});
-				// this.l("ts: ", ts);
-				// this.l("ms: ", ms);
-				let r: any = [];
-				for (let tp = 0, mp = 0; (tp < ts.length) && (mp < ms.length); tp++, mp++) {
-					if (((ms[mp] === "0" || ms[mp] === "A") && (ms[mp] == ts[tp]))
-						|| (ms[mp] === "S" && (ts[tp] === "A" || ts[tp] === "0"))) {
-						// FORMATO IGUAL.
-						r.push(ss[tp]);
-					} else {
-						// MESMO CARACTER
-						if (ss[tp] === ms[mp]) {
-							r.push(ss[tp]);
-						} else {
-							// this.l("> ", ss[tp], " vs ", ms[mp])
-							// Mágica: Coloca o especial que o usuário não colocou.
-							if (ms[mp] != "0" && ms[mp] != "A" && ms[mp] != "S") {
-								r.push(ms[mp]);
-								tp--;
-							} else {
-								mp--;
-							}
-						}
-					}
-				}
-				return r.join("");
-			}
-		} else {
-			mkt.w("Mascarar Requer Texto: ", texto, " e Mascara: ", mascara);
-		}
-		return null;
-	};
-
-	static mkClicarNaAba = (e: HTMLAnchorElement) => {
-		// Funcionalidade de clicar na aba e trocar a classe ativo
-		let pag = Number(e?.getAttribute("data-pag"));
-		if (mkt.classof(pag) == "Number") { // Caso não for NaN
-			let mkAbasTotal = 0;
-			let mkAbas = e.closest(".mkAbas");
-			mkAbas?.querySelectorAll("a").forEach((a: HTMLAnchorElement) => {
-				a.classList.remove("active");
-				mkAbasTotal++;
-			});
-			e.classList.add("active");
-			for (let i = 1; i <= mkAbasTotal; i++) {
-				// Busca, Oculta todas, mas exibe a clicada.
-				mkt.QAll(".mkAba" + i).forEach((e: any) => {
-					if (i == pag) {
-						e.classList.remove("oculto");
-					} else {
-						e.classList.add("oculto");
-					}
-				});
-			}
-		}
-	};
-
-	static Workers = (numWorkers: number = navigator.hardwareConcurrency || 5) => {
-		// POOL de Workers e funções de comunicação.
-		if (numWorkers > 3) numWorkers = 3; // Máximo
-		if (numWorkers < 1) numWorkers = 1; // Mínimo
-		return new Promise((r) => {
-			// Constroi elemento se ele não existir:
-			if (!document.querySelector("#mktWorker")) {
-				let we = document.createElement("script")
-				we.setAttribute("type", "javascript/worker")
-				we.setAttribute("id", "mktWorker")
-				we.innerHTML = `
-				const classof = (o) => {
-					let nomeClasse = Object.prototype.toString.call(o).slice(8, -1);
-					// Exceção, apenas quando "Number" converter os NaN pra "NaN".
-					if (nomeClasse == "Number") {
-						if (o.toString() == "NaN") {
-							nomeClasse = "NaN";
-						}
-					}
-					return nomeClasse;
-				}
-				onmessage = (ev) => {
-					if (ev?.data?.k) {
-						let job = ev.data;
-				
-						if (ev.data.k == "Exclusivos") { // Exclusivos
-							let chaves = new Set();
-							job.v.forEach((o) => {
-								Object.keys(o).forEach((p) => {
-									chaves.add(p);
-								});
-							});
-							let campos = {};
-							let virouJson = {};
-							chaves.forEach((k) => {
-								let tempSet = new Set();
-								let tempJson = new Set();
-								job.v.forEach((o) => {
-									let temp = o[k];
-									let tipo = classof(o[k])
-									if (tipo == "String") {
-										temp = temp.trim();
-									}
-									if (tipo == "Object") {
-										temp = JSON.stringify(temp);
-										if (tempJson) tempJson.add(k);
-									}
-									if (temp) tempSet.add(temp.toString());
-								});
-								campos[k] = [...tempSet];
-								virouJson[k] = [...tempJson];
-								virouJson[k]?.forEach((kJson) => {
-									for (let i = 0; i < campos[kJson].length; i++) {
-										campos[kJson][i] = JSON.parse(campos[kJson][i]);
-									};
-								});
-							});
-							postMessage({ k: "Exclusivos", v: campos });
-				
-						} else if (ev.data.k == "ChavesRepetidas") { // ChavesRepetidas
-							let resultado = new Set();
-							let jaTem = new Set();
-							job.v.forEach(o => {
-								if (jaTem.has(o[job.target])) {
-									resultado.add(o[job.target]);
-								}
-								jaTem.add(o[job.target]);
-							})
-							postMessage({ k: "ChavesRepetidas", v: [...resultado] });
-				
-						} else if (ev.data.k == "Duplices") { // Duplices
-							let resultado = new Set();
-							let jaTem = new Set();
-							job.v.forEach(o => {
-								let ch = o[job.target];
-								if (o[job.target]) {
-									delete o[job.target];
-								}
-								let str = JSON.stringify(o);
-								if (jaTem.has(str)) {
-									resultado.add(ch);
-								}
-								jaTem.add(str);
-							})
-							postMessage({ k: "ChavesRepetidas", v: [...resultado] });
-						}
-					}
-				}`
-				document.body.append(we);
-			}
-			// Transformar o elemento em link para dar inicio a classe.
-			let workerBlob: string = window.URL.createObjectURL(new Blob([mkt.Q("#mktWorker")?.textContent], { type: "text/javascript" }));
-			class WorkerPool {
-				idleWorkers: Array<Worker>;
-				workQueue: Array<any>;
-				workerMap: Map<Worker, any>;
-				// New
-				constructor(numWorkers: number, workerSource: string) {
-					this.idleWorkers = [];
-					this.workQueue = [];
-					this.workerMap = new Map();
-					for (let i = 0; i < numWorkers; i++) {
-						let worker = new Worker(workerSource);
-						worker.onmessage = msg => {
-							this._workerDone(worker, null, msg.data);
-						};
-						worker.onerror = error => {
-							this._workerDone(worker, error, null);
-						};
-						this.idleWorkers[i] = worker;
-					}
-				}
-				// Response
-				_workerDone(worker: Worker, error: ErrorEvent | null, msg: MessageEvent<any> | null) {
-					let [res, rej] = this.workerMap.get(worker);
-					this.workerMap.delete(worker);
-					if (this.workQueue.length === 0) {
-						this.idleWorkers.push(worker);
-					} else {
-						let [task, res, rej] = this.workQueue.shift();
-						this.workerMap.set(worker, [res, rej]);
-						worker.postMessage(task);
-					}
-					error === null ? res(msg) : rej(error);
-				}
-				// Send Task
-				addTask(task: any) {
-					return new Promise((res, rej) => {
-						if (this.idleWorkers.length > 0) {
-							let worker = this.idleWorkers.pop();
-							if (worker) {
-								this.workerMap.set(worker, [res, rej])
-								worker.postMessage(task);
-							} else {
-								mkt.w("addTask() - Worker desocupado: ", worker, " não encontrado. " + this.idleWorkers.length + " desocupados: ", this.idleWorkers, " Solicitando novo!");
-								this.workQueue.push([task, res, rej]);
-							}
-						} else {
-							this.workQueue.push([task, res, rej]);
-						}
-					});
-				}
-			} // FIM WorkerPool class
-			mkt.a.wpool = new WorkerPool(numWorkers, workerBlob);
-			r(mkt.a.wpool);
-		});
-	};
-
-	static addTask = (msg: any, numWorkers: number | undefined = undefined) => {
-		// WORKERS: Atalho de tarefa. Já constroi se necessário
-		// mkt.addTask({ k: "MKT_INCLUDE", v: ["a","b"], target: "a" }).then(r=>{mkt.l("Main Recebeu: ",r)})
-		return new Promise((r) => {
-			if (!mkt.a.wpool) {
-				mkt.Workers(numWorkers).then(() => {
-					r(mkt.a.wpool.addTask(msg));
-				});
-			} else {
-				r(mkt.a.wpool.addTask(msg));
-			}
-		});
-	};
-
-	static removeEspecias = (s: string) => {
-		// Remove acentos e depois chama Apenas Números e Letras.
-		s = s.toString();
-		let r = "";
-		let sS = "áàãâäéèêëíìîïóòõôöúùûüçÁÀÃÂÄÉÈÊËÍÌÎÏÓÒÕÖÔÚÙÛÜÇ";
-		let sN = "aaaaaeeeeiiiiooooouuuucAAAAAEEEEIIIIOOOOOUUUUC";
-		for (let p = 0; p < s.length; p++) {
-			let pSS = sS.indexOf(s.charAt(p)); // <= Procura
-			if (pSS != -1) {
-				r += sN.charAt(pSS); // Substitui mesma posicao
-			} else {
-				r += s.charAt(p);
-			}
-		}
-		r = mkt.apenasNumerosLetras(r); // <== Apenas Numeros e Letras já convertidas passam
-		return r;
-	};
-
-	static removerAspas = (s: any) => {
-		// Converte as aspas simples e duplas.
-		if (mkt.classof(s) == "String") {
-			s = s.replaceAll('"', "&quot;");
-			s = s.replaceAll("\'", "&#39;");
-		}
-		return s;
-	};
-
-	static apenasNumeros = (s: string = ""): string => {
-		// Ignora qualquer outro caracter além de Numeros
-		return s.replace(/(?![0-9])./g, "");
-	};
-
-	static apenasLetras = (s: string = ""): string => {
-		// Ignora qualquer outro caracter além de Letras formato ocidental
-		return s.replace(/(?![a-zA-Z])./g, "");
-	};
-
-	static apenasNumerosLetras = (s: string = ""): string => {
-		// Ignora qualquer outro caracter além de Numeros e Letras formato ocidental
-		return s.replace(/(?![a-zA-Z0-9])./g, "");
-	};
-
-	static mkNodeToScript = (node: any) => {
-		// Recria o node SCRIPT dentro de uma tag SCRIPT para o eval()
-		if (node.tagName === "SCRIPT") {
-			let eScript: any = document.createElement("script");
-			eScript.text = node.innerHTML;
-			let i = -1, attrs = node.attributes, attr;
-			while (++i < attrs.length) {
-				eScript.setAttribute((attr = attrs[i]).name, attr.value);
-			}
-			node.parentNode.replaceChild(eScript, node);
-		} else {
-			// Recursividade sobre filhos
-			var i = -1,
-				children = node.childNodes;
-			while (++i < children.length) {
-				mkt.mkNodeToScript(children[i]);
-			}
-		}
-		return node;
-	};
-
-	static isInside = (e: any, container: any) => {
-		// Retorna o elemento está dentro do container.
-		// Similar ao closest, mas itera sobre os objetos em vez do query.
-		let resultado = false;
-		if (e) {
-			let ePai = e;
-			let c = 0;
-			while (ePai != mkt.Q("BODY") && c < 100) {
-				if (ePai) {
-					ePai = ePai?.parentElement;
-					if (ePai == container) {
-						resultado = true;
-						break;
-					}
-				} else {
-					return false;
-				}
-				c++;
-			}
-		} else {
-			mkt.w("isInside() requer ao menos o Elemento: ", e, " Container: ", container);
-		}
-		return resultado;
-	};
-
-	static isJson = (s: any): boolean => {
-		// Se conseguir efetuar o parse sem erros, então é um JSON
-		// if (mkt.classof(s) == "String") {
-		// 	s = s.removeRaw();
-		// }
-		try {
-			JSON.parse(s);
-		} catch (e) {
-			return false;
-		}
-		return true;
-	};
-
-	static Reposicionar = (e: any, largura: boolean | null = null) => {
-		// REPOSICIONA o elemento E abaixo do elemento anterior.
-		// Precisa de position: fixed;
-		// Atenção: Essa função precisa ser rápida.
-		// Redimenciona e Reposiciona a lista durante focus ou scroll.
-		let eAnterior = e.previousElementSibling;
-		let oDinBloco = eAnterior.getBoundingClientRect();
-		let oDinList = e.getBoundingClientRect();
-		// TAMANHO (min e max with baseado no pai)
-		if (largura) {
-			e.style.minWidth = eAnterior.offsetWidth + "px";
-			e.style.maxWidth = eAnterior.offsetWidth + "px";
-		}
-		// POSICAO e FUGA em Y (em baixo)
-		// Lista = Bloco Fixed Top + Altura do Pai;
-		let novaPos = oDinBloco.top + oDinBloco.height;
-		// SE PosicaoAtual + AlturaAtual estiver na tela
-		if ((novaPos + oDinList.height) <= window.innerHeight) {
-			e.style.top = novaPos + "px";
-			e.style.bottom = null;
-		} else {
-			e.style.top = null;
-			e.style.bottom = "0px";
-		}
-		// FUGA em Y (em cima)
-		if (oDinBloco.top <= 0) {
-			e.classList.add("oculto");
-		} else {
-			e.classList.remove("oculto");
-		}
-	};
-
-	static BoolToSimNaoOA = (oa: object | object[]) => {
-		// Converter (OBJ / ARRAY) Formato Booleano em Sim/Não
-		function BoolToSimNaoOA_Execute(o: any) {
-			for (var propName in o) {
-				if (
-					o[propName].toString().toLowerCase() === "true" ||
-					o[propName] === true
-				) {
-					o[propName] = "Sim";
-				}
-				if (
-					o[propName].toString().toLowerCase() === "false" ||
-					o[propName] === false
-				) {
-					o[propName] = "N&atilde;o";
-				}
-			}
-			return o;
-		}
-		return mkt.aCadaObjExecuta(oa, BoolToSimNaoOA_Execute);
-	};
-
-	static formatadorDeTexto = (texto: string) => {
-		// Converte Tags como [b] e [/b] em <b> e </b>
-		// Impede que o usuário faça uso do html de forma descontrolada.
-		return texto
-			.replaceAll("[b]", "<b>")
-			.replaceAll("[/b]", "</b>");
-	}
-
-	static eToText = (query: any) => {
-		// - Pega o Valor ou Inner do elemento e as classes,
-		// - Remove o Elemento
-		// - Coloca o conteudo dentro duma Div
-		// - Mantem as classes
-		let e = mkt.Q(query);
-		let v = "";
-		let classes = "";
-		let div = document.createElement("div");
-		if (e) {
-			let paiSimples = true;
-			let ePai: any = e.parentElement;
-			classes = e.classList.toString();
-			if (mkt.classof(e) == "HTMLTextAreaElement") {
-				v = e.innerHTML;
-			}
-			if (mkt.classof(e) == "HTMLInputElement") {
-				if (e.classList.contains("mkSel")) {
-					if (!e.closest(".mkSelBloco")) { // Se estiver dentro de um mkSelBloco já renderizou
-						mkt.mkSelRenderizarElemento(e);
-					}
-					v = [...mkt.mkSelGetMap(e).values()].join(", ");
-					paiSimples = false;
-
-					ePai = e.closest(".mkSelBloco");
-				}
-				else {
-					v = e.value;
-				}
-			}
-			div.innerHTML = v;
-			div.setAttribute("class", classes);
-
-			if (paiSimples) {
-				ePai?.insertBefore(div, ePai?.children[Array.from(ePai?.children).indexOf(e) + 1]);
-			} else {
-				div.classList.remove("mkSel");
-				div.classList.remove("mkSecreto");
-				e = ePai;
-				ePai = e.parentElement;
-				ePai?.insertBefore(div, ePai?.children[Array.from(ePai?.children).indexOf(e) + 1]);
-			}
-			e.remove();
-			return div;
-		}
-		return null;
-	}
-
-	static uuid = () => {
-		// Padrão UUIDV4 - Gerador de identificador unico
-		return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, (c: any) => { // c = String
-			return (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16);
-		});
-	}
-
-	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 	//                     Gerenciamento Monetário / Numérico                  \\
 	//==========================================================================\\
 
@@ -4367,49 +3329,1075 @@ class mkt {
 	};
 
 
+	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+	//                     TOOLS e JS HELPERS                                  \\
+	//==========================================================================\\
 
-	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-	//  FIM DAS FUNCÕES ESTÁTICAS       \\
-	//___________________________________\\
+	static contem = (
+		strMaior: string,
+		strMenor: string,
+	): boolean => {
+		// Comparardor de string CONTEM
+		strMaior = mkt.removeEspecias(strMaior).toLowerCase();
+		strMenor = mkt.removeEspecias(strMenor).toLowerCase();
+		return (strMaior.includes(strMenor));
+	};
 
-} // FIM CLASSE MKT
+	static like = (
+		strMenor: string,
+		strMaior: string,
+	): boolean => {
+		// Comparardor de string LIKE
+		let result = false;
+		// Apenas Numeros e Letras está presente,
+		// pois se utilizar str.match(),
+		// não pode conter os caracteres reservados do regex.
 
-// Object.keys(mkt).forEach((n) => {
-// 	Object.defineProperty(mkt, n, { enumerable: false, writable: false, configurable: false });
-// });
+		// RemoveEspeciais já inclui apenasNumerosELetras.
+		let rmMaior = mkt.removeEspecias(strMaior.toLowerCase().trim());
+		let rmMenor = mkt.removeEspecias(strMenor.toLowerCase().trim());
+		if (rmMaior.match(rmMenor)) {
+			result = true;
+		}
 
-(String.prototype as any).removeRaw = function () {
-	return this
-		//.replaceAll("&quot;", '"')
-		//.replaceAll("&#39;", "'")
-		//.replaceAll("&amp;", "&")
-		.replaceAll("\n", "")
-		.replaceAll("\r", "")
-		.replaceAll("\t", "")
-		.replaceAll("\b", "")
-		.replaceAll("\f", "")
-	//.replaceAll("\\", "/");
-	// \u00E3 == ã, viraria /u00E3
-};
+		// Desabilitei pois já estou removendo os especiais em cima. e a função precisa ser rápida.
+		// Internacionalizador de comparação... (Galês CH e DD e Latin ä))
+		// let likeMatcher = new Intl.Collator(undefined, {
+		// 	sensitivity: "base",
+		// 	ignorePunctuation: true,
+		// }).compare;
+		// if (likeMatcher(strMaior, strMenor) === 0) {
+		// 	result = true;
+		// }
 
+		return result;
+	};
 
+	static classof = (o: any) => {
+		// Identifica a classe do argumento informado.
+		let nomeClasse = Object.prototype.toString.call(o).slice(8, -1);
+		// Exceção, apenas quando "Number" converter os NaN pra "NaN".
+		if (nomeClasse == "Number") {
+			if (o.toString() == "NaN") {
+				nomeClasse = "NaN";
+			}
+		};
+		return nomeClasse;
+	};
 
+	static clonar = (i: any) => {
+		// Clona com a técnica de montar e desmontar string.
+		return mkt.parseJSON(mkt.stringify(i));
+	};
 
-Object.defineProperty(mkt, "cursorFim", {
-	value: (e: any) => {
-		// Move o cursor para o fim assim que executar a funcao
+	static ordenar = (array: object[], nomeProp: string | null, sortDir: any) => {
+		// Efetua o ordenamento do array informando a propriedade e a direção (0,1,2)
+		if (nomeProp) {
+			// 0 - Crescente:
+			array.sort((oA: any, oB: any) => {
+				let a = nomeProp ? mkt.getV(nomeProp, oA) : null;
+				let b = nomeProp ? mkt.getV(nomeProp, oB) : null;
+				//let b = oB[nomeProp];
+				if (typeof a == "string") a = a.toLowerCase().trim();
+				if (typeof b == "string") b = b.toLowerCase().trim();
+				if (a !== b) {
+					if (a > b) return 1;
+					if (a < b) return -1;
+				}
+				if (!a || !b) { // Nulo
+					return 0;
+				}
+				return -1;
+			});
+			if (!mkt.a.contaOrdena) { mkt.a.contaOrdena = 0; }
+			mkt.a.contaOrdena++;
+			// 1 - Decrescente
+			if (sortDir === 1) {
+				array = array.reverse();
+			} else if (sortDir === 2) {
+				// 2 - Toogle 
+				if (mkt.a.contaOrdena % 2 == 0) {
+					array = array.reverse();
+				}
+			}
+		}
+		return array;
+	};
+
+	static mkLimparOA = (oa: object | object[]) => {
+		// Converte (OBJ / ARRAY) Limpar Nulos e Vazios
+		let mkLimparOA_Execute = (o: any) => {
+			for (let propName in o) {
+				if (
+					o[propName as keyof typeof o] === null ||
+					o[propName as keyof typeof o] === ""
+				) {
+					delete o[propName as keyof typeof o];
+				}
+			}
+			return o;
+		}
+		return mkt.aCadaObjExecuta(oa, mkLimparOA_Execute);
+	};
+
+	static aCadaSubPropriedade = (OA: any, funcao: Function | null = null, exceto: string = "Object") => {
+		// Executa a FUNCAO em todas as propriedades deste OA. Inclusive Obj.Obj...
+		let c = 0;
+		for (let a in OA) {
+			if (mkt.classof(OA[a]) != exceto) {
+				if (funcao) {
+					funcao(OA[a]);
+				}
+			}
+			c++;
+			// Se o atual é objeto, itera internamente
+			if (mkt.classof(OA[a]) == "Object") {
+				c += mkt.aCadaSubPropriedade(OA[a], funcao, exceto);
+			}
+		}
+		return c;
+	};
+
+	static aCadaObjExecuta = (
+		oa: object | object[],
+		func: any
+	): object | object[] => {
+		// Verifica se ARRAY ou OBJETO e executa a função FUNC a cada objeto dentro de OA.
+		if (Array.isArray(oa)) {
+			for (let i = 0; i < oa.length; i++) {
+				func(oa[i]);
+			}
+		} else {
+			func(oa);
+		}
+		return oa;
+	};
+
+	static aCadaElemento = (query: any, fn: Function) => {
+		// Executa a cada elemento, similar ao QAll.
+		// Query: String, Element, [Element,Element]
+		if (mkt.classof(query) == "String") {
+			let retorno;
+			let elementos = mkt.QAll(query);
+			if (elementos.length == 1) retorno = elementos[0];
+			else retorno = elementos;
+			elementos.forEach((e: any) => {
+				fn(e);
+			});
+			return retorno;
+		} else if (mkt.classof(query) == "Array") {
+			query.forEach((e: HTMLElement) => {
+				fn(e);
+			});
+			return query;
+		} else {
+			let e = mkt.Q(query);
+			fn(e);
+			return e;
+		}
+	};
+
+	static AllFromCadaExe = (query: any, fn: Function) => {
+		// Executa função aCada Elemento do QAll e junta os resultados.
+		// Retorna uma array de resultados de cada execucao.
+		let retorno: any = [];
+		if (typeof query == "string") {
+			let elementos = mkt.QAll(query);
+			elementos.forEach((e: any) => {
+				retorno.push(fn(e));
+			});
+		} else if (Array.isArray(query)) {
+			query.forEach((e) => {
+				retorno.push(fn(e));
+			});
+		} else {
+			let e = mkt.Q(query);
+			retorno.push(fn(e));
+		}
+		return retorno;
+	};
+
+	static parseJSON = (t: any, removeRaw: boolean | null = false) => {
+		// Se for um JSON válido. Retorna o objeto, se não null.
+		if (removeRaw) {
+			if (mkt.classof(t) == "String") {
+				t = t.removeRaw();
+			}
+		}
+		if (t === "") return ""; // Vazio
+		if (mkt.isJson(t)) {
+			return JSON.parse(t);
+		} else {
+			mkt.w("JSON Inválido: Não foi possível converter o JSON.");
+			return null;
+		}
+	};
+
+	static stringify = (o: any): string => {
+		// Camada de tratamento de envio de JSON.
+		return JSON.stringify(o)
+			?.replaceAll("\n", "")
+			?.replaceAll("\r", "")
+			?.replaceAll("\t", "")
+			?.replaceAll("\b", "")
+			?.replaceAll("\f", "")
+		//?.replaceAll('&', "&amp;") // Post C# não identifica os campos do JSON
+		//?.replaceAll('"', "&quot;")
+		//.replaceAll("'", "&#39;");
+	};
+
+	static regras: any[] = [];
+
+	static exeregra = async (e: any, ev: any = null) => {
+		// Função que executa as regras deste campo com base nos objetos salvos
+		// Quando concluir (onChange), executar novamentepra remover erros já corrigidos (justamente no último caracter).
+		return new Promise((resolver) => {
+			let erros: any = [];
+			let regrasDoE = mkt.regras.find((o: any) => o.e == e);
+			let eDisplay = regrasDoE?.c.querySelector(".mkRegrar[data-valmsg-for='" + regrasDoE.n + "']")
+			let regras = regrasDoE?.r;
+			let promises: any = []
+			if (regras) {
+				regras.forEach((re: any) => {
+					if (!re.target) {
+						re.target = "value";
+					}
+					if (re.on == null) {
+						re.on = true;
+					}
+					let podeValidar = re.on; // Padrão validar, mas se regra estiver com o on=false, já inicia o giro sem validar;
+					if (!e.offsetParent) { // Invisivel, padrão sem validar
+						podeValidar = false;
+					}
+					if (e.classList.contains("disabled")) { // Desativado, padrão sem validar
+						podeValidar = false;
+					}
+					// Validar apenas quando i estiver true na regra OU  Visível e Não bloqueado
+					if (podeValidar || re.f) {
+						promises.push(new Promise((prom) => {
+							re.e = e;
+							let regraK = re.k?.toLowerCase();
+
+							switch (regraK) {
+
+								case "mascarar":  // EXE
+									if (e[re.target]) {
+										let mascarado = mkt.mascarar(e[re.target], re.v)
+										if (mascarado != null) e[re.target] = mascarado;
+									}
+									prom(re.k);
+									break;
+
+								case "moeda":  // EXE
+									if (e[re.target]) {
+										e[re.target] = mkt.toMoeda(e[re.target]);
+									}
+									prom(re.k);
+									break;
+
+								case "numero":  // EXE
+									if (e[re.target]) {
+										e[re.target] = mkt.fromNumber(e[re.target]);
+									}
+									prom(re.k);
+									break;
+
+								case "charproibido": // EXE
+									for (let c of re.v) {
+										if (e[re.target].includes(c)) {
+											if (!re.m) re.m = mkt.a.msg.charproibido + c;
+											erros.push(re);
+											e[re.target] = e[re.target].replaceAll(c, "");
+										}
+									}
+									prom(re.k);
+									break;
+
+								case "apenasnumeros": // EXE
+									if (!(mkt.a.util.numeros[1].test(e[re.target]))) {
+										if (!re.m) re.m = mkt.a.msg.apenasnumeros;
+										erros.push(re);
+										e[re.target] = e[re.target].replaceAll(/((?![0-9]).)/g, "")
+									}
+									prom(re.k);
+									break;
+
+								case "apenasletras": // EXE
+									if (!(mkt.a.util.letras[1].test(e[re.target]))) {
+										if (!re.m) re.m = mkt.a.msg.apenasletras;
+										erros.push(re);
+										e[re.target] = e[re.target].replaceAll(/((?![a-zA-Z]).)/g, "")
+									}
+									prom(re.k);
+									break;
+
+								case "maxchars": // EXE
+									e.setAttribute("maxlength", re.v);
+									if (e[re.target].length > Number(re.v)) {
+										if (!re.m) re.m = mkt.a.msg.maxc;
+										erros.push(re);
+										e[re.target] = e[re.target].slice(0, Number(re.v));
+									}
+									prom(re.k);
+									break;
+
+								case "minchars": // EXE
+									e.setAttribute("minlength", re.v);
+									if (e[re.target].length < Number(re.v)) {
+										if (!re.m) re.m = mkt.a.msg.minc + re.v;
+										erros.push(re);
+										let _a = [...e[re.target]];
+										if (!re.fill) re.fill = "0";
+										while (_a.length <= Number(re.v)) {
+											_a.unshift(re.fill.charAt(0));
+										}
+										e[re.target] = _a.join("");
+									}
+									prom(re.k);
+									break;
+
+								case "datamax": // EXE
+									if (mkt.getMs(e[re.target]) > mkt.getMs(re.v)) {
+										if (!re.m) re.m = mkt.a.msg.datamax;
+										erros.push(re);
+										e[re.target] = re.v;
+									}
+									prom(re.k);
+									break;
+
+								case "nummin": // EXE
+									e.setAttribute("min", re.v);
+									if (mkt.mkFloat(e[re.target]) < Number(re.v)) {
+										if (!re.m) re.m = mkt.a.msg.nummin + re.v;
+										erros.push(re);
+										e[re.target] = re.v;
+									}
+									prom(re.k);
+									break;
+
+								case "nummax": // EXE
+									e.setAttribute("max", re.v);
+									if (mkt.mkFloat(e[re.target]) > Number(re.v)) {
+										if (!re.m) re.m = mkt.a.msg.nummax + re.v;
+										erros.push(re);
+										e[re.target] = re.v;
+									}
+									prom(re.k);
+									break;
+
+								case "obrigatorio": // INFO
+									if (re.v == null) re.v = "true";
+									if (re.v == "true") {
+										if (e[re.target] == "") {
+											if (!re.m) {
+												if (e.classList.contains("mkSel")) {
+													re.m = mkt.a.msg.so;
+												} else {
+													re.m = mkt.a.msg.po;
+												}
+											}
+											erros.push(re);
+										}
+									}
+									prom(re.k);
+									break;
+
+								case "regex": // INFO
+									if (!(new RegExp(re.v).test(e[re.target]))) {
+										if (!re.m) re.m = mkt.a.msg.fi;
+										erros.push(re);
+									}
+									prom(re.k);
+									break;
+
+								case "some": // INFO 
+									// (Ao menos 1 ocorrencia do regex informado) (Pode gerar varios erros)
+									let _vs: any;
+									re.vmfail = [];
+									let b = false;
+									Array.isArray(re.v) ? _vs = re.v : _vs = [re.v];
+									for (let i = 0; i < _vs.length; i++) {
+										if (!([...e[re.target]].some(le => new RegExp(_vs[i]).test(le)))) {
+											if (!re.m) {
+												re.m = mkt.a.msg.some;
+											}
+											re.vmfail.push(re.vm[i]);
+											b = true;
+										}
+									}
+									if (b) {
+										erros.push(re);
+									}
+									prom(re.k);
+									break;
+
+								case "mincharsinfo": // INFO
+									e.setAttribute("minlength", re.v);
+									if (e[re.target].length < Number(re.v)) {
+										if (!re.m) re.m = mkt.a.msg.minc + re.v;
+										erros.push(re);
+									}
+									prom(re.k);
+									break;
+
+								case "maxcharsinfo": // INFO
+									if (e[re.target].length > Number(re.v)) {
+										if (!re.m) re.m = mkt.a.msg.maxc + re.v;
+										erros.push(re);
+									}
+									prom(re.k);
+									break;
+
+								case "fn": // INFO
+									if (!(re.v(e[re.target]))) {
+										if (!re.m) re.m = mkt.a.msg.negado;
+										erros.push(re);
+									}
+									prom(re.k);
+									break;
+
+								case "datamaiorque": // INFO
+									if (mkt.getMs(e[re.target]) < mkt.getMs(re.v)) {
+										if (!re.m) re.m = mkt.a.msg.datamaiorque;
+										erros.push(re);
+									}
+									prom(re.k);
+									break;
+
+								case "datamenorque": // INFO
+									if (mkt.getMs(e[re.target]) > mkt.getMs(re.v)) {
+										if (!re.m) re.m = mkt.a.msg.datamenorque;
+										erros.push(re);
+									}
+									prom(re.k);
+									break;
+
+								case "server": // INFO - ASYNC EVENT
+									//(Verificação remota, DB / API)
+									if (ev) {
+										if (!re.m) re.m = mkt.a.msg.in;
+										if (e[re.target] != "") {
+											e.classList.add("pending");
+											let queryString = "?" + regrasDoE.n + "=" + e[re.target];
+											// Anexar campos adicionais:
+											if (re.a) {
+												let arrAdd: Array<string> = re.a.split(",");
+												arrAdd.forEach((s: string) => {
+													let eAdd = regrasDoE.c.querySelector("*[name='" + s + "']");
+													if (eAdd) {
+														queryString += "&" + s + "=" + eAdd[re.target];
+													} else {
+														mkt.w("Regrar: Campo Adicional solicitado não encontrado: ", s);
+													}
+												});
+											}
+											mkt.get.json({ url: re.v + queryString, quiet: true }).then((p: any) => {
+												if (p.retorno != true) {
+													if (mkt.classof(p.retorno) == "String") {
+														re.m = p.retorno;
+													}
+													erros.push(re);
+												}
+												if (p.retorno != null) {
+													e.classList.remove("pending");
+												}
+												prom(re.k);
+											});
+										} else {
+											erros.push(re);
+											prom(re.k);
+										}
+									} else {
+										// Apenas executa quando não tem evento
+										prom(re.k);
+									}
+									break;
+
+								default:
+									mkt.w("Regrar() - Regra não encontrada: ", regraK)
+									prom(null);
+							} // fim switch regras possíveis
+
+						})); // <= Promessas push
+					} // <= Fim do PodeValidar
+				}); // <= A cada regra
+			} // Possui regra
+			Promise.all(promises).then(ok => {
+				if (erros.length > 0) {
+					let mensagens = erros.map((a: any) => {
+						if (Array.isArray(a.vmfail)) {
+							// Se 1 regra gerar varios erros, junta por virgula.
+							a.m = mkt.a.msg.some + a.vmfail.join(", ");
+						}
+						return a.m;
+					}).join("<br/>");
+					mkt.regraDisplay(e, true, eDisplay, mensagens);
+					mkt.TerremotoErros(e);
+				} else {
+					mkt.regraDisplay(e, false, eDisplay, "");
+				}
+				resolver(erros);
+			}); // Promise All
+		}); // Return Promise exeRegra
+	};
+
+	static TerremotoErros = (e: any = null): void => {
+		// Efeito de terremoto apenas no elemento passado via exeRegra
+		e.nextElementSibling?.classList.add("mkTerremoto");
+		setTimeout(() => {
+			e.nextElementSibling?.classList.remove("mkTerremoto");
+		}, 500);
+	};
+
+	static estaValido = async (container: any) => {
+		// Retorna um booleano indicando se este container está ok ou não.
+		container = mkt.Q(container);
+		let validou = false;
+		// Informando um container qualquer, executa apenas as regras dentro deles.
+		let promises: any = [];
+		mkt.regras.forEach((regra: any) => {
+			if (mkt.isInside(regra.e, container)) {
+				promises.push(mkt.exeregra(regra.e, "full"));
+			}
+		});
+		let resultado: any = [];
+		resultado = await Promise.all(promises);
+		validou = resultado.flat().length <= 0;
+		if (!validou) {
+			mkt.vibrar(false);
+			mkt.gc("Validou a ação? ", (validou ? "Sim." : "Não."));
+			resultado.flat().forEach((r: any) => {
+				mkt.gc("Regra:", r.k?.toString().toUpperCase(), "Campo: " + r.e?.name);
+				mkt.l(r.e);
+				mkt.ge();
+			});
+			mkt.ge();
+		} else {
+			mkt.l("Validou a ação? Sim.");
+		}
+
+		return validou;
+	};
+
+	static regraDisplay = (e: any, erro: boolean, eDisplay: any, mensagem: string = "") => {
+		// Reagindo similar ao Unobtrusive, mas usando oculto no span.
+		if (erro) {
+			// EXIBE ERRO
+			e.classList.remove("valid");
+			e.classList.add("input-validation-error");
+			eDisplay?.classList.remove("oculto");
+			eDisplay?.classList.add("field-validation-error");
+		} else {
+			// OCULTA ERRO
+			if (e.offsetParent && !e.classList.contains("disabled")) { // Não setar valido nos desativados/invisiveis
+				e.classList.add("valid");
+			}
+			e.classList.remove("input-validation-error");
+			eDisplay?.classList.add("oculto");
+		}
+		if (eDisplay) eDisplay.innerHTML = mensagem;
+	};
+
+	static regraClear = (container: any) => {
+		container = mkt.Q(container);
+		// A cada regra envia um OCULTAR ERROS
+		mkt.regras.forEach((r: any) => {
+			let e = r.e;
+			let eDisplay = r.c.querySelector(".mkRegrar[data-valmsg-for='" + r.n + "']")
+			if (container) {
+				if (mkt.isInside(e, container)) {
+					mkt.regraDisplay(e, false, eDisplay);
+				}
+			} else {
+				mkt.regraDisplay(e, false, eDisplay);
+			}
+		})
+	};
+
+	static desregrar = async (container: any) => {
+		// Remove as regras de um determinado container
+		container = mkt.Q(container);
+
+		mkt.regras.forEach((r: any) => {
+			if (mkt.isInside(r.e, container)) {
+				mkt.regras.splice(mkt.regras.indexOf(r), 1);
+			}
+		});
+	}
+
+	static mascarar = (texto: any, mascara: any) => {
+		// Informando uma máscara e um texto, retorna dado mascarado.
+		// Mascaras: 0=Numero, A=Letra, Outros repete.
+		if (mascara) {
+			if (texto) {
+				if (typeof texto != "string") texto = texto?.toString();
+				if (typeof mascara != "string") mascara = mascara?.toString();
+				let ms = [...mkt.clonar(mascara)];
+				let ss = [...mkt.clonar(texto)];
+				// this.l("ss: ", ss);
+				let ts: any = [];
+				let pm = 0;
+				ss.forEach(s => {
+					let t = null;
+					if (/[0-9]/.test(s)) {
+						t = "0";
+					} else if (/[a-zA-Z]/.test(s)) {
+						t = "A";
+					} else {
+						t = " ";
+					}
+					ts.push(t);
+					pm++;
+				});
+				// this.l("ts: ", ts);
+				// this.l("ms: ", ms);
+				let r: any = [];
+				for (let tp = 0, mp = 0; (tp < ts.length) && (mp < ms.length); tp++, mp++) {
+					if (((ms[mp] === "0" || ms[mp] === "A") && (ms[mp] == ts[tp]))
+						|| (ms[mp] === "S" && (ts[tp] === "A" || ts[tp] === "0"))) {
+						// FORMATO IGUAL.
+						r.push(ss[tp]);
+					} else {
+						// MESMO CARACTER
+						if (ss[tp] === ms[mp]) {
+							r.push(ss[tp]);
+						} else {
+							// this.l("> ", ss[tp], " vs ", ms[mp])
+							// Mágica: Coloca o especial que o usuário não colocou.
+							if (ms[mp] != "0" && ms[mp] != "A" && ms[mp] != "S") {
+								r.push(ms[mp]);
+								tp--;
+							} else {
+								mp--;
+							}
+						}
+					}
+				}
+				return r.join("");
+			}
+		} else {
+			mkt.w("Mascarar Requer Texto: ", texto, " e Mascara: ", mascara);
+		}
+		return null;
+	};
+
+	static mkClicarNaAba = (e: HTMLAnchorElement) => {
+		// Funcionalidade de clicar na aba e trocar a classe ativo
+		let pag = Number(e?.getAttribute("data-pag"));
+		if (mkt.classof(pag) == "Number") { // Caso não for NaN
+			let mkAbasTotal = 0;
+			let mkAbas = e.closest(".mkAbas");
+			mkAbas?.querySelectorAll("a").forEach((a: HTMLAnchorElement) => {
+				a.classList.remove("active");
+				mkAbasTotal++;
+			});
+			e.classList.add("active");
+			for (let i = 1; i <= mkAbasTotal; i++) {
+				// Busca, Oculta todas, mas exibe a clicada.
+				mkt.QAll(".mkAba" + i).forEach((e: any) => {
+					if (i == pag) {
+						e.classList.remove("oculto");
+					} else {
+						e.classList.add("oculto");
+					}
+				});
+			}
+		}
+	};
+
+	static Workers = (numWorkers: number = navigator.hardwareConcurrency || 5) => {
+		// POOL de Workers e funções de comunicação.
+		if (numWorkers > 3) numWorkers = 3; // Máximo
+		if (numWorkers < 1) numWorkers = 1; // Mínimo
+		return new Promise((r) => {
+			// Constroi elemento se ele não existir:
+			if (!document.querySelector("#mktWorker")) {
+				let we = document.createElement("script")
+				we.setAttribute("type", "javascript/worker")
+				we.setAttribute("id", "mktWorker")
+				we.innerHTML = `
+				const classof = (o) => {
+					let nomeClasse = Object.prototype.toString.call(o).slice(8, -1);
+					// Exceção, apenas quando "Number" converter os NaN pra "NaN".
+					if (nomeClasse == "Number") {
+						if (o.toString() == "NaN") {
+							nomeClasse = "NaN";
+						}
+					}
+					return nomeClasse;
+				}
+				onmessage = (ev) => {
+					if (ev?.data?.k) {
+						let job = ev.data;
+				
+						if (ev.data.k == "Exclusivos") { // Exclusivos
+							let chaves = new Set();
+							job.v.forEach((o) => {
+								Object.keys(o).forEach((p) => {
+									chaves.add(p);
+								});
+							});
+							let campos = {};
+							let virouJson = {};
+							chaves.forEach((k) => {
+								let tempSet = new Set();
+								let tempJson = new Set();
+								job.v.forEach((o) => {
+									let temp = o[k];
+									let tipo = classof(o[k])
+									if (tipo == "String") {
+										temp = temp.trim();
+									}
+									if (tipo == "Object") {
+										temp = JSON.stringify(temp);
+										if (tempJson) tempJson.add(k);
+									}
+									if (temp) tempSet.add(temp.toString());
+								});
+								campos[k] = [...tempSet];
+								virouJson[k] = [...tempJson];
+								virouJson[k]?.forEach((kJson) => {
+									for (let i = 0; i < campos[kJson].length; i++) {
+										campos[kJson][i] = JSON.parse(campos[kJson][i]);
+									};
+								});
+							});
+							postMessage({ k: "Exclusivos", v: campos });
+				
+						} else if (ev.data.k == "ChavesRepetidas") { // ChavesRepetidas
+							let resultado = new Set();
+							let jaTem = new Set();
+							job.v.forEach(o => {
+								if (jaTem.has(o[job.target])) {
+									resultado.add(o[job.target]);
+								}
+								jaTem.add(o[job.target]);
+							})
+							postMessage({ k: "ChavesRepetidas", v: [...resultado] });
+				
+						} else if (ev.data.k == "Duplices") { // Duplices
+							let resultado = new Set();
+							let jaTem = new Set();
+							job.v.forEach(o => {
+								let ch = o[job.target];
+								if (o[job.target]) {
+									delete o[job.target];
+								}
+								let str = JSON.stringify(o);
+								if (jaTem.has(str)) {
+									resultado.add(ch);
+								}
+								jaTem.add(str);
+							})
+							postMessage({ k: "ChavesRepetidas", v: [...resultado] });
+						}
+					}
+				}`
+				document.body.append(we);
+			}
+			// Transformar o elemento em link para dar inicio a classe.
+			let workerBlob: string = window.URL.createObjectURL(new Blob([mkt.Q("#mktWorker")?.textContent], { type: "text/javascript" }));
+			class WorkerPool {
+				idleWorkers: Array<Worker>;
+				workQueue: Array<any>;
+				workerMap: Map<Worker, any>;
+				// New
+				constructor(numWorkers: number, workerSource: string) {
+					this.idleWorkers = [];
+					this.workQueue = [];
+					this.workerMap = new Map();
+					for (let i = 0; i < numWorkers; i++) {
+						let worker = new Worker(workerSource);
+						worker.onmessage = msg => {
+							this._workerDone(worker, null, msg.data);
+						};
+						worker.onerror = error => {
+							this._workerDone(worker, error, null);
+						};
+						this.idleWorkers[i] = worker;
+					}
+				}
+				// Response
+				_workerDone(worker: Worker, error: ErrorEvent | null, msg: MessageEvent<any> | null) {
+					let [res, rej] = this.workerMap.get(worker);
+					this.workerMap.delete(worker);
+					if (this.workQueue.length === 0) {
+						this.idleWorkers.push(worker);
+					} else {
+						let [task, res, rej] = this.workQueue.shift();
+						this.workerMap.set(worker, [res, rej]);
+						worker.postMessage(task);
+					}
+					error === null ? res(msg) : rej(error);
+				}
+				// Send Task
+				addTask(task: any) {
+					return new Promise((res, rej) => {
+						if (this.idleWorkers.length > 0) {
+							let worker = this.idleWorkers.pop();
+							if (worker) {
+								this.workerMap.set(worker, [res, rej])
+								worker.postMessage(task);
+							} else {
+								mkt.w("addTask() - Worker desocupado: ", worker, " não encontrado. " + this.idleWorkers.length + " desocupados: ", this.idleWorkers, " Solicitando novo!");
+								this.workQueue.push([task, res, rej]);
+							}
+						} else {
+							this.workQueue.push([task, res, rej]);
+						}
+					});
+				}
+			} // FIM WorkerPool class
+			mkt.a.wpool = new WorkerPool(numWorkers, workerBlob);
+			r(mkt.a.wpool);
+		});
+	};
+
+	static addTask = (msg: any, numWorkers: number | undefined = undefined) => {
+		// WORKERS: Atalho de tarefa. Já constroi se necessário
+		// mkt.addTask({ k: "MKT_INCLUDE", v: ["a","b"], target: "a" }).then(r=>{mkt.l("Main Recebeu: ",r)})
+		return new Promise((r) => {
+			if (!mkt.a.wpool) {
+				mkt.Workers(numWorkers).then(() => {
+					r(mkt.a.wpool.addTask(msg));
+				});
+			} else {
+				r(mkt.a.wpool.addTask(msg));
+			}
+		});
+	};
+
+	static removeEspecias = (s: string) => {
+		// Remove acentos e depois chama Apenas Números e Letras.
+		s = s.toString();
+		let r = "";
+		let sS = "áàãâäéèêëíìîïóòõôöúùûüçÁÀÃÂÄÉÈÊËÍÌÎÏÓÒÕÖÔÚÙÛÜÇ";
+		let sN = "aaaaaeeeeiiiiooooouuuucAAAAAEEEEIIIIOOOOOUUUUC";
+		for (let p = 0; p < s.length; p++) {
+			let pSS = sS.indexOf(s.charAt(p)); // <= Procura
+			if (pSS != -1) {
+				r += sN.charAt(pSS); // Substitui mesma posicao
+			} else {
+				r += s.charAt(p);
+			}
+		}
+		r = mkt.apenasNumerosLetras(r); // <== Apenas Numeros e Letras já convertidas passam
+		return r;
+	};
+
+	static removerAspas = (s: any) => {
+		// Converte as aspas simples e duplas.
+		if (mkt.classof(s) == "String") {
+			s = s.replaceAll('"', "&quot;");
+			s = s.replaceAll("\'", "&#39;");
+		}
+		return s;
+	};
+
+	static apenasNumeros = (s: string = ""): string => {
+		// Ignora qualquer outro caracter além de Numeros
+		return s.replace(/(?![0-9])./g, "");
+	};
+
+	static apenasLetras = (s: string = ""): string => {
+		// Ignora qualquer outro caracter além de Letras formato ocidental
+		return s.replace(/(?![a-zA-Z])./g, "");
+	};
+
+	static apenasNumerosLetras = (s: string = ""): string => {
+		// Ignora qualquer outro caracter além de Numeros e Letras formato ocidental
+		return s.replace(/(?![a-zA-Z0-9])./g, "");
+	};
+
+	static mkNodeToScript = (node: any) => {
+		// Recria o node SCRIPT dentro de uma tag SCRIPT para o eval()
+		if (node.tagName === "SCRIPT") {
+			let eScript: any = document.createElement("script");
+			eScript.text = node.innerHTML;
+			let i = -1, attrs = node.attributes, attr;
+			while (++i < attrs.length) {
+				eScript.setAttribute((attr = attrs[i]).name, attr.value);
+			}
+			node.parentNode.replaceChild(eScript, node);
+		} else {
+			// Recursividade sobre filhos
+			var i = -1,
+				children = node.childNodes;
+			while (++i < children.length) {
+				mkt.mkNodeToScript(children[i]);
+			}
+		}
+		return node;
+	};
+
+	static isInside = (e: any, container: any) => {
+		// Retorna o elemento está dentro do container.
+		// Similar ao closest, mas itera sobre os objetos em vez do query.
+		let resultado = false;
+		if (e) {
+			let ePai = e;
+			let c = 0;
+			while (ePai != mkt.Q("BODY") && c < 100) {
+				if (ePai) {
+					ePai = ePai?.parentElement;
+					if (ePai == container) {
+						resultado = true;
+						break;
+					}
+				} else {
+					return false;
+				}
+				c++;
+			}
+		} else {
+			mkt.w("isInside() requer ao menos o Elemento: ", e, " Container: ", container);
+		}
+		return resultado;
+	};
+
+	static isJson = (s: any): boolean => {
+		// Se conseguir efetuar o parse sem erros, então é um JSON
+		// if (mkt.classof(s) == "String") {
+		// 	s = s.removeRaw();
+		// }
+		try {
+			JSON.parse(s);
+		} catch (e) {
+			return false;
+		}
+		return true;
+	};
+
+	static Reposicionar = (e: any, largura: boolean | null = null) => {
+		// REPOSICIONA o elemento E abaixo do elemento anterior.
+		// Precisa de position: fixed;
+		// Atenção: Essa função precisa ser rápida.
+		// Redimenciona e Reposiciona a lista durante focus ou scroll.
+		let eAnterior = e.previousElementSibling;
+		let oDinBloco = eAnterior.getBoundingClientRect();
+		let oDinList = e.getBoundingClientRect();
+		// TAMANHO (min e max with baseado no pai)
+		if (largura) {
+			e.style.minWidth = eAnterior.offsetWidth + "px";
+			e.style.maxWidth = eAnterior.offsetWidth + "px";
+		}
+		// POSICAO e FUGA em Y (em baixo)
+		// Lista = Bloco Fixed Top + Altura do Pai;
+		let novaPos = oDinBloco.top + oDinBloco.height;
+		// SE PosicaoAtual + AlturaAtual estiver na tela
+		if ((novaPos + oDinList.height) <= window.innerHeight) {
+			e.style.top = novaPos + "px";
+			e.style.bottom = null;
+		} else {
+			e.style.top = null;
+			e.style.bottom = "0px";
+		}
+		// FUGA em Y (em cima)
+		if (oDinBloco.top <= 0) {
+			e.classList.add("oculto");
+		} else {
+			e.classList.remove("oculto");
+		}
+	};
+
+	static BoolToSimNaoOA = (oa: object | object[]) => {
+		// Converter (OBJ / ARRAY) Formato Booleano em Sim/Não
+		function BoolToSimNaoOA_Execute(o: any) {
+			for (var propName in o) {
+				if (
+					o[propName].toString().toLowerCase() === "true" ||
+					o[propName] === true
+				) {
+					o[propName] = "Sim";
+				}
+				if (
+					o[propName].toString().toLowerCase() === "false" ||
+					o[propName] === false
+				) {
+					o[propName] = "N&atilde;o";
+				}
+			}
+			return o;
+		}
+		return mkt.aCadaObjExecuta(oa, BoolToSimNaoOA_Execute);
+	};
+
+	static formatadorDeTexto = (texto: string) => {
+		// Converte Tags como [b] e [/b] em <b> e </b>
+		// Impede que o usuário faça uso do html de forma descontrolada.
+		return texto
+			.replaceAll("[b]", "<b>")
+			.replaceAll("[/b]", "</b>");
+	}
+
+	static eToText = (query: any) => {
+		// - Pega o Valor ou Inner do elemento e as classes,
+		// - Remove o Elemento
+		// - Coloca o conteudo dentro duma Div
+		// - Mantem as classes
+		let e = mkt.Q(query);
+		let v = "";
+		let classes = "";
+		let div = document.createElement("div");
+		if (e) {
+			let paiSimples = true;
+			let ePai: any = e.parentElement;
+			classes = e.classList.toString();
+			if (mkt.classof(e) == "HTMLTextAreaElement") {
+				v = e.innerHTML;
+			}
+			if (mkt.classof(e) == "HTMLInputElement") {
+				if (e.classList.contains("mkSel")) {
+					if (!e.closest(".mkSelBloco")) { // Se estiver dentro de um mkSelBloco já renderizou
+						mkt.mkSelRenderizarElemento(e);
+					}
+					v = [...mkt.mkSelGetMap(e).values()].join(", ");
+					paiSimples = false;
+
+					ePai = e.closest(".mkSelBloco");
+				}
+				else {
+					v = e.value;
+				}
+			}
+			div.innerHTML = v;
+			div.setAttribute("class", classes);
+
+			if (paiSimples) {
+				ePai?.insertBefore(div, ePai?.children[Array.from(ePai?.children).indexOf(e) + 1]);
+			} else {
+				div.classList.remove("mkSel");
+				div.classList.remove("mkSecreto");
+				e = ePai;
+				ePai = e.parentElement;
+				ePai?.insertBefore(div, ePai?.children[Array.from(ePai?.children).indexOf(e) + 1]);
+			}
+			e.remove();
+			return div;
+		}
+		return null;
+	}
+
+	static uuid = () => {
+		// Padrão UUIDV4 - Gerador de identificador unico
+		return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, (c: any) => { // c = String
+			return (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16);
+		});
+	}
+
+	static cursorFim = (e: any) => {
+		// Move o cursor para o fim do VALUE do elemento.
 		let len = e.value.length;
 		setTimeout(() => {
 			e.setSelectionRange(len, len);
 		}, 1)
-	}, enumerable: false, writable: false, configurable: false,
-});
+	}
 
-Object.defineProperty(mkt, "mkGerarObjeto", {
-	value: (este: any) => {
+	static mkGerarObjeto = (este: any) => {
 		// Gerar Objeto a partir de um Form Entries
 		let form = este;
-		if (typeof este != "object") {
+		if (mkt.classof(este) != "Object") {
+			// Se vier o Elemento Form / o Query do Form
 			form = mkt.Q(este);
 		}
 		let rObjeto = mkt.mkLimparOA(
@@ -4419,31 +4407,9 @@ Object.defineProperty(mkt, "mkGerarObjeto", {
 		mkt.l(rObjeto);
 		mkt.ge();
 		return rObjeto;
-	}, enumerable: false, writable: false, configurable: false,
-});
+	}
 
-Object.defineProperty(mkt, "QSet", {
-	value: (
-		query: HTMLElement | string = "body",
-		valor: any = null
-	): null | HTMLElement => {
-		let e = mkt.Q(query);
-		if (e) {
-			if (valor != null) {
-				if (e) e.value = valor;
-			} else {
-				let e = mkt.Q(query);
-				if (e) e.value = "";
-			}
-			return e;
-		} else {
-			return null;
-		}
-	}, enumerable: false, writable: false, configurable: false,
-});
-
-Object.defineProperty(mkt, "QSetAll", {
-	value: (
+	static QSetAll = (
 		query: string = "input[name='#PROP#']",
 		o: object | null = null,
 		comEvento: boolean | null = true
@@ -4472,12 +4438,10 @@ Object.defineProperty(mkt, "QSetAll", {
 			} else mkt.w("QSetAll - Precisa receber um objeto: " + o);
 		} else mkt.w("QSetAll - Objeto não pode ser nulo: " + o);
 		return eAfetados;
-	}, enumerable: false, writable: false, configurable: false,
-});
+	}
 
-
-Object.defineProperty(mkt, "Qison", {
-	value: (query: any = "body") => {
+	static Qison = (query: any = "body") => {
+		// Retorna uma array do estado DISABLED de todos da query.
 		return mkt.AllFromCadaExe(query, (e: any) => {
 			let b = false;
 			if (!e.classList.contains("disabled")) {
@@ -4485,21 +4449,17 @@ Object.defineProperty(mkt, "Qison", {
 			}
 			return b;
 		});
-	}, enumerable: false, writable: false, configurable: false,
-});
+	}
 
-
-Object.defineProperty(mkt, "QverToggle", {
-	value: (query: HTMLElement | string | null = "body") => {
+	static QverToggle = (query: HTMLElement | string | null = "body") => {
+		// Inverte oculto dos campos da query
 		return mkt.aCadaElemento(query, (e: any) => {
 			e?.classList.toggle("oculto");
 		});
-	}, enumerable: false, writable: false, configurable: false,
-});
+	}
 
-
-Object.defineProperty(mkt, "QScrollTo", {
-	value: (query: HTMLElement | string = "body") => {
+	static QScrollTo = (query: HTMLElement | string = "body") => {
+		// Move o Scroll da janela até o elemento
 		let temp = mkt.Q(query) as HTMLElement;
 		let distTopo = temp.offsetTop;
 		window.scrollTo({
@@ -4507,52 +4467,28 @@ Object.defineProperty(mkt, "QScrollTo", {
 			behavior: "smooth",
 		});
 		return temp;
-	}, enumerable: false, writable: false, configurable: false,
-});
+	}
 
-Object.defineProperty(mkt, "QdataGet", {
-	value: (
-		query: HTMLElement | string = "body",
-		atributoNome: string
-	) => {
-		return mkt.Q(query).getAttribute("data-" + atributoNome);
-	}, enumerable: false, writable: false, configurable: false,
-});
-
-Object.defineProperty(mkt, "QdataSet", {
-	value: (
-		query: HTMLElement | string = "body",
-		atributoNome: string,
-		atributoValor: string
-	) => {
-		return mkt.Q(query).setAttribute("data-" + atributoNome, atributoValor);
-	}, enumerable: false, writable: false, configurable: false,
-});
-
-Object.defineProperty(mkt, "toggleSwitcher", {
-	value: (e: HTMLElement) => {
-		if (e.classList.contains("True")) {
-			e.classList.remove("True");
-			e.classList.add("False");
-		} else {
-			if (e.classList.contains("False")) {
-				e.classList.remove("False");
-				e.classList.add("True");
-			}
-		}
-		return e;
-	}, enumerable: false, writable: false, configurable: false,
-});
-
-Object.defineProperty(mkt, "GetParam", {
-	value: (name = null) => {
+	static GetParam = (name: string | null = null, url: string | null = null) => {
+		// Coleta o valor do parametro da url.
+		if (!url) url = document.location.toString();
 		if (name != null) {
-			return new URL(document.location.toString()).searchParams.get(name);
+			return new URL(url).searchParams.get(name);
 		} else {
-			return new URL(document.location.toString()).searchParams;
+			return new URL(url).searchParams.toString();
 		}
-	}, enumerable: false, writable: false, configurable: false,
-});
+	}
+
+
+
+
+
+	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+	//  FIM DAS FUNCÕES ESTÁTICAS       \\
+	//___________________________________\\
+} // <= FIM CLASSE MKT
+
+
 
 Object.defineProperty(mkt, "isVisible", {
 	value: (e: HTMLElement) => {
@@ -5625,6 +5561,14 @@ Object.defineProperty(mkt, "fUIFaseUpdateLinkFase", {
 		});
 	}, enumerable: false, writable: false, configurable: false,
 });
+
+//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+//  DEFINE PROPERTY                 \\
+//___________________________________\\
+
+// Object.keys(mkt).forEach((n) => {
+// 	Object.defineProperty(mkt, n, { enumerable: false, writable: false, configurable: false });
+// });
 
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //   Auto Inicializar               \\

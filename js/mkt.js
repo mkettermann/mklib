@@ -8,6 +8,22 @@
 // Variável de teste:
 var mkz = null;
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+//  FUNCOES EXTERNAS                \\
+//___________________________________\\
+String.prototype.removeRaw = function () {
+    return this
+        //.replaceAll("&quot;", '"')
+        //.replaceAll("&#39;", "'")
+        //.replaceAll("&amp;", "&")
+        .replaceAll("\n", "")
+        .replaceAll("\r", "")
+        .replaceAll("\t", "")
+        .replaceAll("\b", "")
+        .replaceAll("\f", "");
+    //.replaceAll("\\", "/");
+    // \u00E3 == ã, viraria /u00E3
+};
+//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //  MODELO DOS DADOS DA LISTA       \\
 //___________________________________\\
 // CLASSE Do Design das colunas para formar a listagem da classe mktm.
@@ -2446,6 +2462,793 @@ class mkt {
         return config;
     };
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+    //                     Gerenciamento Monetário / Numérico                  \\
+    //==========================================================================\\
+    static mkFloat = (num) => {
+        // Tenta deixar em formato Number sem bugar
+        let ret;
+        if (typeof num != "number") {
+            if (num)
+                ret = parseFloat(num.toString().replaceAll(".", "").replaceAll(",", "."));
+            else
+                ret = 0;
+        }
+        else {
+            ret = num;
+        }
+        if (isNaN(ret)) {
+            ret = 0;
+        }
+        return ret;
+    };
+    static mkDuasCasas = (num) => {
+        // Formato antigo de retornar duas casas
+        return mkt.mkFloat(num).toFixed(2).replaceAll(".", ","); // 2000,00
+        // .toLocaleString('pt-br', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); // 2.000,00
+    };
+    static toMoeda = (valor) => {
+        // Texto / Número convertido em Reais
+        if (valor != null) {
+            if (mkt.classof(valor) == "Number") {
+                valor = valor.toFixed(2);
+            }
+            let d = [...valor.toString()].filter(a => { return mkt.a.util.numeros[1].test(a); }).join("").padStart(3, "0");
+            return new Intl.NumberFormat("pt-BR", { style: 'currency', currency: 'BRL' }).format(Number(d.slice(0, -2) + "." + d.slice(-2)));
+        }
+        return "";
+    };
+    static fromMoeda = (texto) => {
+        // Retorna um float de duas casas / 0 a partir de um valor monetario 
+        if (texto) {
+            let d = [...texto.toString()].filter(a => { return mkt.a.util.numeros[1].test(a); }).join("").padStart(3, "0");
+            return Number(d.slice(0, -2) + "." + d.slice(-2));
+        }
+        return 0;
+    };
+    static toNumber = (valor, c = {}) => {
+        // Valor em Texto / Número, convertido para Float de no máximo 2 casas.
+        if (!c.casas)
+            c.casas = 2; // Limite de casas apenas para o valor retornado.
+        if (valor != null) {
+            if (typeof valor == "string") {
+                // Possiveis separadores
+                let us = [".", ","].reduce((x, y) => (valor.lastIndexOf(x) > valor.lastIndexOf(y)) ? x : y);
+                let posPonto = valor.lastIndexOf(us);
+                if (posPonto >= 0) {
+                    let i = valor.slice(0, posPonto);
+                    let d = valor.slice(posPonto + 1).slice(0, 2).padEnd(2, "0");
+                    i = [...i.toString()].filter(a => { return mkt.a.util.numeros[1].test(a); }).join("");
+                    d = [...d.toString()].filter(a => { return mkt.a.util.numeros[1].test(a); }).join("");
+                    valor = i + "." + d;
+                }
+                else {
+                    valor = [...valor.toString()].filter(a => { return mkt.a.util.numeros[1].test(a); }).join("").padStart(3, "0");
+                    valor = valor.slice(0, -(c.casas)) + "." + valor.slice(-(c.casas));
+                }
+            }
+            else if (typeof valor == "number") {
+                valor = valor.toFixed(c.casas);
+            }
+            else {
+                mkt.w("toFloat() - Formato não implementado: ", typeof valor);
+            }
+            return Number(valor);
+        }
+        return 0;
+    };
+    static fromNumber = (valor, c = {}) => {
+        // Retorna um string de duas casas "0,00" a partir de um valor numerico
+        //if (!c.s) c.s = ","; // OUTPUT SEPARADOR de decimal numérico do país atual para dados.
+        if (!c.locale)
+            c.locale = "pt-BR";
+        if (valor != null) {
+            let d = [...valor.toString()].filter(a => { return mkt.a.util.numeros[1].test(a); }).join("").padStart(3, "0");
+            valor = Number(d.slice(0, -2) + "." + d.slice(-2));
+        }
+        else {
+            valor = 0;
+        }
+        return new Intl.NumberFormat(c.locale, { minimumFractionDigits: 2 }).format(valor);
+    };
+    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+    //                     Gerenciamento de Data                               \\
+    //==========================================================================\\
+    static getMs = (dataYYYYMMDD = null) => {
+        // Retorna Milisegundos da data no formato Javascript
+        if (dataYYYYMMDD != null) {
+            let dataCortada = dataYYYYMMDD.split("-");
+            let oDia = Number(dataCortada[2]);
+            let oMes = Number(dataCortada[1]) - 1;
+            let oAno = Number(dataCortada[0]);
+            return new Date(oAno, oMes, oDia).getTime();
+        }
+        else
+            return new Date().getTime();
+    };
+    static getDia = (ms = null) => {
+        // GET UTC Dia - '18'
+        if (ms != null)
+            return Number(mkt.getFullData(ms).split("-")[2]);
+        else
+            return Number(mkt.getFullData().split("-")[2]);
+    };
+    static getMes = (ms = null) => {
+        // GET UTC Ano - '02'
+        if (ms != null)
+            return Number(mkt.getFullData(ms).split("-")[1]);
+        else
+            return Number(mkt.getFullData().split("-")[1]);
+    };
+    static getAno = (ms = null) => {
+        // GET UTC Ano - '2024'
+        if (ms != null)
+            return Number(mkt.getFullData(ms).split("-")[0]);
+        else
+            return Number(mkt.getFullData().split("-")[0]);
+    };
+    static getFullData = (ms = null) => {
+        // GET UTC Data - '2024-02-18'
+        let ano = new Date().getUTCFullYear();
+        let mes = new Date().getUTCMonth() + 1;
+        let dia = new Date().getUTCDate();
+        if (ms != null) {
+            ano = new Date(ms).getUTCFullYear();
+            mes = new Date(ms).getUTCMonth() + 1;
+            dia = new Date(ms).getUTCDate();
+        }
+        return ano.toString().padStart(4, "0") + "-" + mes.toString().padStart(2, "0") + "-" + dia.toString().padStart(2, "0");
+    };
+    static hojeMkData = () => {
+        // Data Local: '18/02/2024'
+        return new Date(mkt.getMs()).toLocaleDateString();
+    };
+    static hojeMkHora = () => {
+        // Hora Local: '19:06:07'
+        return new Date(Number(mkt.getMs())).toLocaleTimeString();
+    };
+    static hoje = () => {
+        // Data e Hora Local: '18/02/2024 19:06:47'
+        return mkt.hojeMkData() + " " + mkt.hojeMkHora();
+    };
+    static mkYYYYMMDDtoDDMMYYYY = (dataYYYYMMDD) => {
+        // Converter de YYYY-MM-DD para DD/MM/YYYY
+        let arrayData = dataYYYYMMDD.split("-");
+        let stringRetorno = "";
+        if (arrayData.length >= 3) {
+            // Tenta evitar bug de conversao
+            stringRetorno = arrayData[2] + "/" + arrayData[1] + "/" + arrayData[0];
+        }
+        else {
+            stringRetorno = dataYYYYMMDD;
+        }
+        return stringRetorno;
+    };
+    static mkFormatarDataOA = (oa) => {
+        // Converter (OBJ / ARRAY) Formato Booleano em Sim/Não
+        function mkFormatarDataOA_Execute(o) {
+            let busca = new RegExp("^[0-2][0-9]{3}[-][0-1][0-9][-][0-3][0-9]$"); // Entre 0000-00-00 a 2999-19-39
+            let busca2 = new RegExp("^[0-2][0-9]{3}[-][0-1][0-9][-][0-3][0-9]T[0-2][0-9]:[0-5][0-9]"); // Entre 0000-00-00T00:00 a 2999-19-39T29:59 (Se iniciar nesse formato de ISO)
+            for (var propName in o) {
+                if (busca.test(o[propName])) {
+                    o[propName] = mkt.mkYYYYMMDDtoDDMMYYYY(o[propName]);
+                }
+                if (busca2.test(o[propName])) {
+                    o[propName] = mkt.dataToLocale(o[propName]);
+                }
+            }
+            return o;
+        }
+        return mkt.aCadaObjExecuta(oa, mkFormatarDataOA_Execute);
+    };
+    static dataToLocale = (data) => {
+        // com Objeto DATA, STRING ou MS, retorna data BR.
+        // '2023-12-27T12:01:16.158' => '22/12/2023, 11:18:33'
+        let dataNum = Number(data);
+        if (mkt.classof(dataNum) != "Number") {
+            dataNum = data;
+        }
+        if (mkt.classof(data) == "Date") {
+            return data.toLocaleString();
+        }
+        return new Date(dataNum).toLocaleString();
+    };
+    static getDiasDiferenca = (msOld, msNew = null) => {
+        // Retorna a diferença de dias entre dois MS
+        if (msNew == null)
+            msNew = mkt.getMs();
+        return mkt.transMsEmDias(msNew - msOld);
+    };
+    static transMsEmDias = (ms) => {
+        // 1000 * 3600 * 24 Considerando todo dia tiver 24 horas (~23h 56m 4.1s)
+        // (360º translacao / 86400000) = ~4.1
+        // Então o erro de 1 dia ocorre 1x ao ano (Dia represeta 1436min).
+        return Math.trunc(ms / 86400000);
+    };
+    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+    //                     Web Components                                      \\
+    //==========================================================================\\
+    static mkSelTabIndex = (e) => {
+        // Se elemento estiver DISABLED atualiza TABINDEX
+        if (e.classList.contains("disabled")) {
+            let pes = e.nextElementSibling;
+            if (pes) {
+                if (pes.classList.contains("mkSelPesquisa")) {
+                    pes.firstElementChild?.setAttribute("tabindex", "-1");
+                }
+            }
+        }
+        else {
+            let pes = e.nextElementSibling;
+            if (pes) {
+                if (pes.classList.contains("mkSelPesquisa")) {
+                    pes.firstElementChild?.removeAttribute("tabindex");
+                }
+            }
+        }
+    };
+    static mkSelMoveu = (e) => {
+        if (e.firstElementChild.classList.contains("mkSelItemDeCima")) {
+            e.firstElementChild.style.display = "";
+            e.lastElementChild.style.display = "";
+        }
+    };
+    static mkSelPopularLista = (e) => {
+        // GERA CADA ITEM DA LISTA COM BASE NO JSON
+        if (e.getAttribute("data-selarray") != "") {
+            let eList = e.nextElementSibling.nextElementSibling;
+            eList.innerHTML = "";
+            try {
+                let seletorArray = mkt.parseJSON(e.getAttribute("data-selarray"));
+                if (seletorArray != null) {
+                    let c = 0;
+                    /* ITENS */
+                    seletorArray.forEach((o) => {
+                        if (o.k != null) {
+                            c++;
+                            let divMkSeletorItem = document.createElement("div");
+                            let divMkSeletorItemTexto = document.createElement("span");
+                            let divMkSeletorItemArrow = document.createElement("div");
+                            divMkSeletorItem.className = "mkSelItem";
+                            divMkSeletorItemArrow.className = "mkSelItemArrow";
+                            divMkSeletorItem.setAttribute("data-k", o.k);
+                            divMkSeletorItem.setAttribute("onmousedown", "mkt.mkSelSelecionar(this)");
+                            divMkSeletorItemTexto.innerHTML = o.v;
+                            divMkSeletorItem.appendChild(divMkSeletorItemTexto);
+                            divMkSeletorItem.appendChild(divMkSeletorItemArrow);
+                            eList.appendChild(divMkSeletorItem);
+                        }
+                    });
+                    if (c <= 0) {
+                        eList.innerHTML = "Nenhuma opção";
+                    }
+                    else if (c > 10) {
+                        if (e.getAttribute("data-selmove") != "false") {
+                            let divMkSelCima = document.createElement("div");
+                            divMkSelCima.className = "mkSelItemDeCima microPos2";
+                            divMkSelCima.setAttribute("onmousemove", "mkt.mkSelMoveCima(this);");
+                            divMkSelCima.innerHTML = "↑ ↑ ↑";
+                            eList.insertBefore(divMkSelCima, eList.firstElementChild);
+                            let divMkSelBaixo = document.createElement("div");
+                            divMkSelBaixo.className = "mkSelItemDeBaixo microPos8";
+                            divMkSelBaixo.setAttribute("onmousemove", "mkt.mkSelMoveBaixo(this);");
+                            divMkSelBaixo.innerHTML = "↓ ↓ ↓";
+                            eList.appendChild(divMkSelBaixo);
+                        }
+                    }
+                }
+            }
+            catch {
+                mkt.erro("Erro durante conversao para Json:" + e.getAttribute("data-selarray"));
+            }
+        }
+    };
+    static mkSelUpdate = (e, KV = null) => {
+        if (KV == null) {
+            KV = mkt.mkSelGetKV(e);
+        }
+        // Desmarcar todos mkSelItem pra 0
+        Array.from(e.nextElementSibling.nextElementSibling.children).forEach((el) => {
+            el.setAttribute("data-s", "0");
+        });
+        KV?.forEach((o) => {
+            /* Marcar mkSelItem pra 1 onde tem K selecionado */
+            Array.from(e.nextElementSibling.nextElementSibling.children).forEach((item) => {
+                if (item.getAttribute("data-k") == o.k) {
+                    item.setAttribute("data-s", "1");
+                }
+            });
+        });
+        // Seta Valor do display
+        mkt.mkSelSetDisplay(e, KV);
+    };
+    static mkSelDelRefillProcesso = async (eName, cod = null) => {
+        return new Promise(async (r) => {
+            let e = mkt.Q(eName);
+            if (e) {
+                // Se há o elemento, e para evitar puxar várias veses a mesma lista, adiciona-se uma classe no inicio e tira-se quando concluiu. Se já tem, não refaz.
+                if (!e.classList.contains("refilling")) {
+                    e.classList.add("refilling");
+                    let url = appPath + e.getAttribute("data-refill");
+                    cod != null ? (url += cod) : null;
+                    let p = await mkt.get.json(url);
+                    if (p.retorno != null) {
+                        let kv = p.retorno;
+                        // Se vier um Json em string, Tenta virar pra objeto pra ter certeza que o sistema vai conseguir fazer isso depois.
+                        if (mkt.isJson(kv)) {
+                            kv = mkt.parseJSON(kv);
+                        }
+                        // Se o KV está em forma de objeto, então prepara para colocar no campo.
+                        let tipoKV = mkt.classof(kv);
+                        if (tipoKV == "Array") {
+                            kv = mkt.stringify(p.retorno);
+                            e.setAttribute("data-selarray", kv);
+                            e.classList.remove("refilling");
+                            r(e);
+                        }
+                        else {
+                            mkt.erro("mkSelDelRefillProcesso() - Refill precisa receber uma Array de KVs: ", tipoKV);
+                        }
+                    }
+                } // Apenas 1 rewfill por vez
+            }
+            else {
+                mkt.w("Função (mkSelDlRefill) solicitou Refill em um campo inexistente (JS)");
+            }
+        });
+    };
+    static mkSelGetKV = (e) => {
+        let kSels;
+        let kOpcoes;
+        // Lista de Selecoes vira K do KV
+        if (mkt.isJson(e.value)) {
+            kSels = mkt.parseJSON(e.value);
+            if (!Array.isArray(kSels)) {
+                kSels = [{ k: kSels }];
+            }
+            else {
+                kSels = [];
+                mkt.parseJSON(e.value).forEach((kSel) => {
+                    kSels.push({ k: kSel });
+                });
+            }
+        }
+        else
+            kSels = [{ k: e.value }];
+        // Prepara lista de Opções para iterar
+        if (mkt.isJson(e.dataset.selarray)) {
+            kOpcoes = mkt.parseJSON(e.dataset.selarray);
+            if (!Array.isArray(kOpcoes)) {
+                kOpcoes = [{ k: kOpcoes, v: "\u{2209} Opções" }];
+            }
+        }
+        else
+            kOpcoes = null;
+        if (kOpcoes != null) {
+            // Acrescentar V ao KV
+            kSels.forEach((objKv) => {
+                kOpcoes.forEach((opcao) => {
+                    if (opcao.k == objKv.k) {
+                        objKv.v = opcao.v;
+                    }
+                });
+            });
+        }
+        return kSels;
+    };
+    static mkSelGetMap = (e) => {
+        let kv = mkt.mkSelGetKV(e);
+        let map = [];
+        kv.forEach((o) => {
+            map.push([o.k, o.v]);
+        });
+        return new Map(map);
+    };
+    static mkSelArrayGetKV = (e) => {
+        let kv = e.dataset.selarray;
+        if (mkt.isJson(kv)) {
+            kv = mkt.parseJSON(kv);
+        }
+        return kv;
+    };
+    static mkSelArraySetKV = (e, kv) => {
+        let kvj = mkt.stringify(kv);
+        e.dataset.selarray = kvj;
+        e.classList.add("atualizarSemEvento");
+        return e;
+    };
+    static mkSelArrayGetMap = (e) => {
+        let kvs = e.dataset.selarray;
+        let map = [];
+        if (mkt.isJson(kvs)) {
+            let kv = mkt.parseJSON(kvs);
+            kv.forEach((o) => {
+                map.push([o.k, o.v]);
+            });
+        }
+        return new Map(map);
+    };
+    static mkSelArraySetMap = (e, map) => {
+        if (e) {
+            if (map instanceof Map) {
+                let kv = [];
+                for (let [k, v] of map) {
+                    kv.push({
+                        k: k,
+                        v: v,
+                    });
+                }
+                mkt.mkSelArraySetKV(e, kv);
+            }
+            else {
+                mkt.w("Função mkSelArraySetMap() precisa receber um objeto formato Map no segundo parametro");
+            }
+            return e;
+        }
+        else {
+            mkt.w("Função mkSelArraySetMap() precisa receber o elemento no primeiro parametro");
+            return null;
+        }
+    };
+    static mkSelSelecionar = (eItem) => {
+        let ePrincipal = eItem.parentElement?.parentElement?.firstElementChild;
+        let KV = mkt.mkSelGetKV(ePrincipal);
+        // Obtem limite de seleções
+        let selapenas = ePrincipal?.getAttribute("data-selapenas") || 1;
+        let selLimit = Number(selapenas);
+        // QUANDO O LIMITE é 1
+        if (selLimit == 1) {
+            // Muda valor do input pelo clicado e Gera o evento
+            ePrincipal.value = eItem.getAttribute("data-k");
+            ePrincipal?.dispatchEvent(new Event("input"));
+            // Transfere valor para o Display (Exibe)
+            (eItem?.parentElement?.previousElementSibling?.firstElementChild).value =
+                eItem.innerHTML;
+        }
+        else if (selLimit > 1 || selLimit < 0) {
+            let itemK = eItem.getAttribute("data-k");
+            let jaSelecionado = 0;
+            // Forma um array caso ainda não seja, pois pode seleconar mais de um.
+            let arraySelecionado = [];
+            // Verifica se algum KV.k é o K clicado. (Para saber se vai adicionar ou remover)
+            KV.forEach((ObjKV) => {
+                arraySelecionado.push(ObjKV.k.toString());
+                if (ObjKV.k == itemK)
+                    jaSelecionado++;
+            });
+            if (jaSelecionado > 0) {
+                // Remove valor da lista selecionada
+                arraySelecionado.splice(arraySelecionado.indexOf(itemK), 1);
+            }
+            else {
+                // Verifica se é possivel selecionar mais (Se estiver negativo, pode selecionar infinito)
+                if (arraySelecionado.length < selLimit || selLimit < 0) {
+                    // Acrescenta valor
+                    arraySelecionado.push(itemK);
+                }
+            }
+            // Limpar seleções vazias
+            arraySelecionado.forEach((item) => {
+                if (item == "") {
+                    arraySelecionado.splice(arraySelecionado.indexOf(item), 1);
+                }
+            });
+            // Quando estiver vazio, reseta o campo.
+            // Seta o valor no campo de input
+            if (arraySelecionado.length == 0) {
+                ePrincipal.value = ePrincipal.defaultValue;
+            }
+            else {
+                let string = mkt.stringify(arraySelecionado);
+                if (ePrincipal.type == "text")
+                    ePrincipal.value = string;
+                else
+                    mkt.erro("Erro durante o Set/Conversão do campo. É necessário que este campo seja tipo string.");
+            }
+            // Gera o Evento
+            ePrincipal.dispatchEvent(new Event("input"));
+            // Mantem foco no Display, pois pode selecionar mais de um
+            setTimeout(() => {
+                eItem.parentElement.previousElementSibling.firstElementChild.focus();
+            }, 1);
+        }
+        mkt.mkSelUpdate(ePrincipal);
+        // Evento change apos terminar a atualizacao
+        ePrincipal.dispatchEvent(new Event("change"));
+    };
+    static mkSelSetDisplay = (e, KV) => {
+        if (KV.length <= 0) {
+            mkt.w("Não foi possível encontrar os itens selecionados.");
+            e.nextElementSibling.firstElementChild.value = "Opções \u{2209}";
+        }
+        else {
+            if (KV.length == 1) {
+                let display = "-- Selecione --";
+                if (KV[0].v != null) {
+                    display = KV[0].v;
+                }
+                if (display == "-- Selecione --") {
+                    // Criado um argumento indicando que o VALOR do campo está dessincronizado com as POSSIBILIDADDES em kv.
+                    e.dataset.selerror = "true";
+                    e.dataset.selerrorMsg =
+                        "O item selecionado não está na lista de possibilidades";
+                }
+                else {
+                    e.dataset.selerror = "false";
+                    e.dataset.selerrorMsg = "";
+                }
+                e.nextElementSibling.firstElementChild.value = display;
+            }
+            else if (KV.length > 1) {
+                e.nextElementSibling.firstElementChild.value =
+                    "[" + KV.length + "] Selecionados";
+            }
+        }
+    };
+    static mkSelRenderizar = async () => {
+        mkt.QAll("input.mkSel").forEach(async (e) => {
+            mkt.mkSelRenderizarElemento(e);
+            // Transforma elemento se ele ainda não foi transformado
+            if (e.parentElement?.classList.contains("mkSelBloco")) {
+                // Se não tem array, mas tem o refill e entrou para atualizar, faz o processo de refill genérico
+                if (!e.getAttribute("data-selarray") && e.getAttribute("data-refill")) {
+                    await mkt.mkSelDelRefillProcesso(e);
+                }
+                // Atualiza a lista com base na classe "atualizar" (Gera Evento input e change)
+                if (e.classList.contains("atualizar")) {
+                    e.classList.remove("atualizar");
+                    e.classList.add("atualizando");
+                    mkt.mkSelPopularLista(e);
+                    mkt.mkSelUpdate(e);
+                    // Executa evento, em todos atualizar.
+                    // O evento serve para que ao trocar o 1, o 2 execute input para então o 3 tb ter como saber que é pra atualizar
+                    e.dispatchEvent(new Event("input"));
+                    e.dispatchEvent(new Event("change"));
+                    e.classList.remove("atualizando");
+                }
+                if (e.classList.contains("atualizarSemEvento")) {
+                    e.classList.remove("atualizarSemEvento");
+                    e.classList.add("atualizando");
+                    mkt.mkSelPopularLista(e);
+                    mkt.mkSelUpdate(e);
+                    e.classList.remove("atualizando");
+                }
+                // Manter index em -1 para não chegar até esse campo
+                e.setAttribute("tabindex", "-1");
+                mkt.mkSelTabIndex(e);
+            }
+        });
+    };
+    static mkSelRenderizarElemento = async (e) => {
+        // Transforma elemento se ele ainda não foi transformado
+        if (!e.parentElement?.classList.contains("mkSelBloco")) {
+            // COLETA
+            let ePai = e.parentElement;
+            let ePos = Array.from(ePai?.children).indexOf(e);
+            // ELEMENTO no BLOCO
+            let divMkSeletorBloco = document.createElement("div");
+            let divMkSeletorPesquisa = document.createElement("div");
+            let divMkSeletorInputExibe = document.createElement("input");
+            let divMkSeletorInputExibeArrow = document.createElement("div");
+            let divMkSeletorList = document.createElement("div");
+            // Nomeando Classes
+            divMkSeletorBloco.className = "mkSelBloco";
+            divMkSeletorPesquisa.className = "mkSelPesquisa";
+            divMkSeletorInputExibe.className = "mkSelInputExibe";
+            divMkSeletorInputExibeArrow.className = "mkSelInputExibeArrow";
+            divMkSeletorList.className = "mkSelList";
+            // ORDEM no DOM
+            ePai?.insertBefore(divMkSeletorBloco, ePai?.children[ePos]);
+            divMkSeletorBloco.appendChild(e);
+            divMkSeletorBloco.appendChild(divMkSeletorPesquisa);
+            divMkSeletorBloco.appendChild(divMkSeletorList);
+            divMkSeletorPesquisa.appendChild(divMkSeletorInputExibe);
+            divMkSeletorPesquisa.appendChild(divMkSeletorInputExibeArrow);
+            // Transfere style
+            divMkSeletorBloco.setAttribute("style", e.getAttribute("style") ?? "");
+            // Flexas que movem o selecionado quando há apenas 1 possibilidade de selecao.
+            if (e.getAttribute("data-selmovesel") == "true" &&
+                e.getAttribute("data-selapenas") == "1") {
+                let divMkSelArrowSelLeft = document.createElement("div");
+                let divMkSelArrowSelRight = document.createElement("div");
+                divMkSelArrowSelLeft.className = "mkSelArrowSelLeft microPos6";
+                divMkSelArrowSelRight.className = "mkSelArrowSelRight microPos4";
+                divMkSeletorPesquisa.appendChild(divMkSelArrowSelLeft);
+                divMkSeletorPesquisa.appendChild(divMkSelArrowSelRight);
+                divMkSelArrowSelLeft.setAttribute("onclick", "mkt.mkSelLeftSel(this)");
+                divMkSelArrowSelRight.setAttribute("onclick", "mkt.mkSelRightSel(this)");
+                divMkSeletorBloco.style.setProperty("--mkSelArrowSize", "24px");
+            }
+            // Seta atributos e Gatilhos
+            e.removeAttribute("style");
+            e.setAttribute("readonly", "true");
+            e.setAttribute("tabindex", "-1");
+            mkt.mkSelTabIndex(e);
+            divMkSeletorInputExibe.setAttribute("placeholder", "Filtro \u{1F50D}");
+            divMkSeletorInputExibe.setAttribute("onfocus", "mkt.mkSelPesquisaFocus(this)");
+            divMkSeletorInputExibe.setAttribute("onblur", "mkt.mkSelPesquisaBlur(this)");
+            divMkSeletorInputExibe.setAttribute("oninput", "mkt.mkSelPesquisaInput(this)");
+            divMkSeletorInputExibe.setAttribute("onkeydown", "mkt.mkSelPesquisaKeyDown(event)");
+            divMkSeletorInputExibe.setAttribute("autocomplete", "off");
+            divMkSeletorList.addEventListener("scroll", (ev) => {
+                mkt.mkSelMoveu(ev.target);
+            });
+            // Popular Lista
+            mkt.mkSelPopularLista(e);
+            // Seleciona baseado no value do input
+            mkt.mkSelUpdate(e);
+            // Deixar Elemento de forma visivel, mas inacessivel.
+            if (e.getAttribute("data-dev") != "true") {
+                e.classList.add("mkSecreto");
+            }
+            // Segue o Elemento durante o scroll.
+            document.addEventListener("scroll", (event) => {
+                mkt.Reposicionar(divMkSeletorList, true);
+            });
+            window.addEventListener("resize", (event) => {
+                mkt.Reposicionar(divMkSeletorList, true);
+            });
+        }
+    };
+    static mkRecRenderizar = async () => {
+        mkt.QAll("input.mkRec").forEach(async (e) => {
+            // Gerar Elemento de recomendações
+            if (!e.nextElementSibling?.classList.contains("mkRecList")) {
+                let ePai = e.parentElement;
+                let ePos = Array.from(ePai?.children).indexOf(e);
+                let divMkRecList = document.createElement("div");
+                divMkRecList.className = "mkRecList emFoco";
+                divMkRecList.setAttribute("tabindex", "-1");
+                ePai?.insertBefore(divMkRecList, ePai?.children[ePos + 1]);
+                // Incrementar Evento
+                let oninput = e.getAttribute("oninput");
+                if (!oninput || !oninput.includes(";mkt.mkRecUpdate(this)")) {
+                    e.setAttribute("oninput", oninput + ";mkt.mkRecUpdate(this)");
+                }
+                let onfocus = e.getAttribute("onfocus");
+                if (!onfocus || !onfocus.includes(";mkt.mkRecFoco(this,true)")) {
+                    e.setAttribute("onfocus", onfocus + ";mkt.mkRecFoco(this,true)");
+                }
+                let onblur = e.getAttribute("onblur");
+                if (!onblur || !onblur.includes(";mkt.mkRecFoco(this,false)")) {
+                    e.setAttribute("onblur", onblur + ";mkt.mkRecFoco(this,false)");
+                }
+                e.setAttribute("autocomplete", "off");
+                // Seguir o Elemento durante o scroll e resize
+                document.addEventListener("scroll", (event) => {
+                    mkt.Reposicionar(divMkRecList, false);
+                });
+                window.addEventListener("resize", (event) => {
+                    mkt.Reposicionar(divMkRecList, true);
+                });
+                mkt.mkRecUpdate(e);
+            }
+            else {
+                if (!e.getAttribute("data-selarray") && e.getAttribute("data-refill")) {
+                    // REC não foi implementado refill
+                    //await mkt.mkRecDelRefillProcesso(e as HTMLElement);
+                }
+                let geraEvento = false;
+                if (e.classList.contains("atualizar"))
+                    geraEvento = true;
+                // Atualiza a lista com base na classe "atualizar" (Gera Evento input e change)
+                if (e.classList.contains("atualizar") || e.classList.contains("atualizarSemEvento")) {
+                    e.classList.remove("atualizar");
+                    e.classList.remove("atualizarSemEvento");
+                    e.classList.add("atualizando");
+                    mkt.mkRecUpdate(e);
+                    e.classList.remove("atualizando");
+                }
+                if (geraEvento) {
+                    // Executa evento, em todos atualizar.
+                    // O evento serve para que ao trocar o 1, o 2 execute input para então o 3 tb ter como saber que é pra atualizar
+                    e.dispatchEvent(new Event("input"));
+                    e.dispatchEvent(new Event("change"));
+                }
+            }
+        });
+    };
+    static mkRecUpdate = (e) => {
+        // Recebe o elemento input principal.
+        // GERA CADA ITEM DA LISTA COM BASE NO JSON
+        if (e?.getAttribute("data-selarray") != "") {
+            let eList = e.nextElementSibling;
+            let array = e.dataset.selarray;
+            eList.innerHTML = "";
+            if (mkt.isJson(array)) {
+                let kvList = mkt.parseJSON(array);
+                let c = 0;
+                /* ITENS */
+                kvList.forEach((o) => {
+                    if (o.v != null && o.v != "") {
+                        if (mkt.like(e.value, o.v) && e.value.trim() != o.v.trim()) {
+                            c++;
+                            let item = document.createElement("div");
+                            let itemTexto = document.createElement("span");
+                            item.className = "recItem";
+                            item.setAttribute("data-k", o.k);
+                            item.setAttribute("onmousedown", "mkt.mkRecChange(this,'" + o.v + "')");
+                            itemTexto.innerHTML = o.v;
+                            item.appendChild(itemTexto);
+                            eList.appendChild(item);
+                        }
+                    }
+                });
+                if (c <= 0) {
+                    eList.innerHTML = "Sem recomendações";
+                }
+            }
+            else {
+                mkt.w("mkRecUpdate(e):  atributo selarray Não é um JSON válido: ", array);
+            }
+        }
+        else {
+            mkt.w("mkRecUpdate(e): Elemento não encontrado ou selarray dele está vazia.", e);
+        }
+    };
+    static mkBotCheck = async () => {
+        // Botao incluido uma imagem/pdf visualizavel e clicavel.
+        // Valor inicial no value, quando não presente, exibe data-value.
+        mkt.QAll("button.mkBot").forEach(async (e) => {
+            // Apenas quando contem Atualizar
+            let semEvento = e.classList.contains("atualizarSemEvento");
+            if (e.classList.contains("atualizar") || semEvento) {
+                e.classList.remove("atualizar");
+                e.classList.remove("atualizarSemEvento");
+                e.classList.add("atualizando");
+                // - Remove conteudo
+                e.innerHTML = "";
+                // - Coleta value do campo (ex: botao tem value="/img/teste.jpg")
+                let v = e.getAttribute("value");
+                // - Caso Nulo, Tentar pelo dataset
+                if (v == null || v == "") {
+                    v = e.dataset.value;
+                }
+                let clicavel = e.dataset.clicavel;
+                let exibirbarra = e.dataset.exibirbarra;
+                if (v != null && v != "") {
+                    let tipo = null;
+                    let terminacao = v.slice(v.length - 3, v.length).toString().toLowerCase();
+                    // Verificar aqui se trata-se de um link ou de uma base64 direto no elemento.					
+                    // - Verifica se terminacao do arquivo é PDF ou OUTRO,
+                    if ((v.includes("application/pdf")) || (terminacao == "pdf")) {
+                        tipo = "pdf";
+                    }
+                    // << Inicio do conteúdo
+                    let retornar = "<";
+                    // FORMATOS DE ARQUIVO
+                    if (tipo == "pdf") {
+                        retornar += "embed type='application/pdf' class='mkCem mkBotEmbed' src='" + v;
+                    }
+                    else {
+                        retornar +=
+                            e.innerHTML = "img class='mkCem' src='" + v;
+                    }
+                    if (exibirbarra) {
+                        retornar += "#toolbar=0";
+                    }
+                    // << Fim o conteúdo
+                    retornar += "'>";
+                    // Se é ou não clicavel
+                    if (!clicavel) {
+                        retornar += "<div class='mkBotSobre'></div>";
+                    }
+                    // Set
+                    e.innerHTML = retornar;
+                    // Ao concluir, tenta executar atributo onchange, se houver
+                    if (!semEvento) {
+                        if (e.onchange) {
+                            e.onchange();
+                        }
+                    }
+                }
+                else {
+                    mkt.w("Elemento com 'value' nulo. Esperava-se conteudo: ", v);
+                }
+                e.classList.remove("atualizando");
+            }
+        });
+    };
+    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //                     TOOLS e JS HELPERS                                  \\
     //==========================================================================\\
     static contem = (strMaior, strMenor) => {
@@ -3485,824 +4288,18 @@ class mkt {
             return (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16);
         });
     };
-    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-    //                     Gerenciamento Monetário / Numérico                  \\
-    //==========================================================================\\
-    static mkFloat = (num) => {
-        // Tenta deixar em formato Number sem bugar
-        let ret;
-        if (typeof num != "number") {
-            if (num)
-                ret = parseFloat(num.toString().replaceAll(".", "").replaceAll(",", "."));
-            else
-                ret = 0;
-        }
-        else {
-            ret = num;
-        }
-        if (isNaN(ret)) {
-            ret = 0;
-        }
-        return ret;
-    };
-    static mkDuasCasas = (num) => {
-        // Formato antigo de retornar duas casas
-        return mkt.mkFloat(num).toFixed(2).replaceAll(".", ","); // 2000,00
-        // .toLocaleString('pt-br', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); // 2.000,00
-    };
-    static toMoeda = (valor) => {
-        // Texto / Número convertido em Reais
-        if (valor != null) {
-            if (mkt.classof(valor) == "Number") {
-                valor = valor.toFixed(2);
-            }
-            let d = [...valor.toString()].filter(a => { return mkt.a.util.numeros[1].test(a); }).join("").padStart(3, "0");
-            return new Intl.NumberFormat("pt-BR", { style: 'currency', currency: 'BRL' }).format(Number(d.slice(0, -2) + "." + d.slice(-2)));
-        }
-        return "";
-    };
-    static fromMoeda = (texto) => {
-        // Retorna um float de duas casas / 0 a partir de um valor monetario 
-        if (texto) {
-            let d = [...texto.toString()].filter(a => { return mkt.a.util.numeros[1].test(a); }).join("").padStart(3, "0");
-            return Number(d.slice(0, -2) + "." + d.slice(-2));
-        }
-        return 0;
-    };
-    static toNumber = (valor, c = {}) => {
-        // Valor em Texto / Número, convertido para Float de no máximo 2 casas.
-        if (!c.casas)
-            c.casas = 2; // Limite de casas apenas para o valor retornado.
-        if (valor != null) {
-            if (typeof valor == "string") {
-                // Possiveis separadores
-                let us = [".", ","].reduce((x, y) => (valor.lastIndexOf(x) > valor.lastIndexOf(y)) ? x : y);
-                let posPonto = valor.lastIndexOf(us);
-                if (posPonto >= 0) {
-                    let i = valor.slice(0, posPonto);
-                    let d = valor.slice(posPonto + 1).slice(0, 2).padEnd(2, "0");
-                    i = [...i.toString()].filter(a => { return mkt.a.util.numeros[1].test(a); }).join("");
-                    d = [...d.toString()].filter(a => { return mkt.a.util.numeros[1].test(a); }).join("");
-                    valor = i + "." + d;
-                }
-                else {
-                    valor = [...valor.toString()].filter(a => { return mkt.a.util.numeros[1].test(a); }).join("").padStart(3, "0");
-                    valor = valor.slice(0, -(c.casas)) + "." + valor.slice(-(c.casas));
-                }
-            }
-            else if (typeof valor == "number") {
-                valor = valor.toFixed(c.casas);
-            }
-            else {
-                mkt.w("toFloat() - Formato não implementado: ", typeof valor);
-            }
-            return Number(valor);
-        }
-        return 0;
-    };
-    static fromNumber = (valor, c = {}) => {
-        // Retorna um string de duas casas "0,00" a partir de um valor numerico
-        //if (!c.s) c.s = ","; // OUTPUT SEPARADOR de decimal numérico do país atual para dados.
-        if (!c.locale)
-            c.locale = "pt-BR";
-        if (valor != null) {
-            let d = [...valor.toString()].filter(a => { return mkt.a.util.numeros[1].test(a); }).join("").padStart(3, "0");
-            valor = Number(d.slice(0, -2) + "." + d.slice(-2));
-        }
-        else {
-            valor = 0;
-        }
-        return new Intl.NumberFormat(c.locale, { minimumFractionDigits: 2 }).format(valor);
-    };
-    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-    //                     Gerenciamento de Data                               \\
-    //==========================================================================\\
-    static getMs = (dataYYYYMMDD = null) => {
-        // Retorna Milisegundos da data no formato Javascript
-        if (dataYYYYMMDD != null) {
-            let dataCortada = dataYYYYMMDD.split("-");
-            let oDia = Number(dataCortada[2]);
-            let oMes = Number(dataCortada[1]) - 1;
-            let oAno = Number(dataCortada[0]);
-            return new Date(oAno, oMes, oDia).getTime();
-        }
-        else
-            return new Date().getTime();
-    };
-    static getDia = (ms = null) => {
-        // GET UTC Dia - '18'
-        if (ms != null)
-            return Number(mkt.getFullData(ms).split("-")[2]);
-        else
-            return Number(mkt.getFullData().split("-")[2]);
-    };
-    static getMes = (ms = null) => {
-        // GET UTC Ano - '02'
-        if (ms != null)
-            return Number(mkt.getFullData(ms).split("-")[1]);
-        else
-            return Number(mkt.getFullData().split("-")[1]);
-    };
-    static getAno = (ms = null) => {
-        // GET UTC Ano - '2024'
-        if (ms != null)
-            return Number(mkt.getFullData(ms).split("-")[0]);
-        else
-            return Number(mkt.getFullData().split("-")[0]);
-    };
-    static getFullData = (ms = null) => {
-        // GET UTC Data - '2024-02-18'
-        let ano = new Date().getUTCFullYear();
-        let mes = new Date().getUTCMonth() + 1;
-        let dia = new Date().getUTCDate();
-        if (ms != null) {
-            ano = new Date(ms).getUTCFullYear();
-            mes = new Date(ms).getUTCMonth() + 1;
-            dia = new Date(ms).getUTCDate();
-        }
-        return ano.toString().padStart(4, "0") + "-" + mes.toString().padStart(2, "0") + "-" + dia.toString().padStart(2, "0");
-    };
-    static hojeMkData = () => {
-        // Data Local: '18/02/2024'
-        return new Date(mkt.getMs()).toLocaleDateString();
-    };
-    static hojeMkHora = () => {
-        // Hora Local: '19:06:07'
-        return new Date(Number(mkt.getMs())).toLocaleTimeString();
-    };
-    static hoje = () => {
-        // Data e Hora Local: '18/02/2024 19:06:47'
-        return mkt.hojeMkData() + " " + mkt.hojeMkHora();
-    };
-    static mkYYYYMMDDtoDDMMYYYY = (dataYYYYMMDD) => {
-        // Converter de YYYY-MM-DD para DD/MM/YYYY
-        let arrayData = dataYYYYMMDD.split("-");
-        let stringRetorno = "";
-        if (arrayData.length >= 3) {
-            // Tenta evitar bug de conversao
-            stringRetorno = arrayData[2] + "/" + arrayData[1] + "/" + arrayData[0];
-        }
-        else {
-            stringRetorno = dataYYYYMMDD;
-        }
-        return stringRetorno;
-    };
-    static mkFormatarDataOA = (oa) => {
-        // Converter (OBJ / ARRAY) Formato Booleano em Sim/Não
-        function mkFormatarDataOA_Execute(o) {
-            let busca = new RegExp("^[0-2][0-9]{3}[-][0-1][0-9][-][0-3][0-9]$"); // Entre 0000-00-00 a 2999-19-39
-            let busca2 = new RegExp("^[0-2][0-9]{3}[-][0-1][0-9][-][0-3][0-9]T[0-2][0-9]:[0-5][0-9]"); // Entre 0000-00-00T00:00 a 2999-19-39T29:59 (Se iniciar nesse formato de ISO)
-            for (var propName in o) {
-                if (busca.test(o[propName])) {
-                    o[propName] = mkt.mkYYYYMMDDtoDDMMYYYY(o[propName]);
-                }
-                if (busca2.test(o[propName])) {
-                    o[propName] = mkt.dataToLocale(o[propName]);
-                }
-            }
-            return o;
-        }
-        return mkt.aCadaObjExecuta(oa, mkFormatarDataOA_Execute);
-    };
-    static dataToLocale = (data) => {
-        // com Objeto DATA, STRING ou MS, retorna data BR.
-        // '2023-12-27T12:01:16.158' => '22/12/2023, 11:18:33'
-        let dataNum = Number(data);
-        if (mkt.classof(dataNum) != "Number") {
-            dataNum = data;
-        }
-        if (mkt.classof(data) == "Date") {
-            return data.toLocaleString();
-        }
-        return new Date(dataNum).toLocaleString();
-    };
-    static getDiasDiferenca = (msOld, msNew = null) => {
-        // Retorna a diferença de dias entre dois MS
-        if (msNew == null)
-            msNew = mkt.getMs();
-        return mkt.transMsEmDias(msNew - msOld);
-    };
-    static transMsEmDias = (ms) => {
-        // 1000 * 3600 * 24 Considerando todo dia tiver 24 horas (~23h 56m 4.1s)
-        // (360º translacao / 86400000) = ~4.1
-        // Então o erro de 1 dia ocorre 1x ao ano (Dia represeta 1436min).
-        return Math.trunc(ms / 86400000);
-    };
-    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-    //                     Web Components                                      \\
-    //==========================================================================\\
-    static mkSelTabIndex = (e) => {
-        // Se elemento estiver DISABLED atualiza TABINDEX
-        if (e.classList.contains("disabled")) {
-            let pes = e.nextElementSibling;
-            if (pes) {
-                if (pes.classList.contains("mkSelPesquisa")) {
-                    pes.firstElementChild?.setAttribute("tabindex", "-1");
-                }
-            }
-        }
-        else {
-            let pes = e.nextElementSibling;
-            if (pes) {
-                if (pes.classList.contains("mkSelPesquisa")) {
-                    pes.firstElementChild?.removeAttribute("tabindex");
-                }
-            }
-        }
-    };
-    static mkSelMoveu = (e) => {
-        if (e.firstElementChild.classList.contains("mkSelItemDeCima")) {
-            e.firstElementChild.style.display = "";
-            e.lastElementChild.style.display = "";
-        }
-    };
-    static mkSelPopularLista = (e) => {
-        // GERA CADA ITEM DA LISTA COM BASE NO JSON
-        if (e.getAttribute("data-selarray") != "") {
-            let eList = e.nextElementSibling.nextElementSibling;
-            eList.innerHTML = "";
-            try {
-                let seletorArray = mkt.parseJSON(e.getAttribute("data-selarray"));
-                if (seletorArray != null) {
-                    let c = 0;
-                    /* ITENS */
-                    seletorArray.forEach((o) => {
-                        if (o.k != null) {
-                            c++;
-                            let divMkSeletorItem = document.createElement("div");
-                            let divMkSeletorItemTexto = document.createElement("span");
-                            let divMkSeletorItemArrow = document.createElement("div");
-                            divMkSeletorItem.className = "mkSelItem";
-                            divMkSeletorItemArrow.className = "mkSelItemArrow";
-                            divMkSeletorItem.setAttribute("data-k", o.k);
-                            divMkSeletorItem.setAttribute("onmousedown", "mkt.mkSelSelecionar(this)");
-                            divMkSeletorItemTexto.innerHTML = o.v;
-                            divMkSeletorItem.appendChild(divMkSeletorItemTexto);
-                            divMkSeletorItem.appendChild(divMkSeletorItemArrow);
-                            eList.appendChild(divMkSeletorItem);
-                        }
-                    });
-                    if (c <= 0) {
-                        eList.innerHTML = "Nenhuma opção";
-                    }
-                    else if (c > 10) {
-                        if (e.getAttribute("data-selmove") != "false") {
-                            let divMkSelCima = document.createElement("div");
-                            divMkSelCima.className = "mkSelItemDeCima microPos2";
-                            divMkSelCima.setAttribute("onmousemove", "mkt.mkSelMoveCima(this);");
-                            divMkSelCima.innerHTML = "↑ ↑ ↑";
-                            eList.insertBefore(divMkSelCima, eList.firstElementChild);
-                            let divMkSelBaixo = document.createElement("div");
-                            divMkSelBaixo.className = "mkSelItemDeBaixo microPos8";
-                            divMkSelBaixo.setAttribute("onmousemove", "mkt.mkSelMoveBaixo(this);");
-                            divMkSelBaixo.innerHTML = "↓ ↓ ↓";
-                            eList.appendChild(divMkSelBaixo);
-                        }
-                    }
-                }
-            }
-            catch {
-                mkt.erro("Erro durante conversao para Json:" + e.getAttribute("data-selarray"));
-            }
-        }
-    };
-    static mkSelUpdate = (e, KV = null) => {
-        if (KV == null) {
-            KV = mkt.mkSelGetKV(e);
-        }
-        // Desmarcar todos mkSelItem pra 0
-        Array.from(e.nextElementSibling.nextElementSibling.children).forEach((el) => {
-            el.setAttribute("data-s", "0");
-        });
-        KV?.forEach((o) => {
-            /* Marcar mkSelItem pra 1 onde tem K selecionado */
-            Array.from(e.nextElementSibling.nextElementSibling.children).forEach((item) => {
-                if (item.getAttribute("data-k") == o.k) {
-                    item.setAttribute("data-s", "1");
-                }
-            });
-        });
-        // Seta Valor do display
-        mkt.mkSelSetDisplay(e, KV);
-    };
-    static mkSelDelRefillProcesso = async (eName, cod = null) => {
-        return new Promise(async (r) => {
-            let e = mkt.Q(eName);
-            if (e) {
-                // Se há o elemento, e para evitar puxar várias veses a mesma lista, adiciona-se uma classe no inicio e tira-se quando concluiu. Se já tem, não refaz.
-                if (!e.classList.contains("refilling")) {
-                    e.classList.add("refilling");
-                    let url = appPath + e.getAttribute("data-refill");
-                    cod != null ? (url += cod) : null;
-                    let p = await mkt.get.json(url);
-                    if (p.retorno != null) {
-                        let kv = p.retorno;
-                        // Se vier um Json em string, Tenta virar pra objeto pra ter certeza que o sistema vai conseguir fazer isso depois.
-                        if (mkt.isJson(kv)) {
-                            kv = mkt.parseJSON(kv);
-                        }
-                        // Se o KV está em forma de objeto, então prepara para colocar no campo.
-                        let tipoKV = mkt.classof(kv);
-                        if (tipoKV == "Array") {
-                            kv = mkt.stringify(p.retorno);
-                            e.setAttribute("data-selarray", kv);
-                            e.classList.remove("refilling");
-                            r(e);
-                        }
-                        else {
-                            mkt.erro("mkSelDelRefillProcesso() - Refill precisa receber uma Array de KVs: ", tipoKV);
-                        }
-                    }
-                } // Apenas 1 rewfill por vez
-            }
-            else {
-                mkt.w("Função (mkSelDlRefill) solicitou Refill em um campo inexistente (JS)");
-            }
-        });
-    };
-    static mkSelGetKV = (e) => {
-        let kSels;
-        let kOpcoes;
-        // Lista de Selecoes vira K do KV
-        if (mkt.isJson(e.value)) {
-            kSels = mkt.parseJSON(e.value);
-            if (!Array.isArray(kSels)) {
-                kSels = [{ k: kSels }];
-            }
-            else {
-                kSels = [];
-                mkt.parseJSON(e.value).forEach((kSel) => {
-                    kSels.push({ k: kSel });
-                });
-            }
-        }
-        else
-            kSels = [{ k: e.value }];
-        // Prepara lista de Opções para iterar
-        if (mkt.isJson(e.dataset.selarray)) {
-            kOpcoes = mkt.parseJSON(e.dataset.selarray);
-            if (!Array.isArray(kOpcoes)) {
-                kOpcoes = [{ k: kOpcoes, v: "\u{2209} Opções" }];
-            }
-        }
-        else
-            kOpcoes = null;
-        if (kOpcoes != null) {
-            // Acrescentar V ao KV
-            kSels.forEach((objKv) => {
-                kOpcoes.forEach((opcao) => {
-                    if (opcao.k == objKv.k) {
-                        objKv.v = opcao.v;
-                    }
-                });
-            });
-        }
-        return kSels;
-    };
-    static mkSelGetMap = (e) => {
-        let kv = mkt.mkSelGetKV(e);
-        let map = [];
-        kv.forEach((o) => {
-            map.push([o.k, o.v]);
-        });
-        return new Map(map);
-    };
-    static mkSelArrayGetKV = (e) => {
-        let kv = e.dataset.selarray;
-        if (mkt.isJson(kv)) {
-            kv = mkt.parseJSON(kv);
-        }
-        return kv;
-    };
-    static mkSelArraySetKV = (e, kv) => {
-        let kvj = mkt.stringify(kv);
-        e.dataset.selarray = kvj;
-        e.classList.add("atualizarSemEvento");
-        return e;
-    };
-    static mkSelArrayGetMap = (e) => {
-        let kvs = e.dataset.selarray;
-        let map = [];
-        if (mkt.isJson(kvs)) {
-            let kv = mkt.parseJSON(kvs);
-            kv.forEach((o) => {
-                map.push([o.k, o.v]);
-            });
-        }
-        return new Map(map);
-    };
-    static mkSelArraySetMap = (e, map) => {
-        if (e) {
-            if (map instanceof Map) {
-                let kv = [];
-                for (let [k, v] of map) {
-                    kv.push({
-                        k: k,
-                        v: v,
-                    });
-                }
-                mkt.mkSelArraySetKV(e, kv);
-            }
-            else {
-                mkt.w("Função mkSelArraySetMap() precisa receber um objeto formato Map no segundo parametro");
-            }
-            return e;
-        }
-        else {
-            mkt.w("Função mkSelArraySetMap() precisa receber o elemento no primeiro parametro");
-            return null;
-        }
-    };
-    static mkSelSelecionar = (eItem) => {
-        let ePrincipal = eItem.parentElement?.parentElement?.firstElementChild;
-        let KV = mkt.mkSelGetKV(ePrincipal);
-        // Obtem limite de seleções
-        let selapenas = ePrincipal?.getAttribute("data-selapenas") || 1;
-        let selLimit = Number(selapenas);
-        // QUANDO O LIMITE é 1
-        if (selLimit == 1) {
-            // Muda valor do input pelo clicado e Gera o evento
-            ePrincipal.value = eItem.getAttribute("data-k");
-            ePrincipal?.dispatchEvent(new Event("input"));
-            // Transfere valor para o Display (Exibe)
-            (eItem?.parentElement?.previousElementSibling?.firstElementChild).value =
-                eItem.innerHTML;
-        }
-        else if (selLimit > 1 || selLimit < 0) {
-            let itemK = eItem.getAttribute("data-k");
-            let jaSelecionado = 0;
-            // Forma um array caso ainda não seja, pois pode seleconar mais de um.
-            let arraySelecionado = [];
-            // Verifica se algum KV.k é o K clicado. (Para saber se vai adicionar ou remover)
-            KV.forEach((ObjKV) => {
-                arraySelecionado.push(ObjKV.k.toString());
-                if (ObjKV.k == itemK)
-                    jaSelecionado++;
-            });
-            if (jaSelecionado > 0) {
-                // Remove valor da lista selecionada
-                arraySelecionado.splice(arraySelecionado.indexOf(itemK), 1);
-            }
-            else {
-                // Verifica se é possivel selecionar mais (Se estiver negativo, pode selecionar infinito)
-                if (arraySelecionado.length < selLimit || selLimit < 0) {
-                    // Acrescenta valor
-                    arraySelecionado.push(itemK);
-                }
-            }
-            // Limpar seleções vazias
-            arraySelecionado.forEach((item) => {
-                if (item == "") {
-                    arraySelecionado.splice(arraySelecionado.indexOf(item), 1);
-                }
-            });
-            // Quando estiver vazio, reseta o campo.
-            // Seta o valor no campo de input
-            if (arraySelecionado.length == 0) {
-                ePrincipal.value = ePrincipal.defaultValue;
-            }
-            else {
-                let string = mkt.stringify(arraySelecionado);
-                if (ePrincipal.type == "text")
-                    ePrincipal.value = string;
-                else
-                    mkt.erro("Erro durante o Set/Conversão do campo. É necessário que este campo seja tipo string.");
-            }
-            // Gera o Evento
-            ePrincipal.dispatchEvent(new Event("input"));
-            // Mantem foco no Display, pois pode selecionar mais de um
-            setTimeout(() => {
-                eItem.parentElement.previousElementSibling.firstElementChild.focus();
-            }, 1);
-        }
-        mkt.mkSelUpdate(ePrincipal);
-        // Evento change apos terminar a atualizacao
-        ePrincipal.dispatchEvent(new Event("change"));
-    };
-    static mkSelSetDisplay = (e, KV) => {
-        if (KV.length <= 0) {
-            mkt.w("Não foi possível encontrar os itens selecionados.");
-            e.nextElementSibling.firstElementChild.value = "Opções \u{2209}";
-        }
-        else {
-            if (KV.length == 1) {
-                let display = "-- Selecione --";
-                if (KV[0].v != null) {
-                    display = KV[0].v;
-                }
-                if (display == "-- Selecione --") {
-                    // Criado um argumento indicando que o VALOR do campo está dessincronizado com as POSSIBILIDADDES em kv.
-                    e.dataset.selerror = "true";
-                    e.dataset.selerrorMsg =
-                        "O item selecionado não está na lista de possibilidades";
-                }
-                else {
-                    e.dataset.selerror = "false";
-                    e.dataset.selerrorMsg = "";
-                }
-                e.nextElementSibling.firstElementChild.value = display;
-            }
-            else if (KV.length > 1) {
-                e.nextElementSibling.firstElementChild.value =
-                    "[" + KV.length + "] Selecionados";
-            }
-        }
-    };
-    static mkSelRenderizar = async () => {
-        mkt.QAll("input.mkSel").forEach(async (e) => {
-            mkt.mkSelRenderizarElemento(e);
-            // Transforma elemento se ele ainda não foi transformado
-            if (e.parentElement?.classList.contains("mkSelBloco")) {
-                // Se não tem array, mas tem o refill e entrou para atualizar, faz o processo de refill genérico
-                if (!e.getAttribute("data-selarray") && e.getAttribute("data-refill")) {
-                    await mkt.mkSelDelRefillProcesso(e);
-                }
-                // Atualiza a lista com base na classe "atualizar" (Gera Evento input e change)
-                if (e.classList.contains("atualizar")) {
-                    e.classList.remove("atualizar");
-                    e.classList.add("atualizando");
-                    mkt.mkSelPopularLista(e);
-                    mkt.mkSelUpdate(e);
-                    // Executa evento, em todos atualizar.
-                    // O evento serve para que ao trocar o 1, o 2 execute input para então o 3 tb ter como saber que é pra atualizar
-                    e.dispatchEvent(new Event("input"));
-                    e.dispatchEvent(new Event("change"));
-                    e.classList.remove("atualizando");
-                }
-                if (e.classList.contains("atualizarSemEvento")) {
-                    e.classList.remove("atualizarSemEvento");
-                    e.classList.add("atualizando");
-                    mkt.mkSelPopularLista(e);
-                    mkt.mkSelUpdate(e);
-                    e.classList.remove("atualizando");
-                }
-                // Manter index em -1 para não chegar até esse campo
-                e.setAttribute("tabindex", "-1");
-                mkt.mkSelTabIndex(e);
-            }
-        });
-    };
-    static mkSelRenderizarElemento = async (e) => {
-        // Transforma elemento se ele ainda não foi transformado
-        if (!e.parentElement?.classList.contains("mkSelBloco")) {
-            // COLETA
-            let ePai = e.parentElement;
-            let ePos = Array.from(ePai?.children).indexOf(e);
-            // ELEMENTO no BLOCO
-            let divMkSeletorBloco = document.createElement("div");
-            let divMkSeletorPesquisa = document.createElement("div");
-            let divMkSeletorInputExibe = document.createElement("input");
-            let divMkSeletorInputExibeArrow = document.createElement("div");
-            let divMkSeletorList = document.createElement("div");
-            // Nomeando Classes
-            divMkSeletorBloco.className = "mkSelBloco";
-            divMkSeletorPesquisa.className = "mkSelPesquisa";
-            divMkSeletorInputExibe.className = "mkSelInputExibe";
-            divMkSeletorInputExibeArrow.className = "mkSelInputExibeArrow";
-            divMkSeletorList.className = "mkSelList";
-            // ORDEM no DOM
-            ePai?.insertBefore(divMkSeletorBloco, ePai?.children[ePos]);
-            divMkSeletorBloco.appendChild(e);
-            divMkSeletorBloco.appendChild(divMkSeletorPesquisa);
-            divMkSeletorBloco.appendChild(divMkSeletorList);
-            divMkSeletorPesquisa.appendChild(divMkSeletorInputExibe);
-            divMkSeletorPesquisa.appendChild(divMkSeletorInputExibeArrow);
-            // Transfere style
-            divMkSeletorBloco.setAttribute("style", e.getAttribute("style") ?? "");
-            // Flexas que movem o selecionado quando há apenas 1 possibilidade de selecao.
-            if (e.getAttribute("data-selmovesel") == "true" &&
-                e.getAttribute("data-selapenas") == "1") {
-                let divMkSelArrowSelLeft = document.createElement("div");
-                let divMkSelArrowSelRight = document.createElement("div");
-                divMkSelArrowSelLeft.className = "mkSelArrowSelLeft microPos6";
-                divMkSelArrowSelRight.className = "mkSelArrowSelRight microPos4";
-                divMkSeletorPesquisa.appendChild(divMkSelArrowSelLeft);
-                divMkSeletorPesquisa.appendChild(divMkSelArrowSelRight);
-                divMkSelArrowSelLeft.setAttribute("onclick", "mkt.mkSelLeftSel(this)");
-                divMkSelArrowSelRight.setAttribute("onclick", "mkt.mkSelRightSel(this)");
-                divMkSeletorBloco.style.setProperty("--mkSelArrowSize", "24px");
-            }
-            // Seta atributos e Gatilhos
-            e.removeAttribute("style");
-            e.setAttribute("readonly", "true");
-            e.setAttribute("tabindex", "-1");
-            mkt.mkSelTabIndex(e);
-            divMkSeletorInputExibe.setAttribute("placeholder", "Filtro \u{1F50D}");
-            divMkSeletorInputExibe.setAttribute("onfocus", "mkt.mkSelPesquisaFocus(this)");
-            divMkSeletorInputExibe.setAttribute("onblur", "mkt.mkSelPesquisaBlur(this)");
-            divMkSeletorInputExibe.setAttribute("oninput", "mkt.mkSelPesquisaInput(this)");
-            divMkSeletorInputExibe.setAttribute("onkeydown", "mkt.mkSelPesquisaKeyDown(event)");
-            divMkSeletorInputExibe.setAttribute("autocomplete", "off");
-            divMkSeletorList.addEventListener("scroll", (ev) => {
-                mkt.mkSelMoveu(ev.target);
-            });
-            // Popular Lista
-            mkt.mkSelPopularLista(e);
-            // Seleciona baseado no value do input
-            mkt.mkSelUpdate(e);
-            // Deixar Elemento de forma visivel, mas inacessivel.
-            if (e.getAttribute("data-dev") != "true") {
-                e.classList.add("mkSecreto");
-            }
-            // Segue o Elemento durante o scroll.
-            document.addEventListener("scroll", (event) => {
-                mkt.Reposicionar(divMkSeletorList, true);
-            });
-            window.addEventListener("resize", (event) => {
-                mkt.Reposicionar(divMkSeletorList, true);
-            });
-        }
-    };
-    static mkRecRenderizar = async () => {
-        mkt.QAll("input.mkRec").forEach(async (e) => {
-            // Gerar Elemento de recomendações
-            if (!e.nextElementSibling?.classList.contains("mkRecList")) {
-                let ePai = e.parentElement;
-                let ePos = Array.from(ePai?.children).indexOf(e);
-                let divMkRecList = document.createElement("div");
-                divMkRecList.className = "mkRecList emFoco";
-                divMkRecList.setAttribute("tabindex", "-1");
-                ePai?.insertBefore(divMkRecList, ePai?.children[ePos + 1]);
-                // Incrementar Evento
-                let oninput = e.getAttribute("oninput");
-                if (!oninput || !oninput.includes(";mkt.mkRecUpdate(this)")) {
-                    e.setAttribute("oninput", oninput + ";mkt.mkRecUpdate(this)");
-                }
-                let onfocus = e.getAttribute("onfocus");
-                if (!onfocus || !onfocus.includes(";mkt.mkRecFoco(this,true)")) {
-                    e.setAttribute("onfocus", onfocus + ";mkt.mkRecFoco(this,true)");
-                }
-                let onblur = e.getAttribute("onblur");
-                if (!onblur || !onblur.includes(";mkt.mkRecFoco(this,false)")) {
-                    e.setAttribute("onblur", onblur + ";mkt.mkRecFoco(this,false)");
-                }
-                e.setAttribute("autocomplete", "off");
-                // Seguir o Elemento durante o scroll e resize
-                document.addEventListener("scroll", (event) => {
-                    mkt.Reposicionar(divMkRecList, false);
-                });
-                window.addEventListener("resize", (event) => {
-                    mkt.Reposicionar(divMkRecList, true);
-                });
-                mkt.mkRecUpdate(e);
-            }
-            else {
-                if (!e.getAttribute("data-selarray") && e.getAttribute("data-refill")) {
-                    // REC não foi implementado refill
-                    //await mkt.mkRecDelRefillProcesso(e as HTMLElement);
-                }
-                let geraEvento = false;
-                if (e.classList.contains("atualizar"))
-                    geraEvento = true;
-                // Atualiza a lista com base na classe "atualizar" (Gera Evento input e change)
-                if (e.classList.contains("atualizar") || e.classList.contains("atualizarSemEvento")) {
-                    e.classList.remove("atualizar");
-                    e.classList.remove("atualizarSemEvento");
-                    e.classList.add("atualizando");
-                    mkt.mkRecUpdate(e);
-                    e.classList.remove("atualizando");
-                }
-                if (geraEvento) {
-                    // Executa evento, em todos atualizar.
-                    // O evento serve para que ao trocar o 1, o 2 execute input para então o 3 tb ter como saber que é pra atualizar
-                    e.dispatchEvent(new Event("input"));
-                    e.dispatchEvent(new Event("change"));
-                }
-            }
-        });
-    };
-    static mkRecUpdate = (e) => {
-        // Recebe o elemento input principal.
-        // GERA CADA ITEM DA LISTA COM BASE NO JSON
-        if (e?.getAttribute("data-selarray") != "") {
-            let eList = e.nextElementSibling;
-            let array = e.dataset.selarray;
-            eList.innerHTML = "";
-            if (mkt.isJson(array)) {
-                let kvList = mkt.parseJSON(array);
-                let c = 0;
-                /* ITENS */
-                kvList.forEach((o) => {
-                    if (o.v != null && o.v != "") {
-                        if (mkt.like(e.value, o.v) && e.value.trim() != o.v.trim()) {
-                            c++;
-                            let item = document.createElement("div");
-                            let itemTexto = document.createElement("span");
-                            item.className = "recItem";
-                            item.setAttribute("data-k", o.k);
-                            item.setAttribute("onmousedown", "mkt.mkRecChange(this,'" + o.v + "')");
-                            itemTexto.innerHTML = o.v;
-                            item.appendChild(itemTexto);
-                            eList.appendChild(item);
-                        }
-                    }
-                });
-                if (c <= 0) {
-                    eList.innerHTML = "Sem recomendações";
-                }
-            }
-            else {
-                mkt.w("mkRecUpdate(e):  atributo selarray Não é um JSON válido: ", array);
-            }
-        }
-        else {
-            mkt.w("mkRecUpdate(e): Elemento não encontrado ou selarray dele está vazia.", e);
-        }
-    };
-    static mkBotCheck = async () => {
-        // Botao incluido uma imagem/pdf visualizavel e clicavel.
-        // Valor inicial no value, quando não presente, exibe data-value.
-        mkt.QAll("button.mkBot").forEach(async (e) => {
-            // Apenas quando contem Atualizar
-            let semEvento = e.classList.contains("atualizarSemEvento");
-            if (e.classList.contains("atualizar") || semEvento) {
-                e.classList.remove("atualizar");
-                e.classList.remove("atualizarSemEvento");
-                e.classList.add("atualizando");
-                // - Remove conteudo
-                e.innerHTML = "";
-                // - Coleta value do campo (ex: botao tem value="/img/teste.jpg")
-                let v = e.getAttribute("value");
-                // - Caso Nulo, Tentar pelo dataset
-                if (v == null || v == "") {
-                    v = e.dataset.value;
-                }
-                let clicavel = e.dataset.clicavel;
-                let exibirbarra = e.dataset.exibirbarra;
-                if (v != null && v != "") {
-                    let tipo = null;
-                    let terminacao = v.slice(v.length - 3, v.length).toString().toLowerCase();
-                    // Verificar aqui se trata-se de um link ou de uma base64 direto no elemento.					
-                    // - Verifica se terminacao do arquivo é PDF ou OUTRO,
-                    if ((v.includes("application/pdf")) || (terminacao == "pdf")) {
-                        tipo = "pdf";
-                    }
-                    // << Inicio do conteúdo
-                    let retornar = "<";
-                    // FORMATOS DE ARQUIVO
-                    if (tipo == "pdf") {
-                        retornar += "embed type='application/pdf' class='mkCem mkBotEmbed' src='" + v;
-                    }
-                    else {
-                        retornar +=
-                            e.innerHTML = "img class='mkCem' src='" + v;
-                    }
-                    if (exibirbarra) {
-                        retornar += "#toolbar=0";
-                    }
-                    // << Fim o conteúdo
-                    retornar += "'>";
-                    // Se é ou não clicavel
-                    if (!clicavel) {
-                        retornar += "<div class='mkBotSobre'></div>";
-                    }
-                    // Set
-                    e.innerHTML = retornar;
-                    // Ao concluir, tenta executar atributo onchange, se houver
-                    if (!semEvento) {
-                        if (e.onchange) {
-                            e.onchange();
-                        }
-                    }
-                }
-                else {
-                    mkt.w("Elemento com 'value' nulo. Esperava-se conteudo: ", v);
-                }
-                e.classList.remove("atualizando");
-            }
-        });
-    };
-} // FIM CLASSE MKT
-// Object.keys(mkt).forEach((n) => {
-// 	Object.defineProperty(mkt, n, { enumerable: false, writable: false, configurable: false });
-// });
-String.prototype.removeRaw = function () {
-    return this
-        //.replaceAll("&quot;", '"')
-        //.replaceAll("&#39;", "'")
-        //.replaceAll("&amp;", "&")
-        .replaceAll("\n", "")
-        .replaceAll("\r", "")
-        .replaceAll("\t", "")
-        .replaceAll("\b", "")
-        .replaceAll("\f", "");
-    //.replaceAll("\\", "/");
-    // \u00E3 == ã, viraria /u00E3
-};
-Object.defineProperty(mkt, "cursorFim", {
-    value: (e) => {
-        // Move o cursor para o fim assim que executar a funcao
+    static cursorFim = (e) => {
+        // Move o cursor para o fim do VALUE do elemento.
         let len = e.value.length;
         setTimeout(() => {
             e.setSelectionRange(len, len);
         }, 1);
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "mkGerarObjeto", {
-    value: (este) => {
+    };
+    static mkGerarObjeto = (este) => {
         // Gerar Objeto a partir de um Form Entries
         let form = este;
-        if (typeof este != "object") {
+        if (mkt.classof(este) != "Object") {
+            // Se vier o Elemento Form / o Query do Form
             form = mkt.Q(este);
         }
         let rObjeto = mkt.mkLimparOA(Object.fromEntries(new FormData(form).entries()));
@@ -4310,30 +4307,8 @@ Object.defineProperty(mkt, "mkGerarObjeto", {
         mkt.l(rObjeto);
         mkt.ge();
         return rObjeto;
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "QSet", {
-    value: (query = "body", valor = null) => {
-        let e = mkt.Q(query);
-        if (e) {
-            if (valor != null) {
-                if (e)
-                    e.value = valor;
-            }
-            else {
-                let e = mkt.Q(query);
-                if (e)
-                    e.value = "";
-            }
-            return e;
-        }
-        else {
-            return null;
-        }
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "QSetAll", {
-    value: (query = "input[name='#PROP#']", o = null, comEvento = true) => {
+    };
+    static QSetAll = (query = "input[name='#PROP#']", o = null, comEvento = true) => {
         // Seta todos os query com os valores das propriedades informadas nos campos.
         // O nome da propriedade precisa ser compatível com o PROPNAME do query.
         let eAfetados = [];
@@ -4361,10 +4336,9 @@ Object.defineProperty(mkt, "QSetAll", {
         else
             mkt.w("QSetAll - Objeto não pode ser nulo: " + o);
         return eAfetados;
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "Qison", {
-    value: (query = "body") => {
+    };
+    static Qison = (query = "body") => {
+        // Retorna uma array do estado DISABLED de todos da query.
         return mkt.AllFromCadaExe(query, (e) => {
             let b = false;
             if (!e.classList.contains("disabled")) {
@@ -4372,17 +4346,15 @@ Object.defineProperty(mkt, "Qison", {
             }
             return b;
         });
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "QverToggle", {
-    value: (query = "body") => {
+    };
+    static QverToggle = (query = "body") => {
+        // Inverte oculto dos campos da query
         return mkt.aCadaElemento(query, (e) => {
             e?.classList.toggle("oculto");
         });
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "QScrollTo", {
-    value: (query = "body") => {
+    };
+    static QScrollTo = (query = "body") => {
+        // Move o Scroll da janela até o elemento
         let temp = mkt.Q(query);
         let distTopo = temp.offsetTop;
         window.scrollTo({
@@ -4390,43 +4362,19 @@ Object.defineProperty(mkt, "QScrollTo", {
             behavior: "smooth",
         });
         return temp;
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "QdataGet", {
-    value: (query = "body", atributoNome) => {
-        return mkt.Q(query).getAttribute("data-" + atributoNome);
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "QdataSet", {
-    value: (query = "body", atributoNome, atributoValor) => {
-        return mkt.Q(query).setAttribute("data-" + atributoNome, atributoValor);
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "toggleSwitcher", {
-    value: (e) => {
-        if (e.classList.contains("True")) {
-            e.classList.remove("True");
-            e.classList.add("False");
-        }
-        else {
-            if (e.classList.contains("False")) {
-                e.classList.remove("False");
-                e.classList.add("True");
-            }
-        }
-        return e;
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "GetParam", {
-    value: (name = null) => {
+    };
+    static GetParam = (name = null, url = null) => {
+        // Coleta o valor do parametro da url.
+        if (!url)
+            url = document.location.toString();
         if (name != null) {
-            return new URL(document.location.toString()).searchParams.get(name);
+            return new URL(url).searchParams.get(name);
         }
         else {
-            return new URL(document.location.toString()).searchParams;
+            return new URL(url).searchParams.toString();
         }
-    }, enumerable: false, writable: false, configurable: false,
-});
+    };
+} // <= FIM CLASSE MKT
 Object.defineProperty(mkt, "isVisible", {
     value: (e) => {
         return (e.offsetWidth > 0 || e.offsetHeight > 0 || e.getClientRects().length > 0);
@@ -5441,6 +5389,12 @@ Object.defineProperty(mkt, "fUIFaseUpdateLinkFase", {
         });
     }, enumerable: false, writable: false, configurable: false,
 });
+//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+//  DEFINE PROPERTY                 \\
+//___________________________________\\
+// Object.keys(mkt).forEach((n) => {
+// 	Object.defineProperty(mkt, n, { enumerable: false, writable: false, configurable: false });
+// });
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //   Auto Inicializar               \\
 //___________________________________\\

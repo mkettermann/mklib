@@ -3,7 +3,7 @@ const menuAbrir = async (t) => {
 		t = "zone";
 	}
 	let e = mkt.Q("#" + t);
-	let destino = mkt.QdataGet(e, "go");
+	let destino = e.dataset["go"];
 	if (destino != null) {
 		let pac = await mkt.get.html("./html/" + destino + "?" + mkt.uuid());
 		if (pac.retorno != null) {
