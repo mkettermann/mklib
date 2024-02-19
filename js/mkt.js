@@ -833,7 +833,7 @@ class mkt {
 						Filtro
 					</div>
 					<div class='col10 microPos5 botao hmNext'>${mkt.a.SVGINI}${mkt.a.svgRight}${mkt.a.SVGFIM}</div>
-					<div class='col10 fechar botao nosel' onclick='mkt.headMenuHideX()'>
+					<div class='col10 fechar botao nosel hmHide'>
 					${mkt.a.SVGINI}${mkt.a.svgFecha}${mkt.a.SVGFIM}
 					</div>
 				</div>
@@ -856,6 +856,9 @@ class mkt {
             mkt.Ao("click", ".mkHeadMenu .hmNext", (e) => {
                 let eHmenu = mkt.Q("body .mkHeadMenu");
                 mkt.a.hm.Next(eHmenu?.getAttribute("data-colname"), eHmenu?.getAttribute("data-mkt"));
+            });
+            mkt.Ao("click", ".mkHeadMenu .hmHide", (e) => {
+                mkt.Q("body .mkHeadMenu")?.classList.add("oculto");
             });
             mkt.Ao("click", ".mkHeadMenu .hmCrescente", (e) => {
                 let eHmenu = mkt.Q("body .mkHeadMenu");
@@ -1627,9 +1630,8 @@ class mkt {
         },
         wpool: null, // WorkerPool quando iniciado
     };
-    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-    //                     ATALHOS PERSONALIZADOS                              \\
-    //==========================================================================\\
+    // ============================ ATALHOS PERSONALIZADOS ============================ \\
+    // ================================================================================= \\
     static Q = (query) => {
         // Atalho para QuerySelector que retorna apenas o primeiro elemento da query.
         if (mkt.classof(query) != "String")
@@ -1750,9 +1752,8 @@ class mkt {
     static wait = (ms) => {
         return new Promise(r => setTimeout(r, ms));
     };
-    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-    //                     ERROS, LOGS E INFORMACOES                           \\
-    //==========================================================================\\
+    // =========================== ERROS, LOGS E INFORMACOES ========================== \\
+    // ================================================================================= \\
     static l = (...s) => {
         // Atalho e Redirect Log. Utilizar mkt.w para realizar trace route.
         if (mkt.a.log) {
@@ -1813,9 +1814,8 @@ class mkt {
             mktArmazenado = JSON.parse(localStorage.mktRequests);
         return console.table(mktArmazenado);
     };
-    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-    //                     MKT Support / Component                             \\
-    //==========================================================================\\
+    // ============================ MKT Support / Component =========================== \\	
+    // ================================================================================= \\
     static exeTimer = () => {
         // A um determinado tempo, reexecuta essas funções.
         // Quando trocar essas funções para Web Component, será possivel manter observado por dentro da classe.
@@ -2100,9 +2100,8 @@ class mkt {
         }
         return listaDados;
     };
-    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-    //                     Web Generic Component                               \\
-    //==========================================================================\\
+    // ============================= Web Generic Component ============================ \\	
+    // ================================================================================= \\
     static CarregarON = (nomeDoRequest = "") => {
         // Gera e exibe um sobreposto elemento que representa o carregamento com opção de ocultar.
         if (!mkt.Q("body .CarregadorMkBlock")) {
@@ -2461,9 +2460,8 @@ class mkt {
         // Sempre retorna o config
         return config;
     };
-    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-    //                     Gerenciamento Monetário / Numérico                  \\
-    //==========================================================================\\
+    // ==================== Gerenciamento Monetário / Numérico ======================== \\
+    // ================================================================================= \\
     static mkFloat = (num) => {
         // Tenta deixar em formato Number sem bugar
         let ret;
@@ -2550,9 +2548,8 @@ class mkt {
         }
         return new Intl.NumberFormat(c.locale, { minimumFractionDigits: 2 }).format(valor);
     };
-    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-    //                     Gerenciamento de Data                               \\
-    //==========================================================================\\
+    // =========================== Gerenciamento de Data ============================== \\
+    // ================================================================================= \\
     static getMs = (dataYYYYMMDD = null) => {
         // Retorna Milisegundos da data no formato Javascript
         if (dataYYYYMMDD != null) {
@@ -2686,9 +2683,8 @@ class mkt {
         // Então o erro de 1 dia ocorre 1x ao ano (Dia represeta 1436min).
         return Math.trunc(ms / 86400000);
     };
-    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-    //                     Web Components                                      \\
-    //==========================================================================\\
+    // =============================== Web Components ================================= \\
+    // ================================================================================= \\
     static mkSelTabIndex = (e) => {
         // Se elemento estiver DISABLED atualiza TABINDEX
         if (e.classList.contains("disabled")) {
@@ -3270,213 +3266,8 @@ class mkt {
             }
         });
     };
-    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-    //                     TOOLS e JS HELPERS                                  \\
-    //==========================================================================\\
-    static contem = (strMaior, strMenor) => {
-        // Comparardor de string CONTEM
-        strMaior = mkt.removeEspecias(strMaior).toLowerCase();
-        strMenor = mkt.removeEspecias(strMenor).toLowerCase();
-        return (strMaior.includes(strMenor));
-    };
-    static like = (strMenor, strMaior) => {
-        // Comparardor de string LIKE
-        let result = false;
-        // Apenas Numeros e Letras está presente,
-        // pois se utilizar str.match(),
-        // não pode conter os caracteres reservados do regex.
-        // RemoveEspeciais já inclui apenasNumerosELetras.
-        let rmMaior = mkt.removeEspecias(strMaior.toLowerCase().trim());
-        let rmMenor = mkt.removeEspecias(strMenor.toLowerCase().trim());
-        if (rmMaior.match(rmMenor)) {
-            result = true;
-        }
-        // Desabilitei pois já estou removendo os especiais em cima. e a função precisa ser rápida.
-        // Internacionalizador de comparação... (Galês CH e DD e Latin ä))
-        // let likeMatcher = new Intl.Collator(undefined, {
-        // 	sensitivity: "base",
-        // 	ignorePunctuation: true,
-        // }).compare;
-        // if (likeMatcher(strMaior, strMenor) === 0) {
-        // 	result = true;
-        // }
-        return result;
-    };
-    static classof = (o) => {
-        // Identifica a classe do argumento informado.
-        let nomeClasse = Object.prototype.toString.call(o).slice(8, -1);
-        // Exceção, apenas quando "Number" converter os NaN pra "NaN".
-        if (nomeClasse == "Number") {
-            if (o.toString() == "NaN") {
-                nomeClasse = "NaN";
-            }
-        }
-        ;
-        return nomeClasse;
-    };
-    static clonar = (i) => {
-        // Clona com a técnica de montar e desmontar string.
-        return mkt.parseJSON(mkt.stringify(i));
-    };
-    static ordenar = (array, nomeProp, sortDir) => {
-        // Efetua o ordenamento do array informando a propriedade e a direção (0,1,2)
-        if (nomeProp) {
-            // 0 - Crescente:
-            array.sort((oA, oB) => {
-                let a = nomeProp ? mkt.getV(nomeProp, oA) : null;
-                let b = nomeProp ? mkt.getV(nomeProp, oB) : null;
-                //let b = oB[nomeProp];
-                if (typeof a == "string")
-                    a = a.toLowerCase().trim();
-                if (typeof b == "string")
-                    b = b.toLowerCase().trim();
-                if (a !== b) {
-                    if (a > b)
-                        return 1;
-                    if (a < b)
-                        return -1;
-                }
-                if (!a || !b) { // Nulo
-                    return 0;
-                }
-                return -1;
-            });
-            if (!mkt.a.contaOrdena) {
-                mkt.a.contaOrdena = 0;
-            }
-            mkt.a.contaOrdena++;
-            // 1 - Decrescente
-            if (sortDir === 1) {
-                array = array.reverse();
-            }
-            else if (sortDir === 2) {
-                // 2 - Toogle 
-                if (mkt.a.contaOrdena % 2 == 0) {
-                    array = array.reverse();
-                }
-            }
-        }
-        return array;
-    };
-    static mkLimparOA = (oa) => {
-        // Converte (OBJ / ARRAY) Limpar Nulos e Vazios
-        let mkLimparOA_Execute = (o) => {
-            for (let propName in o) {
-                if (o[propName] === null ||
-                    o[propName] === "") {
-                    delete o[propName];
-                }
-            }
-            return o;
-        };
-        return mkt.aCadaObjExecuta(oa, mkLimparOA_Execute);
-    };
-    static aCadaSubPropriedade = (OA, funcao = null, exceto = "Object") => {
-        // Executa a FUNCAO em todas as propriedades deste OA. Inclusive Obj.Obj...
-        let c = 0;
-        for (let a in OA) {
-            if (mkt.classof(OA[a]) != exceto) {
-                if (funcao) {
-                    funcao(OA[a]);
-                }
-            }
-            c++;
-            // Se o atual é objeto, itera internamente
-            if (mkt.classof(OA[a]) == "Object") {
-                c += mkt.aCadaSubPropriedade(OA[a], funcao, exceto);
-            }
-        }
-        return c;
-    };
-    static aCadaObjExecuta = (oa, func) => {
-        // Verifica se ARRAY ou OBJETO e executa a função FUNC a cada objeto dentro de OA.
-        if (Array.isArray(oa)) {
-            for (let i = 0; i < oa.length; i++) {
-                func(oa[i]);
-            }
-        }
-        else {
-            func(oa);
-        }
-        return oa;
-    };
-    static aCadaElemento = (query, fn) => {
-        // Executa a cada elemento, similar ao QAll.
-        // Query: String, Element, [Element,Element]
-        if (mkt.classof(query) == "String") {
-            let retorno;
-            let elementos = mkt.QAll(query);
-            if (elementos.length == 1)
-                retorno = elementos[0];
-            else
-                retorno = elementos;
-            elementos.forEach((e) => {
-                fn(e);
-            });
-            return retorno;
-        }
-        else if (mkt.classof(query) == "Array") {
-            query.forEach((e) => {
-                fn(e);
-            });
-            return query;
-        }
-        else {
-            let e = mkt.Q(query);
-            fn(e);
-            return e;
-        }
-    };
-    static AllFromCadaExe = (query, fn) => {
-        // Executa função aCada Elemento do QAll e junta os resultados.
-        // Retorna uma array de resultados de cada execucao.
-        let retorno = [];
-        if (typeof query == "string") {
-            let elementos = mkt.QAll(query);
-            elementos.forEach((e) => {
-                retorno.push(fn(e));
-            });
-        }
-        else if (Array.isArray(query)) {
-            query.forEach((e) => {
-                retorno.push(fn(e));
-            });
-        }
-        else {
-            let e = mkt.Q(query);
-            retorno.push(fn(e));
-        }
-        return retorno;
-    };
-    static parseJSON = (t, removeRaw = false) => {
-        // Se for um JSON válido. Retorna o objeto, se não null.
-        if (removeRaw) {
-            if (mkt.classof(t) == "String") {
-                t = t.removeRaw();
-            }
-        }
-        if (t === "")
-            return ""; // Vazio
-        if (mkt.isJson(t)) {
-            return JSON.parse(t);
-        }
-        else {
-            mkt.w("JSON Inválido: Não foi possível converter o JSON.");
-            return null;
-        }
-    };
-    static stringify = (o) => {
-        // Camada de tratamento de envio de JSON.
-        return JSON.stringify(o)
-            ?.replaceAll("\n", "")
-            ?.replaceAll("\r", "")
-            ?.replaceAll("\t", "")
-            ?.replaceAll("\b", "")
-            ?.replaceAll("\f", "");
-        //?.replaceAll('&', "&amp;") // Post C# não identifica os campos do JSON
-        //?.replaceAll('"', "&quot;")
-        //.replaceAll("'", "&#39;");
-    };
+    // ======================== REGRAR | VALIDAR | MASCARAR =========================== \\
+    // ================================================================================= \\
     static regras = [];
     static exeregra = async (e, ev = null) => {
         // Função que executa as regras deste campo com base nos objetos salvos
@@ -3913,6 +3704,261 @@ class mkt {
             mkt.w("Mascarar Requer Texto: ", texto, " e Mascara: ", mascara);
         }
         return null;
+    };
+    static regrar = (container, nome, ...obj) => {
+        /**
+         * Informar o C (Container), N (Nome do input) e OBJ (Regra)
+         * Atributos do Objeto
+         * k:		nome da regra a ser utilizada
+         * v: 	atributo da regra escolhida
+         * m: 	mensagem de exibição caso esteja em estado falso.
+         * a: 	auto executar essa regra assim que regrar (true/false)
+         * f:		força validar mesmo se estiver invisivel / desativado (true/false)
+         * on: 	padrão true. define se vai executar a regra ou não.
+         */
+        if (typeof nome != "string") {
+            return mkt.w("Regrar() precisa receber o nome do input como string");
+        }
+        container = mkt.Q(container);
+        let e = container?.querySelector("*[name='" + nome + "']");
+        if (e) {
+            mkt.atribuir(e, () => { mkt.exeregra(e); }, "oninput");
+            mkt.atribuir(e, () => { mkt.exeregra(e, event); }, "onblur");
+            // Buscar Elemento e regra
+            let auto = false;
+            let novaregra = { c: container, n: nome, e: e, r: [...obj] };
+            let posE = mkt.regras.findIndex((o) => o.e == e);
+            if (posE >= 0) {
+                // Elemento já encontrado, substituir a regra específica
+                novaregra.r.forEach((i) => {
+                    let posRe = mkt.regras[posE].r.findIndex((o) => o.k == i.k);
+                    if (posRe >= 0) {
+                        for (let p in novaregra.r) {
+                            mkt.regras[posE].r[posRe] = novaregra.r[p];
+                        }
+                    }
+                    else {
+                        mkt.regras[posE].r.push(i);
+                    }
+                });
+            }
+            else {
+                mkt.regras.push(novaregra);
+            }
+            // Auto Executa
+            if (auto) {
+                mkt.exeregra(e, "inicial");
+            }
+        }
+        else {
+            mkt.w("Regrar Requer Elemento (" + nome + "): ", e, " Container: ", container);
+        }
+    };
+    // ============================ TOOLS e JS HELPERS ================================ \\
+    // ================================================================================= \\
+    static contem = (strMaior, strMenor) => {
+        // Comparardor de string CONTEM
+        strMaior = mkt.removeEspecias(strMaior).toLowerCase();
+        strMenor = mkt.removeEspecias(strMenor).toLowerCase();
+        return (strMaior.includes(strMenor));
+    };
+    static like = (strMenor, strMaior) => {
+        // Comparardor de string LIKE
+        let result = false;
+        // Apenas Numeros e Letras está presente,
+        // pois se utilizar str.match(),
+        // não pode conter os caracteres reservados do regex.
+        // RemoveEspeciais já inclui apenasNumerosELetras.
+        let rmMaior = mkt.removeEspecias(strMaior.toLowerCase().trim());
+        let rmMenor = mkt.removeEspecias(strMenor.toLowerCase().trim());
+        if (rmMaior.match(rmMenor)) {
+            result = true;
+        }
+        // Desabilitei pois já estou removendo os especiais em cima. e a função precisa ser rápida.
+        // Internacionalizador de comparação... (Galês CH e DD e Latin ä))
+        // let likeMatcher = new Intl.Collator(undefined, {
+        // 	sensitivity: "base",
+        // 	ignorePunctuation: true,
+        // }).compare;
+        // if (likeMatcher(strMaior, strMenor) === 0) {
+        // 	result = true;
+        // }
+        return result;
+    };
+    static classof = (o) => {
+        // Identifica a classe do argumento informado.
+        let nomeClasse = Object.prototype.toString.call(o).slice(8, -1);
+        // Exceção, apenas quando "Number" converter os NaN pra "NaN".
+        if (nomeClasse == "Number") {
+            if (o.toString() == "NaN") {
+                nomeClasse = "NaN";
+            }
+        }
+        ;
+        return nomeClasse;
+    };
+    static clonar = (i) => {
+        // Clona com a técnica de montar e desmontar string.
+        return mkt.parseJSON(mkt.stringify(i));
+    };
+    static ordenar = (array, nomeProp, sortDir) => {
+        // Efetua o ordenamento do array informando a propriedade e a direção (0,1,2)
+        if (nomeProp) {
+            // 0 - Crescente:
+            array.sort((oA, oB) => {
+                let a = nomeProp ? mkt.getV(nomeProp, oA) : null;
+                let b = nomeProp ? mkt.getV(nomeProp, oB) : null;
+                //let b = oB[nomeProp];
+                if (typeof a == "string")
+                    a = a.toLowerCase().trim();
+                if (typeof b == "string")
+                    b = b.toLowerCase().trim();
+                if (a !== b) {
+                    if (a > b)
+                        return 1;
+                    if (a < b)
+                        return -1;
+                }
+                if (!a || !b) { // Nulo
+                    return 0;
+                }
+                return -1;
+            });
+            if (!mkt.a.contaOrdena) {
+                mkt.a.contaOrdena = 0;
+            }
+            mkt.a.contaOrdena++;
+            // 1 - Decrescente
+            if (sortDir === 1) {
+                array = array.reverse();
+            }
+            else if (sortDir === 2) {
+                // 2 - Toogle 
+                if (mkt.a.contaOrdena % 2 == 0) {
+                    array = array.reverse();
+                }
+            }
+        }
+        return array;
+    };
+    static mkLimparOA = (oa) => {
+        // Converte (OBJ / ARRAY) Limpar Nulos e Vazios
+        let mkLimparOA_Execute = (o) => {
+            for (let propName in o) {
+                if (o[propName] === null ||
+                    o[propName] === "") {
+                    delete o[propName];
+                }
+            }
+            return o;
+        };
+        return mkt.aCadaObjExecuta(oa, mkLimparOA_Execute);
+    };
+    static aCadaSubPropriedade = (OA, funcao = null, exceto = "Object") => {
+        // Executa a FUNCAO em todas as propriedades deste OA. Inclusive Obj.Obj...
+        let c = 0;
+        for (let a in OA) {
+            if (mkt.classof(OA[a]) != exceto) {
+                if (funcao) {
+                    funcao(OA[a]);
+                }
+            }
+            c++;
+            // Se o atual é objeto, itera internamente
+            if (mkt.classof(OA[a]) == "Object") {
+                c += mkt.aCadaSubPropriedade(OA[a], funcao, exceto);
+            }
+        }
+        return c;
+    };
+    static aCadaObjExecuta = (oa, func) => {
+        // Verifica se ARRAY ou OBJETO e executa a função FUNC a cada objeto dentro de OA.
+        if (Array.isArray(oa)) {
+            for (let i = 0; i < oa.length; i++) {
+                func(oa[i]);
+            }
+        }
+        else {
+            func(oa);
+        }
+        return oa;
+    };
+    static aCadaElemento = (query, fn) => {
+        // Executa a cada elemento, similar ao QAll.
+        // Query: String, Element, [Element,Element]
+        if (mkt.classof(query) == "String") {
+            let retorno;
+            let elementos = mkt.QAll(query);
+            if (elementos.length == 1)
+                retorno = elementos[0];
+            else
+                retorno = elementos;
+            elementos.forEach((e) => {
+                fn(e);
+            });
+            return retorno;
+        }
+        else if (mkt.classof(query) == "Array") {
+            query.forEach((e) => {
+                fn(e);
+            });
+            return query;
+        }
+        else {
+            let e = mkt.Q(query);
+            fn(e);
+            return e;
+        }
+    };
+    static AllFromCadaExe = (query, fn) => {
+        // Executa função aCada Elemento do QAll e junta os resultados.
+        // Retorna uma array de resultados de cada execucao.
+        let retorno = [];
+        if (typeof query == "string") {
+            let elementos = mkt.QAll(query);
+            elementos.forEach((e) => {
+                retorno.push(fn(e));
+            });
+        }
+        else if (Array.isArray(query)) {
+            query.forEach((e) => {
+                retorno.push(fn(e));
+            });
+        }
+        else {
+            let e = mkt.Q(query);
+            retorno.push(fn(e));
+        }
+        return retorno;
+    };
+    static parseJSON = (t, removeRaw = false) => {
+        // Se for um JSON válido. Retorna o objeto, se não null.
+        if (removeRaw) {
+            if (mkt.classof(t) == "String") {
+                t = t.removeRaw();
+            }
+        }
+        if (t === "")
+            return ""; // Vazio
+        if (mkt.isJson(t)) {
+            return JSON.parse(t);
+        }
+        else {
+            mkt.w("JSON Inválido: Não foi possível converter o JSON.");
+            return null;
+        }
+    };
+    static stringify = (o) => {
+        // Camada de tratamento de envio de JSON.
+        return JSON.stringify(o)
+            ?.replaceAll("\n", "")
+            ?.replaceAll("\r", "")
+            ?.replaceAll("\t", "")
+            ?.replaceAll("\b", "")
+            ?.replaceAll("\f", "");
+        //?.replaceAll('&', "&amp;") // Post C# não identifica os campos do JSON
+        //?.replaceAll('"', "&quot;")
+        //.replaceAll("'", "&#39;");
     };
     static mkClicarNaAba = (e) => {
         // Funcionalidade de clicar na aba e trocar a classe ativo
@@ -4423,9 +4469,7 @@ class mkt {
         link.click();
         return nomeArquivo;
     };
-} // <= FIM CLASSE MKT
-Object.defineProperty(mkt, "mkOnlyFloatKeys", {
-    value: (ev) => {
+    static mkOnlyFloatKeys = (ev) => {
         // Eventos HTML5
         // Bloqueio de teclas especificas onKeyDown
         // Input: UMA tecla QUALQUER
@@ -4453,17 +4497,13 @@ Object.defineProperty(mkt, "mkOnlyFloatKeys", {
         if (isNegado) {
             ev.preventDefault();
         }
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "mkEventBlock", {
-    value: (ev) => {
+    };
+    static mkEventBlock = (ev) => {
         // Bloqueios de eventos especificos (varios, exemplo: onContextMenu)
         mkt.w("Negado");
         ev.preventDefault();
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "mkSelecionarInner", {
-    value: (e) => {
+    };
+    static mkSelecionarInner = (e) => {
         // Seleciona texto do elemento
         if (window.getSelection) {
             const selection = window.getSelection();
@@ -4472,46 +4512,26 @@ Object.defineProperty(mkt, "mkSelecionarInner", {
             selection?.removeAllRanges();
             selection?.addRange(range);
         }
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "mkInputFormatarValor", {
-    value: (e) => {
+    };
+    static mkInputFormatarValor = (e) => {
         // 123,45 (2 casas pos conversao float)
         e.value = mkt.mkDuasCasas(mkt.mkFloat(e.value));
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "mkMedia", {
-    value: (menor, maior) => {
+    };
+    static mkMedia = (menor, maior) => {
         return mkt.mkDuasCasas((mkt.mkFloat(menor) + mkt.mkFloat(maior)) / 2);
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "mkNCasas", {
-    value: (num, nCasas = 2) => {
+    };
+    static mkNCasas = (num, nCasas = 2) => {
         return mkt.mkFloat(num).toFixed(nCasas).replaceAll(".", ","); // 2000,?
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "mkEmReais", {
-    value: (num) => {
+    };
+    static mkEmReais = (num) => {
+        // Essa função foi substituida por toMoeda.
+        // Mas aqui tentava usar um Number do javascript e usar as classes pra converter em reais.
         return mkt.mkFloat(num).toLocaleString("pt-br", {
             style: "currency",
             currency: "BRL",
         }); // R$ 12.123,45
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "encod", {
-    value: (texto = "") => {
-        // String qualquer para B64
-        return btoa(encodeURIComponent(texto));
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "decod", {
-    value: (texto = "") => {
-        // B64 para String
-        return decodeURIComponent(atob(texto));
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "mkBase64", {
-    value: (arquivo, tagImg, tagHidden) => {
+    };
+    static mkBase64 = (arquivo, tagImg, tagHidden) => {
         // Verificar se esta nulo
         let leitor = new FileReader();
         leitor.onload = () => {
@@ -4519,10 +4539,8 @@ Object.defineProperty(mkt, "mkBase64", {
             mkt.Q(tagHidden).value = leitor.result;
         };
         leitor.readAsDataURL(arquivo);
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "ler", {
-    value: async (arq, p) => {
+    };
+    static ler = async (arq, p) => {
         return new Promise((r) => {
             let leitor = new FileReader();
             leitor.onprogress = (ev) => {
@@ -4555,10 +4573,8 @@ Object.defineProperty(mkt, "ler", {
                 r(null);
             }
         });
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "getModelo", {
-    value: (array) => {
+    };
+    static getModelo = (array) => {
         let chaves = new Set();
         array.forEach((o) => {
             Object.keys(o).forEach((p) => {
@@ -4575,16 +4591,12 @@ Object.defineProperty(mkt, "getModelo", {
             });
         });
         return modelo;
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "getExclusivos", {
-    value: async (array) => {
+    };
+    static getExclusivos = async (array) => {
         let res = await mkt.addTask({ k: "Exclusivos", v: array });
         return res.v;
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "mkMerge", {
-    value: (o, ...fontes) => {
+    };
+    static mkMerge = (o, ...fontes) => {
         for (let fonte of fontes) {
             for (let k of Object.keys(fonte)) {
                 if (!(k in o)) {
@@ -4593,10 +4605,8 @@ Object.defineProperty(mkt, "mkMerge", {
             }
         }
         return o;
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "encheArray", {
-    value: (arrTemplate, inicio = 1, total) => {
+    };
+    static encheArray = (arrTemplate, inicio = 1, total) => {
         // Retorna uma array utilizando um template do que deve ser preenchido.
         let novaArray = [];
         if (Array.isArray(arrTemplate)) {
@@ -4630,10 +4640,8 @@ Object.defineProperty(mkt, "encheArray", {
             }
         }
         return novaArray;
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "encheArrayUltimos", {
-    value: (arrTemplate, fim = 1, total) => {
+    };
+    static encheArrayUltimos = (arrTemplate, fim = 1, total) => {
         // Retorna uma array dos últimos
         let novaArray = [];
         if (Array.isArray(arrTemplate)) {
@@ -4667,15 +4675,11 @@ Object.defineProperty(mkt, "encheArrayUltimos", {
             }
         }
         return novaArray;
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "isData", {
-    value: (i) => {
+    };
+    static isData = (i) => {
         return mkt.a.util.data[1].test(i);
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "getTempoDiferenca", {
-    value: (msOld, msNew = null) => {
+    };
+    static getTempoDiferenca = (msOld, msNew = null) => {
         let dias = mkt.getDiasDiferenca(msOld, msNew);
         if (dias < 0) {
             dias = dias * -1;
@@ -4718,124 +4722,36 @@ Object.defineProperty(mkt, "getTempoDiferenca", {
             }
         }
         return strTempo;
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "transMsEmSegundos", {
-    value: (ms) => {
+    };
+    static transMsEmSegundos = (ms) => {
         return Math.trunc(ms / 1000); // 1000 ms == 1s
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "transMsEmMinutos", {
-    value: (ms) => {
+    };
+    static transMsEmMinutos = (ms) => {
         return Math.trunc(ms / 60000); // 1000 * 60
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "transMsEmHoras", {
-    value: (ms) => {
+    };
+    static transMsEmHoras = (ms) => {
         return Math.trunc(ms / 3600000); // 1000 * 3600
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "transSegundosEmMs", {
-    value: (s) => {
+    };
+    static transSegundosEmMs = (s) => {
         return s * 1000;
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "transMinutosEmMs", {
-    value: (m) => {
+    };
+    static transMinutosEmMs = (m) => {
         return m * 60000;
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "transHorasEmMs", {
-    value: (h) => {
+    };
+    static transHorasEmMs = (h) => {
         return h * 3600000;
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "transDiasEmMs", {
-    value: (d) => {
+    };
+    static transDiasEmMs = (d) => {
         return d * 86400000;
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "mkFormatarOA", {
-    value: (oa) => {
+    };
+    static mkFormatarOA = (oa) => {
         // Converter (OBJ / ARRAY) Formatar para normalizar com a exibicao ao usuario.
         return mkt.BoolToSimNaoOA(mkt.mkFormatarDataOA(mkt.mkLimparOA(oa)));
-    }, enumerable: false, writable: false, configurable: false,
-});
-//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-//			Carregador									\\
-//___________________________________\\
-Object.defineProperty(mkt, "CarregarHtml", {
-    value: (estilo = "", classe = "relative") => {
+    };
+    static CarregarHtml = (estilo = "", classe = "relative") => {
         return `<div class="CarregadorMk ${classe}" style="${estilo}"></div>`;
-    }, enumerable: false, writable: false, configurable: false,
-});
-//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-//   HEAD MENU                      \\
-//___________________________________\\
-Object.defineProperty(mkt, "headMenuHideX", {
-    value: () => {
-        mkt.Q("body .mkHeadMenu")?.classList.add("oculto");
-    }, enumerable: false, writable: false, configurable: false,
-});
-//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-//			REGRAR E VALIDAR						\\
-//___________________________________\\
-Object.defineProperty(mkt, "regrar", {
-    value: (container, nome, ...obj) => {
-        /**
-         * Informar o C (Container), N (Nome do input) e OBJ (Regra)
-         * Atributos do Objeto
-         * k:		nome da regra a ser utilizada
-         * v: 	atributo da regra escolhida
-         * m: 	mensagem de exibição caso esteja em estado falso.
-         * a: 	auto executar essa regra assim que regrar (true/false)
-         * f:		força validar mesmo se estiver invisivel / desativado (true/false)
-         * on: 	padrão true. define se vai executar a regra ou não.
-         */
-        if (typeof nome != "string") {
-            return mkt.w("Regrar() precisa receber o nome do input como string");
-        }
-        container = mkt.Q(container);
-        let e = container?.querySelector("*[name='" + nome + "']");
-        if (e) {
-            mkt.atribuir(e, () => { mkt.exeregra(e); }, "oninput");
-            mkt.atribuir(e, () => { mkt.exeregra(e, event); }, "onblur");
-            // Buscar Elemento e regra
-            let auto = false;
-            let novaregra = { c: container, n: nome, e: e, r: [...obj] };
-            let posE = mkt.regras.findIndex((o) => o.e == e);
-            if (posE >= 0) {
-                // Elemento já encontrado, substituir a regra específica
-                novaregra.r.forEach((i) => {
-                    let posRe = mkt.regras[posE].r.findIndex((o) => o.k == i.k);
-                    if (posRe >= 0) {
-                        for (let p in novaregra.r) {
-                            mkt.regras[posE].r[posRe] = novaregra.r[p];
-                        }
-                    }
-                    else {
-                        mkt.regras[posE].r.push(i);
-                    }
-                });
-            }
-            else {
-                mkt.regras.push(novaregra);
-            }
-            // Auto Executa
-            if (auto) {
-                mkt.exeregra(e, "inicial");
-            }
-        }
-        else {
-            mkt.w("Regrar Requer Elemento (" + nome + "): ", e, " Container: ", container);
-        }
-    }, enumerable: false, writable: false, configurable: false,
-});
-//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-//			FASEADOR / FasearMK (OBJ)		\\
-//___________________________________\\
-Object.defineProperty(mkt, "fase", {
-    value: (possiveis, config) => {
+    };
+    static fase = (possiveis, config) => {
         // Botões: .btnVoltar, .btnAvancar, .btnConclusivo.
         // Telas: .modalFaseX (X é o numero da fase)
         // Utiliza a array mkt.fase.possiveis para possibilitar a rota
@@ -4999,13 +4915,8 @@ Object.defineProperty(mkt, "fase", {
             }
         }
         return new FasearMK(possiveis, config);
-    }, enumerable: false, writable: false, configurable: false,
-});
-//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-//			MK Include									\\
-//___________________________________\\
-Object.defineProperty(mkt, "mkInclude", {
-    value: async () => {
+    };
+    static mkInclude = async () => {
         return new Promise((r) => {
             mkt.QAll("body *").forEach(async (e) => {
                 let destino = e.getAttribute("mkInclude");
@@ -5023,13 +4934,8 @@ Object.defineProperty(mkt, "mkInclude", {
                 }
             });
         });
-    }, enumerable: false, writable: false, configurable: false,
-});
-//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-//			MK UI Confirmar							\\
-//___________________________________\\
-Object.defineProperty(mkt, "mkConfirma", {
-    value: async (texto = "Você tem certeza?", p = null) => {
+    };
+    static mkConfirma = async (texto = "Você tem certeza?", p = null) => {
         // p { corSim: "bVerde", corNao: "bCinza"}
         let possiveisBotoes = ["bCinza", "bVermelho", "bVerde"];
         let corSim = "bVerde";
@@ -5111,10 +5017,8 @@ Object.defineProperty(mkt, "mkConfirma", {
                 return r(resultado);
             }
         });
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "mkRecChange", {
-    value: (recItem, texto) => {
+    };
+    static mkRecChange = (recItem, texto) => {
         let e = recItem?.parentElement?.previousElementSibling;
         if (e) {
             e.value = texto;
@@ -5123,10 +5027,8 @@ Object.defineProperty(mkt, "mkRecChange", {
         else {
             mkt.w("Não foi possível alterar o elemento: ", e);
         }
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "mkRecFoco", {
-    value: (input, f) => {
+    };
+    static mkRecFoco = (input, f) => {
         let eList = input?.nextElementSibling;
         if (eList) {
             if (!f) {
@@ -5141,19 +5043,15 @@ Object.defineProperty(mkt, "mkRecFoco", {
         }
         // Atualizar posição da Lista.
         mkt.Reposicionar(eList, false);
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "mkSelDlRefill", {
-    value: async (eName, cod, clear = true) => {
+    };
+    static mkSelDlRefill = async (eName, cod, clear = true) => {
         mkt.mkSelDelRefillProcesso(eName, cod).then((e) => {
             if (clear)
                 e.value = "";
             e.classList.add("atualizar");
         });
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "mkSelLeftSel", {
-    value: (e) => {
+    };
+    static mkSelLeftSel = (e) => {
         let eAlvo = null;
         Array.from(e.parentElement?.nextElementSibling?.children).forEach((el) => {
             if (el.getAttribute("data-s") == "1") {
@@ -5171,10 +5069,8 @@ Object.defineProperty(mkt, "mkSelLeftSel", {
             }
             mkt.mkSelSelecionar(eAlvo);
         }
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "mkSelRightSel", {
-    value: (e) => {
+    };
+    static mkSelRightSel = (e) => {
         let eAlvo = null;
         Array.from(e.parentElement.nextElementSibling.children).forEach((el) => {
             if (el.getAttribute("data-s") == "1") {
@@ -5192,10 +5088,8 @@ Object.defineProperty(mkt, "mkSelRightSel", {
             }
             mkt.mkSelSelecionar(eAlvo);
         }
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "mkSelPesquisaFocus", {
-    value: (e) => {
+    };
+    static mkSelPesquisaFocus = (e) => {
         // Atualiza Itens Selecionados, caso houve mudança sem atualizar.
         mkt.mkSelUpdate(e.parentElement.previousElementSibling);
         // Limpa o Display
@@ -5215,10 +5109,8 @@ Object.defineProperty(mkt, "mkSelPesquisaFocus", {
             primeiroOffSet - 120 - (eList.offsetHeight - eList.clientHeight) / 2;
         // Atualizar posição da Lista.
         mkt.Reposicionar(e.parentElement.nextElementSibling, true);
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "getParentScrollTop", {
-    value: (e) => {
+    };
+    static getParentScrollTop = (e) => {
         let eHtml = e;
         let soma = 0;
         while (eHtml.tagName != "HTML") {
@@ -5226,15 +5118,11 @@ Object.defineProperty(mkt, "getParentScrollTop", {
             eHtml = eHtml.parentElement;
         }
         return soma;
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "mkSelPesquisaBlur", {
-    value: (e) => {
+    };
+    static mkSelPesquisaBlur = (e) => {
         mkt.mkSelUpdate(e.parentElement.previousElementSibling);
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "mkSelPesquisaKeyDown", {
-    value: (ev) => {
+    };
+    static mkSelPesquisaKeyDown = (ev) => {
         let isNegado = false;
         //mkt.l(ev);
         if (ev.key == "Escape") {
@@ -5320,10 +5208,8 @@ Object.defineProperty(mkt, "mkSelPesquisaKeyDown", {
         if (isNegado) {
             ev.preventDefault();
         }
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "mkSelPesquisaInput", {
-    value: (e) => {
+    };
+    static mkSelPesquisaInput = (e) => {
         let cVisivel = 0;
         let eList = e.parentElement.nextElementSibling;
         Array.from(eList.children).forEach((el) => {
@@ -5348,27 +5234,19 @@ Object.defineProperty(mkt, "mkSelPesquisaInput", {
             eList.lastElementChild.style.display = "";
         }
         mkt.Reposicionar(eList, true);
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "mkSelMoveCima", {
-    value: (e) => {
+    };
+    static mkSelMoveCima = (e) => {
         let eList = e.parentElement;
         eList.scrollTop = eList.scrollTop - 5;
         mkt.mkSelMoveu(eList);
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "mkSelMoveBaixo", {
-    value: (e) => {
+    };
+    static mkSelMoveBaixo = (e) => {
         let eList = e.parentElement;
         eList.scrollTop = eList.scrollTop + 5;
         mkt.mkSelMoveu(eList);
-    }, enumerable: false, writable: false, configurable: false,
-});
-//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-//			AREA FASEADO (OLD)					\\
-//___________________________________\\
-Object.defineProperty(mkt, "fUIFaseUpdateLinkFase", {
-    value: () => {
+    };
+    // DEPRECATED - Utiliza em Fichas (Substituir por Faseador)
+    static fUIFaseUpdateLinkFase = () => {
         // FUNCAO PARA ATUALIZAR OS LINKS DE FASES
         mkt.QAll("ul.mkUlFase li a").forEach((e) => {
             e.parentElement?.classList.remove("mkFaseBack");
@@ -5386,14 +5264,14 @@ Object.defineProperty(mkt, "fUIFaseUpdateLinkFase", {
                 e.parentElement?.classList.add("disabled");
             }
         });
-    }, enumerable: false, writable: false, configurable: false,
-});
+    };
+} // <= FIM CLASSE MKT
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //  DEFINE PROPERTY                 \\
 //___________________________________\\
-// Object.keys(mkt).forEach((n) => {
-// 	Object.defineProperty(mkt, n, { enumerable: false, writable: false, configurable: false });
-// });
+Object.keys(mkt).forEach((n) => {
+    Object.defineProperty(mkt, n, { enumerable: false, writable: false, configurable: false });
+});
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //   Auto Inicializar               \\
 //___________________________________\\
