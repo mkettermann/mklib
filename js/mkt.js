@@ -4374,57 +4374,34 @@ class mkt {
             return new URL(url).searchParams.toString();
         }
     };
-} // <= FIM CLASSE MKT
-Object.defineProperty(mkt, "isVisible", {
-    value: (e) => {
+    static isVisible = (e) => {
+        // Retorna se está na tela.
+        // Aperfeiçoar para uma verificação se está no viewport.
         return (e.offsetWidth > 0 || e.offsetHeight > 0 || e.getClientRects().length > 0);
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "isFloat", {
-    value: (x) => {
-        if (!isNaN(x)) {
-            if (parseInt(x) != parseFloat(x)) {
-                return true;
-            }
-        }
-        return false;
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "gerarDownload", {
-    value: (blob, nomeArquivo = "Arquivo.zip") => {
-        // Funcção que recebe os dados de um arquivo e executa um Download deste dados.
-        const fileUrl = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = fileUrl;
-        link.download = nomeArquivo;
-        link.click();
-        URL.revokeObjectURL(fileUrl);
-        return nomeArquivo;
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "downloadData", {
-    value: (base64, nomeArquivo = "Arquivo") => {
+    };
+    // Entrou em desuso
+    // static gerarDownload = (
+    // 	blob: any,
+    // 	nomeArquivo: string = "Arquivo.zip"
+    // ) => {
+    // 	// Funcção que recebe os dados de um arquivo e executa um Download deste dados.
+    // 	const fileUrl = URL.createObjectURL(blob);
+    // 	const link = document.createElement("a");
+    // 	link.href = fileUrl;
+    // 	link.download = nomeArquivo;
+    // 	link.click();
+    // 	URL.revokeObjectURL(fileUrl);
+    // 	return nomeArquivo;
+    // }
+    static downloadData = (base64, nomeArquivo = "Arquivo") => {
         // Função que recebe um Base64 e solicita pra download.
         const link = document.createElement("a");
         link.href = base64;
         link.download = nomeArquivo;
         link.click();
         return nomeArquivo;
-    }, enumerable: false, writable: false, configurable: false,
-});
-Object.defineProperty(mkt, "getServerOn", {
-    value: async (url = "/Login/GetServerOn") => {
-        // Get Server On
-        let pac = await mkt.get.json({ url: url, quiet: true });
-        // Vem nulo caso falhe
-        if (pac?.retorno) {
-            mkt.detectedServerOn();
-        }
-        else {
-            mkt.detectedServerOff();
-        }
-    }, enumerable: false, writable: false, configurable: false,
-});
+    };
+} // <= FIM CLASSE MKT
 Object.defineProperty(mkt, "mkOnlyFloatKeys", {
     value: (ev) => {
         // Eventos HTML5
