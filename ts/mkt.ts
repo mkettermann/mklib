@@ -2639,17 +2639,38 @@ class mkt {
 		return stringRetorno;
 	};
 
-	static mkFormatarDataOA = (oa: object | object[]) => {
+	static dataDDMMYYYYparaYYYYMMDD = (data: string): string => {
+		// Converter de DD/MM/YYYY para YYYY-MM-DD
+		let arrayData = data.split("/");
+		let stringRetorno = "";
+		if (arrayData.length >= 3) {
+			stringRetorno = arrayData[2] + "-" + arrayData[1] + "-" + arrayData[0];
+		} else {
+			stringRetorno = data;
+		}
+		return stringRetorno;
+	};
+
+	static mkFormatarDataOA = (oa: object | object[], reverse: boolean | null = false) => {
 		// Converter (OBJ / ARRAY) Formato Booleano em Sim/Não
 		function mkFormatarDataOA_Execute(o: any) {
-			let busca = new RegExp("^[0-2][0-9]{3}[-][0-1][0-9][-][0-3][0-9]$"); // Entre 0000-00-00 a 2999-19-39
-			let busca2 = new RegExp("^[0-2][0-9]{3}[-][0-1][0-9][-][0-3][0-9]T[0-2][0-9]:[0-5][0-9]"); // Entre 0000-00-00T00:00 a 2999-19-39T29:59 (Se iniciar nesse formato de ISO)
-			for (var propName in o) {
-				if (busca.test(o[propName])) {
-					o[propName] = mkt.mkYYYYMMDDtoDDMMYYYY(o[propName]);
+			if (reverse) {
+				let dataDDMMYYYY = new RegExp("^[0-3][0-9][/][0-1][0-9][/][0-2][0-9]{3}$");
+				for (var propName in o) {
+					if (dataDDMMYYYY.test(o[propName])) {
+						o[propName] = mkt.dataDDMMYYYYparaYYYYMMDD(o[propName]);
+					}
 				}
-				if (busca2.test(o[propName])) {
-					o[propName] = mkt.dataToLocale(o[propName]);
+			} else {
+				let busca = new RegExp("^[0-2][0-9]{3}[-][0-1][0-9][-][0-3][0-9]$"); // Entre 0000-00-00 a 2999-19-39
+				let busca2 = new RegExp("^[0-2][0-9]{3}[-][0-1][0-9][-][0-3][0-9]T[0-2][0-9]:[0-5][0-9]"); // Entre 0000-00-00T00:00 a 2999-19-39T29:59 (Se iniciar nesse formato de ISO)
+				for (var propName in o) {
+					if (busca.test(o[propName])) {
+						o[propName] = mkt.mkYYYYMMDDtoDDMMYYYY(o[propName]);
+					}
+					if (busca2.test(o[propName])) {
+						o[propName] = mkt.dataToLocale(o[propName]);
+					}
 				}
 			}
 			return o;
