@@ -4555,7 +4555,7 @@ class mkt {
 		);
 	}
 
-	// Entrou em desuso
+	// (gerarDownload) - Entrou em desuso
 	// static gerarDownload = (
 	// 	blob: any,
 	// 	nomeArquivo: string = "Arquivo.zip"

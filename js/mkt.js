@@ -4447,7 +4447,7 @@ class mkt {
         // Aperfeiçoar para uma verificação se está no viewport.
         return (e.offsetWidth > 0 || e.offsetHeight > 0 || e.getClientRects().length > 0);
     };
-    // Entrou em desuso
+    // (gerarDownload) - Entrou em desuso
     // static gerarDownload = (
     // 	blob: any,
     // 	nomeArquivo: string = "Arquivo.zip"
