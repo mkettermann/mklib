@@ -2202,6 +2202,10 @@ class mkt {
 		mkt.Q("body").classList.remove("CarregadorMkSemScrollY");
 	};
 
+	static CarregarHtml = (estilo = "", classe = "relative") => {
+		return `<div class="CarregadorMk ${classe}" style="${estilo}"></div>`;
+	}
+
 	static detectedServerOff = (mensagem: string = "Servidor OFF-LINE") => {
 		// Gera e exibe um elemento que representa o servidor offline com opção de ocultar.
 		if (mkt.Q("body .offlineBlock") == null) {
@@ -2525,6 +2529,95 @@ class mkt {
 		return config;
 	};
 
+
+	static mkConfirma = async (
+		texto: string = "Você tem certeza?",
+		p: any = null
+	) => {
+		// p { corSim: "bVerde", corNao: "bCinza"}
+		let possiveisBotoes = ["bCinza", "bVermelho", "bVerde"];
+		let corSim = "bVerde";
+		if (p?.corSim != undefined) corSim = p.corSim;
+		let corNao = "bCinza";
+		if (p?.corNao != undefined) corNao = p.corNao;
+		let classContainer = "";
+		if (p?.classContainer != undefined) classContainer = p.classContainer;
+		return new Promise((r) => {
+			function verficiarResposta() {
+				let resposta = null;
+				if (mkt.Q(".mkConfirmadorBloco .mkConfirmadorArea .bBotao.icoSim.true"))
+					resposta = true;
+				if (mkt.Q(".mkConfirmadorBloco .mkConfirmadorArea .bBotao.icoNao.true"))
+					resposta = false;
+				//mkt.l("Resposta: " + resposta);
+				if (resposta !== null) {
+					mkt.Q(".mkConfirmadorBloco .icoSim").classList.remove("true");
+					mkt.Q(".mkConfirmadorBloco .icoNao").classList.remove("true");
+					mkt.Q(".mkConfirmadorBloco").classList.add("oculto");
+					retornar(resposta);
+				}
+			}
+			if (!document.querySelector(".mkConfirmadorBloco")) {
+				let divMkConfirmarBloco = document.createElement("div");
+				let divMkConfirmarFora = document.createElement("div");
+				let divMkConfirmarArea = document.createElement("div");
+				let divMkConfirmarTitulo = document.createElement("div");
+				let divMkConfirmarTexto = document.createElement("div");
+				let divMkConfirmarBotoes = document.createElement("div");
+				let divMkConfirmarSim = document.createElement("button");
+				let divMkConfirmarNao = document.createElement("button");
+				divMkConfirmarBloco.className = "mkConfirmadorBloco microPos5";
+				divMkConfirmarFora.className = "mkConfirmadorFora";
+				divMkConfirmarArea.className =
+					"mkConfirmadorArea microPos5 tb fsb " + classContainer;
+				divMkConfirmarTitulo.className = "mkConfirmadorTitulo";
+				divMkConfirmarTexto.className = "mkConfirmadorTexto";
+				divMkConfirmarBotoes.className = "mkConfirmadorBotoes fsb";
+				divMkConfirmarSim.className = "bBotao icoSim " + corSim;
+				divMkConfirmarNao.className = "bBotao icoNao " + corNao;
+				divMkConfirmarTitulo.innerHTML =
+					"<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path d='M9.05.435c-.58-.58-1.52-.58-2.1 0L.436 6.95c-.58.58-.58 1.519 0 2.098l6.516 6.516c.58.58 1.519.58 2.098 0l6.516-6.516c.58-.58.58-1.519 0-2.098L9.05.435zM5.495 6.033a.237.237 0 0 1-.24-.247C5.35 4.091 6.737 3.5 8.005 3.5c1.396 0 2.672.73 2.672 2.24 0 1.08-.635 1.594-1.244 2.057-.737.559-1.01.768-1.01 1.486v.105a.25.25 0 0 1-.25.25h-.81a.25.25 0 0 1-.25-.246l-.004-.217c-.038-.927.495-1.498 1.168-1.987.59-.444.965-.736.965-1.371 0-.825-.628-1.168-1.314-1.168-.803 0-1.253.478-1.342 1.134-.018.137-.128.25-.266.25h-.825zm2.325 6.443c-.584 0-1.009-.394-1.009-.927 0-.552.425-.94 1.01-.94.609 0 1.028.388 1.028.94 0 .533-.42.927-1.029.927z'/></svg><span>Confirmação</span>";
+
+				divMkConfirmarTexto.innerHTML = texto;
+				divMkConfirmarSim.innerHTML = "Sim";
+				divMkConfirmarNao.innerHTML = "Não";
+				divMkConfirmarFora.setAttribute(
+					"onclick",
+					"mkt.w('Essa funcionalidade não está disponível no momento.')"
+				);
+				divMkConfirmarSim.setAttribute("onclick", "this.classList.add(true);");
+				divMkConfirmarNao.setAttribute("onclick", "this.classList.add(true);");
+				mkt.Q("body").appendChild(divMkConfirmarBloco);
+				divMkConfirmarBloco.appendChild(divMkConfirmarFora);
+				divMkConfirmarBloco.appendChild(divMkConfirmarArea);
+				divMkConfirmarArea.appendChild(divMkConfirmarTitulo);
+				divMkConfirmarArea.appendChild(divMkConfirmarTexto);
+				divMkConfirmarArea.appendChild(divMkConfirmarBotoes);
+				divMkConfirmarBotoes.appendChild(divMkConfirmarSim);
+				divMkConfirmarBotoes.appendChild(divMkConfirmarNao);
+			} else {
+				// Limpeza de cores anteriores
+				possiveisBotoes.forEach((s) => {
+					mkt.QAll(".mkConfirmadorBloco .bBotao").forEach((botao: any) => {
+						botao.classList.remove(s);
+					});
+				});
+				// Set das cores novas
+				mkt.Q(".mkConfirmadorBloco .bBotao.icoSim").classList.add(corSim);
+				mkt.Q(".mkConfirmadorBloco .bBotao.icoNao").classList.add(corNao);
+				mkt.Q(".mkConfirmadorBloco").classList.remove("oculto");
+				mkt.Q(".mkConfirmadorTexto").innerHTML = texto;
+			}
+			const checkResposta = setInterval(verficiarResposta, 100);
+			// Função de conclusão.
+			function retornar(resultado: boolean = false) {
+				clearInterval(checkResposta);
+				return r(resultado);
+			}
+		});
+	}
+
+
 	// ==================== Gerenciamento Monetário / Numérico ======================== \\
 	// ================================================================================= \\
 
@@ -2613,6 +2706,25 @@ class mkt {
 		}
 		return new Intl.NumberFormat(c.locale, { minimumFractionDigits: 2 }).format(valor);
 	};
+
+
+	static mkMedia = (menor: string | number, maior: string | number): string => {
+		return mkt.mkDuasCasas((mkt.mkFloat(menor) + mkt.mkFloat(maior)) / 2);
+	}
+
+	static mkNCasas = (num: number, nCasas: number = 2): string => {
+		return mkt.mkFloat(num).toFixed(nCasas).replaceAll(".", ","); // 2000,?
+	}
+
+	static mkEmReais = (num: number): string => {
+		// Essa função foi substituida por toMoeda.
+		// Mas aqui tentava usar um Number do javascript e usar as classes pra converter em reais.
+		return mkt.mkFloat(num).toLocaleString("pt-br", {
+			style: "currency",
+			currency: "BRL",
+		}); // R$ 12.123,45
+	}
+
 
 	// =========================== Gerenciamento de Data ============================== \\
 	// ================================================================================= \\
@@ -3301,6 +3413,236 @@ class mkt {
 			});
 		}
 	};
+
+	static mkSelDlRefill = async (
+		eName: string | HTMLElement,
+		cod: any,
+		clear: boolean = true
+	): Promise<void> => {
+		mkt.mkSelDelRefillProcesso(eName, cod).then((e: any) => {
+			if (clear) e.value = "";
+			e.classList.add("atualizar");
+		});
+	}
+
+	static mkSelLeftSel = (e: any) => {
+		let eAlvo = null;
+		Array.from(e.parentElement?.nextElementSibling?.children).forEach(
+			(el: any) => {
+				if (el.getAttribute("data-s") == "1") {
+					eAlvo = (el as HTMLInputElement).previousElementSibling;
+					return;
+				}
+			}
+		);
+		if (eAlvo == null) {
+			mkt.mkSelSelecionar(e.parentElement?.nextElementSibling?.lastElementChild);
+		} else {
+			if ((eAlvo as HTMLElement).classList.contains("mkSelItemDeCima")) {
+				eAlvo = (eAlvo as HTMLElement).parentElement?.lastElementChild
+					?.previousElementSibling;
+			}
+			mkt.mkSelSelecionar(eAlvo);
+		}
+	}
+
+	static mkSelRightSel = (e: any) => {
+		let eAlvo = null;
+		Array.from(e.parentElement.nextElementSibling.children).forEach(
+			(el: any) => {
+				if (el.getAttribute("data-s") == "1") {
+					eAlvo = el.nextElementSibling;
+					return;
+				}
+			}
+		);
+		if (eAlvo == null) {
+			mkt.mkSelSelecionar(e.parentElement.nextElementSibling.firstElementChild);
+		} else {
+			if ((eAlvo as HTMLElement).classList.contains("mkSelItemDeBaixo")) {
+				eAlvo = (eAlvo as HTMLElement).parentElement?.firstElementChild
+					?.nextElementSibling;
+			}
+			mkt.mkSelSelecionar(eAlvo);
+		}
+	}
+
+	static mkSelPesquisaFocus = (e: any) => {
+		// Atualiza Itens Selecionados, caso houve mudança sem atualizar.
+		mkt.mkSelUpdate(e.parentElement.previousElementSibling);
+		// Limpa o Display
+		e.value = "";
+		// Limpa o resultado do filtro anterior
+		let eList = e.parentElement.nextElementSibling;
+		let ePrimeiroSel: any = null;
+		Array.from(eList.children).forEach((el: any) => {
+			el.style.display = "";
+			el.removeAttribute("data-m");
+			if (el.getAttribute("data-s") == 1 && ePrimeiroSel == null)
+				ePrimeiroSel = el;
+		});
+
+		// Faz movimento no scroll até o primeiro item selecionado
+		let primeiroOffSet = ePrimeiroSel?.offsetTop || 0;
+		eList.scrollTop =
+			primeiroOffSet - 120 - (eList.offsetHeight - eList.clientHeight) / 2;
+
+		// Atualizar posição da Lista.
+		mkt.Reposicionar(e.parentElement.nextElementSibling, true);
+	}
+
+	static mkSelPesquisaBlur = (e: any) => {
+		mkt.mkSelUpdate(e.parentElement.previousElementSibling);
+	}
+
+	static mkSelPesquisaKeyDown = (ev: any) => {
+		let isNegado = false;
+		//mkt.l(ev);
+		if (ev.key == "Escape") {
+			ev.srcElement.blur();
+		}
+		if (ev.key == "ArrowUp" || ev.key == "ArrowDown" || ev.key == "Enter") {
+			isNegado = true;
+			let eList = ev.srcElement.parentElement.nextElementSibling;
+			let eListItem;
+			let array: any = Array.from(eList.children).filter((e: any) => {
+				return e.style.display != "none";
+			});
+			let eM = array.find((e: any) => e.getAttribute("data-m") == "1");
+			Array.from(eList.children).forEach((e: any) =>
+				e.removeAttribute("data-m")
+			);
+			if (ev.key == "Enter") {
+				if (eM) mkt.mkSelSelecionar(eM);
+				ev.srcElement.blur();
+			}
+			if (ev.key == "ArrowUp") {
+				isNegado = true;
+				let ultimo = array[array.length - 1];
+				let peNultimo = array[array.length - 2];
+
+				if (eM) {
+					let indexProximo = array.indexOf(eM) - 1;
+					if (
+						array[indexProximo] &&
+						!array[indexProximo].classList.contains("mkSelItemDeCima")
+					) {
+						eListItem = array[indexProximo];
+					} else {
+						if (ultimo?.classList.contains("mkSelItemDeBaixo")) {
+							eListItem = peNultimo;
+						} else {
+							eListItem = ultimo;
+						}
+					}
+				} else {
+					if (ultimo?.classList.contains("mkSelItemDeBaixo")) {
+						eListItem = peNultimo;
+					} else {
+						eListItem = ultimo;
+					}
+				}
+				eListItem?.setAttribute("data-m", "1");
+				let alvoOffsetTop = eListItem?.offsetTop || 0;
+				eList.scrollTop =
+					alvoOffsetTop - 120 - (eList.offsetHeight - eList.clientHeight) / 2;
+			}
+			if (ev.key == "ArrowDown") {
+				isNegado = true;
+				if (eM) {
+					let indexProximo = array.indexOf(eM) + 1;
+					if (
+						array[indexProximo] &&
+						!array[indexProximo].classList.contains("mkSelItemDeBaixo")
+					) {
+						eListItem = array[indexProximo];
+					} else {
+						if (array[0]?.classList.contains("mkSelItemDeCima")) {
+							eListItem = array[1];
+						} else {
+							eListItem = array[0];
+						}
+					}
+				} else {
+					if (array[0]?.classList.contains("mkSelItemDeCima")) {
+						eListItem = array[1];
+					} else {
+						eListItem = array[0];
+					}
+				}
+				eListItem?.setAttribute("data-m", "1");
+				let alvoOffsetTop = eListItem?.offsetTop || 0;
+				eList.scrollTop =
+					alvoOffsetTop - 120 - (eList.clientHeight - eList.offsetHeight) / 2;
+			}
+		}
+		if (isNegado) {
+			ev.preventDefault();
+		}
+	}
+
+	static mkSelPesquisaInput = (e: any) => {
+		let cVisivel = 0;
+		let eList = e.parentElement.nextElementSibling;
+		Array.from(eList.children).forEach((el: any) => {
+			let exibe = false;
+			if (el.classList.contains("mkSelItem")) {
+				let strInputado = e.value.toLowerCase();
+				let strFromKv = el.firstElementChild.innerHTML.toLowerCase();
+				if (mkt.like(strInputado, strFromKv)) {
+					exibe = true;
+					cVisivel++;
+				}
+			}
+			if (exibe) {
+				el.style.display = "";
+			} else {
+				el.style.display = "none";
+			}
+		});
+		if (cVisivel > 10) {
+			eList.firstElementChild.style.display = "";
+			eList.lastElementChild.style.display = "";
+		}
+		mkt.Reposicionar(eList, true);
+	}
+
+	static mkSelMoveCima = (e: any) => {
+		let eList = e.parentElement;
+		eList.scrollTop = eList.scrollTop - 5;
+		mkt.mkSelMoveu(eList);
+	}
+
+	static mkSelMoveBaixo = (e: any) => {
+		let eList = e.parentElement;
+		eList.scrollTop = eList.scrollTop + 5;
+		mkt.mkSelMoveu(eList);
+	}
+
+	static mkRecChange = (recItem: any, texto: string) => {
+		let e = recItem?.parentElement?.previousElementSibling
+		if (e) {
+			e.value = texto;
+			setTimeout(() => { mkt.mkRecUpdate(e); e.focus() }, 10);
+		} else {
+			mkt.w("Não foi possível alterar o elemento: ", e);
+		}
+	}
+
+	static mkRecFoco = (input: any, f: Boolean) => {
+		let eList = input?.nextElementSibling
+		if (eList) {
+			if (!f) {
+				eList.classList.add("emFoco")
+			} else {
+				eList.classList.remove("emFoco");
+			}
+		} else {
+			mkt.w("Não foi possível alterar o elemento: ", eList);
+		}
+		// Atualizar posição da Lista.
+		mkt.Reposicionar(eList, false);
+	}
 
 	static mkRecRenderizar = async () => {
 		mkt.QAll("input.mkRec").forEach(async (e: HTMLInputElement) => {
@@ -4742,23 +5084,6 @@ class mkt {
 		e.value = mkt.mkDuasCasas(mkt.mkFloat(e.value));
 	}
 
-	static mkMedia = (menor: string | number, maior: string | number): string => {
-		return mkt.mkDuasCasas((mkt.mkFloat(menor) + mkt.mkFloat(maior)) / 2);
-	}
-
-	static mkNCasas = (num: number, nCasas: number = 2): string => {
-		return mkt.mkFloat(num).toFixed(nCasas).replaceAll(".", ","); // 2000,?
-	}
-
-	static mkEmReais = (num: number): string => {
-		// Essa função foi substituida por toMoeda.
-		// Mas aqui tentava usar um Number do javascript e usar as classes pra converter em reais.
-		return mkt.mkFloat(num).toLocaleString("pt-br", {
-			style: "currency",
-			currency: "BRL",
-		}); // R$ 12.123,45
-	}
-
 	static mkBase64 = (arquivo: any, tagImg: string, tagHidden: string): void => {
 		// Verificar se esta nulo
 		let leitor = new FileReader();
@@ -4822,17 +5147,6 @@ class mkt {
 	static getExclusivos = async (array: any) => {
 		let res: any = await mkt.addTask({ k: "Exclusivos", v: array });
 		return res.v;
-	}
-
-	static mkMerge = (o: any, ...fontes: any): object => {
-		for (let fonte of fontes) {
-			for (let k of Object.keys(fonte)) {
-				if (!(k in o)) {
-					o[k] = fonte[k];
-				}
-			}
-		}
-		return o;
 	}
 
 	static encheArray = (
@@ -4919,10 +5233,6 @@ class mkt {
 			}
 		}
 		return novaArray;
-	}
-
-	static CarregarHtml = (estilo = "", classe = "relative") => {
-		return `<div class="CarregadorMk ${classe}" style="${estilo}"></div>`;
 	}
 
 	static fase = (possiveis: number[], config: any) => {
@@ -5089,333 +5399,6 @@ class mkt {
 				}
 			});
 		});
-	}
-
-	static mkConfirma = async (
-		texto: string = "Você tem certeza?",
-		p: any = null
-	) => {
-		// p { corSim: "bVerde", corNao: "bCinza"}
-		let possiveisBotoes = ["bCinza", "bVermelho", "bVerde"];
-		let corSim = "bVerde";
-		if (p?.corSim != undefined) corSim = p.corSim;
-		let corNao = "bCinza";
-		if (p?.corNao != undefined) corNao = p.corNao;
-		let classContainer = "";
-		if (p?.classContainer != undefined) classContainer = p.classContainer;
-		return new Promise((r) => {
-			function verficiarResposta() {
-				let resposta = null;
-				if (mkt.Q(".mkConfirmadorBloco .mkConfirmadorArea .bBotao.icoSim.true"))
-					resposta = true;
-				if (mkt.Q(".mkConfirmadorBloco .mkConfirmadorArea .bBotao.icoNao.true"))
-					resposta = false;
-				//mkt.l("Resposta: " + resposta);
-				if (resposta !== null) {
-					mkt.Q(".mkConfirmadorBloco .icoSim").classList.remove("true");
-					mkt.Q(".mkConfirmadorBloco .icoNao").classList.remove("true");
-					mkt.Q(".mkConfirmadorBloco").classList.add("oculto");
-					retornar(resposta);
-				}
-			}
-			if (!document.querySelector(".mkConfirmadorBloco")) {
-				let divMkConfirmarBloco = document.createElement("div");
-				let divMkConfirmarFora = document.createElement("div");
-				let divMkConfirmarArea = document.createElement("div");
-				let divMkConfirmarTitulo = document.createElement("div");
-				let divMkConfirmarTexto = document.createElement("div");
-				let divMkConfirmarBotoes = document.createElement("div");
-				let divMkConfirmarSim = document.createElement("button");
-				let divMkConfirmarNao = document.createElement("button");
-				divMkConfirmarBloco.className = "mkConfirmadorBloco microPos5";
-				divMkConfirmarFora.className = "mkConfirmadorFora";
-				divMkConfirmarArea.className =
-					"mkConfirmadorArea microPos5 tb fsb " + classContainer;
-				divMkConfirmarTitulo.className = "mkConfirmadorTitulo";
-				divMkConfirmarTexto.className = "mkConfirmadorTexto";
-				divMkConfirmarBotoes.className = "mkConfirmadorBotoes fsb";
-				divMkConfirmarSim.className = "bBotao icoSim " + corSim;
-				divMkConfirmarNao.className = "bBotao icoNao " + corNao;
-				divMkConfirmarTitulo.innerHTML =
-					"<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path d='M9.05.435c-.58-.58-1.52-.58-2.1 0L.436 6.95c-.58.58-.58 1.519 0 2.098l6.516 6.516c.58.58 1.519.58 2.098 0l6.516-6.516c.58-.58.58-1.519 0-2.098L9.05.435zM5.495 6.033a.237.237 0 0 1-.24-.247C5.35 4.091 6.737 3.5 8.005 3.5c1.396 0 2.672.73 2.672 2.24 0 1.08-.635 1.594-1.244 2.057-.737.559-1.01.768-1.01 1.486v.105a.25.25 0 0 1-.25.25h-.81a.25.25 0 0 1-.25-.246l-.004-.217c-.038-.927.495-1.498 1.168-1.987.59-.444.965-.736.965-1.371 0-.825-.628-1.168-1.314-1.168-.803 0-1.253.478-1.342 1.134-.018.137-.128.25-.266.25h-.825zm2.325 6.443c-.584 0-1.009-.394-1.009-.927 0-.552.425-.94 1.01-.94.609 0 1.028.388 1.028.94 0 .533-.42.927-1.029.927z'/></svg><span>Confirmação</span>";
-
-				divMkConfirmarTexto.innerHTML = texto;
-				divMkConfirmarSim.innerHTML = "Sim";
-				divMkConfirmarNao.innerHTML = "Não";
-				divMkConfirmarFora.setAttribute(
-					"onclick",
-					"mkt.w('Essa funcionalidade não está disponível no momento.')"
-				);
-				divMkConfirmarSim.setAttribute("onclick", "this.classList.add(true);");
-				divMkConfirmarNao.setAttribute("onclick", "this.classList.add(true);");
-				mkt.Q("body").appendChild(divMkConfirmarBloco);
-				divMkConfirmarBloco.appendChild(divMkConfirmarFora);
-				divMkConfirmarBloco.appendChild(divMkConfirmarArea);
-				divMkConfirmarArea.appendChild(divMkConfirmarTitulo);
-				divMkConfirmarArea.appendChild(divMkConfirmarTexto);
-				divMkConfirmarArea.appendChild(divMkConfirmarBotoes);
-				divMkConfirmarBotoes.appendChild(divMkConfirmarSim);
-				divMkConfirmarBotoes.appendChild(divMkConfirmarNao);
-			} else {
-				// Limpeza de cores anteriores
-				possiveisBotoes.forEach((s) => {
-					mkt.QAll(".mkConfirmadorBloco .bBotao").forEach((botao: any) => {
-						botao.classList.remove(s);
-					});
-				});
-				// Set das cores novas
-				mkt.Q(".mkConfirmadorBloco .bBotao.icoSim").classList.add(corSim);
-				mkt.Q(".mkConfirmadorBloco .bBotao.icoNao").classList.add(corNao);
-				mkt.Q(".mkConfirmadorBloco").classList.remove("oculto");
-				mkt.Q(".mkConfirmadorTexto").innerHTML = texto;
-			}
-			const checkResposta = setInterval(verficiarResposta, 100);
-			// Função de conclusão.
-			function retornar(resultado: boolean = false) {
-				clearInterval(checkResposta);
-				return r(resultado);
-			}
-		});
-	}
-
-	static mkRecChange = (recItem: any, texto: string) => {
-		let e = recItem?.parentElement?.previousElementSibling
-		if (e) {
-			e.value = texto;
-			setTimeout(() => { mkt.mkRecUpdate(e); e.focus() }, 10);
-		} else {
-			mkt.w("Não foi possível alterar o elemento: ", e);
-		}
-	}
-
-	static mkRecFoco = (input: any, f: Boolean) => {
-		let eList = input?.nextElementSibling
-		if (eList) {
-			if (!f) {
-				eList.classList.add("emFoco")
-			} else {
-				eList.classList.remove("emFoco");
-			}
-		} else {
-			mkt.w("Não foi possível alterar o elemento: ", eList);
-		}
-		// Atualizar posição da Lista.
-		mkt.Reposicionar(eList, false);
-	}
-
-	static mkSelDlRefill = async (
-		eName: string | HTMLElement,
-		cod: any,
-		clear: boolean = true
-	): Promise<void> => {
-		mkt.mkSelDelRefillProcesso(eName, cod).then((e: any) => {
-			if (clear) e.value = "";
-			e.classList.add("atualizar");
-		});
-	}
-
-	static mkSelLeftSel = (e: any) => {
-		let eAlvo = null;
-		Array.from(e.parentElement?.nextElementSibling?.children).forEach(
-			(el: any) => {
-				if (el.getAttribute("data-s") == "1") {
-					eAlvo = (el as HTMLInputElement).previousElementSibling;
-					return;
-				}
-			}
-		);
-		if (eAlvo == null) {
-			mkt.mkSelSelecionar(e.parentElement?.nextElementSibling?.lastElementChild);
-		} else {
-			if ((eAlvo as HTMLElement).classList.contains("mkSelItemDeCima")) {
-				eAlvo = (eAlvo as HTMLElement).parentElement?.lastElementChild
-					?.previousElementSibling;
-			}
-			mkt.mkSelSelecionar(eAlvo);
-		}
-	}
-
-	static mkSelRightSel = (e: any) => {
-		let eAlvo = null;
-		Array.from(e.parentElement.nextElementSibling.children).forEach(
-			(el: any) => {
-				if (el.getAttribute("data-s") == "1") {
-					eAlvo = el.nextElementSibling;
-					return;
-				}
-			}
-		);
-		if (eAlvo == null) {
-			mkt.mkSelSelecionar(e.parentElement.nextElementSibling.firstElementChild);
-		} else {
-			if ((eAlvo as HTMLElement).classList.contains("mkSelItemDeBaixo")) {
-				eAlvo = (eAlvo as HTMLElement).parentElement?.firstElementChild
-					?.nextElementSibling;
-			}
-			mkt.mkSelSelecionar(eAlvo);
-		}
-	}
-
-	static mkSelPesquisaFocus = (e: any) => {
-		// Atualiza Itens Selecionados, caso houve mudança sem atualizar.
-		mkt.mkSelUpdate(e.parentElement.previousElementSibling);
-		// Limpa o Display
-		e.value = "";
-		// Limpa o resultado do filtro anterior
-		let eList = e.parentElement.nextElementSibling;
-		let ePrimeiroSel: any = null;
-		Array.from(eList.children).forEach((el: any) => {
-			el.style.display = "";
-			el.removeAttribute("data-m");
-			if (el.getAttribute("data-s") == 1 && ePrimeiroSel == null)
-				ePrimeiroSel = el;
-		});
-
-		// Faz movimento no scroll até o primeiro item selecionado
-		let primeiroOffSet = ePrimeiroSel?.offsetTop || 0;
-		eList.scrollTop =
-			primeiroOffSet - 120 - (eList.offsetHeight - eList.clientHeight) / 2;
-
-		// Atualizar posição da Lista.
-		mkt.Reposicionar(e.parentElement.nextElementSibling, true);
-	}
-
-	static getParentScrollTop = (e: any) => {
-		let eHtml = e;
-		let soma = 0;
-		while (eHtml.tagName != "HTML") {
-			soma += eHtml.scrollTop;
-			eHtml = eHtml.parentElement;
-		}
-		return soma;
-	}
-
-	static mkSelPesquisaBlur = (e: any) => {
-		mkt.mkSelUpdate(e.parentElement.previousElementSibling);
-	}
-
-	static mkSelPesquisaKeyDown = (ev: any) => {
-		let isNegado = false;
-		//mkt.l(ev);
-		if (ev.key == "Escape") {
-			ev.srcElement.blur();
-		}
-		if (ev.key == "ArrowUp" || ev.key == "ArrowDown" || ev.key == "Enter") {
-			isNegado = true;
-			let eList = ev.srcElement.parentElement.nextElementSibling;
-			let eListItem;
-			let array: any = Array.from(eList.children).filter((e: any) => {
-				return e.style.display != "none";
-			});
-			let eM = array.find((e: any) => e.getAttribute("data-m") == "1");
-			Array.from(eList.children).forEach((e: any) =>
-				e.removeAttribute("data-m")
-			);
-			if (ev.key == "Enter") {
-				if (eM) mkt.mkSelSelecionar(eM);
-				ev.srcElement.blur();
-			}
-			if (ev.key == "ArrowUp") {
-				isNegado = true;
-				let ultimo = array[array.length - 1];
-				let peNultimo = array[array.length - 2];
-
-				if (eM) {
-					let indexProximo = array.indexOf(eM) - 1;
-					if (
-						array[indexProximo] &&
-						!array[indexProximo].classList.contains("mkSelItemDeCima")
-					) {
-						eListItem = array[indexProximo];
-					} else {
-						if (ultimo?.classList.contains("mkSelItemDeBaixo")) {
-							eListItem = peNultimo;
-						} else {
-							eListItem = ultimo;
-						}
-					}
-				} else {
-					if (ultimo?.classList.contains("mkSelItemDeBaixo")) {
-						eListItem = peNultimo;
-					} else {
-						eListItem = ultimo;
-					}
-				}
-				eListItem?.setAttribute("data-m", "1");
-				let alvoOffsetTop = eListItem?.offsetTop || 0;
-				eList.scrollTop =
-					alvoOffsetTop - 120 - (eList.offsetHeight - eList.clientHeight) / 2;
-			}
-			if (ev.key == "ArrowDown") {
-				isNegado = true;
-				if (eM) {
-					let indexProximo = array.indexOf(eM) + 1;
-					if (
-						array[indexProximo] &&
-						!array[indexProximo].classList.contains("mkSelItemDeBaixo")
-					) {
-						eListItem = array[indexProximo];
-					} else {
-						if (array[0]?.classList.contains("mkSelItemDeCima")) {
-							eListItem = array[1];
-						} else {
-							eListItem = array[0];
-						}
-					}
-				} else {
-					if (array[0]?.classList.contains("mkSelItemDeCima")) {
-						eListItem = array[1];
-					} else {
-						eListItem = array[0];
-					}
-				}
-				eListItem?.setAttribute("data-m", "1");
-				let alvoOffsetTop = eListItem?.offsetTop || 0;
-				eList.scrollTop =
-					alvoOffsetTop - 120 - (eList.clientHeight - eList.offsetHeight) / 2;
-			}
-		}
-		if (isNegado) {
-			ev.preventDefault();
-		}
-	}
-
-	static mkSelPesquisaInput = (e: any) => {
-		let cVisivel = 0;
-		let eList = e.parentElement.nextElementSibling;
-		Array.from(eList.children).forEach((el: any) => {
-			let exibe = false;
-			if (el.classList.contains("mkSelItem")) {
-				let strInputado = e.value.toLowerCase();
-				let strFromKv = el.firstElementChild.innerHTML.toLowerCase();
-				if (mkt.like(strInputado, strFromKv)) {
-					exibe = true;
-					cVisivel++;
-				}
-			}
-			if (exibe) {
-				el.style.display = "";
-			} else {
-				el.style.display = "none";
-			}
-		});
-		if (cVisivel > 10) {
-			eList.firstElementChild.style.display = "";
-			eList.lastElementChild.style.display = "";
-		}
-		mkt.Reposicionar(eList, true);
-	}
-
-	static mkSelMoveCima = (e: any) => {
-		let eList = e.parentElement;
-		eList.scrollTop = eList.scrollTop - 5;
-		mkt.mkSelMoveu(eList);
-	}
-
-	static mkSelMoveBaixo = (e: any) => {
-		let eList = e.parentElement;
-		eList.scrollTop = eList.scrollTop + 5;
-		mkt.mkSelMoveu(eList);
 	}
 
 	// DEPRECATED - Utiliza em Fichas (Substituir por Faseador)
