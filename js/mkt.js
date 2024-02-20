@@ -1260,6 +1260,7 @@ class mkt {
         contaImportados: 0,
         contem: "Contém...",
         debug: 0,
+        definePropertyExceptions: ["regras"],
         espaco: "&nbsp;",
         exeTimer: 500,
         hm: {
@@ -1751,6 +1752,51 @@ class mkt {
     };
     static wait = (ms) => {
         return new Promise(r => setTimeout(r, ms));
+    };
+    static QSetAll = (query = "input[name='#PROP#']", o = null, comEvento = true) => {
+        // Seta todos os query com os valores das propriedades informadas nos campos.
+        // O nome da propriedade precisa ser compatível com o PROPNAME do query.
+        let eAfetados = [];
+        if (o != null) {
+            if (typeof o == "object" && !Array.isArray(o)) {
+                for (let p in o) {
+                    let eDynamicQuery = mkt.Q(query.replace("#PROP#", p));
+                    if (eDynamicQuery) {
+                        if (o[p]) {
+                            eDynamicQuery.value = o[p];
+                            if (comEvento) {
+                                eDynamicQuery.classList.add("atualizar");
+                            }
+                            else {
+                                eDynamicQuery.classList.add("atualizarSemEvento");
+                            }
+                            eAfetados.push(eDynamicQuery);
+                        }
+                    }
+                }
+            }
+            else
+                mkt.w("QSetAll - Precisa receber um objeto: " + o);
+        }
+        else
+            mkt.w("QSetAll - Objeto não pode ser nulo: " + o);
+        return eAfetados;
+    };
+    static Qison = (query = "body") => {
+        // Retorna uma array do estado DISABLED de todos da query.
+        return mkt.AllFromCadaExe(query, (e) => {
+            let b = false;
+            if (!e.classList.contains("disabled")) {
+                b = true;
+            }
+            return b;
+        });
+    };
+    static QverToggle = (query = "body") => {
+        // Inverte oculto dos campos da query
+        return mkt.aCadaElemento(query, (e) => {
+            e?.classList.toggle("oculto");
+        });
     };
     // =========================== ERROS, LOGS E INFORMACOES ========================== \\
     // ================================================================================= \\
@@ -2659,6 +2705,10 @@ class mkt {
         }
         return mkt.aCadaObjExecuta(oa, mkFormatarDataOA_Execute);
     };
+    static mkFormatarOA = (oa) => {
+        // Converter (OBJ / ARRAY) Formatar para normalizar com a exibicao ao usuario.
+        return mkt.BoolToSimNaoOA(mkt.mkFormatarDataOA(mkt.mkLimparOA(oa)));
+    };
     static dataToLocale = (data) => {
         // com Objeto DATA, STRING ou MS, retorna data BR.
         // '2023-12-27T12:01:16.158' => '22/12/2023, 11:18:33'
@@ -2682,6 +2732,74 @@ class mkt {
         // (360º translacao / 86400000) = ~4.1
         // Então o erro de 1 dia ocorre 1x ao ano (Dia represeta 1436min).
         return Math.trunc(ms / 86400000);
+    };
+    static isData = (i) => {
+        return mkt.a.util.data[1].test(i);
+    };
+    static getTempoDiferenca = (msOld, msNew = null) => {
+        let dias = mkt.getDiasDiferenca(msOld, msNew);
+        if (dias < 0) {
+            dias = dias * -1;
+        }
+        let strTempo = "";
+        if (dias > 30) {
+            if (dias < 60) {
+                strTempo = "1 mês";
+            }
+            else {
+                if (dias > 365) {
+                    let anos = Math.floor(dias / 365);
+                    let diasRestoAno = dias % 365;
+                    if (anos < 2) {
+                        strTempo += anos + " ano ";
+                    }
+                    else {
+                        strTempo += anos + " anos ";
+                    }
+                    if (diasRestoAno > 30) {
+                        if (diasRestoAno < 60) {
+                            strTempo += "1 mês";
+                        }
+                        else {
+                            strTempo += Math.floor(diasRestoAno / 30) + " meses";
+                        }
+                    }
+                }
+                else {
+                    strTempo = Math.floor(dias / 30) + " meses";
+                }
+            }
+        }
+        else {
+            if (dias < 1) {
+                strTempo = "menos de 1 dia";
+            }
+            else {
+                strTempo = dias + " dias";
+            }
+        }
+        return strTempo;
+    };
+    static transMsEmSegundos = (ms) => {
+        return Math.trunc(ms / 1000); // 1000 ms == 1s
+    };
+    static transMsEmMinutos = (ms) => {
+        return Math.trunc(ms / 60000); // 1000 * 60
+    };
+    static transMsEmHoras = (ms) => {
+        return Math.trunc(ms / 3600000); // 1000 * 3600
+    };
+    static transSegundosEmMs = (s) => {
+        return s * 1000;
+    };
+    static transMinutosEmMs = (m) => {
+        return m * 60000;
+    };
+    static transHorasEmMs = (h) => {
+        return h * 3600000;
+    };
+    static transDiasEmMs = (d) => {
+        return d * 86400000;
     };
     // =============================== Web Components ================================= \\
     // ================================================================================= \\
@@ -3273,6 +3391,15 @@ class mkt {
         // Função que executa as regras deste campo com base nos objetos salvos
         // Quando concluir (onChange), executar novamentepra remover erros já corrigidos (justamente no último caracter).
         return new Promise((resolver) => {
+            // Antes de buscar a regra para esse elemento, limpa os que estão fora do dom
+            let tempRegras = [];
+            mkt.regras.forEach((r) => {
+                if (mkt.isInsideDom(r.e)) {
+                    tempRegras.push(r);
+                }
+                ;
+            });
+            mkt.regras = tempRegras; // Requer Propriedade destravada
             let erros = [];
             let regrasDoE = mkt.regras.find((o) => o.e == e);
             let eDisplay = regrasDoE?.c.querySelector(".mkRegrar[data-valmsg-for='" + regrasDoE.n + "']");
@@ -3287,7 +3414,7 @@ class mkt {
                         re.on = true;
                     }
                     let podeValidar = re.on; // Padrão validar, mas se regra estiver com o on=false, já inicia o giro sem validar;
-                    if (!e.offsetParent) { // Invisivel, padrão sem validar
+                    if (!mkt.isVisible(e)) { // Invisivel / fora do dom, padrão sem validar
                         podeValidar = false;
                     }
                     if (e.classList.contains("disabled")) { // Desativado, padrão sem validar
@@ -4376,51 +4503,6 @@ class mkt {
         mkt.ge();
         return rObjeto;
     };
-    static QSetAll = (query = "input[name='#PROP#']", o = null, comEvento = true) => {
-        // Seta todos os query com os valores das propriedades informadas nos campos.
-        // O nome da propriedade precisa ser compatível com o PROPNAME do query.
-        let eAfetados = [];
-        if (o != null) {
-            if (typeof o == "object" && !Array.isArray(o)) {
-                for (let p in o) {
-                    let eDynamicQuery = mkt.Q(query.replace("#PROP#", p));
-                    if (eDynamicQuery) {
-                        if (o[p]) {
-                            eDynamicQuery.value = o[p];
-                            if (comEvento) {
-                                eDynamicQuery.classList.add("atualizar");
-                            }
-                            else {
-                                eDynamicQuery.classList.add("atualizarSemEvento");
-                            }
-                            eAfetados.push(eDynamicQuery);
-                        }
-                    }
-                }
-            }
-            else
-                mkt.w("QSetAll - Precisa receber um objeto: " + o);
-        }
-        else
-            mkt.w("QSetAll - Objeto não pode ser nulo: " + o);
-        return eAfetados;
-    };
-    static Qison = (query = "body") => {
-        // Retorna uma array do estado DISABLED de todos da query.
-        return mkt.AllFromCadaExe(query, (e) => {
-            let b = false;
-            if (!e.classList.contains("disabled")) {
-                b = true;
-            }
-            return b;
-        });
-    };
-    static QverToggle = (query = "body") => {
-        // Inverte oculto dos campos da query
-        return mkt.aCadaElemento(query, (e) => {
-            e?.classList.toggle("oculto");
-        });
-    };
     static QScrollTo = (query = "body") => {
         // Move o Scroll da janela até o elemento
         let temp = mkt.Q(query);
@@ -4443,9 +4525,26 @@ class mkt {
         }
     };
     static isVisible = (e) => {
-        // Retorna se está na tela.
-        // Aperfeiçoar para uma verificação se está no viewport.
-        return (e.offsetWidth > 0 || e.offsetHeight > 0 || e.getClientRects().length > 0);
+        // Verifica se o elemento está no dom e se está com tamanho e display visivel.
+        if (mkt.isInsideDom(e)) {
+            // Está no DOM, mas se estiver
+            if (mkt.isOculto(e)) {
+                // Aqui não verifica se está dentro da viewport.
+                return true;
+            }
+            ;
+        }
+        return false;
+    };
+    static isOculto = (e) => {
+        // Verifica se está com display none (oculto) ou com tamanho zerado (mkSecreto)
+        e = mkt.Q(e);
+        // Se estiver com display none, vai zerar o Width.
+        return (e.offsetWidth > 0 || e.offsetHeight > 0);
+    };
+    static isInsideDom = (e) => {
+        // Retorna true se estiver dentro de HTML
+        return mkt.Q(e).closest("html") ? true : false;
     };
     // (gerarDownload) - Entrou em desuso
     // static gerarDownload = (
@@ -4675,78 +4774,6 @@ class mkt {
             }
         }
         return novaArray;
-    };
-    static isData = (i) => {
-        return mkt.a.util.data[1].test(i);
-    };
-    static getTempoDiferenca = (msOld, msNew = null) => {
-        let dias = mkt.getDiasDiferenca(msOld, msNew);
-        if (dias < 0) {
-            dias = dias * -1;
-        }
-        let strTempo = "";
-        if (dias > 30) {
-            if (dias < 60) {
-                strTempo = "1 mês";
-            }
-            else {
-                if (dias > 365) {
-                    let anos = Math.floor(dias / 365);
-                    let diasRestoAno = dias % 365;
-                    if (anos < 2) {
-                        strTempo += anos + " ano ";
-                    }
-                    else {
-                        strTempo += anos + " anos ";
-                    }
-                    if (diasRestoAno > 30) {
-                        if (diasRestoAno < 60) {
-                            strTempo += "1 mês";
-                        }
-                        else {
-                            strTempo += Math.floor(diasRestoAno / 30) + " meses";
-                        }
-                    }
-                }
-                else {
-                    strTempo = Math.floor(dias / 30) + " meses";
-                }
-            }
-        }
-        else {
-            if (dias < 1) {
-                strTempo = "menos de 1 dia";
-            }
-            else {
-                strTempo = dias + " dias";
-            }
-        }
-        return strTempo;
-    };
-    static transMsEmSegundos = (ms) => {
-        return Math.trunc(ms / 1000); // 1000 ms == 1s
-    };
-    static transMsEmMinutos = (ms) => {
-        return Math.trunc(ms / 60000); // 1000 * 60
-    };
-    static transMsEmHoras = (ms) => {
-        return Math.trunc(ms / 3600000); // 1000 * 3600
-    };
-    static transSegundosEmMs = (s) => {
-        return s * 1000;
-    };
-    static transMinutosEmMs = (m) => {
-        return m * 60000;
-    };
-    static transHorasEmMs = (h) => {
-        return h * 3600000;
-    };
-    static transDiasEmMs = (d) => {
-        return d * 86400000;
-    };
-    static mkFormatarOA = (oa) => {
-        // Converter (OBJ / ARRAY) Formatar para normalizar com a exibicao ao usuario.
-        return mkt.BoolToSimNaoOA(mkt.mkFormatarDataOA(mkt.mkLimparOA(oa)));
     };
     static CarregarHtml = (estilo = "", classe = "relative") => {
         return `<div class="CarregadorMk ${classe}" style="${estilo}"></div>`;
@@ -5270,7 +5297,10 @@ class mkt {
 //  DEFINE PROPERTY                 \\
 //___________________________________\\
 Object.keys(mkt).forEach((n) => {
-    Object.defineProperty(mkt, n, { enumerable: false, writable: false, configurable: false });
+    // Excessões
+    if (!mkt.a.definePropertyExceptions.includes(n)) {
+        Object.defineProperty(mkt, n, { enumerable: false, writable: false, configurable: false });
+    }
 });
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //   Auto Inicializar               \\
