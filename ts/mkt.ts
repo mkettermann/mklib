@@ -3488,6 +3488,10 @@ class mkt {
 			mkt.regras.forEach((r) => {
 				if (mkt.isInsideDom(r.e)) {
 					tempRegras.push(r);
+				} else {
+					// Não está mais no DOM e será removida.
+					// Mas emite aviso, pois não foi removida naturalmente.
+					mkt.l("Regrar > AutoRemoção de Validação do campo: ", r.n);
 				};
 			});
 			mkt.regras = tempRegras; // Requer Propriedade destravada
@@ -3856,12 +3860,13 @@ class mkt {
 	static desregrar = async (container: any) => {
 		// Remove as regras de um determinado container
 		container = mkt.Q(container);
-
-		mkt.regras.forEach((r: any) => {
-			if (mkt.isInside(r.e, container)) {
-				mkt.regras.splice(mkt.regras.indexOf(r), 1);
-			}
+		let tempRegras: any[] = [];
+		mkt.regras.forEach((r) => {
+			if (!mkt.isInside(r.e, container)) {
+				tempRegras.push(r);
+			};
 		});
+		mkt.regras = tempRegras; // Requer Propriedade destravada
 	}
 
 	static mascarar = (texto: any, mascara: any) => {
