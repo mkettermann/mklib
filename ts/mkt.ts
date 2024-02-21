@@ -5104,7 +5104,7 @@ class mkt {
 				}
 				// Evento no PRIMEIRO parametro.
 				// 0-100% carregamento no SEGUNDO parametro.
-				eventos(event, Math.trunc((event.loaded / event.total) * 100));
+				if (eventos) eventos(event, Math.trunc((event.loaded / event.total) * 100));
 			};
 			if (arquivo) {
 				if (arquivo.name != "") {
