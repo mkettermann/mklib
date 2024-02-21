@@ -1658,13 +1658,23 @@ class mkt {
     static QverOff = (query = "body") => {
         // Oculta pela classe "oculto" todos elementos deste query.
         return mkt.aCadaElemento(query, (e) => {
-            e?.classList.add("oculto");
+            if (e.classList.contains("mkSel") && e.classList.contains("mkSecreto")) {
+                e.parentElement?.classList.add("oculto");
+            }
+            else {
+                e?.classList.add("oculto");
+            }
         });
     };
     static QverOn = (query = "body") => {
         // Visualiza elemento removendo a classe "oculto";
         return mkt.aCadaElemento(query, (e) => {
-            e?.classList.remove("oculto");
+            if (e.classList.contains("mkSel") && e.classList.contains("mkSecreto")) {
+                e.parentElement?.classList.remove("oculto");
+            }
+            else {
+                e?.classList.remove("oculto");
+            }
         });
     };
     static Qoff = (query = "body") => {
