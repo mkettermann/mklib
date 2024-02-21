@@ -10,18 +10,21 @@ var mkz = null;
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //  FUNCOES EXTERNAS                \\
 //___________________________________\\
-String.prototype.removeRaw = function () {
-    return this
-        //.replaceAll("&quot;", '"')
-        //.replaceAll("&#39;", "'")
-        //.replaceAll("&amp;", "&")
-        .replaceAll("\n", "")
+String.prototype.removeRaw = function (fix = false) {
+    let r = this.replaceAll("\n", "")
         .replaceAll("\r", "")
         .replaceAll("\t", "")
         .replaceAll("\b", "")
         .replaceAll("\f", "");
-    //.replaceAll("\\", "/");
+    if (fix.toString() == "2") {
+        r = r.replaceAll("&quot;", '"')
+            .replaceAll("&#39;", "'")
+            .replaceAll("&amp;", "&");
+        r = r.replaceAll("\\", "/");
+    }
+    //
     // \u00E3 == ã, viraria /u00E3
+    return r;
 };
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //  MODELO DOS DADOS DA LISTA       \\
@@ -4388,7 +4391,7 @@ class mkt {
         // Se for um JSON válido. Retorna o objeto, se não null.
         if (removeRaw) {
             if (mkt.classof(t) == "String") {
-                t = t.removeRaw();
+                t = t.removeRaw(removeRaw);
             }
         }
         if (t === "")
@@ -4942,47 +4945,47 @@ class mkt {
         // 123,45 (2 casas pos conversao float)
         e.value = mkt.mkDuasCasas(mkt.mkFloat(e.value));
     };
-    static mkBase64 = (arquivo, tagImg, tagHidden) => {
-        // Verificar se esta nulo
-        let leitor = new FileReader();
-        leitor.onload = () => {
-            mkt.Q(tagImg).src = leitor.result;
-            mkt.Q(tagHidden).value = leitor.result;
-        };
-        leitor.readAsDataURL(arquivo);
-    };
-    static ler = async (arq, p) => {
+    static fileReader = async (arquivo, eventos) => {
+        // File API
+        // Recebe e Retorna o file, mas seta propriedade b64.
+        // Durante o processo retorna os eventos no "eventos"
         return new Promise((r) => {
             let leitor = new FileReader();
-            leitor.onprogress = (ev) => {
-                if (ev.lengthComputable) {
-                    let carga = ev.loaded / ev.total;
-                    if (carga <= 1) {
-                        if (p)
-                            p(carga);
-                    }
+            let gatilhos = (event) => {
+                // Tratamento dos Eventos durante Leitura
+                if (event.type == "error") {
+                    mkt.erro("fileReader() - Erro: ", event);
+                    r(null);
                 }
+                else if (event.type == "loadend") {
+                    arquivo.b64 = leitor.result;
+                    r(arquivo);
+                }
+                // Evento no PRIMEIRO parametro.
+                // 0-100% carregamento no SEGUNDO parametro.
+                eventos(event, Math.trunc((event.loaded / event.total) * 100));
             };
-            leitor.onload = (ev) => {
-                arq.b64 = ev.target?.result;
-                r(arq);
-            };
-            leitor.onerror = () => {
-                mkt.erro("Erro ao ler arquivo: " + arq);
-            };
-            if (arq) {
-                if (arq.name != "") {
-                    leitor.readAsDataURL(arq);
+            if (arquivo) {
+                if (arquivo.name != "") {
+                    // Possibilidades de eventos e Início da leitura
+                    leitor.addEventListener("loadstart", gatilhos);
+                    leitor.addEventListener("progress", gatilhos);
+                    leitor.addEventListener("error", gatilhos);
+                    leitor.addEventListener("abort", gatilhos);
+                    leitor.addEventListener("load", gatilhos);
+                    leitor.addEventListener("loadend", gatilhos);
+                    leitor.readAsDataURL(arquivo);
                 }
                 else {
-                    mkt.l("F: Sem nome de arquivo.", arq);
+                    mkt.l("fileReader() - Nome do arquivo necessário: ", arquivo.name);
                     r(null);
                 }
             }
             else {
-                mkt.l("F: Arquivo Nulo.", arq);
+                mkt.w("fileReader() - Arquivo Nulo: ", arquivo);
                 r(null);
             }
+            ;
         });
     };
     static getModelo = (array) => {
@@ -5260,6 +5263,9 @@ class mkt {
                 }
             });
         });
+    };
+    static capitalize = (string) => {
+        return string.charAt(0).toUpperCase() + string.slice(1);
     };
     // DEPRECATED - Utiliza em Fichas (Substituir por Faseador)
     static fUIFaseUpdateLinkFase = () => {
