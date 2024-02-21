@@ -3740,7 +3740,7 @@ class mkt {
                         re.on = true;
                     }
                     let podeValidar = re.on; // Padrão validar, mas se regra estiver com o on=false, já inicia o giro sem validar;
-                    if (!mkt.isVisible(e)) { // Invisivel / fora do dom, padrão sem validar
+                    if (mkt.isVisible(e)) { // Invisivel / fora do dom, padrão sem validar
                         podeValidar = false;
                     }
                     if (e.classList.contains("disabled")) { // Desativado, padrão sem validar
