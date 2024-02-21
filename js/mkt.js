@@ -4857,9 +4857,17 @@ class mkt {
         // Verifica se o elemento está no dom e se está com tamanho e display visivel.
         if (mkt.isInsideDom(e)) {
             // Está no DOM, mas se estiver
-            if (mkt.isOculto(e)) {
+            if (!mkt.isOculto(e)) {
                 // Aqui não verifica se está dentro da viewport.
                 return true;
+            }
+            else {
+                if (e.classList.contains("mkSel") && e.classList.contains("mkSecreto")) {
+                    if (!mkt.isOculto(e.parentElement)) {
+                        // Aqui não verifica se está dentro da viewport.
+                        return true;
+                    }
+                }
             }
             ;
         }
@@ -4869,7 +4877,7 @@ class mkt {
         // Verifica se está com display none (oculto) ou com tamanho zerado (mkSecreto)
         e = mkt.Q(e);
         // Se estiver com display none, vai zerar o Width.
-        return (e.offsetWidth > 0 || e.offsetHeight > 0);
+        return !(e.offsetWidth > 0 || e.offsetHeight > 0);
     };
     static isInsideDom = (e) => {
         // Retorna true se estiver dentro de HTML
