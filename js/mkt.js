@@ -1161,7 +1161,7 @@ class mkt {
     getAllTr = () => {
         return Array.from(mkt.QAll(this.c.container + " tbody tr"));
     };
-    // USER INTERFACE - UI - INDIVIDUAL
+    // USER INTERFACE - UI FOR CRUD
     add = (objDados) => {
         objDados = this.c.aoReceberDados(objDados, this);
         this.dadosFull.push(objDados);
@@ -1239,7 +1239,7 @@ class mkt {
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //                     ARMAZENADORES ESTÁTICOS                             \\
     //==========================================================================\\
-    // mkt.a.
+    // mkt.a. - XXX UTIL
     static a = {
         // Armazenadores / Constantes
         ALL: "*/*",
@@ -1279,8 +1279,8 @@ class mkt {
                 // iof == indexOf mkt.a.build
                 if ((mkt.classof(iof) == "String") && (mkt.classof(colName) == "String")) {
                     // Sempre que abre o menu, da o replace do this na estática.
-                    let opcoes = mkt.getThis(Number(iof)).getModel().map(o => { if (o.f)
-                        return o.k; }).filter(r => { return r != null; });
+                    let opcoes = mkt.getThis(Number(iof)).getModel().map((o) => { if (o.f)
+                        return o.k; }).filter((r) => { return r != null; });
                     let posAtual = opcoes.indexOf(colName);
                     let posAnterior = 0;
                     if (posAtual >= 0) { // Se o atual existe
@@ -1298,8 +1298,8 @@ class mkt {
             },
             Next: (colName, iof) => {
                 if (mkt.classof(iof) == "String") {
-                    let opcoes = mkt.getThis(Number(iof)).getModel().map(o => { if (o.f)
-                        return o.k; }).filter(r => { return r != null; });
+                    let opcoes = mkt.getThis(Number(iof)).getModel().map((o) => { if (o.f)
+                        return o.k; }).filter((r) => { return r != null; });
                     let posAtual = opcoes.indexOf(colName);
                     let posSeguinte = 0;
                     if (posAtual >= 0) { // Se o atual existe
@@ -1592,7 +1592,15 @@ class mkt {
                 }
             ],
             cpf_cnpj: [
-                "00.000.000/0000-00",
+                (str) => {
+                    if (mkt.apenasNumeros(str).length <= 11) {
+                        return "000.000.000-00";
+                    }
+                    else {
+                        return "00.000.000/0000-00";
+                    }
+                    ;
+                },
                 /^([0-9]{2}([\.]?[0-9]{3}){2}[\/]?[0-9]{4}[-]?[0-9]{2})|([0-9]{3}([\.]?[0-9]{3}){2}[-]?[0-9]{2})$/, (cpf_cnpj) => {
                     return mkt.a.util.cpf[2](cpf_cnpj) || mkt.a.util.cnpj[2](cpf_cnpj);
                 }
@@ -1728,11 +1736,11 @@ class mkt {
         // Incrementa no ATRIBUTO do elemento E o texto do GATILHO.
         if (e) {
             if (atributo) {
-                let classof = mkt.classof(gatilho);
-                if (classof == "Function") {
+                let tipo = mkt.classof(gatilho);
+                if (tipo == "Function") {
                     e[atributo] = gatilho;
                 }
-                else if (classof == "String") {
+                else if (tipo == "String") {
                     let attr = e?.getAttribute(atributo);
                     if (attr) {
                         if (!attr.includes(gatilho)) {
@@ -1744,7 +1752,7 @@ class mkt {
                     }
                 }
                 else {
-                    mkt.w("mkt.atribuir() - Formato não implementado: ", classof);
+                    mkt.w("mkt.atribuir() - Formato não implementado: ", tipo);
                 }
             }
             else {
@@ -1808,7 +1816,12 @@ class mkt {
     static QverToggle = (query = "body") => {
         // Inverte oculto dos campos da query
         return mkt.aCadaElemento(query, (e) => {
-            e?.classList.toggle("oculto");
+            if (e.classList.contains("mkSel") && e.classList.contains("mkSecreto")) {
+                e.parentElement?.classList.add("oculto");
+            }
+            else {
+                e?.classList.toggle("oculto");
+            }
         });
     };
     // =========================== ERROS, LOGS E INFORMACOES ========================== \\
@@ -1905,7 +1918,27 @@ class mkt {
             let listaNode = "";
             let mkMoldeOAA_Execute = (o) => {
                 let node = eModelo.innerHTML;
-                node = mkt.mkToValue(node, o);
+                // Converte de "${obj.key}" em valor dentro de uma string.
+                if (node.indexOf("${") >= 0) {
+                    let ret = "";
+                    let ini = node.split("${");
+                    ret = ini[0];
+                    for (let i in ini) {
+                        if (i == "0")
+                            continue;
+                        let end = ini[i].indexOf("}");
+                        let key = ini[i].slice(0, end).trim();
+                        if ((mkt.classof(o) == "Object" || mkt.classof(o) == "Array") && o != null) {
+                            // Quando é Objeto ou Array, entra na propriedade ou posição solicitada.
+                            let v = mkt.removerAspas(mkt.getV(key, o));
+                            if (v != null) {
+                                ret += v;
+                            }
+                        }
+                        ret += ini[i].slice(end + 1);
+                    }
+                    node = ret;
+                }
                 listaNode += node;
             };
             mkt.aCadaObjExecuta(dadosOA, mkMoldeOAA_Execute);
@@ -1952,32 +1985,6 @@ class mkt {
                 ")");
         }
         return null;
-    };
-    static mkToValue = (m, o) => {
-        // Conversor de "${obj.key}" em valor dentro de uma string.
-        let ret = "";
-        if (m.indexOf("${") >= 0) {
-            let ini = m.split("${");
-            ret = ini[0];
-            for (let i in ini) {
-                if (i == "0")
-                    continue;
-                let end = ini[i].indexOf("}");
-                let key = ini[i].slice(0, end).trim();
-                if ((mkt.classof(o) == "Object" || mkt.classof(o) == "Array") && o != null) {
-                    // Quando é Objeto ou Array, entra na propriedade ou posição solicitada.
-                    let v = mkt.removerAspas(mkt.getV(key, o));
-                    if (v != null) {
-                        ret += v;
-                    }
-                }
-                ret += ini[i].slice(end + 1);
-            }
-        }
-        else {
-            ret = m;
-        }
-        return ret;
     };
     static processoFiltragem = (aTotal, objFiltro, inst) => {
         // Atravéz de uma array completa e vários filtros, retorna uma array filtrada sobre as regras de cada objeto.
@@ -4111,12 +4118,18 @@ class mkt {
     static mascarar = (texto, mascara) => {
         // Informando uma máscara e um texto, retorna dado mascarado.
         // Mascaras: 0=Numero, A=Letra, Outros repete.
+        if (mkt.classof(mascara) != "String") {
+            // Se passar uma funcao para a mascara, Executa a função enviando o texto e deve retornar uma string da mascara para esse texto.
+            if (mkt.classof(mascara) == "Function") {
+                mascara = mascara(texto); // Sobreextreve a mascara a ser executada pelo retorno da função.
+            }
+        }
         if (mascara) {
             if (texto) {
-                if (typeof texto != "string")
+                if (mkt.classof(texto) != "String")
                     texto = texto?.toString();
-                if (typeof mascara != "string")
-                    mascara = mascara?.toString();
+                if (mkt.classof(mascara) != "String")
+                    mascara = mascara?.toString(); // Se a chegar até aqui e ainda não for string
                 let ms = [...mkt.clonar(mascara)];
                 let ss = [...mkt.clonar(texto)];
                 // this.l("ss: ", ss);
@@ -4644,7 +4657,7 @@ class mkt {
     };
     static apenasNumeros = (s = "") => {
         // Ignora qualquer outro caracter além de Numeros
-        return s.replace(/(?![0-9])./g, "");
+        return s.toString().replace(/(?![0-9])./g, "");
     };
     static apenasLetras = (s = "") => {
         // Ignora qualquer outro caracter além de Letras formato ocidental
