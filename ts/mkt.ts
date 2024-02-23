@@ -950,7 +950,13 @@ class mkt {
 			colNameLabel = esteLabel;
 		}
 		if (colNameLabel == colName) {
-			colNameLabel = eHead.innerHTML;
+			if (eHead) {
+				// Tenta utilizar o campo do Head.
+				colNameLabel = eHead?.innerHTML;
+			} else {
+				// Mas se não encontrar, deixa o próprio.
+				colNameLabel = colName;
+			}
 		}
 		mkt.QAll("body .mkHeadMenu .hmTitulo").forEach((e: HTMLElement) => {
 			e.innerHTML = colNameLabel;
@@ -2840,13 +2846,13 @@ class mkt {
 				}
 			} else {
 				let busca = new RegExp("^[0-2][0-9]{3}[-][0-1][0-9][-][0-3][0-9]$"); // Entre 0000-00-00 a 2999-19-39
-				let busca2 = new RegExp("^[0-2][0-9]{3}[-][0-1][0-9][-][0-3][0-9]T[0-2][0-9]:[0-5][0-9]"); // Entre 0000-00-00T00:00 a 2999-19-39T29:59 (Se iniciar nesse formato de ISO)
+				let busca2 = new RegExp("^[0-2][0-9]{3}[-][0-1][0-9][-][0-3][0-9][T| ][0-2][0-9]:[0-5][0-9]"); // Entre 0000-00-00T00:00 a 2999-19-39T29:59 (Se iniciar nesse formato de ISO )
 				for (var propName in o) {
 					if (busca.test(o[propName])) {
 						o[propName] = mkt.mkYYYYMMDDtoDDMMYYYY(o[propName]);
 					}
 					if (busca2.test(o[propName])) {
-						o[propName] = mkt.dataToLocale(o[propName]);
+						o[propName] = mkt.dataToLocale(o[propName]).replaceAll(",", "");
 					}
 				}
 			}

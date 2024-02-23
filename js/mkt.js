@@ -932,7 +932,14 @@ class mkt {
             colNameLabel = esteLabel;
         }
         if (colNameLabel == colName) {
-            colNameLabel = eHead.innerHTML;
+            if (eHead) {
+                // Tenta utilizar o campo do Head.
+                colNameLabel = eHead?.innerHTML;
+            }
+            else {
+                // Mas se não encontrar, deixa o próprio.
+                colNameLabel = colName;
+            }
         }
         mkt.QAll("body .mkHeadMenu .hmTitulo").forEach((e) => {
             e.innerHTML = colNameLabel;
