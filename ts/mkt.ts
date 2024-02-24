@@ -2839,40 +2839,50 @@ class mkt {
 	};
 
 	static dataFormatarSOA = (soa: object | object[] | string, reverse: boolean | null = false) => {
-		// Converter todas Datas (OBJ / ARRAY / STRING)
+		// Converter todas Datas (OBJ / ARRAY / STRING) - Não converte MS (Number)
+		// Como deveria ser:
+		// - A cada Sub Propriedade String
+		// - -> Verificar se é: Só data, Data e Hora
+		// - -> Verfificar se está padrao BR ou ISO
+		// - -> Converter para o padrao BR se reverse estiver false.
+		// - -> Converter para o padrao ISO se reverse estiver true.
+		// MAS Está primitivo, apenas string que foi implementado formato via regex
 		function dataFormatarS_Execute(s: string, rev: boolean | null = false) {
-
-		}
-		function dataFormatarOA_Execute(o: any) {
-			if (reverse) {
-				for (var propName in o) {
-					o[propName] = mkt.dataToIsoData(o[propName]);
-				}
+			// A cada vez que entrar aqui, precisa verificar se a string é um regex da data.
+			if (rev) {
+				s = mkt.dataToIsoData(s);
 			} else {
 				let busca = new RegExp("^[0-2][0-9]{3}[-][0-1][0-9][-][0-3][0-9]$"); // Entre 0000-00-00 a 2999-19-39
 				let busca2 = new RegExp("^[0-2][0-9]{3}[-][0-1][0-9][-][0-3][0-9][T| ][0-2][0-9]:[0-5][0-9]"); // Entre 0000-00-00T00:00 a 2999-19-39T29:59 (Se iniciar nesse formato de ISO )
-				for (var propName in o) {
-					if (busca.test(o[propName])) {
-						o[propName] = mkt.dataToBRData(o[propName]);
-					}
-					if (busca2.test(o[propName])) {
-						o[propName] = mkt.dataToLocale(o[propName]).replaceAll(",", "");
-					}
+
+				if (busca2.test(s)) {
+					s = mkt.dataToLocale(s).replaceAll(",", "");
+				} else if (busca.test(s)) {
+					s = mkt.dataToBRData(s);
+				}
+			}
+			return s;
+		}
+		function dataFormatarO_Execute(o: any) {
+			for (var propName in o) {
+				if (mkt.classof(o[propName]) == "String") {
+					o[propName] = dataFormatarS_Execute(o[propName], reverse);
 				}
 			}
 			return o;
 		}
 		let tipo = mkt.classof(soa);
 		if (tipo == "Object" || tipo == "Array") {
-			return mkt.aCadaObjExecuta(soa, dataFormatarOA_Execute);
+			return mkt.aCadaObjExecuta(soa as object | object[], dataFormatarO_Execute);
 		} else if (tipo == "String") {
-			return dataFormatarS_Execute(soa);
+			return dataFormatarS_Execute(soa as string, reverse);
 		}
+		return soa; // Outra tipagem, não formata
 	};
 
-	static mkFormatarOA = (oa: object | object[]) => {
+	static masterFormatarSOA = (soa: object | object[]) => {
 		// Converter (OBJ / ARRAY) Formatar para normalizar com a exibicao ao usuario.
-		return mkt.BoolToSimNaoOA(mkt.mkFormatarDataOA(mkt.mkLimparOA(oa)));
+		return mkt.BoolToSimNaoSOA(mkt.dataFormatarSOA(mkt.mkLimparOA(soa)));
 	}
 
 	static dataToLocale = (data: string): string => {
@@ -4889,7 +4899,7 @@ class mkt {
 		}
 	};
 
-	static BoolToSimNaoOA = (oa: object | object[]) => {
+	static BoolToSimNaoSOA = (soa: object | object[] | string) => {
 		// Converter (OBJ / ARRAY) Formato Booleano em Sim/Não
 		function BoolToSimNaoOA_Execute(o: any) {
 			for (var propName in o) {
@@ -4908,7 +4918,16 @@ class mkt {
 			}
 			return o;
 		}
-		return mkt.aCadaObjExecuta(oa, BoolToSimNaoOA_Execute);
+		if (mkt.classof(soa) == "String") {
+			if (soa.toString().toLowerCase() == "true") {
+				soa = "Sim";
+			}
+			if (soa.toString().toLowerCase() == "false") {
+				soa = "N&atilde;o";
+			}
+			return soa;
+		}
+		return mkt.aCadaObjExecuta(soa as object | object[], BoolToSimNaoOA_Execute);
 	};
 
 	static formatadorDeTexto = (texto: string) => {
