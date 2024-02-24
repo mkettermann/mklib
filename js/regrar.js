@@ -1,5 +1,5 @@
 mkt.Ao("click", ".btnTestarValidar", async (e) => {
-	if (await mkt.estaValido("#regrarTeste")) {
+	if (await mkt.regrasValidas("#regrarTeste")) {
 		console.log("Validou");
 	} else {
 		console.log("Não validou");
@@ -7,7 +7,7 @@ mkt.Ao("click", ".btnTestarValidar", async (e) => {
 });
 
 mkt.Ao("click", ".btnTestarValidarAll", async (e) => {
-	if (await mkt.estaValido("body")) {
+	if (await mkt.regrasValidas("body")) {
 		console.log("Validou");
 	} else {
 		console.log("Não validou");
@@ -15,11 +15,11 @@ mkt.Ao("click", ".btnTestarValidarAll", async (e) => {
 });
 
 mkt.Ao("click", ".btnClearValidar", async (e) => {
-	mkt.regraClear("#regrarTeste");
+	mkt.regraOcultar("#regrarTeste");
 });
 
 mkt.Ao("click", ".btnClearValidarAll", async (e) => {
-	mkt.regraClear();
+	mkt.regraOcultar();
 });
 
 // REGRAR

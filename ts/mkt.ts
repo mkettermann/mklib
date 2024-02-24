@@ -2256,17 +2256,6 @@ class mkt {
 		mkt.Q("body").classList.remove("CarregadorMkSemScrollY");
 	};
 
-	static vibrar = async (tipo: boolean | null) => {
-		// Funcionalidade de vibrar celular baseado no tipo informado.
-		if (tipo === false) {
-			navigator.vibrate([100, 30, 100, 30, 100]); // 3 tempos curtos com intervalo representando: "Não, Não, Não"
-		} else if (tipo === true) {
-			navigator.vibrate([300]); // 3 tempos sem intervalo representando: "Efetivado"
-		} else {
-			navigator.vibrate([200, 50, 200]) // 2 Tempos seguidos representando: "Talvez"
-		}
-	};
-
 	static importar = async (tagBuscar = ".divListagemContainer", tipo: any = "race", quiet: boolean = true) => {
 		// IMPORTAR - Coleta o html externo através da classe mkImportar contendo a url.
 		return new Promise((r, x) => {
@@ -3862,7 +3851,7 @@ class mkt {
 
 	static regras: any[] = [];
 
-	static exeregra = async (e: any, ev: any = null) => {
+	static regraExe = async (e: any, ev: any = null) => {
 		// Função que executa as regras deste campo com base nos objetos salvos
 		// Quando concluir (onChange), executar novamentepra remover erros já corrigidos (justamente no último caracter).
 		return new Promise((resolver) => {
@@ -4158,24 +4147,16 @@ class mkt {
 						return a.m;
 					}).join("<br/>");
 					mkt.regraDisplay(e, true, eDisplay, mensagens);
-					mkt.TerremotoErros(e);
+					if (eDisplay) mkt.Terremoto(eDisplay);
 				} else {
 					mkt.regraDisplay(e, false, eDisplay, "");
 				}
 				resolver(erros);
 			}); // Promise All
-		}); // Return Promise exeRegra
+		}); // Return Promise regraExe
 	};
 
-	static TerremotoErros = (e: any = null): void => {
-		// Efeito de terremoto apenas no elemento passado via exeRegra
-		e.nextElementSibling?.classList.add("mkTerremoto");
-		setTimeout(() => {
-			e.nextElementSibling?.classList.remove("mkTerremoto");
-		}, 500);
-	};
-
-	static estaValido = async (container: any) => {
+	static regrasValidas = async (container: any) => {
 		// Retorna um booleano indicando se este container está ok ou não.
 		container = mkt.Q(container);
 		let validou = false;
@@ -4183,7 +4164,7 @@ class mkt {
 		let promises: any = [];
 		mkt.regras.forEach((regra: any) => {
 			if (mkt.isInside(regra.e, container)) {
-				promises.push(mkt.exeregra(regra.e, "full"));
+				promises.push(mkt.regraExe(regra.e, "full"));
 			}
 		});
 		let resultado: any = [];
@@ -4224,7 +4205,7 @@ class mkt {
 		if (eDisplay) eDisplay.innerHTML = mensagem;
 	};
 
-	static regraClear = (container: any) => {
+	static regraOcultar = (container: any) => {
 		container = mkt.Q(container);
 		// A cada regra envia um OCULTAR ERROS
 		mkt.regras.forEach((r: any) => {
@@ -4240,7 +4221,7 @@ class mkt {
 		})
 	};
 
-	static desregrar = async (container: any) => {
+	static regraRemover = async (container: any) => {
 		// Remove as regras de um determinado container
 		container = mkt.Q(container);
 		let tempRegras: any[] = [];
@@ -4251,6 +4232,56 @@ class mkt {
 		});
 		mkt.regras = tempRegras; // Requer Propriedade destravada
 	}
+
+
+	static regrar = (container: any, nome: string, ...obj: any) => {
+		/**
+		 * Informar o C (Container), N (Nome do input) e OBJ (Regra)
+		 * Atributos do Objeto
+		 * k:		nome da regra a ser utilizada
+		 * v: 	atributo da regra escolhida
+		 * m: 	mensagem de exibição caso esteja em estado falso.
+		 * a: 	auto executar essa regra assim que regrar (true/false)
+		 * f:		força validar mesmo se estiver invisivel / desativado (true/false)
+		 * on: 	padrão true. define se vai executar a regra ou não.
+		 */
+		if (typeof nome != "string") {
+			return mkt.w("Regrar() precisa receber o nome do input como string");
+		}
+		container = mkt.Q(container);
+		let e = container?.querySelector("*[name='" + nome + "']");
+		if (e) {
+			mkt.atribuir(e, () => { mkt.regraExe(e) }, "oninput");
+			mkt.atribuir(e, () => { mkt.regraExe(e, event) }, "onblur");
+
+			// Buscar Elemento e regra
+			let auto = false;
+			let novaregra: any = { c: container, n: nome, e: e, r: [...obj] };
+			let posE = mkt.regras.findIndex((o: any) => o.e == e);
+			if (posE >= 0) {
+				// Elemento já encontrado, substituir a regra específica
+				novaregra.r.forEach((i: any) => {
+					let posRe = mkt.regras[posE].r.findIndex((o: any) => o.k == i.k);
+					if (posRe >= 0) {
+						for (let p in novaregra.r) {
+							mkt.regras[posE].r[posRe] = novaregra.r[p];
+						}
+					} else {
+						mkt.regras[posE].r.push(i);
+					}
+				});
+			} else {
+				mkt.regras.push(novaregra);
+			}
+			// Auto Executa
+			if (auto) {
+				mkt.regraExe(e, "inicial");
+			}
+		} else {
+			mkt.w("Regrar Requer Elemento (" + nome + "): ", e, " Container: ", container)
+		}
+	}
+
 
 	static mascarar = (texto: any, mascara: any) => {
 		// Informando uma máscara e um texto, retorna dado mascarado.
@@ -4313,56 +4344,6 @@ class mkt {
 		}
 		return null;
 	};
-
-	static regrar = (container: any, nome: string, ...obj: any) => {
-		/**
-		 * Informar o C (Container), N (Nome do input) e OBJ (Regra)
-		 * Atributos do Objeto
-		 * k:		nome da regra a ser utilizada
-		 * v: 	atributo da regra escolhida
-		 * m: 	mensagem de exibição caso esteja em estado falso.
-		 * a: 	auto executar essa regra assim que regrar (true/false)
-		 * f:		força validar mesmo se estiver invisivel / desativado (true/false)
-		 * on: 	padrão true. define se vai executar a regra ou não.
-		 */
-		if (typeof nome != "string") {
-			return mkt.w("Regrar() precisa receber o nome do input como string");
-		}
-		container = mkt.Q(container);
-		let e = container?.querySelector("*[name='" + nome + "']");
-		if (e) {
-			mkt.atribuir(e, () => { mkt.exeregra(e) }, "oninput");
-			mkt.atribuir(e, () => { mkt.exeregra(e, event) }, "onblur");
-
-			// Buscar Elemento e regra
-			let auto = false;
-			let novaregra: any = { c: container, n: nome, e: e, r: [...obj] };
-			let posE = mkt.regras.findIndex((o: any) => o.e == e);
-			if (posE >= 0) {
-				// Elemento já encontrado, substituir a regra específica
-				novaregra.r.forEach((i: any) => {
-					let posRe = mkt.regras[posE].r.findIndex((o: any) => o.k == i.k);
-					if (posRe >= 0) {
-						for (let p in novaregra.r) {
-							mkt.regras[posE].r[posRe] = novaregra.r[p];
-						}
-					} else {
-						mkt.regras[posE].r.push(i);
-					}
-				});
-			} else {
-				mkt.regras.push(novaregra);
-			}
-			// Auto Executa
-			if (auto) {
-				mkt.exeregra(e, "inicial");
-			}
-		} else {
-			mkt.w("Regrar Requer Elemento (" + nome + "): ", e, " Container: ", container)
-		}
-	}
-
-
 	// ============================ TOOLS e JS HELPERS ================================ \\
 	// ================================================================================= \\
 
@@ -5321,7 +5302,7 @@ class mkt {
 			async aoAvancar() { }
 			async avancar(novaFase: any = null) {
 				return new Promise(async (r, err) => {
-					if (await mkt.estaValido(".modalFase" + this.atual)) {
+					if (await mkt.regrasValidas(".modalFase" + this.atual)) {
 						if (novaFase) {
 							if (novaFase instanceof HTMLElement) {
 								if (novaFase.getAttribute("data-libera")) {
@@ -5466,6 +5447,27 @@ class mkt {
 	static capitalize = (string: string): string => {
 		return string.charAt(0).toUpperCase() + string.slice(1);
 	}
+
+	static vibrar = async (tipo: boolean | null) => {
+		// Funcionalidade de vibrar celular baseado no tipo informado.
+		if (tipo === false) {
+			navigator.vibrate([100, 30, 100, 30, 100]); // 3 tempos curtos com intervalo representando: "Não, Não, Não"
+		} else if (tipo === true) {
+			navigator.vibrate([300]); // 3 tempos sem intervalo representando: "Efetivado"
+		} else {
+			navigator.vibrate([200, 50, 200]) // 2 Tempos seguidos representando: "Talvez"
+		}
+	};
+
+	static Terremoto = (e: any = null): void => {
+		// Efeito de terremoto no elemento
+		if (e) {
+			e.classList.add("mkTerremoto");
+		}
+		setTimeout(() => {
+			e.classList.remove("mkTerremoto");
+		}, 500);
+	};
 
 	// DEPRECATED - Utiliza em Fichas (Substituir por Faseador)
 	static fUIFaseUpdateLinkFase = () => {
