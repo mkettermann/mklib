@@ -1869,7 +1869,7 @@ class mkt {
         if (!t) {
             mkt.a.timers.push({
                 name: s,
-                ini: mkt.getMs(),
+                ini: mkt.dataGetMs(),
                 fim: 0,
                 tempo: -1,
             });
@@ -1879,7 +1879,7 @@ class mkt {
         // FIM do CONTA TEMPO utillizado pra saber o tempo dos GET e POST.
         let t = mkt.a.timers.find((t) => t.name == s);
         if (t.fim == 0) {
-            t.fim = mkt.getMs();
+            t.fim = mkt.dataGetMs();
             t.tempo = t.fim - t.ini;
         }
         if (!quietMode) {
@@ -2464,7 +2464,7 @@ class mkt {
                     }
                     let erros = JSON.parse(localStorage.mktRequests);
                     erros.push({
-                        quando: mkt.hoje(),
+                        quando: mkt.dataGetFullToday(),
                         status: config.pacote.status,
                         texto: texto,
                         url: config.url,
@@ -2723,7 +2723,7 @@ class mkt {
     };
     // =========================== Gerenciamento de Data ============================== \\
     // ================================================================================= \\
-    static getMs = (dataYYYYMMDD = null) => {
+    static dataGetMs = (dataYYYYMMDD = null) => {
         // Retorna Milisegundos da data no formato Javascript
         if (dataYYYYMMDD != null) {
             let dataCortada = dataYYYYMMDD.split("-");
@@ -2735,28 +2735,28 @@ class mkt {
         else
             return new Date().getTime();
     };
-    static getDia = (ms = null) => {
+    static dataGetDia = (ms = null) => {
         // GET UTC Dia - '18'
         if (ms != null)
-            return Number(mkt.getFullData(ms).split("-")[2]);
+            return Number(mkt.dataGetData(ms).split("-")[2]);
         else
-            return Number(mkt.getFullData().split("-")[2]);
+            return Number(mkt.dataGetData().split("-")[2]);
     };
-    static getMes = (ms = null) => {
+    static dataGetMes = (ms = null) => {
         // GET UTC Ano - '02'
         if (ms != null)
-            return Number(mkt.getFullData(ms).split("-")[1]);
+            return Number(mkt.dataGetData(ms).split("-")[1]);
         else
-            return Number(mkt.getFullData().split("-")[1]);
+            return Number(mkt.dataGetData().split("-")[1]);
     };
-    static getAno = (ms = null) => {
+    static dataGetAno = (ms = null) => {
         // GET UTC Ano - '2024'
         if (ms != null)
-            return Number(mkt.getFullData(ms).split("-")[0]);
+            return Number(mkt.dataGetData(ms).split("-")[0]);
         else
-            return Number(mkt.getFullData().split("-")[0]);
+            return Number(mkt.dataGetData().split("-")[0]);
     };
-    static getFullData = (ms = null) => {
+    static dataGetData = (ms = null) => {
         // GET UTC Data - '2024-02-18'
         let ano = new Date().getUTCFullYear();
         let mes = new Date().getUTCMonth() + 1;
@@ -2768,52 +2768,55 @@ class mkt {
         }
         return ano.toString().padStart(4, "0") + "-" + mes.toString().padStart(2, "0") + "-" + dia.toString().padStart(2, "0");
     };
-    static hojeMkData = () => {
+    static dataGetDataToday = () => {
         // Data Local: '18/02/2024'
-        return new Date(mkt.getMs()).toLocaleDateString();
+        return new Date(mkt.dataGetMs()).toLocaleDateString();
     };
-    static hojeMkHora = () => {
+    static dataGetHoraToday = () => {
         // Hora Local: '19:06:07'
-        return new Date(Number(mkt.getMs())).toLocaleTimeString();
+        return new Date(Number(mkt.dataGetMs())).toLocaleTimeString();
     };
-    static hoje = () => {
+    static dataGetFullToday = () => {
         // Data e Hora Local: '18/02/2024 19:06:47'
-        return mkt.hojeMkData() + " " + mkt.hojeMkHora();
+        return mkt.dataGetDataToday() + " " + mkt.dataGetHoraToday();
     };
-    static mkYYYYMMDDtoDDMMYYYY = (dataYYYYMMDD) => {
+    static dataToBRData = (data) => {
         // Converter de YYYY-MM-DD para DD/MM/YYYY
-        let arrayData = dataYYYYMMDD.split("-");
+        let arrayData = data.split("-");
         let stringRetorno = "";
         if (arrayData.length >= 3) {
             // Tenta evitar bug de conversao
             stringRetorno = arrayData[2] + "/" + arrayData[1] + "/" + arrayData[0];
         }
         else {
-            stringRetorno = dataYYYYMMDD;
-        }
-        return stringRetorno;
-    };
-    static dataDDMMYYYYparaYYYYMMDD = (data) => {
-        // Converter de DD/MM/YYYY para YYYY-MM-DD
-        let arrayData = data.split("/");
-        let stringRetorno = "";
-        if (arrayData.length >= 3) {
-            stringRetorno = arrayData[2] + "-" + arrayData[1] + "-" + arrayData[0];
-        }
-        else {
             stringRetorno = data;
         }
         return stringRetorno;
     };
-    static mkFormatarDataOA = (oa, reverse = false) => {
-        // Converter (OBJ / ARRAY) Formato Booleano em Sim/Não
-        function mkFormatarDataOA_Execute(o) {
+    // ISO 8601
+    static dataToIsoData = (data) => {
+        // Converter de DD/MM/YYYY para YYYY-MM-DD
+        let dataDDMMYYYY = new RegExp("^[0-3][0-9][/][0-1][0-9][/][0-2][0-9]{3}$");
+        let stringRetorno = data;
+        if (dataDDMMYYYY.test(data)) {
+            let arrayData = data.split("/");
+            if (arrayData.length >= 3) {
+                stringRetorno = arrayData[2] + "-" + arrayData[1] + "-" + arrayData[0];
+            }
+            else {
+                stringRetorno = data;
+            }
+        }
+        return stringRetorno;
+    };
+    static dataFormatarSOA = (soa, reverse = false) => {
+        // Converter todas Datas (OBJ / ARRAY / STRING)
+        function dataFormatarS_Execute(s, rev = false) {
+        }
+        function dataFormatarOA_Execute(o) {
             if (reverse) {
-                let dataDDMMYYYY = new RegExp("^[0-3][0-9][/][0-1][0-9][/][0-2][0-9]{3}$");
                 for (var propName in o) {
-                    if (dataDDMMYYYY.test(o[propName])) {
-                        o[propName] = mkt.dataDDMMYYYYparaYYYYMMDD(o[propName]);
-                    }
+                    o[propName] = mkt.dataToIsoData(o[propName]);
                 }
             }
             else {
@@ -2821,7 +2824,7 @@ class mkt {
                 let busca2 = new RegExp("^[0-2][0-9]{3}[-][0-1][0-9][-][0-3][0-9][T| ][0-2][0-9]:[0-5][0-9]"); // Entre 0000-00-00T00:00 a 2999-19-39T29:59 (Se iniciar nesse formato de ISO )
                 for (var propName in o) {
                     if (busca.test(o[propName])) {
-                        o[propName] = mkt.mkYYYYMMDDtoDDMMYYYY(o[propName]);
+                        o[propName] = mkt.dataToBRData(o[propName]);
                     }
                     if (busca2.test(o[propName])) {
                         o[propName] = mkt.dataToLocale(o[propName]).replaceAll(",", "");
@@ -2830,7 +2833,13 @@ class mkt {
             }
             return o;
         }
-        return mkt.aCadaObjExecuta(oa, mkFormatarDataOA_Execute);
+        let tipo = mkt.classof(soa);
+        if (tipo == "Object" || tipo == "Array") {
+            return mkt.aCadaObjExecuta(soa, dataFormatarOA_Execute);
+        }
+        else if (tipo == "String") {
+            return dataFormatarS_Execute(soa);
+        }
     };
     static mkFormatarOA = (oa) => {
         // Converter (OBJ / ARRAY) Formatar para normalizar com a exibicao ao usuario.
@@ -2851,7 +2860,7 @@ class mkt {
     static getDiasDiferenca = (msOld, msNew = null) => {
         // Retorna a diferença de dias entre dois MS
         if (msNew == null)
-            msNew = mkt.getMs();
+            msNew = mkt.dataGetMs();
         return mkt.transMsEmDias(msNew - msOld);
     };
     static transMsEmDias = (ms) => {
@@ -3852,7 +3861,7 @@ class mkt {
                                     prom(re.k);
                                     break;
                                 case "datamax": // EXE
-                                    if (mkt.getMs(e[re.target]) > mkt.getMs(re.v)) {
+                                    if (mkt.dataGetMs(e[re.target]) > mkt.dataGetMs(re.v)) {
                                         if (!re.m)
                                             re.m = mkt.a.msg.datamax;
                                         erros.push(re);
@@ -3952,7 +3961,7 @@ class mkt {
                                     prom(re.k);
                                     break;
                                 case "datamaiorque": // INFO
-                                    if (mkt.getMs(e[re.target]) < mkt.getMs(re.v)) {
+                                    if (mkt.dataGetMs(e[re.target]) < mkt.dataGetMs(re.v)) {
                                         if (!re.m)
                                             re.m = mkt.a.msg.datamaiorque;
                                         erros.push(re);
@@ -3960,7 +3969,7 @@ class mkt {
                                     prom(re.k);
                                     break;
                                 case "datamenorque": // INFO
-                                    if (mkt.getMs(e[re.target]) > mkt.getMs(re.v)) {
+                                    if (mkt.dataGetMs(e[re.target]) > mkt.dataGetMs(re.v)) {
                                         if (!re.m)
                                             re.m = mkt.a.msg.datamenorque;
                                         erros.push(re);
