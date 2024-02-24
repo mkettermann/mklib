@@ -20,7 +20,7 @@ lista_mkt.container_importar = true;
 lista_mkt.aoAntesDePopularTabela = (x) => { // Aqui modificamos a exibicao de um campo por outro formato
 	x.forEach((o) => {
 		if (o.mDataUltimoAcesso) {
-			o.mDataUltimoAcesso = mkt.mkYYYYMMDDtoDDMMYYYY(o.mDataUltimoAcesso);
+			o.mDataUltimoAcesso = mkt.masterFormatarSOA(o.mDataUltimoAcesso);
 		}
 	});
 };

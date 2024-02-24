@@ -2723,18 +2723,6 @@ class mkt {
     };
     // =========================== Gerenciamento de Data ============================== \\
     // ================================================================================= \\
-    static dataGetMs = (dataYYYYMMDD = null) => {
-        // Retorna Milisegundos da data no formato Javascript
-        if (dataYYYYMMDD != null) {
-            let dataCortada = dataYYYYMMDD.split("-");
-            let oDia = Number(dataCortada[2]);
-            let oMes = Number(dataCortada[1]) - 1;
-            let oAno = Number(dataCortada[0]);
-            return new Date(oAno, oMes, oDia).getTime();
-        }
-        else
-            return new Date().getTime();
-    };
     static dataGetDia = (ms = null) => {
         // GET UTC Dia - '18'
         if (ms != null)
@@ -2809,6 +2797,11 @@ class mkt {
         }
         return stringRetorno;
     };
+    static isData = (i) => {
+        // Verifica se é data Se não for, retorna 0 (false).
+        // Se for, retorna o tipo de data baseado no regex usado.
+        return mkt.a.util.data[1].test(i);
+    };
     static dataFormatarSOA = (soa, reverse = false) => {
         // Converter todas Datas (OBJ / ARRAY / STRING) - Não converte MS (Number)
         // Como deveria ser:
@@ -2868,23 +2861,14 @@ class mkt {
         }
         return new Date(dataNum).toLocaleString();
     };
-    static getDiasDiferenca = (msOld, msNew = null) => {
+    static dataGetDiasDiferenca = (msOld, msNew = null) => {
         // Retorna a diferença de dias entre dois MS
         if (msNew == null)
             msNew = mkt.dataGetMs();
-        return mkt.transMsEmDias(msNew - msOld);
+        return mkt.dataMsToDias(msNew - msOld);
     };
-    static transMsEmDias = (ms) => {
-        // 1000 * 3600 * 24 Considerando todo dia tiver 24 horas (~23h 56m 4.1s)
-        // (360º translacao / 86400000) = ~4.1
-        // Então o erro de 1 dia ocorre 1x ao ano (Dia represeta 1436min).
-        return Math.trunc(ms / 86400000);
-    };
-    static isData = (i) => {
-        return mkt.a.util.data[1].test(i);
-    };
-    static getTempoDiferenca = (msOld, msNew = null) => {
-        let dias = mkt.getDiasDiferenca(msOld, msNew);
+    static dataGetTempoDiferenca = (msOld, msNew = null) => {
+        let dias = mkt.dataGetDiasDiferenca(msOld, msNew);
         if (dias < 0) {
             dias = dias * -1;
         }
@@ -2927,26 +2911,45 @@ class mkt {
         }
         return strTempo;
     };
-    static transMsEmSegundos = (ms) => {
-        return Math.trunc(ms / 1000); // 1000 ms == 1s
+    static dataGetMs = (dataYYYYMMDD = null) => {
+        // Retorna Milisegundos da data no formato Javascript
+        if (dataYYYYMMDD != null) {
+            let dataCortada = dataYYYYMMDD.split("-");
+            let oDia = Number(dataCortada[2]);
+            let oMes = Number(dataCortada[1]) - 1;
+            let oAno = Number(dataCortada[0]);
+            return new Date(oAno, oMes, oDia).getTime();
+        }
+        else
+            return new Date().getTime();
     };
-    static transMsEmMinutos = (ms) => {
-        return Math.trunc(ms / 60000); // 1000 * 60
+    static dataMsToSegundos = (num, reverse = false) => {
+        if (reverse) {
+            return num * 1000;
+        }
+        return Math.trunc(num / 1000); // 1000 ms == 1s
     };
-    static transMsEmHoras = (ms) => {
-        return Math.trunc(ms / 3600000); // 1000 * 3600
+    static dataMsToMinutos = (num, reverse = false) => {
+        if (reverse) {
+            return num * 60000;
+        }
+        return Math.trunc(num / 60000); // 1000 * 60
     };
-    static transSegundosEmMs = (s) => {
-        return s * 1000;
+    static dataMsToHoras = (num, reverse = false) => {
+        if (reverse) {
+            return num * 3600000;
+        }
+        return Math.trunc(num / 3600000); // 1000 * 3600
     };
-    static transMinutosEmMs = (m) => {
-        return m * 60000;
-    };
-    static transHorasEmMs = (h) => {
-        return h * 3600000;
-    };
-    static transDiasEmMs = (d) => {
-        return d * 86400000;
+    static dataMsToDias = (num, reverse = false) => {
+        // 1000 * 3600 * 24 Considerando todo dia tiver 24 horas (~23h 56m 4.1s)
+        // (360º translacao / 86400000) = ~4.1
+        // Então o erro de 1 dia ocorre 1x ao ano (Dia represeta 1436min).
+        // Por isso, é melhor trabalhar com Dias em vez de outro formato maior.
+        if (reverse) {
+            return Math.trunc(num * 86400000);
+        }
+        return Math.trunc(num / 86400000);
     };
     // =============================== Web Components ================================= \\
     // ================================================================================= \\
