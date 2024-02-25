@@ -1,10 +1,18 @@
 <h1 class="microPos2 h1">WC Seletor</h1>
-<h4>&nbsp; O Seletor passou a ser um WebComponent que
-	a estrutura fica em fragmento específico e não interfere nos demais.
+<h4>&nbsp; O Novo Seletor será um WebComponent que a estrutura fica isolada
+	e não interfere nos demais elementos da página. O formato de trabalho de dados será em Map,
+	ou seja, uma array que possúi arrays com chave e valor.
 </h4>
+<br /><br />
+<input id="x" name="x" type="text" value="teste">
 <br /><br /><br />
-<b>Seletor:</b> <mk-sel vazio="Selecione" opcoes="[[1,'Sim'],[2,'Não']]"></mk-sel>
-<br /><br /><br /><br /><br />
+<b>Seletor:</b> <mk-sel name="staAtivo" vazio="Selecione" opcoes='[[1,"Sim"],[2,"Não"]]'></mk-sel>
+<b>Multi Seletor:</b> <mk-sel vazio="Selecione" opcoes='[[1,"Sim"],[2,"Não"]]' selapenas="3"></mk-sel>
+<br /><br /><br />
+
+<input id="x" name="x" type="text" value="teste2">
+<br /><br /><br /><br />
+
 <div class="fullCodigoContainer microPos5">
 	<div class="i codigoContainer">
 		<div class="titulo">Modo de uso - HTML</div>

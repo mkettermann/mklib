@@ -5332,9 +5332,11 @@ Object.keys(mkt).forEach((n) => {
 //  Web Component MkSel - Seletor   \\
 //___________________________________\\
 class mkSel extends HTMLElement {
-    k; // HTMLInputElement
-    v; // HTMLInputElement
-    svg; // HTMLOrSVGElement
+    k; // HTMLInputElement text
+    v; // HTMLInputElement hidden
+    svg; // SVGSVGElement
+    map = null;
+    filtrado = "";
     constructor() {
         super();
         this.attachShadow({ mode: "open" });
@@ -5380,7 +5382,6 @@ class mkSel extends HTMLElement {
 	transition: 0.5s ease-in-out;
 	transform: translate(0px, 0px);
 }
-
 .mkSel{
 	display:flex;
 }
@@ -5401,7 +5402,7 @@ slot {
 </style>
 <div class="mkSel">
 	<input type="hidden" id="v" />
-	<input type="text" placeholder="" value="- Selecione -" id="k" />
+	<input type="text" placeholder="Filtro \u{1F50D}" value="- Selecione -" id="k" />
 	<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'>
 	<path class='setaCima' d='M14.6,6.9L8.4,0.7c-0.2-0.2-0.6-0.2-0.9,0L1.4,6.9c-0.2,0.2,0,0.4,0.2,0.4h4.5c0.1,0,0.3-0.1,0.4-0.2L7,6.7C7.5,6.1,8.5,6,9,6.6l0.6,0.6C9.7,7.3,9.9,7.4,10,7.4h4.4C14.6,7.4,14.7,7.1,14.6,6.9z'/>
 	<path class='setaBaixo' d='M1.4,8.9l6.1,6.3c0.2,0.2,0.6,0.2,0.9,0l6.1-6.3c0.2-0.2,0-0.4-0.2-0.4H9.9c-0.1,0-0.3,0.1-0.4,0.2L9,9.2C8.5,9.8,7.5,9.9,7,9.3L6.4,8.7C6.3,8.6,6.1,8.5,6,8.5H1.6C1.4,8.5,1.3,8.8,1.4,8.9z'/>
@@ -5411,16 +5412,28 @@ slot {
         this.k = this.shadowRoot?.querySelector("#k");
         this.v = this.shadowRoot?.querySelector("#v");
         this.k.onfocus = () => {
+            this.setAttribute("focused", "");
             this.aoFocus();
         };
         this.k.onblur = () => {
-            this.removeAttribute("focused");
+            setTimeout(() => {
+                if (document.activeElement !== this) {
+                    this.removeAttribute("focused");
+                }
+            }, 250);
+            this.aoBlur();
         };
         this.svg = this.shadowRoot?.querySelector("svg");
         this.svg.onclick = (ev) => {
             ev.stopPropagation();
             this.k.focus();
         };
+        let name = this.getAttribute("name");
+        let opcoes = this.getAttribute("opcoes");
+        if (mkt.isJson(opcoes)) {
+            this.map = new Map(mkt.parseJSON(opcoes));
+        }
+        mkt.l("Seletor: " + name + ", Dados: ", this.map);
     } // Construtor mkSel
     attributeChangedCallback(name, oldValue, newValue) {
         if (name === "disabled") {
@@ -5434,7 +5447,22 @@ slot {
         }
     }
     aoFocus() {
-        this.setAttribute("focused", "");
+        // Ao receber Foco
+        // Limpa o Display
+        this.k.value = "";
+        // Limpa Filtro atual
+        this.filtrado = "";
+        // Atualiza Itens Selecionados, caso houve mudança sem atualizar.
+        // mkt.mkSelUpdate(e.parentElement.previousElementSibling);
+        // Faz movimento no scroll até o primeiro item selecionado
+        // let primeiroOffSet = ePrimeiroSel?.offsetTop || 0;
+        // eList.scrollTop =
+        // 	primeiroOffSet - 120 - (eList.offsetHeight - eList.clientHeight) / 2;
+        // Atualizar posição da Lista.
+        // mkt.Reposicionar(e.parentElement.nextElementSibling, true);
+    }
+    aoBlur() {
+        // Ao perder foco
     }
     get size() { return this.getAttribute("size"); }
     ;
