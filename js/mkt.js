@@ -2609,27 +2609,27 @@ class mkt {
     };
     // ==================== Gerenciamento Monetário / Numérico ======================== \\
     // ================================================================================= \\
-    static mkFloat = (num) => {
-        // Tenta deixar em formato Number sem bugar
-        let ret;
-        if (typeof num != "number") {
-            if (num)
-                ret = parseFloat(num.toString().replaceAll(".", "").replaceAll(",", "."));
-            else
-                ret = 0;
+    static numToDisplay = (num, c = {}) => {
+        // Formata o número para uma string com casas fixas atrás da vírgula.
+        if (c.casas == null)
+            c.casas = 2; // Valor Padrão de casas atrás da vírgula.
+        if (c.mincasas == null)
+            c.mincasas = c.casas; // Mínimo de casas atrás da vírgula
+        if (c.maxcasas == null)
+            c.maxcasas = c.casas; // Máximo de casas atrás da vírgula
+        if (c.milhar == null)
+            c.milhar = false; // Exibe ou remove o separador de milhar
+        if (c.locale == null)
+            c.locale = "pt-BR";
+        let opcoes = {
+            minimumFractionDigits: c.mincasas,
+            maximumFractionDigits: c.maxcasas,
+            useGrouping: c.milhar,
+        };
+        if (mkt.classof(num) != "Number") {
+            return mkt.toNumber(num, c).toLocaleString(c.locale, opcoes);
         }
-        else {
-            ret = num;
-        }
-        if (isNaN(ret)) {
-            ret = 0;
-        }
-        return ret;
-    };
-    static mkDuasCasas = (num) => {
-        // Formato antigo de retornar duas casas
-        return mkt.mkFloat(num).toFixed(2).replaceAll(".", ","); // 2000,00
-        // .toLocaleString('pt-br', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); // 2.000,00
+        return num.toLocaleString(c.locale, opcoes);
     };
     static toMoeda = (valor) => {
         // Texto / Número convertido em Reais
@@ -2651,11 +2651,12 @@ class mkt {
         return 0;
     };
     static toNumber = (valor, c = {}) => {
-        // Valor em Texto / Número, convertido para Float de no máximo 2 casas.
-        if (!c.casas)
+        // Informando String/Number, converte para o número de casas c.casas (padrão 2).
+        // mkt.toNumber("R$ 1.222,333") => 1222.33
+        if (c.casas == null)
             c.casas = 2; // Limite de casas apenas para o valor retornado.
         if (valor != null) {
-            if (typeof valor == "string") {
+            if (mkt.classof(valor) == "String") {
                 // Possiveis separadores
                 let us = [".", ","].reduce((x, y) => (valor.lastIndexOf(x) > valor.lastIndexOf(y)) ? x : y);
                 let posPonto = valor.lastIndexOf(us);
@@ -2671,43 +2672,18 @@ class mkt {
                     valor = valor.slice(0, -(c.casas)) + "." + valor.slice(-(c.casas));
                 }
             }
-            else if (typeof valor == "number") {
-                valor = valor.toFixed(c.casas);
+            else if (mkt.classof(valor) == "Number") {
+                valor = valor.toFixed(c.casas); // <= Vira String, mas essa função apenas devolve Number
             }
             else {
-                mkt.w("toFloat() - Formato não implementado: ", typeof valor);
+                mkt.w("toNumber() - Formato de entrada não implementado: ", mkt.classof(valor));
             }
-            return Number(valor);
+            return Number(valor); // <= OutPut Number
         }
-        return 0;
+        return 0; // <= OutPut Number
     };
-    static fromNumber = (valor, c = {}) => {
-        // Retorna um string de duas casas "0,00" a partir de um valor numerico
-        //if (!c.s) c.s = ","; // OUTPUT SEPARADOR de decimal numérico do país atual para dados.
-        if (!c.locale)
-            c.locale = "pt-BR";
-        if (valor != null) {
-            let d = [...valor.toString()].filter(a => { return mkt.a.util.numeros[1].test(a); }).join("").padStart(3, "0");
-            valor = Number(d.slice(0, -2) + "." + d.slice(-2));
-        }
-        else {
-            valor = 0;
-        }
-        return new Intl.NumberFormat(c.locale, { minimumFractionDigits: 2 }).format(valor);
-    };
-    static mkMedia = (menor, maior) => {
-        return mkt.mkDuasCasas((mkt.mkFloat(menor) + mkt.mkFloat(maior)) / 2);
-    };
-    static mkNCasas = (num, nCasas = 2) => {
-        return mkt.mkFloat(num).toFixed(nCasas).replaceAll(".", ","); // 2000,?
-    };
-    static mkEmReais = (num) => {
-        // Essa função foi substituida por toMoeda.
-        // Mas aqui tentava usar um Number do javascript e usar as classes pra converter em reais.
-        return mkt.mkFloat(num).toLocaleString("pt-br", {
-            style: "currency",
-            currency: "BRL",
-        }); // R$ 12.123,45
+    static numMedia = (menor, maior) => {
+        return mkt.numToDisplay((mkt.toNumber(menor) + mkt.toNumber(maior)) / 2);
     };
     // =========================== Gerenciamento de Data ============================== \\
     // ================================================================================= \\
