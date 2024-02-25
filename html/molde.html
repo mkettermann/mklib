@@ -44,7 +44,7 @@
 2
 3
 4</textarea>
-		<textarea class="codigo" rows="4" cols="100" onfocus="mkt.mkSelecionarInner(this)" readonly>
+		<textarea class="codigo" rows="4" cols="100" onfocus="mkt.selecionarInner(this)" readonly>
 <div id="exibir"></div>
 <template id="modelo">
 	Olá ${nome} ${sobrenome} (${data.d}/${data.m}/${data.a})!
@@ -60,7 +60,7 @@
 2
 3
 4</textarea>
-		<textarea class="codigo" rows="4" cols="100" onfocus="mkt.mkSelecionarInner(this)" readonly>
+		<textarea class="codigo" rows="4" cols="100" onfocus="mkt.selecionarInner(this)" readonly>
 var dados = [{ nome: "Marcos", sobrenome: "Kettermann" },{ nome: "Zé", data: { d: "31", m: "12", a: "2023" } },];
 dados.push({nome: "Fulano",sobrenome: "dos Santos Silva",data: { d: 31 },});
 mkt.mkMoldeOA(dados, "#modelo333", "#exibir");</textarea>

@@ -1916,7 +1916,7 @@ class mkt {
 
 	static Inicializar = () => {
 		// Ao iniciar a biblioteca já executa essas funções
-		mkt.mkClicarNaAba(mkt.Q(".mkAbas a.active")); // Inicia no ativo
+		mkt.clicarNaAba(mkt.Q(".mkAbas a.active")); // Inicia no ativo
 		mkt.exeTimer();
 	};
 
@@ -2280,7 +2280,7 @@ class mkt {
 						o.e.removeAttribute("mkImportar");
 						o.e.innerHTML = re.retorno;
 						try {
-							mkt.mkNodeToScript(o.e);
+							mkt.nodeToScript(o.e);
 						} catch (error) {
 							mkt.gc("Auto Import por TAG lancou erros:");
 							mkt.erro("ERRO: ", error);
@@ -2633,7 +2633,7 @@ class mkt {
 	// ================================================================================= \\
 
 
-	static numToDisplay = (num: number, c: any = {}): string => {
+	static numToDisplay = (num: any, c: any = {}): string => {
 		// Formata o número para uma string com casas fixas atrás da vírgula.
 		if (c.casas == null) c.casas = 2; // Valor Padrão de casas atrás da vírgula.
 		if (c.mincasas == null) c.mincasas = c.casas; // Mínimo de casas atrás da vírgula
@@ -4526,7 +4526,7 @@ class mkt {
 		//.replaceAll("'", "&#39;");
 	};
 
-	static mkClicarNaAba = (e: HTMLAnchorElement) => {
+	static clicarNaAba = (e: HTMLAnchorElement) => {
 		// Funcionalidade de clicar na aba e trocar a classe ativo
 		let pag = Number(e?.getAttribute("data-pag"));
 		if (mkt.classof(pag) == "Number") { // Caso não for NaN
@@ -4754,7 +4754,7 @@ class mkt {
 		return s.replace(/(?![a-zA-Z0-9])./g, "");
 	};
 
-	static mkNodeToScript = (node: any) => {
+	static nodeToScript = (node: any) => {
 		// Recria o node SCRIPT dentro de uma tag SCRIPT para o eval()
 		if (node.tagName === "SCRIPT") {
 			let eScript: any = document.createElement("script");
@@ -4769,7 +4769,7 @@ class mkt {
 			var i = -1,
 				children = node.childNodes;
 			while (++i < children.length) {
-				mkt.mkNodeToScript(children[i]);
+				mkt.nodeToScript(children[i]);
 			}
 		}
 		return node;
@@ -5042,7 +5042,7 @@ class mkt {
 		return nomeArquivo;
 	}
 
-	static mkOnlyFloatKeys = (ev: KeyboardEvent) => {
+	static onlyFloatKeys = (ev: KeyboardEvent) => {
 		// Eventos HTML5
 		// Bloqueio de teclas especificas onKeyDown
 		// Input: UMA tecla QUALQUER
@@ -5072,13 +5072,13 @@ class mkt {
 		}
 	}
 
-	static mkEventBlock = (ev: Event) => {
+	static eventBlock = (ev: Event) => {
 		// Bloqueios de eventos especificos (varios, exemplo: onContextMenu)
 		mkt.w("Negado");
 		ev.preventDefault();
 	}
 
-	static mkSelecionarInner = (e: HTMLElement) => {
+	static selecionarInner = (e: HTMLElement) => {
 		// Seleciona texto do elemento
 		if (window.getSelection) {
 			const selection = window.getSelection();
@@ -5089,9 +5089,9 @@ class mkt {
 		}
 	}
 
-	static mkInputFormatarValor = (e: HTMLInputElement): void => {
+	static formatarNumValue = (e: HTMLInputElement): void => {
 		// 123,45 (2 casas pos conversao float)
-		e.value = mkt.mkDuasCasas(mkt.mkFloat(e.value));
+		e.value = mkt.numToDisplay(e.value);
 	}
 
 	static fileReader = async (arquivo: any, eventos: Function) => {
@@ -5400,7 +5400,7 @@ class mkt {
 					let p = await mkt.get.html({ url: destino, quiet: true });
 					if (p.retorno != null) {
 						e.innerHTML = p.retorno;
-						//mkt.mkNodeToScript(mkt.Q(".conteudo"));
+						//mkt.nodeToScript(mkt.Q(".conteudo"));
 					} else {
 						mkt.l("Falhou ao coletar dados");
 					}

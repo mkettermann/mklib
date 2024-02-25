@@ -1906,7 +1906,7 @@ class mkt {
     };
     static Inicializar = () => {
         // Ao iniciar a biblioteca já executa essas funções
-        mkt.mkClicarNaAba(mkt.Q(".mkAbas a.active")); // Inicia no ativo
+        mkt.clicarNaAba(mkt.Q(".mkAbas a.active")); // Inicia no ativo
         mkt.exeTimer();
     };
     static moldeOA = async (dados, modelo = "#modelo", repositorio = ".tableListagem .listBody", allowTags = false) => {
@@ -2256,7 +2256,7 @@ class mkt {
                         o.e.removeAttribute("mkImportar");
                         o.e.innerHTML = re.retorno;
                         try {
-                            mkt.mkNodeToScript(o.e);
+                            mkt.nodeToScript(o.e);
                         }
                         catch (error) {
                             mkt.gc("Auto Import por TAG lancou erros:");
@@ -4428,7 +4428,7 @@ class mkt {
         //?.replaceAll('"', "&quot;")
         //.replaceAll("'", "&#39;");
     };
-    static mkClicarNaAba = (e) => {
+    static clicarNaAba = (e) => {
         // Funcionalidade de clicar na aba e trocar a classe ativo
         let pag = Number(e?.getAttribute("data-pag"));
         if (mkt.classof(pag) == "Number") { // Caso não for NaN
@@ -4656,7 +4656,7 @@ class mkt {
         // Ignora qualquer outro caracter além de Numeros e Letras formato ocidental
         return s.replace(/(?![a-zA-Z0-9])./g, "");
     };
-    static mkNodeToScript = (node) => {
+    static nodeToScript = (node) => {
         // Recria o node SCRIPT dentro de uma tag SCRIPT para o eval()
         if (node.tagName === "SCRIPT") {
             let eScript = document.createElement("script");
@@ -4671,7 +4671,7 @@ class mkt {
             // Recursividade sobre filhos
             var i = -1, children = node.childNodes;
             while (++i < children.length) {
-                mkt.mkNodeToScript(children[i]);
+                mkt.nodeToScript(children[i]);
             }
         }
         return node;
@@ -4926,7 +4926,7 @@ class mkt {
         link.click();
         return nomeArquivo;
     };
-    static mkOnlyFloatKeys = (ev) => {
+    static onlyFloatKeys = (ev) => {
         // Eventos HTML5
         // Bloqueio de teclas especificas onKeyDown
         // Input: UMA tecla QUALQUER
@@ -4955,12 +4955,12 @@ class mkt {
             ev.preventDefault();
         }
     };
-    static mkEventBlock = (ev) => {
+    static eventBlock = (ev) => {
         // Bloqueios de eventos especificos (varios, exemplo: onContextMenu)
         mkt.w("Negado");
         ev.preventDefault();
     };
-    static mkSelecionarInner = (e) => {
+    static selecionarInner = (e) => {
         // Seleciona texto do elemento
         if (window.getSelection) {
             const selection = window.getSelection();
@@ -4970,9 +4970,9 @@ class mkt {
             selection?.addRange(range);
         }
     };
-    static mkInputFormatarValor = (e) => {
+    static formatarNumValue = (e) => {
         // 123,45 (2 casas pos conversao float)
-        e.value = mkt.mkDuasCasas(mkt.mkFloat(e.value));
+        e.value = mkt.numToDisplay(e.value);
     };
     static fileReader = async (arquivo, eventos) => {
         // File API
@@ -5284,7 +5284,7 @@ class mkt {
                     let p = await mkt.get.html({ url: destino, quiet: true });
                     if (p.retorno != null) {
                         e.innerHTML = p.retorno;
-                        //mkt.mkNodeToScript(mkt.Q(".conteudo"));
+                        //mkt.nodeToScript(mkt.Q(".conteudo"));
                     }
                     else {
                         mkt.l("Falhou ao coletar dados");

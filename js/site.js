@@ -8,7 +8,7 @@ const menuAbrir = async (t) => {
 		let pac = await mkt.get.html("./html/" + destino + "?" + mkt.uuid());
 		if (pac.retorno != null) {
 			mkt.Q(".conteudo").innerHTML = pac.retorno;
-			mkt.mkNodeToScript(mkt.Q(".conteudo"));
+			mkt.nodeToScript(mkt.Q(".conteudo"));
 		} else {
 			console.log("Falhou ao coletar dados");
 		}
