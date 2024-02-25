@@ -488,7 +488,7 @@ class mkt {
         mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoIniciarListagem"));
         this.c.aoIniciarListagem(this);
         // Limpar Dados nulos
-        mkt.mkLimparOA(this.dadosFull);
+        mkt.limparOA(this.dadosFull);
         //EVENT: aoPossuirDados
         mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoPossuirDados"));
         await this.c.aoPossuirDados(this.dadosFull, this);
@@ -616,7 +616,7 @@ class mkt {
                     }
                 }
             }
-            await mkt.mkMoldeOA(this.dadosExibidos, this.c.idmodelo, this.c.tbody);
+            await mkt.moldeOA(this.dadosExibidos, this.c.idmodelo, this.c.tbody);
             //EVENT: aoConcluirExibicao
             mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoConcluirExibicao"));
             await this.c.aoConcluirExibicao(this);
@@ -1909,8 +1909,9 @@ class mkt {
         mkt.mkClicarNaAba(mkt.Q(".mkAbas a.active")); // Inicia no ativo
         mkt.exeTimer();
     };
-    static mkMoldeOA = async (dadosOA, modelo = "#modelo", repositorio = ".tableListagem .listBody", allowTags = false) => {
-        // MoldeOA é uma ferramenta do MKT que popula templates por demanda informando os dados a iterar, como devem se apresentar e onde colocar o resultado.
+    static moldeOA = async (dados, modelo = "#modelo", repositorio = ".tableListagem .listBody", allowTags = false) => {
+        // MoldeOA popula templates de forma escalável com uma array de objetos ou um objeto.
+        // É no molde que se converte vários objetos em várias exibições estes objetos.
         return new Promise((r) => {
             let eModelo = mkt.Q(modelo);
             if (!eModelo) {
@@ -1923,7 +1924,7 @@ class mkt {
                 return r(null);
             }
             let listaNode = "";
-            let mkMoldeOAA_Execute = (o) => {
+            let moldeO_Execute = (o) => {
                 let node = eModelo.innerHTML;
                 // Converte de "${obj.key}" em valor dentro de uma string.
                 if (node.indexOf("${") >= 0) {
@@ -1948,7 +1949,7 @@ class mkt {
                 }
                 listaNode += node;
             };
-            mkt.aCadaObjExecuta(dadosOA, mkMoldeOAA_Execute);
+            mkt.aCadaObjExecuta(dados, moldeO_Execute);
             //Allow Tags
             if (allowTags) {
                 listaNode = listaNode.replaceAll("&lt;", "<");
@@ -2811,7 +2812,7 @@ class mkt {
     };
     static masterFormatarSOA = (soa) => {
         // Converter (OBJ / ARRAY) Formatar para normalizar com a exibicao ao usuario.
-        return mkt.BoolToSimNaoSOA(mkt.dataFormatarSOA(mkt.mkLimparOA(soa)));
+        return mkt.BoolToSimNaoSOA(mkt.dataFormatarSOA(mkt.limparOA(soa)));
     };
     static dataToLocale = (data) => {
         // com Objeto DATA, STRING ou MS, retorna data BR.
@@ -4308,9 +4309,9 @@ class mkt {
         }
         return array;
     };
-    static mkLimparOA = (oa) => {
+    static limparOA = (oa) => {
         // Converte (OBJ / ARRAY) Limpar Nulos e Vazios
-        let mkLimparOA_Execute = (o) => {
+        let limparO_Execute = (o) => {
             for (let propName in o) {
                 if (o[propName] === null ||
                     o[propName] === "") {
@@ -4319,7 +4320,7 @@ class mkt {
             }
             return o;
         };
-        return mkt.aCadaObjExecuta(oa, mkLimparOA_Execute);
+        return mkt.aCadaObjExecuta(oa, limparO_Execute);
     };
     static aCadaSubPropriedade = (OA, funcao = null, exceto = "Object") => {
         // Executa a FUNCAO em todas as propriedades deste OA. Inclusive Obj.Obj...
@@ -4839,14 +4840,14 @@ class mkt {
             e.setSelectionRange(len, len);
         }, 1);
     };
-    static mkGerarObjeto = (este) => {
+    static geraObjForm = (este) => {
         // Gerar Objeto a partir de um Form Entries
         let form = este;
         if (mkt.classof(este) != "Object") {
             // Se vier o Elemento Form / o Query do Form
             form = mkt.Q(este);
         }
-        let rObjeto = mkt.mkLimparOA(Object.fromEntries(new FormData(form).entries()));
+        let rObjeto = mkt.limparOA(Object.fromEntries(new FormData(form).entries()));
         mkt.gc("Objeto Gerado: ");
         mkt.l(rObjeto);
         mkt.ge();

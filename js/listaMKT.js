@@ -96,13 +96,13 @@ var uiGetDEL = async (e, listId) => {
 
 // ACOES
 var uiSetADD = async (listId) => {
-	let obj = mkt.mkGerarObjeto(".operacaoCampos");
+	let obj = mkt.geraObjForm(".operacaoCampos");
 	// Método de ADICIONAR da biblioteca:
 	listas[listId].add(obj);
 	mkt.QverOff(".operacaoContainer");
 };
 var uiSetEDIT = async (k, v, listId) => {
-	let obj = mkt.mkGerarObjeto(".operacaoCampos");
+	let obj = mkt.geraObjForm(".operacaoCampos");
 	// Método de EDITAR da biblioteca:
 	listas[listId].edit(obj, k, v);
 	mkt.QverOff(".operacaoContainer");
