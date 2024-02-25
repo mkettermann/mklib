@@ -485,3 +485,7 @@ pre {
 	color: var(--corSecundaria);
 	border-radius: 5px;
 }
+
+mk-sel {
+	background-color: #ccc5;
+}

@@ -148,7 +148,7 @@ class mktc {
 }
 
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-//  CLASSE  ESTÁTICA e LISTAGEM     \\
+//  CLASSE MKT ESTÁTICA e LISTAGEM  \\
 //___________________________________\\
 // Classe contendo uma grande ferramenta de gerenciamento de dados em massa é construida e diveras funções estáticas facilitadoras.
 class mkt {
@@ -1695,17 +1695,7 @@ class mkt {
 	static Qoff = (query: any = "body") => {
 		// Coloca atributo disabled e classe disabled nos elementos do query e seta tab até o campo desativado.
 		return mkt.aCadaElemento(query, (e: any) => {
-			let co = mkt.classof(e);
-			// INPUT - BUTTON - TEXTAREA - SELECT - OPTION - OPTGROUP - FIELDSET
-			if (co == 'HTMLTextAreaElement' ||
-				co == 'HTMLButtonElement' ||
-				co == 'HTMLSelectElement' ||
-				co == 'HTMLOptionElement' ||
-				co == 'HTMLOptGroupElement' ||
-				co == 'HTMLFieldSetElement' ||
-				co == 'HTMLInputElement') {
-				e.disabled = true;
-			}
+			e.setAttribute("disabled", "");
 			e.classList.add("disabled");
 			e.setAttribute("tabindex", "-1");
 		});
@@ -1714,17 +1704,7 @@ class mkt {
 	static Qon = (query: any = "body") => {
 		// Remove atributo disabled e classe disabled nos elementos do query e seta tab até o campo ativo.
 		return mkt.aCadaElemento(query, (e: any) => {
-			let co = mkt.classof(e);
-			// INPUT - BUTTON - TEXTAREA - SELECT - OPTION - OPTGROUP - FIELDSET
-			if (co == 'HTMLTextAreaElement' ||
-				co == 'HTMLButtonElement' ||
-				co == 'HTMLSelectElement' ||
-				co == 'HTMLOptionElement' ||
-				co == 'HTMLOptGroupElement' ||
-				co == 'HTMLFieldSetElement' ||
-				co == 'HTMLInputElement') {
-				e.disabled = false;
-			}
+			e.removeAttribute("disabled");
 			e.classList.remove("disabled");
 			e.removeAttribute("tabindex");
 		});
@@ -5473,6 +5453,132 @@ Object.keys(mkt).forEach((n) => {
 		Object.defineProperty(mkt, n, { enumerable: false, writable: false, configurable: false });
 	}
 });
+
+//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+//  Web Component MkSel - Seletor   \\
+//___________________________________\\
+
+class mkSel extends HTMLElement {
+	k: any; // HTMLInputElement
+	v: any; // HTMLInputElement
+	svg: any; // HTMLOrSVGElement
+	constructor() {
+		super();
+		this.attachShadow({ mode: "open" });
+		let template = document.createElement("template");
+		template.innerHTML = `<style>
+:host {
+	display: inline-block;
+	border: 1px inset #555;
+	border-radius: 4px;
+}
+:host .setaCima {
+	opacity: 0;
+	transition: 0.2s ease-in-out;
+	transform: translate(0px, 5px);
+}
+:host .setaBaixo {
+	opacity: 1;
+	transition: 0.5s ease-in-out;
+	transform: translate(0px, 0px);
+}
+:host([hidden]) {
+	display: none;
+}
+:host([disabled]) {
+	opacity: 0.4;
+	cursor: not-allowed;
+}
+:host([disabled]) *{
+	cursor: not-allowed;
+	pointer-events: auto;
+}
+:host([focused]) {
+	box-shadow: 0 0 1px 1px #666;
+}
+:host([focused]) .setaBaixo {
+	opacity: 0;
+	transition: 0.2s ease-in-out;
+	transform: translate(0px, -5px);
+}
+:host([focused]) .setaCima {
+	opacity: 1;
+	transition: 0.5s ease-in-out;
+	transform: translate(0px, 0px);
+}
+
+.mkSel{
+	display:flex;
+}
+.mkSel svg{
+	width: 16px;
+	user-select: none;
+}
+input {
+	border: 0px;
+	outline: none;
+	font: inherit;
+	background: inherit;
+}
+slot {
+	cursor: default;
+	user-select: none;
+}
+</style>
+<div class="mkSel">
+	<input type="hidden" id="v" />
+	<input type="text" placeholder="Selecione" id="k" />
+	<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'>
+	<path class='setaCima' d='M14.6,6.9L8.4,0.7c-0.2-0.2-0.6-0.2-0.9,0L1.4,6.9c-0.2,0.2,0,0.4,0.2,0.4h4.5c0.1,0,0.3-0.1,0.4-0.2L7,6.7C7.5,6.1,8.5,6,9,6.6l0.6,0.6C9.7,7.3,9.9,7.4,10,7.4h4.4C14.6,7.4,14.7,7.1,14.6,6.9z'/>
+	<path class='setaBaixo' d='M1.4,8.9l6.1,6.3c0.2,0.2,0.6,0.2,0.9,0l6.1-6.3c0.2-0.2,0-0.4-0.2-0.4H9.9c-0.1,0-0.3,0.1-0.4,0.2L9,9.2C8.5,9.8,7.5,9.9,7,9.3L6.4,8.7C6.3,8.6,6.1,8.5,6,8.5H1.6C1.4,8.5,1.3,8.8,1.4,8.9z'/>
+  </svg>
+</div>`
+		this.shadowRoot?.append(template.content);
+		this.k = this.shadowRoot?.querySelector("#k");
+		this.v = this.shadowRoot?.querySelector("#v");
+		this.k.onfocus = () => { this.setAttribute("focused", ""); };
+		this.k.onblur = () => { this.removeAttribute("focused"); };
+		this.svg = this.shadowRoot?.querySelector("svg");
+		this.svg.onclick = (ev: Event) => {
+			ev.stopPropagation();
+			this.k.focus();
+		};
+	} // Construtor mkSel
+
+	attributeChangedCallback(name: string, oldValue: string, newValue: string) {
+		if (name === "disabled") {
+			this.k.disabled = newValue !== null;
+		} else if (name === "placeholder") {
+			this.k.placeholder = newValue;
+		} else if (name === "size") {
+			this.k.size = newValue;
+		} else if (name === "value") {
+			this.v.value = newValue;
+		}
+	}
+
+	get placeholder() { return this.getAttribute("placeholder"); };
+	get size() { return this.getAttribute("size"); };
+	get value() { return this.getAttribute("value"); };
+	get disabled() { return this.hasAttribute("disabled"); };
+	get hidden() { return this.hasAttribute("hidden"); };
+
+	set placeholder(value) { if (value) this.setAttribute("placeholder", value); };
+	set size(value) { if (value) this.setAttribute("size", value); };
+	set value(text) { if (text) this.setAttribute("value", text); };
+	set disabled(value) {
+		if (value) this.setAttribute("disabled", "");
+		else this.removeAttribute("disabled");
+	};
+	set hidden(value) {
+		if (value) this.setAttribute("hidden", "");
+		else this.removeAttribute("hidden");
+	};
+
+	static template: HTMLTemplateElement;
+	static observedAttributes: Array<string> = ["disabled", "placeholder", "size", "value"];
+}
+customElements.define("mk-sel", mkSel);
 
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //   Auto Inicializar               \\
