@@ -3880,7 +3880,7 @@ class mkt {
 
 								case "numero":  // EXE
 									if (e[re.target]) {
-										e[re.target] = mkt.fromNumber(e[re.target]);
+										e[re.target] = mkt.numToDisplay(e[re.target]);
 									}
 									prom(re.k);
 									break;
@@ -3950,7 +3950,7 @@ class mkt {
 
 								case "nummin": // EXE
 									e.setAttribute("min", re.v);
-									if (mkt.mkFloat(e[re.target]) < Number(re.v)) {
+									if (mkt.toNumber(e[re.target]) < Number(re.v)) {
 										if (!re.m) re.m = mkt.a.msg.nummin + re.v;
 										erros.push(re);
 										e[re.target] = re.v;
@@ -3960,7 +3960,7 @@ class mkt {
 
 								case "nummax": // EXE
 									e.setAttribute("max", re.v);
-									if (mkt.mkFloat(e[re.target]) > Number(re.v)) {
+									if (mkt.toNumber(e[re.target]) > Number(re.v)) {
 										if (!re.m) re.m = mkt.a.msg.nummax + re.v;
 										erros.push(re);
 										e[re.target] = re.v;
