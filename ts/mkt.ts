@@ -1902,8 +1902,8 @@ class mkt {
 
 	static moldeOA = async (
 		dados: object[] | object,
-		modelo: string = "#modelo",
-		repositorio: string = ".tableListagem .listBody",
+		modelo: any = "#modelo",
+		repositorio: any = ".tableListagem .listBody",
 		allowTags: boolean = false
 	) => {
 		// MoldeOA popula templates de forma escalável com uma array de objetos ou um objeto.
@@ -4803,8 +4803,8 @@ class mkt {
 		let oDinList = e.getBoundingClientRect();
 		// TAMANHO (min e max with baseado no pai)
 		if (largura) {
-			e.style.minWidth = eAnterior.offsetWidth + "px";
-			e.style.maxWidth = eAnterior.offsetWidth + "px";
+			e.style.minWidth = (eAnterior.offsetWidth - 3) + "px";
+			e.style.maxWidth = (eAnterior.offsetWidth - 3) + "px";
 		}
 		// POSICAO e FUGA em Y (em baixo)
 		// Lista = Bloco Fixed Top + Altura do Pai;
@@ -5462,8 +5462,10 @@ class mkSel extends HTMLElement {
 	k: any; // HTMLInputElement text
 	v: any; // HTMLInputElement hidden
 	svg: any; // SVGSVGElement
-	map: Map<any, any> | null = null;
+	eList: any;
+	dados: Map<any, any>;
 	filtrado: string = "";
+	vazio: string | null = "- Selecione -";
 	constructor() {
 		super();
 		this.attachShadow({ mode: "open" });
@@ -5497,7 +5499,7 @@ class mkSel extends HTMLElement {
 	pointer-events: auto;
 }
 :host([focused]) {
-	box-shadow: 0 0 1px 1px #666;
+	outline: 1px solid #666;
 }
 :host([focused]) .setaBaixo {
 	opacity: 0;
@@ -5509,6 +5511,9 @@ class mkSel extends HTMLElement {
 	transition: 0.5s ease-in-out;
 	transform: translate(0px, 0px);
 }
+:host([focused]) .lista{
+	display: block;
+}
 .mkSel{
 	display:flex;
 }
@@ -5516,11 +5521,29 @@ class mkSel extends HTMLElement {
 	width: 16px;
 	user-select: none;
 }
+.lista{
+	display: none;
+	position: fixed;
+	border: 1px solid black;
+	border-radius: 5px;
+	cursor: pointer;
+	user-select: none;
+	max-height: 300px;
+	overflow-y: auto;
+	width: max-content;
+	z-index: calc(var(--mkSelIndex));
+	padding: 2px 1px;
+}
 input {
 	border: 0px;
 	outline: none;
 	font: inherit;
 	background: inherit;
+}
+ul,li{
+	list-style: none;
+	padding: 0px;
+	margin: 0px;
 }
 slot {
 	cursor: default;
@@ -5528,16 +5551,25 @@ slot {
 }
 </style>
 <div class="mkSel">
-	<input type="hidden" id="v" />
-	<input type="text" placeholder="Filtro \u{1F50D}" value="- Selecione -" id="k" />
+	<input type="hidden" id="v" value />
+	<input type="text" placeholder="Filtro \u{1F50D}" value="${this.vazio}" id="k" autocomplete="off"/>
 	<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'>
 	<path class='setaCima' d='M14.6,6.9L8.4,0.7c-0.2-0.2-0.6-0.2-0.9,0L1.4,6.9c-0.2,0.2,0,0.4,0.2,0.4h4.5c0.1,0,0.3-0.1,0.4-0.2L7,6.7C7.5,6.1,8.5,6,9,6.6l0.6,0.6C9.7,7.3,9.9,7.4,10,7.4h4.4C14.6,7.4,14.7,7.1,14.6,6.9z'/>
 	<path class='setaBaixo' d='M1.4,8.9l6.1,6.3c0.2,0.2,0.6,0.2,0.9,0l6.1-6.3c0.2-0.2,0-0.4-0.2-0.4H9.9c-0.1,0-0.3,0.1-0.4,0.2L9,9.2C8.5,9.8,7.5,9.9,7,9.3L6.4,8.7C6.3,8.6,6.1,8.5,6,8.5H1.6C1.4,8.5,1.3,8.8,1.4,8.9z'/>
   </svg>
-</div>`
+</div>
+<div class="lista"><ul></ul></div>`
+		// GET / SETS Iniciais
 		this.shadowRoot?.append(template.content);
 		this.k = this.shadowRoot?.querySelector("#k");
 		this.v = this.shadowRoot?.querySelector("#v");
+		this.eList = this.shadowRoot?.querySelector(".lista");
+		this.svg = this.shadowRoot?.querySelector("svg");
+		let name = this.getAttribute("name");
+		let opcoes = this.getAttribute("opcoes");
+		this.vazio = this.getAttribute("vazio");
+
+		// Eventos
 		this.k.onfocus = () => {
 			this.setAttribute("focused", "");
 			this.aoFocus();
@@ -5548,20 +5580,31 @@ slot {
 					if (document.activeElement !== this) {
 						this.removeAttribute("focused");
 					}
-				}, 250);
+				}, 150);
 			this.aoBlur();
 		};
-		this.svg = this.shadowRoot?.querySelector("svg");
 		this.svg.onclick = (ev: Event) => {
 			ev.stopPropagation();
 			this.k.focus();
 		};
-		let name = this.getAttribute("name");
-		let opcoes = this.getAttribute("opcoes");
+		// Seguir o Elemento durante o scroll e resize
+		document.addEventListener("scroll", (event) => {
+			mkt.Reposicionar(this.eList, false);
+		});
+		window.addEventListener("resize", (event) => {
+			mkt.Reposicionar(this.eList, true);
+		});
+		// DADOS 
 		if (mkt.isJson(opcoes)) {
-			this.map = new Map(mkt.parseJSON(opcoes));
+			this.dados = new Map(mkt.parseJSON(opcoes));
+		} else {
+			this.dados = new Map(); // Inicializa sem dados
 		}
-		mkt.l("Seletor: " + name + ", Dados: ", this.map);
+		mkt.l("Seletor: " + name + ", Dados: ", this.dados);
+		// Popular Lista com dados atuais
+		this.aoPopularLista();
+		// Atualiza os selecionados pelo Value
+		this.aoAtualizaSelecionados();
 	} // Construtor mkSel
 
 	attributeChangedCallback(name: string, oldValue: string, newValue: string) {
@@ -5581,20 +5624,63 @@ slot {
 		// Limpa Filtro atual
 		this.filtrado = "";
 		// Atualiza Itens Selecionados, caso houve mudança sem atualizar.
-		// mkt.mkSelUpdate(e.parentElement.previousElementSibling);
+		this.aoAtualizaSelecionados();
+
 
 		// Faz movimento no scroll até o primeiro item selecionado
 		// let primeiroOffSet = ePrimeiroSel?.offsetTop || 0;
-		// eList.scrollTop =
-		// 	primeiroOffSet - 120 - (eList.offsetHeight - eList.clientHeight) / 2;
+		// this.eList.scrollTop =
+		// 	primeiroOffSet - 120 - (this.eList.offsetHeight - this.eList.clientHeight) / 2;
 
 		// Atualizar posição da Lista.
-		// mkt.Reposicionar(e.parentElement.nextElementSibling, true);
+		mkt.Reposicionar(this.eList, true);
 	}
 
 	aoBlur() {
 		// Ao perder foco
 	}
+
+	aoPopularLista() {
+		let linha = document.createElement("template");
+		linha.innerHTML = "<li k='${0}'>${1}</li>"
+		if (mkt.classof(this.dados) == "Map") {
+			mkt.moldeOA([...this.dados!], linha, this.eList?.querySelector("ul"));
+		}
+	}
+
+	aoAtualizaSelecionados() {
+		/* Marcar mkSelItem pra 1 onde tem K selecionado */
+		Array.from(this.eList?.querySelector("ul").children).forEach(
+			(e: any) => {
+				e.getAttribute("k")
+				if (e.getAttribute("k") == this.v.value) {
+					e.setAttribute("ativo", "");
+				} else {
+					e.removeAttribute("ativo");
+				}
+			}
+		);
+		// Seta Valor do display
+		this.setDisplay();
+	}
+
+	setDisplay = () => {
+		let display = "- Selecione -";
+		if (this.vazio) {
+			if ((display != this.vazio) && (this.v.value === "")) {
+				display = this.vazio;
+			}
+		}
+		if (this.dados.has(this.v.value)) {
+			display = this.dados.get(this.v.value);
+		}
+		this.k.value = display;
+
+		if (this.dados.size <= 0) {
+			mkt.w("mk-sel - Nenhuma opção para selecionar: ", this.dados.size);
+			this.eList.querySelector("ul").innerHTML = `Opções \u{2209}`;
+		}
+	};
 
 	get size() { return this.getAttribute("size"); };
 	get value() { return this.getAttribute("value"); };
