@@ -5483,7 +5483,7 @@ slot {
         else {
             this.dados = new Map(); // Inicializa sem dados
         }
-        mkt.l("Seletor: " + name + ", Dados: ", this.dados);
+        //mkt.l("Seletor: " + name + ", Dados: ", this.dados);
         // Popular Lista com dados atuais
         this.aoPopularLista();
         // Atualiza os selecionados pelo Value
@@ -5544,9 +5544,13 @@ slot {
     }
     selecionar(ev) {
         let li = ev.target;
-        mkt.l("Ev Target: ", li);
         if (li) {
-            this.v.value = li.getAttribute("k");
+            let novoValor = li.getAttribute("k");
+            if (novoValor == "")
+                this.removeAttribute("value");
+            else
+                this.value = novoValor;
+            //mkt.l("Li Value: ", novoValor);
             // Atualizar ativo
             this.aoAtualizaSelecionados();
         }
