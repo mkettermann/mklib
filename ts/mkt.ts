@@ -4406,7 +4406,7 @@ class mkt {
 		for (let a in OA) {
 			if (mkt.classof(OA[a]) != exceto) {
 				if (funcao) {
-					funcao(OA[a]);
+					funcao(OA[a], a, OA);
 				}
 			}
 			c++;
@@ -5598,7 +5598,15 @@ slot {
 		});
 		// DADOS 
 		if (mkt.isJson(opcoes)) {
-			this.dados = new Map(mkt.parseJSON(opcoes));
+			let colect = mkt.parseJSON(opcoes);
+			if (mkt.classof(colect) == "Array") {
+				colect.forEach((v: any, i: any, a: any) => {
+					a[i][0] = a[i][0].toString();
+					a[i][1] = a[i][1].toString();
+					//mkt.l("v: ", v, " i: ", i, " a: ", a)
+				});
+			}
+			this.dados = new Map(colect);
 		} else {
 			this.dados = new Map(); // Inicializa sem dados
 		}
@@ -5607,6 +5615,8 @@ slot {
 		this.aoPopularLista();
 		// Atualiza os selecionados pelo Value
 		this.aoAtualizaSelecionados();
+		// Atualiza o Display
+		this.setDisplay();
 	} // Construtor mkSel
 
 	attributeChangedCallback(name: string, oldValue: string, newValue: string) {
@@ -5623,10 +5633,11 @@ slot {
 		// Ao receber Foco
 		// Limpa Filtro atual
 		this.filtrado = "";
-		// Atualiza Itens Selecionados, caso houve mudança sem atualizar.
-		this.aoAtualizaSelecionados();
 		// Limpa o Display após atualizar status.
 		this.k.value = "";
+		// Atualiza Itens Selecionados, caso houve mudança sem atualizar.
+		this.aoAtualizaSelecionados();
+
 
 
 		// Faz movimento no scroll até o primeiro item selecionado
@@ -5646,18 +5657,35 @@ slot {
 					// SE REALMENTE Saiu do elemento:
 					// Atualiza Itens Selecionados.
 					this.aoAtualizaSelecionados();
+					// Seta Valor do display
+					this.setDisplay();
 					// Remove Status de focus pra sumir
 					this.removeAttribute("focused");
 				}
 			}, 150);
 	}
 
-	aoPopularLista() {
+	async aoPopularLista() {
+		let ul = this.eList?.querySelector("ul");
 		let linha = document.createElement("template");
 		linha.innerHTML = "<li k='${0}'>${1}</li>"
 		if (mkt.classof(this.dados) == "Map") {
-			mkt.moldeOA([...this.dados!], linha, this.eList?.querySelector("ul"));
+			await mkt.moldeOA([...this.dados!], linha, ul);
 		}
+		mkt.Ao("click", ul, (e: any, ev: Event) => {
+			this.selecionar(ev);
+		});
+	}
+
+	selecionar(ev: Event) {
+		let li: any = ev.target;
+		mkt.l("Ev Target: ", li);
+		if (li) {
+			this.v.value = li.getAttribute("k");
+			// Atualizar ativo
+			this.aoAtualizaSelecionados();
+		}
+
 	}
 
 	aoAtualizaSelecionados() {
@@ -5672,8 +5700,6 @@ slot {
 				}
 			}
 		);
-		// Seta Valor do display
-		this.setDisplay();
 	}
 
 	setDisplay = () => {
@@ -5683,7 +5709,7 @@ slot {
 				display = this.vazio;
 			}
 		}
-		if (this.dados.has(this.v.value)) {
+		if (this.dados.has(this.v.value.toString())) {
 			display = this.dados.get(this.v.value);
 		}
 		this.k.value = display;
