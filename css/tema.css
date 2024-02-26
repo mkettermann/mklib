@@ -1,7 +1,7 @@
 /* TEMA */
 :root {
 	--bordaMaster: #331166;
-	--bordaInput: #ace;
+	--bordaInput: rgb(193, 184, 255);
 	--fundoHead: #331166;
 	--corHead: #0f0;
 	--corHeadEfeito: #f0c;

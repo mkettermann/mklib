@@ -487,5 +487,5 @@ pre {
 }
 
 mk-sel {
-	background-color: #ccc5;
+	background-color: var(--bordaInput);
 }

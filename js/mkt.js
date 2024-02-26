@@ -5406,6 +5406,8 @@ class mkSel extends HTMLElement {
 	width: max-content;
 	z-index: calc(var(--mkSelIndex));
 	padding: 2px 1px;
+	background: inherit;
+	color:inherit;
 }
 input {
 	border: 0px;
@@ -5417,6 +5419,12 @@ ul,li{
 	list-style: none;
 	padding: 0px;
 	margin: 0px;
+}
+li{	
+	padding: 3px 0px;
+}
+li:not(:first-child){
+	border-top: 1px solid #0001;
 }
 slot {
 	cursor: default;
@@ -5447,11 +5455,6 @@ slot {
             this.aoFocus();
         };
         this.k.onblur = () => {
-            setTimeout(() => {
-                if (document.activeElement !== this) {
-                    this.removeAttribute("focused");
-                }
-            }, 150);
             this.aoBlur();
         };
         this.svg.onclick = (ev) => {
@@ -5491,12 +5494,12 @@ slot {
     }
     aoFocus() {
         // Ao receber Foco
-        // Limpa o Display
-        this.k.value = "";
         // Limpa Filtro atual
         this.filtrado = "";
         // Atualiza Itens Selecionados, caso houve mudança sem atualizar.
         this.aoAtualizaSelecionados();
+        // Limpa o Display após atualizar status.
+        this.k.value = "";
         // Faz movimento no scroll até o primeiro item selecionado
         // let primeiroOffSet = ePrimeiroSel?.offsetTop || 0;
         // this.eList.scrollTop =
@@ -5506,6 +5509,15 @@ slot {
     }
     aoBlur() {
         // Ao perder foco
+        setTimeout(() => {
+            if (document.activeElement !== this) {
+                // SE REALMENTE Saiu do elemento:
+                // Atualiza Itens Selecionados.
+                this.aoAtualizaSelecionados();
+                // Remove Status de focus pra sumir
+                this.removeAttribute("focused");
+            }
+        }, 150);
     }
     aoPopularLista() {
         let linha = document.createElement("template");
