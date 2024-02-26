@@ -5410,13 +5410,14 @@ class mkt {
 	};
 
 	static Terremoto = (e: any = null): void => {
+		e = mkt.Q(e);
 		// Efeito de terremoto no elemento
 		if (e) {
 			e.classList.add("mkTerremoto");
+			setTimeout(() => {
+				e.classList.remove("mkTerremoto");
+			}, 500);
 		}
-		setTimeout(() => {
-			e.classList.remove("mkTerremoto");
-		}, 500);
 	};
 
 	// DEPRECATED - Utiliza em Fichas (Substituir por Faseador)
