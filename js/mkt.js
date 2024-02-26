@@ -5606,33 +5606,25 @@ slot {
         }
     };
     get size() { return this.getAttribute("size"); }
-    ;
     get value() { return this.getAttribute("value"); }
-    ;
     get disabled() { return this.hasAttribute("disabled"); }
-    ;
     get hidden() { return this.hasAttribute("hidden"); }
-    ;
     set size(value) { if (value)
         this.setAttribute("size", value); }
-    ;
     set value(text) { if (text)
         this.setAttribute("value", text); }
-    ;
     set disabled(value) {
         if (value)
             this.setAttribute("disabled", "");
         else
             this.removeAttribute("disabled");
     }
-    ;
     set hidden(value) {
         if (value)
             this.setAttribute("hidden", "");
         else
             this.removeAttribute("hidden");
     }
-    ;
     static observedAttributes = ["disabled", "size", "value"];
 }
 customElements.define("mk-sel", mkSel);
