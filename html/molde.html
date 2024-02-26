@@ -63,7 +63,7 @@
 		<textarea class="codigo" rows="4" cols="100" onfocus="mkt.selecionarInner(this)" readonly>
 var dados = [{ nome: "Marcos", sobrenome: "Kettermann" },{ nome: "Zé", data: { d: "31", m: "12", a: "2023" } },];
 dados.push({nome: "Fulano",sobrenome: "dos Santos Silva",data: { d: 31 },});
-mkt.mkMoldeOA(dados, "#modelo333", "#exibir");</textarea>
+mkt.moldeOA(dados, "#modelo333", "#exibir");</textarea>
 	</div>
 </div>
 <div>Resultado do script acima:</div>
@@ -116,7 +116,7 @@ mkt.mkMoldeOA(dados, "#modelo333", "#exibir");</textarea>
 var objeto = { nome: "Seu Zé"};
 function aoModificarInput(e) {
 	objeto[e.name] = e.value;
-	mkt.mkMoldeOA(objeto, "#modelo", ".resultado");
+	mkt.moldeOA(objeto, "#modelo", ".resultado");
 }
 </pre>
 			<br />&nbsp; Um objeto chamado "objeto" é criado no navegador do cliente e
@@ -125,9 +125,9 @@ function aoModificarInput(e) {
 			. Você escreve no campo<br />
 			. Chamamos a função por evento.<br />
 			. Mudamos a propriedade que está escrita no atributo name.<br />
-			. Chamamos a função de molde mkt.mkMoldeOA() passando o objeto com a
+			. Chamamos a função de molde mkt.moldeOA() passando o objeto com a
 			propriedade já alterada.<br /><br />
-			&nbsp; A função mkMoldeOA recebe os parametros:
+			&nbsp; A função moldeOA recebe os parametros:
 			<br />1º Array de objetos / Objeto<br />2º String de identificação do
 			campo do modelo<br />3º String de identificação do campo de resultado.
 		</div>

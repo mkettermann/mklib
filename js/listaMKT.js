@@ -52,7 +52,7 @@ var uiGetADD = async (listId, strListagem) => {
 	mkt.Q(".operacaoTitulo").innerHTML = "Adicionar na " + strListagem + " (Dinâmico)";
 	mkt.Q(".operacaoAcao").innerHTML = "Adicionar na " + strListagem;
 	mkt.Q(".operacaoAcao").setAttribute("onclick", "uiSetADD(" + listId + ")");
-	await mkt.mkMoldeOA(
+	await mkt.moldeOA(
 		listas[listId].getUsedKeys(true),
 		"#modeloOperacao",
 		".operacaoCampos"
@@ -77,7 +77,7 @@ var uiGetEDIT = async (e, listId) => {
 	//let objeto = listas[listId].dadosFull.find((o) => o[k] == v);
 	let objeto = listas[listId].getObj(v); //
 	//console.log("Editando: [k:" + k + ",v:" + v + "]", objeto);
-	await mkt.mkMoldeOA(
+	await mkt.moldeOA(
 		listas[listId].getKVLR(objeto),
 		"#modeloOperacao",
 		".operacaoCampos"
