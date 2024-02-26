@@ -27,6 +27,9 @@
 	--carregadorCentro: black;
 	--zCarregador: 5011;
 
+	/* WC Seletor*/
+	--mkSelCorSetaSelecionado: black;
+
 	/* Seletor mkSel*/
 	--mkSelArrowSize: 0px;
 	--Main1: var(--g5AzulEscuro);

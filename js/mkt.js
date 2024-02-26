@@ -5426,6 +5426,22 @@ li{
 li:not(:first-child){
 	border-top: 1px solid #0001;
 }
+li[ativo]{
+	background: #0092;
+  border-left: 3px solid #0095;
+  padding-left: 2px;
+  border-radius: 2px;
+}
+li[ativo]::before{
+	content: '';
+	position: absolute;
+	width: 5px;
+	height: 10px;
+	border-right: 2px solid var(--mkSelCorSetaSelecionado);
+	border-bottom: 2px solid var(--mkSelCorSetaSelecionado);
+	transform: rotate(45deg);
+	right: 8px;
+}
 slot {
 	cursor: default;
 	user-select: none;
