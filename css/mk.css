@@ -727,6 +727,10 @@ button.CarregadorMkTopoDireito:hover {
 	animation: pulsarMk 1.5s ease-in-out alternate infinite;
 }
 
+.mkEfeitoPulsar {
+	animation: pulsarMk 1.5s ease-in-out alternate infinite;
+}
+
 @keyframes pulsarMk {
 
 	0%,
