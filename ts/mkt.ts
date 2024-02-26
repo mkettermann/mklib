@@ -1951,6 +1951,10 @@ class mkt {
 				listaNode = listaNode.replaceAll("&gt;", ">");
 			}
 			eRepositorio.innerHTML = listaNode;
+			// Após todos elementos inseridos, remove os r_e_m
+			[...eRepositorio.querySelectorAll("*")].forEach(e => {
+				if (e.classList.contains("r_e_m")) e.remove();
+			})
 			r(true);
 		});
 	};
