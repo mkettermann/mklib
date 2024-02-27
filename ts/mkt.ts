@@ -3934,7 +3934,7 @@ class mkt {
 
 								case "nummin": // EXE
 									e.setAttribute("min", re.v);
-									if (mkt.toNumber(e[re.target]) < Number(re.v)) {
+									if (mkt.toNumber(Number(e[re.target])) < Number(re.v)) {
 										if (!re.m) re.m = mkt.a.msg.nummin + re.v;
 										erros.push(re);
 										e[re.target] = re.v;
@@ -3944,7 +3944,7 @@ class mkt {
 
 								case "nummax": // EXE
 									e.setAttribute("max", re.v);
-									if (mkt.toNumber(e[re.target]) > Number(re.v)) {
+									if (mkt.toNumber(Number(e[re.target])) > Number(re.v)) {
 										if (!re.m) re.m = mkt.a.msg.nummax + re.v;
 										erros.push(re);
 										e[re.target] = re.v;
