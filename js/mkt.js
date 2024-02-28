@@ -26,6 +26,18 @@ String.prototype.removeRaw = function (fix = false) {
     // \u00E3 == ã, viraria /u00E3
     return r;
 };
+String.prototype.toEntities = function () {
+    // "'".toEntities() == '&#39;'
+    return this.replace(/./gm, function (s) {
+        return (s.match(/[a-z0-9\s]+/i)) ? s : "&#" + s.charCodeAt(0) + ";";
+    });
+};
+String.prototype.fromEntities = function () {
+    // "'".toEntities() == '&#39;'
+    return (this + "").replace(/&#\d+;/gm, function (s) {
+        return String.fromCharCode(s.match(/\d+/gm)[0]);
+    });
+};
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //  MODELO DOS DADOS DA LISTA       \\
 //___________________________________\\

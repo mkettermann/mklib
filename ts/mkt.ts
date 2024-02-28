@@ -28,6 +28,18 @@ declare const appPath: any;
 	// \u00E3 == ã, viraria /u00E3
 	return r;
 };
+(String.prototype as any).toEntities = function () {
+	// "'".toEntities() == '&#39;'
+	return this.replace(/./gm, function (s: string) {
+		return (s.match(/[a-z0-9\s]+/i)) ? s : "&#" + s.charCodeAt(0) + ";";
+	});
+};
+(String.prototype as any).fromEntities = function () {
+	// "'".toEntities() == '&#39;'
+	return (this + "").replace(/&#\d+;/gm, function (s: any) {
+		return String.fromCharCode(s.match(/\d+/gm)[0]);
+	})
+};
 
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //  MODELO DOS DADOS DA LISTA       \\
