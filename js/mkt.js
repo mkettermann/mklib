@@ -33,7 +33,7 @@ String.prototype.toEntities = function () {
     });
 };
 String.prototype.fromEntities = function () {
-    // "'".toEntities() == '&#39;'
+    // '&#39;'.fromEntities() == "'"
     return (this + "").replace(/&#\d+;/gm, function (s) {
         return String.fromCharCode(s.match(/\d+/gm)[0]);
     });
