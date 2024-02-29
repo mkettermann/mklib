@@ -1657,7 +1657,8 @@ class mkt {
             ],
             numeros: ["0", /^[0-9]*$/],
             letras: ["A", /^[A-Za-z]*$/],
-            telefone_ddd: ["(00) 000000000", /^[0-9]{11}$/],
+            telefone_ddd11: ["(00) 00000-0000", /^[0-9]{11}$/],
+            telefone_ddd10: ["(00) 0000-0000", /^[0-9]{10}$/],
         },
         wpool: null, // WorkerPool quando iniciado
     };
