@@ -2913,8 +2913,6 @@ class mkt {
 						}
 					}
 				}
-				// 24 horas possiveis == 1440 minutos == 86400 segundos
-				strTempo = "menos de 1 dia";
 			} else { // Em Dias
 				strTempo = dias + " dias";
 			}
