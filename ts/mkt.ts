@@ -1656,7 +1656,7 @@ class mkt {
 			],
 			numeros: ["0", /^[0-9]*$/],
 			letras: ["A", /^[A-Za-z]*$/],
-			telefone_ddd: ["(00) 00000-0000", /^[0-9]{11}$/],
+			telefone_ddd: ["(00) 00000-00000", /^[0-9]{11}$/],
 		} as any, // Util: Mascarar, Regex, Funcao Validadora
 		wpool: null as any | null, // WorkerPool quando iniciado
 	};
@@ -4353,7 +4353,10 @@ class mkt {
 					parteDDI = mkt.apenasNumeros(str).slice(0, 2); // "55"
 					parteDDDTelefone = str.slice(str.indexOf(parteDDI) + parteDDI.length) // " (48) 99968-0348"
 				}
-				resultado = "+" + parteDDI + " ";
+				resultado = "+" + parteDDI;
+				if (texto.length >= 5) {
+					resultado += " ";
+				}
 				parteDDDTelefone = parteDDDTelefone.trim(); // Apenas por garantia "(48) 99968-0348"
 				// ETAPA 2 QUANDO for DDI 55, Formata o DDD
 				if (parteDDDTelefone.indexOf(" ") >= 0) { // true (4)
@@ -4394,7 +4397,6 @@ class mkt {
 			mkt.w("mascaraTelefoneDDI() - Parametro precisa ser string: ", mkt.classof(texto));
 		}
 		if (resultado == "") resultado = texto;
-		resultado = resultado.replaceAll("+ ", "+");
 		mkt.l("Tel DDI: ", texto, " -> ", resultado);
 		return resultado;
 	}
