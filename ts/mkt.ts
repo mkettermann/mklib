@@ -2846,6 +2846,15 @@ class mkt {
 		return new Date(dataNum).toLocaleString();
 	};
 
+	static dataGetSegundosDiferenca = (
+		msOld: number,
+		msNew: number | null = null
+	): number => {
+		// Retorna a diferença de segundos entre dois MS
+		if (msNew == null) msNew = mkt.dataGetMs();
+		return mkt.dataMsToSegundos(msNew! - msOld);
+	};
+
 	static dataGetDiasDiferenca = (
 		msOld: number,
 		msNew: number | null = null
@@ -2861,11 +2870,11 @@ class mkt {
 			dias = dias * -1;
 		}
 		let strTempo = "";
-		if (dias > 30) {
+		if (dias > 30) { // Em Meses
 			if (dias < 60) {
 				strTempo = "1 mês";
 			} else {
-				if (dias > 365) {
+				if (dias > 365) { // Em Anos (+ Meses restantes)
 					let anos = Math.floor(dias / 365);
 					let diasRestoAno = dias % 365;
 					if (anos < 2) {
@@ -2886,8 +2895,27 @@ class mkt {
 			}
 		} else {
 			if (dias < 1) {
+				let segundos = mkt.dataGetSegundosDiferenca(msOld, msNew);
+				if (segundos > 7200) { // Em Horas
+					strTempo = Math.floor(segundos / 3600) + " horas";
+				} else {
+					if (segundos > 3600) {
+						strTempo = "1 hora";
+					} else {
+						if (segundos > 120) { // Em Minutos
+							strTempo = Math.floor(segundos / 60) + " minutos";
+						} else {
+							if (segundos > 60) {
+								strTempo = "1 minuto";
+							} else {
+								strTempo = Math.floor(segundos) + " segundos";
+							}
+						}
+					}
+				}
+				// 24 horas possiveis == 1440 minutos == 86400 segundos
 				strTempo = "menos de 1 dia";
-			} else {
+			} else { // Em Dias
 				strTempo = dias + " dias";
 			}
 		}
