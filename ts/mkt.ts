@@ -4338,7 +4338,7 @@ class mkt {
 		// Formata DDI apenas se estiver presente o +
 		let str = texto;
 		let resultado = "";
-		if (mkt.classof(str) != "String") { // Ex: "+55 (48) 99968-0348"
+		if (mkt.classof(str) == "String") { // Ex: "+55 (48) 99968-0348"
 			let parteDDI = "";
 			let parteDDDTelefone = "";
 			if (str.indexOf("+") >= 0) { // true (2)
