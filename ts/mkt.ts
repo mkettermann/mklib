@@ -4394,6 +4394,7 @@ class mkt {
 			mkt.w("mascaraTelefoneDDI() - Parametro precisa ser string: ", mkt.classof(texto));
 		}
 		if (resultado == "") resultado = texto;
+		resultado = resultado.replaceAll("+ ", "+");
 		mkt.l("Tel DDI: ", texto, " -> ", resultado);
 		return resultado;
 	}

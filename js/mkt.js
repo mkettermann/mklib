@@ -4314,6 +4314,7 @@ class mkt {
         }
         if (resultado == "")
             resultado = texto;
+        resultado = resultado.replaceAll("+ ", "+");
         mkt.l("Tel DDI: ", texto, " -> ", resultado);
         return resultado;
     };
