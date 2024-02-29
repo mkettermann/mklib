@@ -4399,7 +4399,7 @@ class mkt {
 			mkt.w("mascaraTelefoneDDI() - Parametro precisa ser string: ", mkt.classof(texto));
 		}
 		if (resultado == "") resultado = texto;
-		if (resultado.length > 13) resultado = resultado.slice(0, 12);
+		if (mkt.apenasNumeros(resultado).length > 13) resultado = resultado.slice(0, resultado.length - 1);
 		mkt.l("Tel DDI: ", texto, " -> ", resultado);
 		return resultado;
 	}
