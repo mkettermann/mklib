@@ -4349,7 +4349,7 @@ class mkt {
 					parteDDI = mkt.apenasNumeros(str.split(" ")[0]); // "55"
 					parteDDDTelefone = str.slice(str.split(" ")[0].length); // " (48) 99968-0348"
 				} else {
-					// Nenhum espaço encontrado (Supor que DDI tem 2 caracteres)
+					// Nenhum espaço encontrado (Supor que DDI tem 2 caracteres) "+5548999680348"
 					parteDDI = mkt.apenasNumeros(str).slice(0, 2); // "55"
 					parteDDDTelefone = str.slice(str.indexOf(parteDDI) + parteDDI.length) // " (48) 99968-0348"
 				}
