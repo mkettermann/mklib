@@ -2841,7 +2841,7 @@ class mkt {
             dias = dias * -1;
         }
         let strTempo = "";
-        if (dias > 30) { // Em Meses
+        if (dias > 29) { // Em Meses
             if (dias < 60) {
                 strTempo = "1 mês";
             }
@@ -2872,19 +2872,19 @@ class mkt {
         else {
             if (dias < 1) {
                 let segundos = mkt.dataGetSegundosDiferenca(msOld, msNew);
-                if (segundos > 7200) { // Em Horas
+                if (segundos > 7199) { // Em Horas
                     strTempo = Math.floor(segundos / 3600) + " horas";
                 }
                 else {
-                    if (segundos > 3600) {
+                    if (segundos > 3599) {
                         strTempo = "1 hora";
                     }
                     else {
-                        if (segundos > 120) { // Em Minutos
+                        if (segundos > 119) { // Em Minutos
                             strTempo = Math.floor(segundos / 60) + " minutos";
                         }
                         else {
-                            if (segundos > 60) {
+                            if (segundos > 59) {
                                 strTempo = "1 minuto";
                             }
                             else {
