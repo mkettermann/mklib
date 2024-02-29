@@ -4334,58 +4334,62 @@ class mkt {
 	};
 
 	static mascaraTelefoneDDI = (texto: string) => {
-		// Como DDI não da pra mascarar, Aqui tenta:
-		// - Dar um Split no primeiro espaco encontrado.
-		// - Antes do primeiro espaço é DDI
-		// - Após o primeiro espaço, é aplicada a mascara de 11 caracteres.
-		if (mkt.classof(texto) != "String") { // Ex: "+55 (48) 99968-0348"
-			let resultado = "";
+		// Essa máscara tenta encontrar um espaço entre DDI e DDD e Telefone para formatar.
+		// Formata DDI apenas se estiver presente o +
+		let str = texto;
+		let resultado = "";
+		if (mkt.classof(str) != "String") { // Ex: "+55 (48) 99968-0348"
 			let parteDDI = "";
-			let parteDDD = "";
-			let parteTelefone = "";
 			let parteDDDTelefone = "";
-			texto = texto.replaceAll("+", ""); // "55 (48) 99968-0348"
-			// ETAPA 1: Difivir o DDI do DDD+TELEFONE
-			if (texto.indexOf(" ") >= 0) { // true (2)
-				// Encontrou Espaço. (Supor que seja a divisória do DDI com o DDD)
-				parteDDI = mkt.apenasNumeros(texto.split(" ")[0]); // "55"
-				parteDDDTelefone = texto.slice(texto.split(" ")[0].length); // " (48) 99968-0348"
-			} else {
-				// Nenhum espaço encontrado (Supor que DDI tem 2 caracteres)
-				parteDDI = mkt.apenasNumeros(texto).slice(0, 2); // "55"
-				parteDDDTelefone = texto.slice(texto.indexOf(parteDDI) + parteDDI.length) // " (48) 99968-0348"
-			}
-
-			resultado = "+" + parteDDI + " ";
-			parteDDDTelefone = parteDDDTelefone.trim(); // Apenas por garantia "(48) 99968-0348"
-			// ETAPA 2 Tentar identificar o tamanho do DDD pelo código do pais. E cercar com parenteses.
-			if (parteDDDTelefone.indexOf(" ") >= 0) { // true (4)
-				// DDD+Telefone contém espaço. (Supor que é a divisão entre DDD e Telefone)
-				parteDDD = mkt.apenasNumeros(parteDDDTelefone.split(" ")[0]); // "48"
-				parteTelefone = parteDDDTelefone.slice(parteDDDTelefone.split(" ")[0].length);
-			} else {
-				let sizeDDD: any = {
-					"55": 2,
+			if (str.indexOf("+") >= 0) { // true (2)
+				str = str.replaceAll("+", ""); // "55 (48) 99968-0348"
+				// ETAPA 1: Difivir o DDI do DDD+TELEFONE
+				if (str.indexOf(" ") >= 0) { // true (2)
+					// Encontrou Espaço. (Supor que seja a divisória do DDI com o DDD)
+					parteDDI = mkt.apenasNumeros(str.split(" ")[0]); // "55"
+					parteDDDTelefone = str.slice(str.split(" ")[0].length); // " (48) 99968-0348"
+				} else {
+					// Nenhum espaço encontrado (Supor que DDI tem 2 caracteres)
+					parteDDI = mkt.apenasNumeros(str).slice(0, 2); // "55"
+					parteDDDTelefone = str.slice(str.indexOf(parteDDI) + parteDDI.length) // " (48) 99968-0348"
 				}
-				if (parteDDI in sizeDDD) {
-					parteDDD = mkt.apenasNumeros(parteDDDTelefone).slice(0, sizeDDD[parteDDI]); // "48"
-					parteTelefone = mkt.apenasNumeros(parteDDDTelefone).slice(2);
+				resultado = "+" + parteDDI + " ";
+				parteDDDTelefone = parteDDDTelefone.trim(); // Apenas por garantia "(48) 99968-0348"
+				// ETAPA 2 QUANDO for DDI 55, Formata o DDD
+				if (parteDDDTelefone.indexOf(" ") >= 0) { // true (4)
+					// DDD+Telefone contém espaço. (Supor que é a divisão entre DDD e Telefone)
+					let parteDDD = mkt.apenasNumeros(parteDDDTelefone.split(" ")[0]); // "48"
+					let parteTelefone = mkt.apenasNumeros(parteDDDTelefone.slice(parteDDDTelefone.split(" ")[0].length).trim()); // "999680348"
+					let p1 = parteTelefone.length - 5; // 4
+					if (p1 > 0) { // true (tamanho suficiente pra por o tracinho)
+						parteTelefone = parteTelefone.slice(0, p1 + 1) + "-" + parteTelefone.slice(p1 + 1); // "9996-0348"
+					}
+					resultado += "(" + parteDDD + ") " + parteTelefone;
+				} else {
+					if (parteDDI == "55") {
+						// Pais Brasil, mas sem espaco:
+						let parteDDD = mkt.apenasNumeros(parteDDDTelefone).slice(0, 2); // "48"
+						let parteTelefone = mkt.apenasNumeros(parteDDDTelefone).slice(2); // "999680348"
+						let p1 = parteTelefone.length - 5; // 4
+						if (p1 > 0) { // true (tamanho suficiente pra por o tracinho)
+							parteTelefone = parteTelefone.slice(0, p1 + 1) + "-" + parteTelefone.slice(p1 + 1); // "9996-0348"
+						}
+						resultado += "(" + parteDDD + ") " + parteTelefone;
+					} else {
+						// Sem espaco e não é 55 
+						resultado += mkt.apenasNumeros(parteDDDTelefone); // "+54 48999680348" 
+					}
 				}
-			}
-			resultado += "(" + parteDDD + ") ";
-			parteTelefone = parteTelefone.trim();
-
-
-			let size = numeros.length;
-			if (size > 11) { //(48) 99968-0348" == 11
-				// Se entrar aqui, é garantido que tem ddi
 			} else {
-				if (size == 11)
+				// Sem +, padrão nacional BR
+				resultado = mkt.mascarar(str, mkt.a.util.telefone_ddd[0]);
 			}
-
-			return resultado;
+		} else {
+			mkt.w("mascaraTelefoneDDI() - Parametro precisa ser string: ", mkt.classof(texto));
 		}
-		return texto;
+		if (resultado == "") resultado = texto;
+		mkt.l("Tel DDI: ", texto, " -> ", resultado);
+		return resultado;
 	}
 
 	// ============================ TOOLS e JS HELPERS ================================ \\
