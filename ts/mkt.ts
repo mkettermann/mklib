@@ -4385,7 +4385,7 @@ class mkt {
 				if ((mkt.apenasNumeros(str).startsWith("55")) && (mkt.apenasNumeros(str).length >= 12)) { // "55 48 99968-0348"
 					// Se iniciar com 55, esse 55 pode ser Brasil / Rio Grande do Sul.
 					// Remove 55 do Brasil se for tamanho >= 12. (12/13)
-					resultado = mkt.mascarar(str.trim().slice(2), mkt.a.util.telefone_ddd[0]);
+					resultado = "+55 " + mkt.mascarar(str.trim().slice(2), mkt.a.util.telefone_ddd[0]);
 				} else {
 					resultado = mkt.mascarar(str, mkt.a.util.telefone_ddd[0]);
 				}
