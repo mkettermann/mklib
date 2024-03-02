@@ -5462,8 +5462,9 @@ class mkSel extends HTMLElement {
         eList: null,
         vazio: "- Selecione -",
         svg: null,
+        selapenas: 1,
     };
-    opcoes;
+    opcoes = new Map();
     constructor() {
         super();
         this.attachShadow({ mode: "open" });
@@ -5554,13 +5555,13 @@ li{
 li:not(:first-child){
 	border-top: 1px solid #0001;
 }
-li[ativo]{
+li[selecionado]{
 	background: #0092;
   border-left: 3px solid #0095;
   padding-left: 2px;
   border-radius: 2px;
 }
-li[ativo]::before{
+li[selecionado]::before{
 	content: '';
 	position: absolute;
 	width: 5px;
@@ -5590,9 +5591,10 @@ slot {
         this.config.eV = this.shadowRoot?.querySelector("#v");
         this.config.eList = this.shadowRoot?.querySelector(".lista");
         this.config.svg = this.shadowRoot?.querySelector("svg");
-        let name = this.getAttribute("name");
-        let opcoes = this.getAttribute("opcoes");
-        this.config.vazio = this.getAttribute("vazio");
+        if (this.getAttribute("vazio"))
+            this.config.vazio = this.getAttribute("vazio");
+        if (this.getAttribute("selapenas"))
+            this.config.selapenas = Number(this.getAttribute("selapenas"));
         // Eventos
         this.config.eK.onfocus = () => {
             this.setAttribute("focused", "");
@@ -5612,7 +5614,11 @@ slot {
         window.addEventListener("resize", (event) => {
             mkt.Reposicionar(this.config.eList, true);
         });
-        // Opcoes
+        // Não precisa inicializar por aqui
+    } // Construtor mkSel
+    forceUpdate() {
+        mkt.l("Deu Update Em: ", this.getAttribute("name"));
+        let opcoes = this.getAttribute("opcoes"); // possivelmente nulo
         if (mkt.isJson(opcoes)) {
             let colect = mkt.parseJSON(opcoes);
             if (mkt.classof(colect) == "Array") {
@@ -5633,8 +5639,8 @@ slot {
         // Atualiza os selecionados pelo Value
         this.aoAtualizaSelecionados();
         // Atualiza o Display
-        this.setDisplay();
-    } // Construtor mkSel
+        this.atualizarDisplay();
+    }
     attributeChangedCallback(name, oldValue, newValue) {
         if (name === "disabled") {
             this.config.eK.disabled = newValue !== null;
@@ -5645,7 +5651,10 @@ slot {
         }
         else if (name === "value") {
             this.config.eV.value = newValue;
-            this.setDisplay();
+            this.atualizarDisplay();
+        }
+        else if (name === "opcoes") {
+            this.forceUpdate();
         }
         else if (name === "url") {
             mkt.l("Url: ", newValue);
@@ -5656,6 +5665,9 @@ slot {
         else if (name === "scrollbarcolor") {
             this.config.eList.style.scrollbarColor = newValue;
         }
+        else if (name === "selapenas") {
+            this.config.selapenas = Number(newValue);
+        }
     }
     aoFocus() {
         // Ao receber Foco
@@ -5665,10 +5677,18 @@ slot {
         this.config.eK.value = "";
         // Atualiza Itens Selecionados, caso houve mudança sem atualizar.
         this.aoAtualizaSelecionados();
-        // Faz movimento no scroll até o primeiro item selecionado
-        // let primeiroOffSet = ePrimeiroSel?.offsetTop || 0;
-        // this.config.eList.scrollTop =
-        // 	primeiroOffSet - 120 - (this.config.eList.offsetHeight - this.config.eList.clientHeight) / 2;
+        // Encontra o primeira opção selecionado
+        let ePrimeiroSel = null;
+        Array.from(this.config.eList.firstElementChild?.children).forEach((li) => {
+            //li.style.display = "";
+            li.removeAttribute("data-m");
+            if (li.hasAttribute("selecionado") && ePrimeiroSel == null)
+                ePrimeiroSel = li;
+        });
+        // Faz movimento no scroll até a primeira opção selecionada
+        let primeiroOffSet = ePrimeiroSel?.offsetTop || 0;
+        this.config.eList.scrollTop =
+            primeiroOffSet - 120 - (this.config.eList.offsetHeight - this.config.eList.clientHeight) / 2;
         // Atualizar posição da Lista.
         mkt.Reposicionar(this.config.eList, true);
     }
@@ -5680,7 +5700,7 @@ slot {
                 // Atualiza Itens Selecionados.
                 this.aoAtualizaSelecionados();
                 // Seta Valor do display
-                this.setDisplay();
+                this.atualizarDisplay();
                 // Remove Status de focus pra sumir
                 this.removeAttribute("focused");
             }
@@ -5706,7 +5726,7 @@ slot {
             else
                 this.value = novoValor;
             //mkt.l("Li Value: ", novoValor);
-            // Atualizar ativo
+            // Atualizar selecionado
             this.aoAtualizaSelecionados();
         }
     }
@@ -5715,14 +5735,14 @@ slot {
         Array.from(this.config.eList?.querySelector("ul").children).forEach((e) => {
             e.getAttribute("k");
             if (e.getAttribute("k") == this.config.eV.value) {
-                e.setAttribute("ativo", "");
+                e.setAttribute("selecionado", "");
             }
             else {
-                e.removeAttribute("ativo");
+                e.removeAttribute("selecionado");
             }
         });
     }
-    setDisplay = () => {
+    atualizarDisplay = () => {
         let display = "- Selecione -";
         if (this.config.vazio) {
             if ((display != this.config.vazio) && (this.config.eV.value === "")) {
@@ -5758,7 +5778,7 @@ slot {
         else
             this.removeAttribute("hidden");
     }
-    static observedAttributes = ["disabled", "size", "value", "url", "scrollbarwidth", "scrollbarcolor"];
+    static observedAttributes = ["disabled", "size", "value", "opcoes", "url", "scrollbarwidth", "scrollbarcolor", "selapenas"];
 }
 customElements.define("mk-sel", mkSel);
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
