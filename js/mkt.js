@@ -5680,8 +5680,8 @@ slot {
         // Encontra o primeira opção selecionado
         let ePrimeiroSel = null;
         Array.from(this.config.eList.firstElementChild?.children).forEach((li) => {
-            //li.style.display = "";
-            li.removeAttribute("data-m");
+            li.style.display = ""; // Pesquisa antiga
+            li.removeAttribute("cursor"); // Seta Sobe e Desce teclado
             if (li.hasAttribute("selecionado") && ePrimeiroSel == null)
                 ePrimeiroSel = li;
         });
