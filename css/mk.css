@@ -2315,3 +2315,10 @@ svg {
 .flex {
 	display: flex;
 }
+
+mk-sel:not(:defined) {
+	opacity: 0;
+	display: inline-block;
+	width: 211px;
+	height: 23px;
+}
