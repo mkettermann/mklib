@@ -2311,3 +2311,7 @@ svg {
 .mkHeadMenu li svg {
 	margin-bottom: 1px;
 }
+
+.flex {
+	display: flex;
+}

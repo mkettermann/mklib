@@ -5510,10 +5510,10 @@ class mkSel extends HTMLElement {
 :host([focused]) .lista{
 	display: block;
 }
-.mkSel{
+.mkSeletor{
 	display:flex;
 }
-.mkSel svg{
+.mkSeletor svg{
 	width: 16px;
 	user-select: none;
 }
@@ -5525,12 +5525,15 @@ class mkSel extends HTMLElement {
 	cursor: pointer;
 	user-select: none;
 	max-height: 300px;
-	overflow-y: auto;
 	width: max-content;
 	z-index: calc(var(--mkSelIndex));
 	padding: 2px 1px;
 	background: inherit;
 	color:inherit;
+
+	overflow-y: auto;
+	scrollbar-color: #777 transparent;
+	scrollbar-width: none;
 }
 input {
 	border: 0px;
@@ -5543,7 +5546,7 @@ ul,li{
 	padding: 0px;
 	margin: 0px;
 }
-li{	
+li{
 	padding: 3px 0px;
 }
 li:not(:first-child){
@@ -5570,7 +5573,7 @@ slot {
 	user-select: none;
 }
 </style>
-<div class="mkSel">
+<div class="mkSeletor">
 	<input type="hidden" id="v" value />
 	<input type="text" placeholder="Filtro \u{1F50D}" value="${this.vazio}" id="k" autocomplete="off"/>
 	<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'>
@@ -5622,7 +5625,7 @@ slot {
         else {
             this.dados = new Map(); // Inicializa sem dados
         }
-        //mkt.l("Seletor: " + name + ", Dados: ", this.dados);
+        mkt.l("Seletor: " + name + ", Dados: ", this.dados);
         // Popular Lista com dados atuais
         this.aoPopularLista();
         // Atualiza os selecionados pelo Value
@@ -5639,6 +5642,12 @@ slot {
         }
         else if (name === "value") {
             this.v.value = newValue;
+        }
+        else if (name === "scrollbarwidth") {
+            this.eList.style.scrollbarWidth = newValue;
+        }
+        else if (name === "scrollbarcolor") {
+            this.eList.style.scrollbarColor = newValue;
         }
     }
     aoFocus() {
@@ -5719,7 +5728,7 @@ slot {
         this.k.value = display;
         if (this.dados.size <= 0) {
             mkt.w("mk-sel - Nenhuma opção para selecionar: ", this.dados.size);
-            this.eList.querySelector("ul").innerHTML = `Opções \u{2209}`;
+            this.eList.querySelector("ul").innerHTML = `Nenhuma Opção \u{2209}`;
         }
     };
     get size() { return this.getAttribute("size"); }
@@ -5742,7 +5751,7 @@ slot {
         else
             this.removeAttribute("hidden");
     }
-    static observedAttributes = ["disabled", "size", "value"];
+    static observedAttributes = ["disabled", "size", "value", "scrollbarwidth", "scrollbarcolor"];
 }
 customElements.define("mk-sel", mkSel);
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
