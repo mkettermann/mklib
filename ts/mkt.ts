@@ -5572,7 +5572,12 @@ Object.keys(mkt).forEach((n) => {
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //  Web Component MkSel - Seletor   \\
 //___________________________________\\
-
+// Está faltando resolver:
+// - Ao trocar o pai da referencia, mas o filho já está selecionado. Deveria trocar pra clear.
+// - Ao já iniciar selecionado no seletor
+// - Seletor Pós pela URL
+// - Mecânica de teclado sobe, desce, enter seleciona, esc perde foco.
+// - Mecânica de setas para subir e descer / Seria bom fazer carregar ao descer.
 class mkSel extends HTMLElement {
 	config: any = {
 		filtrado: "",
@@ -5790,7 +5795,7 @@ slot {
 			mkt.Reposicionar(this.config.eList, true);
 		});
 		// Não precisa inicializar tudo por aqui pois quando tem opcoes, já gera get no opcoes.
-		this.atualizarDisplay();
+		//this.atualizarDisplay();
 	} // Construtor mkSel
 
 	// Funçao que refaz a lista, Coleta, Popula, Seleciona e Exibe o selecionado.
@@ -5842,7 +5847,7 @@ slot {
 		// Caso o valor esteja diferente de vazio e não encontrou as seleções acima, zerar.
 		if (resetValue) {
 			mkt.l("Reset")
-			if (this.value != null) this.config.mecanicaSelecionar("");
+			if (this.value != null) this.value = "";
 		}
 	}
 
@@ -5951,7 +5956,7 @@ slot {
 			// Apenas QUANDO: 
 			// - Foi trocado as opções!
 			// - O selecionado não existe nas novas opções.
-			mkt.l("Name: ", this.getAttribute("name"), " MudouOpcoes? ", mudouOpcoes, " SelecionadoExiste? ", selecionadoExiste, " V: ", this.config.eV.value);
+			mkt.l("upSel() - Name: ", this.getAttribute("name"), " MudouOpcoes? ", mudouOpcoes, " SelecionadoExiste? ", selecionadoExiste, " V: ", this.config.eV.value);
 		}
 	}
 
