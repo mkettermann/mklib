@@ -5617,7 +5617,10 @@ slot {
         });
         // Não precisa inicializar por aqui
     } // Construtor mkSel
-    forceUpdate(ignore) {
+    // Funçao que refaz a lista, Coleta, Popula, Seleciona e Exibe o selecionado.
+    forceUpdate(ignore = false) {
+        // Durante o update, o usuário não deveria estar com o seletor aberto.
+        this.removeAttribute("focused");
         mkt.l("Request Update Em: ", this.getAttribute("name"));
         // Ignora o New Map: Caso o opcoes já contem um map em vez de uma string JSON.
         if (!ignore) {
@@ -5645,6 +5648,7 @@ slot {
         // Atualiza o Display
         this.atualizarDisplay();
     }
+    // Atributos modificados no elemento
     attributeChangedCallback(name, oldValue, newValue) {
         if (name === "disabled") {
             this.config.eK.disabled = newValue !== null;
@@ -5658,9 +5662,7 @@ slot {
             this.atualizarDisplay();
         }
         else if (name === "opcoes") {
-            // Mudou Html, executa Set do Opcoes.
             this.opcoes = this.getAttribute("opcoes");
-            this.removeAttribute("opcoes");
         }
         else if (name === "url") {
             mkt.l("Url: ", newValue);
@@ -5675,6 +5677,7 @@ slot {
             this.config.selapenas = Number(newValue);
         }
     }
+    // Quando o input principal de Pesquisar recebe foco.
     aoFocus() {
         // Ao receber Foco
         // Limpa Filtro atual
@@ -5698,6 +5701,7 @@ slot {
         // Atualizar posição da Lista.
         mkt.Reposicionar(this.config.eList, true);
     }
+    // Quando sai do botão de pesquisar principal
     aoBlur() {
         // Ao perder foco
         setTimeout(() => {
@@ -5712,6 +5716,7 @@ slot {
             }
         }, 150);
     }
+    // Usa o MoldeOA pra criar os LI
     async aoPopularLista() {
         let ul = this.config.eList?.querySelector("ul");
         let linha = document.createElement("template");
@@ -5723,6 +5728,7 @@ slot {
             this.selecionar(ev);
         });
     }
+    // Atravéz do evento de MouseDown, o evento é passado o selecionar.
     selecionar(ev) {
         let li = ev.target;
         if (li) {
@@ -5736,18 +5742,20 @@ slot {
             this.aoAtualizaSelecionados();
         }
     }
+    // Itera Lista e marca ou desmarca o/os elementos do value.
     aoAtualizaSelecionados() {
         // Atualiza as marcações dos selecionados atuais.
-        Array.from(this.config.eList?.querySelector("ul").children).forEach((e) => {
-            e.getAttribute("k");
-            if (e.getAttribute("k") == this.config.eV.value) {
-                e.setAttribute("selecionado", "");
+        Array.from(this.config.eList?.querySelector("ul").children).forEach((li) => {
+            li.getAttribute("k");
+            if (li.getAttribute("k") == this.config.eV.value) {
+                li.setAttribute("selecionado", "");
             }
             else {
-                e.removeAttribute("selecionado");
+                li.removeAttribute("selecionado");
             }
         });
     }
+    // Atualiza o selecionado Atual procurando no Map
     atualizarDisplay = () => {
         let display = "- Selecione -";
         if (this.config.vazio) {
@@ -5803,6 +5811,7 @@ slot {
         else
             this.removeAttribute("hidden");
     }
+    // Atributos sendo observados no elemento.
     static observedAttributes = ["disabled", "size", "value", "opcoes", "url", "scrollbarwidth", "scrollbarcolor", "selapenas"];
 }
 customElements.define("mk-sel", mkSel);

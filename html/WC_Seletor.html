@@ -52,7 +52,11 @@
 	</li>
 	<li>
 		<div class="quebra">
-
+			&nbsp; O seletor armazena a lista de opções em um Map em memória enquanto a tela estiver aberta. Para alterar as
+			opções do seletor, há duas formas, você pode colocar novamente o novo array json dentro do campo "opcoes" no
+			elemento mk-sel, ou você pode localizar o elemento na página e pegar o Map pelas opcoes 'let x =
+			mkt.Q("mk-sel").opcoes;', fazer as devidas modificações e setar novamente 'mkt.Q("mk-sel").opcoes = x;'. Obs:
+			Pegar o Map, alterar e resetar é mais rápido o processamento.
 		</div>
 		<div class="quebra">
 			&lt;mk-sel&gt;<br />&lt;/mk-sel&gt;
