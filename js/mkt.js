@@ -5466,6 +5466,10 @@ class mkSel extends HTMLElement {
         _data: null,
         opcoes: "",
         selecionados: new Map(),
+        geraEvento: () => {
+            // Gera o Evento
+            this.dispatchEvent(new Event("input"));
+        }
     };
     constructor() {
         super();
@@ -5616,7 +5620,8 @@ slot {
         window.addEventListener("resize", (event) => {
             mkt.Reposicionar(this.config.eList, true);
         });
-        // Não precisa inicializar por aqui
+        // Não precisa inicializar por aqui pois
+        //this.atualizarDisplay()
     } // Construtor mkSel
     // Funçao que refaz a lista, Coleta, Popula, Seleciona e Exibe o selecionado.
     forceUpdate(ignore = false) {
@@ -5742,10 +5747,12 @@ slot {
                     this.config.selecionados.clear();
                     if (novoK == "") {
                         this.removeAttribute("value");
+                        this.config.geraEvento();
                     }
                     else {
                         this.config.selecionados.set(novoK, novoV);
                         this.value = novoK;
+                        this.config.geraEvento();
                     }
                 }
                 else if ((this.config.selapenas > 1) || (this.config.selapenas < 0)) {
@@ -5767,12 +5774,6 @@ slot {
                             this.config.selecionados.set(novoK, novoV);
                         }
                     }
-                    // Limpar seleções vazias
-                    // arraySelecionado.forEach((item) => {
-                    // 	if (item == "") {
-                    // 		arraySelecionado.splice(arraySelecionado.indexOf(item), 1);
-                    // 	}
-                    // });
                     // Quando estiver vazio, reseta o campo.
                     // Seta o valor no campo de input
                     if (this.config.selecionados.size == 0) {
@@ -5782,8 +5783,7 @@ slot {
                     else {
                         this.value = mkt.stringify([...this.config.selecionados]);
                     }
-                    // Gera o Evento
-                    //ePrincipal.dispatchEvent(new Event("input"));
+                    this.config.geraEvento();
                     // Mantem foco no Display, pois pode selecionar mais de um
                     this.config.eK.focus();
                     // setTimeout(() => {
@@ -5830,10 +5830,14 @@ slot {
     // Atualiza o selecionado Atual procurando no Map
     atualizarDisplay = () => {
         let display = "- Selecione -";
+        // Se ficar no inicial, Não tem 
         if (this.config.vazio) {
-            //if ((display != this.config.vazio) && (this.config.eV.value === "")) {
-            display = this.config.vazio;
-            //}
+            if ((display != this.config.vazio) && (this.config.eV.value === "")) {
+                display = this.config.vazio; // Display diferenciado quando vazio == ""
+            }
+            else {
+                mkt.w("Name: ", this.getAttribute("name"), " Display: ", display, " Value: ", this.config.eV.value, " Cfg Vazio: ", this.config.vazio);
+            }
         }
         if (this.config.selapenas == 1) {
             if (this.config._data?.has(this.config.eV.value.toString())) {
