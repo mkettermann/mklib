@@ -5455,8 +5455,8 @@ Object.keys(mkt).forEach((n) => {
 //  Web Component MkSel - Seletor   \\
 //___________________________________\\
 // Está faltando resolver:
-// - Ao trocar o pai da referencia, mas o filho já está selecionado. Deveria trocar pra clear.
 // - Ao já iniciar selecionado no seletor
+// - Mecanica do Refill
 // - Seletor Pós pela URL
 // - Mecânica de teclado sobe, desce, enter seleciona, esc perde foco.
 // - Mecânica de setas para subir e descer / Seria bom fazer carregar ao descer.
@@ -5478,8 +5478,9 @@ class mkSel extends HTMLElement {
         },
         mecanicaSelecionar: (novoK) => {
             let novoV = this.config._data?.get(novoK);
+            mkt.l("(" + this.getAttribute("name") + ")Selecionado: ", novoK, ", V: ", novoV + ", Data: ", this.config._data);
             if (mkt.classof(this.config.selapenas) == "Number") {
-                mkt.l("Setado K: ", novoK, " V:", novoV, " Selecoes: ", this.config);
+                //mkt.l("Setado K: ", novoK, " V:", novoV, " Selecoes: ", this.config);
                 if (this.config.selapenas == 1) {
                     // UNICA SELEÇÃO
                     this.config.selecionados.clear();
@@ -5688,7 +5689,6 @@ slot {
     forceUpdate(ignore = false) {
         // Durante o update, o usuário não deveria estar com o seletor aberto.
         this.removeAttribute("focused");
-        //mkt.l("Request Update Em: ", this.getAttribute("name"));
         // Ignora o New Map: Caso o opcoes já contem um map em vez de uma string JSON.
         if (!ignore) {
             // Caso o opções contem uma string JSON
@@ -5707,33 +5707,19 @@ slot {
                 this.config._data = new Map(); // Inicializa sem opcoes
             }
         }
-        // Aqui já tem o Map de Opcoes em _data.
-        // Agora tenta manter o que está selecionado:
-        // Exemplo:
-        // - Se já iniciou value='1'
-        // - Então tem que ver se 1 é uma opção válida para deixar no Map de selecionado.
-        // let resetValue = false;
+        // Aqui Seleciona inicialmente ou Seleciona novamente ao trocar o Opcoes.
         this.config._data.forEach((v, i) => {
             if (i == this.value) {
-                mkt.l("OK: Opcao: ", i, " V: ", this.value + " Data: ", this.config._data);
                 this.config.mecanicaSelecionar(i);
             }
         });
-        // if (this.selecionadosMap.size <= 0) {
-        // 	resetValue = true;
-        // }
-        //mkt.l("Seletor: " + name + ", Opcoes: ", this.config._data);
+        //mkt.l("Seletor: " + this.getAttribute("name") + ", Opcoes: ", this.config._data);
         // Popular Lista com opcoes atuais
         this.aoPopularLista();
         // Atualiza os selecionados pelo Value
         this.aoAtualizaSelecionados(true);
         // Atualiza o Display
         this.atualizarDisplay();
-        // Caso o valor esteja diferente de vazio e não encontrou as seleções acima, zerar.
-        // if (resetValue) {
-        // 	mkt.l("Reset");
-        // 	if (this.value != null) this.value = "";
-        // }
     }
     // Quando o input principal de Pesquisar recebe foco.
     aoFocus() {
@@ -5844,23 +5830,20 @@ slot {
     // Atualiza o selecionado Atual procurando no Map
     atualizarDisplay = () => {
         let display = "- Selecione -";
-        // Se ficar no inicial, Não tem 
         if (this.config.vazio) {
             if ((display != this.config.vazio) && (this.config.eV.value === "")) {
                 display = this.config.vazio; // Display diferenciado quando vazio == ""
             }
         }
-        if (this.config.selapenas == 1) {
-            if (this.config._data?.has(this.config.eV.value.toString())) {
-                display = this.config._data.get(this.config.eV.value);
+        if (this.config.selecionados.size != 0) {
+            if (this.config.selapenas == 1) {
+                display = [...this.selecionadosMap]?.[0]?.[1];
             }
-        }
-        else {
-            if (this.config.selecionados.size != 0) {
+            else {
                 display = `${this.config.selecionados.size} selecionados`;
             }
-            ;
         }
+        ;
         this.config.eK.value = display;
         if (this.config._data?.size <= 0) {
             mkt.w("mk-sel - Nenhuma opção para selecionar: ", this.config._data.size);
