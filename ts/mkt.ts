@@ -5573,7 +5573,6 @@ Object.keys(mkt).forEach((n) => {
 //  Web Component MkSel - Seletor   \\
 //___________________________________\\
 // Está faltando resolver:
-// - Ao já iniciar selecionado no seletor MULTI
 // - Mecanica do Refill
 // - Seletor Pós pela URL
 // - Mecânica de teclado sobe, desce, enter seleciona, esc perde foco.
@@ -5596,7 +5595,7 @@ class mkSel extends HTMLElement {
 		},
 		mecanicaSelecionar: (novoK: any) => {
 			let novoV = this.config._data?.get(novoK);
-			mkt.l(this.getAttribute("name") + "\tSEL: ", novoK, "\tV: ", novoV + ", Sels: ", this.config.selecionados);
+			//mkt.l(this.getAttribute("name") + "\tSEL: ", novoK, "\tV: ", novoV + ", Sels: ", this.config.selecionados);
 			if (mkt.classof(this.config.selapenas) == "Number") {
 				//mkt.l("Setado K: ", novoK, " V:", novoV, " Selecoes: ", this.config);
 				if (this.config.selapenas == 1) {
@@ -5831,14 +5830,14 @@ slot {
 						colect.forEach((v: any, i: any, a: any) => {
 							a[i][0] = a[i][0].toString();
 							a[i][1] = a[i][1].toString();
-							mkt.l("v: ", v, " i: ", i)
+							//mkt.l("v: ", v, " i: ", i)
 						});
 					}
 					this.config.selecionados = new Map(colect);
 				} else {
 					this.config.selecionados = new Map(); // Inicializa sem opcoes
 				}
-				mkt.l("Map Selecionados:", this.config.selecionados);
+				//mkt.l("Map Selecionados:", this.config.selecionados);
 			}
 		}
 
