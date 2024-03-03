@@ -5588,7 +5588,58 @@ class mkSel extends HTMLElement {
 		geraEvento: () => {
 			// Gera o Evento
 			this.dispatchEvent(new Event("input"));
-		}
+		},
+		mecanicaSelecionar: (novoK: any) => {
+			let novoV = this.config._data?.get(novoK);
+			if (mkt.classof(this.config.selapenas) == "Number") {
+				mkt.l("Setado K: ", novoK, " V:", novoV, " Selecoes: ", this.config);
+				if (this.config.selapenas == 1) {
+					// UNICA SELEÇÃO
+					this.config.selecionados.clear();
+					if (novoK == "") {
+						this.value = "";
+					} else {
+						this.value = novoK;
+					}
+					this.config.geraEvento();
+					this.config.selecionados.set(novoK, novoV);
+				} else if ((this.config.selapenas > 1) || (this.config.selapenas < 0)) {
+					// MULTI SELEÇÃO
+					let jaSelecionado = false;
+					// Verifica já possui um selecionado. (Para saber se vai adicionar ou remover)
+					if (this.config.selecionados.has(novoK)) {
+						jaSelecionado = true;
+					};
+					if (jaSelecionado) {
+						// Remove valor da lista selecionada
+						this.config.selecionados.delete(novoK);
+					} else {
+						// Verifica se é possivel selecionar mais (Se estiver negativo, pode selecionar infinito)
+						if (this.config.selecionados.size < this.config.selapenas || this.config.selapenas < 0) {
+							// Acrescenta valor
+							this.config.selecionados.set(novoK, novoV);
+						}
+					}
+
+					// Quando estiver vazio, reseta o campo.
+					// Seta o valor no campo de input
+					if (this.config.selecionados.size == 0) {
+						this.value = "";
+					} else {
+						this.value = mkt.stringify([...this.config.selecionados]);
+					}
+					this.config.geraEvento();
+
+					// Mantem foco no Display, pois pode selecionar mais de um
+					this.config.eK.focus();
+					// setTimeout(() => {
+					// 	eItem.parentElement.previousElementSibling.firstElementChild.focus();
+					// }, 1);
+				}
+			} else {
+				mkt.w("mk-sel - atributo 'selapenas' precisa ser número: ", mkt.classof(this.config.selapenas));
+			}
+		},
 	};
 	constructor() {
 		super();
@@ -5738,8 +5789,8 @@ slot {
 		window.addEventListener("resize", (event) => {
 			mkt.Reposicionar(this.config.eList, true);
 		});
-		// Não precisa inicializar por aqui pois
-		//this.atualizarDisplay()
+		// Não precisa inicializar tudo por aqui pois quando tem opcoes, já gera get no opcoes.
+		this.atualizarDisplay();
 	} // Construtor mkSel
 
 	// Funçao que refaz a lista, Coleta, Popula, Seleciona e Exibe o selecionado.
@@ -5764,35 +5815,34 @@ slot {
 				this.config._data = new Map(); // Inicializa sem opcoes
 			}
 		}
+		// Aqui já tem o Map de Opcoes em _data.
+		// Agora tenta manter o que está selecionado:
+		// Exemplo:
+		// - Se já iniciou value='1'
+		// - Então tem que ver se 1 é uma opção válida para deixar no Map de selecionado.
+		let resetValue = false;
+		this.config._data.forEach((v: string, i: string) => {
+			if (i == this.value) {
+				mkt.l("OK: Opcao: ", i, " V: ", this.value + " Data: ", this.config._data);
+				this.config.mecanicaSelecionar(i);
+			}
+		});
+		if (this.selecionadosMap.size <= 0) {
+			resetValue = true;
+		}
+
 		//mkt.l("Seletor: " + name + ", Opcoes: ", this.config._data);
 		// Popular Lista com opcoes atuais
 		this.aoPopularLista();
 		// Atualiza os selecionados pelo Value
-		this.aoAtualizaSelecionados();
+		this.aoAtualizaSelecionados(true);
 		// Atualiza o Display
 		this.atualizarDisplay();
-	}
 
-	// Atributos modificados no elemento
-	attributeChangedCallback(name: string, oldValue: string, newValue: string) {
-		if (name === "disabled") {
-			this.config.eK.disabled = newValue !== null;
-			this.aoBlur();
-		} else if (name === "size") {
-			this.config.eK.size = newValue;
-		} else if (name === "value") {
-			this.config.eV.value = newValue;
-			this.atualizarDisplay();
-		} else if (name === "opcoes") {
-			this.opcoes = this.getAttribute("opcoes");
-		} else if (name === "url") {
-			mkt.l("Url: ", newValue);
-		} else if (name === "scrollbarwidth") {
-			this.config.eList.style.scrollbarWidth = newValue;
-		} else if (name === "scrollbarcolor") {
-			this.config.eList.style.scrollbarColor = newValue;
-		} else if (name === "selapenas") {
-			this.config.selapenas = Number(newValue);
+		// Caso o valor esteja diferente de vazio e não encontrou as seleções acima, zerar.
+		if (resetValue) {
+			mkt.l("Reset")
+			if (this.value != null) this.config.mecanicaSelecionar("");
 		}
 	}
 
@@ -5860,57 +5910,9 @@ slot {
 	selecionar(ev: Event) {
 		let li: any = ev.target;
 		if (li) {
-			if (mkt.classof(this.config.selapenas) == "Number") {
-				let novoK = li.getAttribute("k")
-				let novoV = this.config._data?.get(novoK);
-				if (this.config.selapenas == 1) {
-					// UNICA SELEÇÃO
-					this.config.selecionados.clear();
-					if (novoK == "") {
-						this.removeAttribute("value");
-						this.config.geraEvento();
-					} else {
-						this.config.selecionados.set(novoK, novoV);
-						this.value = novoK;
-						this.config.geraEvento();
-					}
-				} else if ((this.config.selapenas > 1) || (this.config.selapenas < 0)) {
-					// MULTI SELEÇÃO
-					let jaSelecionado = false;
-					// Verifica já possui um selecionado. (Para saber se vai adicionar ou remover)
-					if (this.config.selecionados.has(novoK)) {
-						jaSelecionado = true;
-					};
-					if (jaSelecionado) {
-						// Remove valor da lista selecionada
-						this.config.selecionados.delete(novoK);
-					} else {
-						// Verifica se é possivel selecionar mais (Se estiver negativo, pode selecionar infinito)
-						if (this.config.selecionados.size < this.config.selapenas || this.config.selapenas < 0) {
-							// Acrescenta valor
-							this.config.selecionados.set(novoK, novoV);
-						}
-					}
+			let novoK = li.getAttribute("k")
+			this.config.mecanicaSelecionar(novoK);
 
-					// Quando estiver vazio, reseta o campo.
-					// Seta o valor no campo de input
-					if (this.config.selecionados.size == 0) {
-						this.removeAttribute("value");
-						//ePrincipal.value = ePrincipal.defaultValue;
-					} else {
-						this.value = mkt.stringify([...this.config.selecionados]);
-					}
-					this.config.geraEvento();
-
-					// Mantem foco no Display, pois pode selecionar mais de um
-					this.config.eK.focus();
-					// setTimeout(() => {
-					// 	eItem.parentElement.previousElementSibling.firstElementChild.focus();
-					// }, 1);
-				}
-			} else {
-				mkt.w("mk-sel - atributo 'selapenas' precisa ser número: ", mkt.classof(this.config.selapenas));
-			}
 			// Atualizar selecionado
 			this.aoAtualizaSelecionados();
 		} else {
@@ -5920,13 +5922,16 @@ slot {
 	}
 
 	// Itera Lista e marca ou desmarca o/os elementos do value.
-	aoAtualizaSelecionados() {
+	aoAtualizaSelecionados(mudouOpcoes = false) {
+		let selecionadoExiste = false;
 		// Atualiza as marcações dos selecionados atuais.
 		if (this.config.selapenas == 1) {
 			// Value é Unico
 			Array.from(this.config.eList?.querySelector("ul").children).forEach((li: any) => {
-				if (li.getAttribute("k") == this.config.eV.value) {
+				//mkt.l("Name: ", this.getAttribute("name"), " K_LI: ", li.getAttribute("k"), " selHas: ", this.config.selecionados.has(li.getAttribute("k")));
+				if (this.config.selecionados.has(li.getAttribute("k"))) {
 					li.setAttribute("selecionado", "");
+					selecionadoExiste = true;
 				} else {
 					li.removeAttribute("selecionado");
 				}
@@ -5936,10 +5941,17 @@ slot {
 			Array.from(this.config.eList?.querySelector("ul").children).forEach((li: any) => {
 				if (this.config.selecionados.has(li.getAttribute("k"))) {
 					li.setAttribute("selecionado", "");
+					selecionadoExiste = true;
 				} else {
 					li.removeAttribute("selecionado");
 				}
 			});
+		}
+		if ((mudouOpcoes) && (!selecionadoExiste)) {
+			// Apenas QUANDO: 
+			// - Foi trocado as opções!
+			// - O selecionado não existe nas novas opções.
+			mkt.l("Name: ", this.getAttribute("name"), " MudouOpcoes? ", mudouOpcoes, " SelecionadoExiste? ", selecionadoExiste, " V: ", this.config.eV.value);
 		}
 	}
 
@@ -5972,6 +5984,32 @@ slot {
 		}
 	};
 
+
+	// Atributos modificados no elemento
+	attributeChangedCallback(name: string, oldValue: string, newValue: string) {
+		if (name === "disabled") {
+			this.config.eK.disabled = newValue !== null;
+			this.aoBlur();
+		} else if (name === "size") {
+			this.config.eK.size = newValue;
+		} else if (name === "value") {
+			this.config.eV.value = newValue;
+			this.atualizarDisplay();
+		} else if (name === "opcoes") {
+			this.opcoes = this.getAttribute("opcoes");
+			this.removeAttribute("opcoes"); // Mantem os dados em memória
+		} else if (name === "url") {
+			mkt.l("Url: ", newValue);
+		} else if (name === "scrollbarwidth") {
+			this.config.eList.style.scrollbarWidth = newValue;
+		} else if (name === "scrollbarcolor") {
+			this.config.eList.style.scrollbarColor = newValue;
+		} else if (name === "selapenas") {
+			this.config.selapenas = Number(newValue);
+		}
+	}
+
+
 	// Recuperar os Selecionados
 	get selecionadosMap() { return this.config.selecionados; }
 	get selecionados() { return JSON.stringify([...this.config.selecionados]); }
@@ -5996,11 +6034,9 @@ slot {
 	}
 
 	get size() { return this.getAttribute("size"); }
-	get value() { return this.getAttribute("value"); }
 	get disabled() { return this.hasAttribute("disabled"); }
 	get hidden() { return this.hasAttribute("hidden"); }
 	set size(value) { if (value) this.setAttribute("size", value); }
-	set value(text) { if (text) this.setAttribute("value", text); }
 	set disabled(value) {
 		if (value) this.setAttribute("disabled", "");
 		else this.removeAttribute("disabled");
@@ -6009,6 +6045,13 @@ slot {
 		if (value) this.setAttribute("hidden", "");
 		else this.removeAttribute("hidden");
 	}
+	get value() {
+		if (this.getAttribute("value") == null) {
+			return "";
+		}
+		return this.getAttribute("value");
+	}
+	set value(text) { if (text) this.setAttribute("value", text); }
 
 	// Atributos sendo observados no elemento.
 	static observedAttributes: Array<string> = ["disabled", "size", "value", "opcoes", "url", "scrollbarwidth", "scrollbarcolor", "selapenas"];

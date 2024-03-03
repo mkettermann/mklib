@@ -25,19 +25,27 @@
 </div>
 <br /><br />
 <div class="i">
-	<fieldset>
-		<legend>Elementos Relacionados</legend>
-		<div class="col25">
-			<b>Quando Seleciona aqui</b> <mk-sel name="nomLetra" vazio="Selecione" opcoes='[["A","A"],["B","B"]]'></mk-sel>
-		</div>
-		<div class="col25">
-			<b>Troca Opções Daqui:</b> <mk-sel name="nomLetraEstado" vazio="Selecione"></mk-sel>
-		</div>
-	</fieldset>
 	<div class="col50">
-
+		<fieldset>
+			<legend>Elementos Relacionados</legend>
+			<div class="i">
+				<div class="col50">
+					<b>Quando Seleciona aqui</b> <mk-sel name="nomLetra" vazio="Selecione"
+						opcoes='[["A","A"],["B","B"]]'></mk-sel>
+				</div>
+				<div class="col50">
+					<b>Troca Opções Daqui:</b> <mk-sel name="nomLetraEstado" vazio="Selecione"></mk-sel>
+				</div>
+			</div>
+		</fieldset>
 	</div>
-
+	<div class="col25">
+		<b>Iniciou Selecionado:</b> <mk-sel value="1" name="staSelecionado" vazio="Selecione"
+			opcoes='[["","Item Vazio"],["1","Sim"],[2,"Não"]]'></mk-sel>
+	</div>
+	<div class="col25">
+		&nbsp;
+	</div>
 </div>
 
 
