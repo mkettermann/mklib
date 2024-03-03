@@ -5682,7 +5682,7 @@ slot {
             mkt.Reposicionar(this.config.eList, true);
         });
         // Não precisa inicializar tudo por aqui pois quando tem opcoes, já gera get no opcoes.
-        //this.atualizarDisplay();
+        this.atualizarDisplay();
     } // Construtor mkSel
     // Funçao que refaz a lista, Coleta, Popula, Seleciona e Exibe o selecionado.
     forceUpdate(ignore = false) {
@@ -5712,16 +5712,16 @@ slot {
         // Exemplo:
         // - Se já iniciou value='1'
         // - Então tem que ver se 1 é uma opção válida para deixar no Map de selecionado.
-        let resetValue = false;
+        // let resetValue = false;
         this.config._data.forEach((v, i) => {
             if (i == this.value) {
                 mkt.l("OK: Opcao: ", i, " V: ", this.value + " Data: ", this.config._data);
                 this.config.mecanicaSelecionar(i);
             }
         });
-        if (this.selecionadosMap.size <= 0) {
-            resetValue = true;
-        }
+        // if (this.selecionadosMap.size <= 0) {
+        // 	resetValue = true;
+        // }
         //mkt.l("Seletor: " + name + ", Opcoes: ", this.config._data);
         // Popular Lista com opcoes atuais
         this.aoPopularLista();
@@ -5730,11 +5730,10 @@ slot {
         // Atualiza o Display
         this.atualizarDisplay();
         // Caso o valor esteja diferente de vazio e não encontrou as seleções acima, zerar.
-        if (resetValue) {
-            mkt.l("Reset");
-            if (this.value != null)
-                this.value = "";
-        }
+        // if (resetValue) {
+        // 	mkt.l("Reset");
+        // 	if (this.value != null) this.value = "";
+        // }
     }
     // Quando o input principal de Pesquisar recebe foco.
     aoFocus() {
@@ -5834,7 +5833,12 @@ slot {
             // Apenas QUANDO: 
             // - Foi trocado as opções!
             // - O selecionado não existe nas novas opções.
-            mkt.l("upSel() - Name: ", this.getAttribute("name"), " MudouOpcoes? ", mudouOpcoes, " SelecionadoExiste? ", selecionadoExiste, " V: ", this.config.eV.value);
+            // - Se o seletor ainda não estiver vazio, vai ser removido e ficar nulo
+            if (this.config.eV.value != "") {
+                mkt.l("upSel() - Name: ", this.getAttribute("name"), " MudouOpcoes? ", mudouOpcoes, " SelecionadoExiste? ", selecionadoExiste, " V: ", this.config.eV.value);
+                this.removeAttribute("value");
+                this.config.selecionados = new Map();
+            }
         }
     }
     // Atualiza o selecionado Atual procurando no Map
@@ -5844,9 +5848,6 @@ slot {
         if (this.config.vazio) {
             if ((display != this.config.vazio) && (this.config.eV.value === "")) {
                 display = this.config.vazio; // Display diferenciado quando vazio == ""
-            }
-            else {
-                mkt.w("Name: ", this.getAttribute("name"), " Display: ", display, " Value: ", this.config.eV.value, " Cfg Vazio: ", this.config.vazio);
             }
         }
         if (this.config.selapenas == 1) {
