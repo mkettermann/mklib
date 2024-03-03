@@ -5582,8 +5582,9 @@ class mkSel extends HTMLElement {
 		vazio: "- Selecione -",
 		svg: null,
 		selapenas: 1,
+		_data: null,
+		opcoes: "",
 	};
-	opcoes: Map<any, any> = new Map();
 	constructor() {
 		super();
 		this.attachShadow({ mode: "open" });
@@ -5735,23 +5736,26 @@ slot {
 		// Não precisa inicializar por aqui
 	} // Construtor mkSel
 
-	forceUpdate() {
-		mkt.l("Deu Update Em: ", this.getAttribute("name"));
-		let opcoes = this.getAttribute("opcoes"); // possivelmente nulo
-		if (mkt.isJson(opcoes)) {
-			let colect = mkt.parseJSON(opcoes);
-			if (mkt.classof(colect) == "Array") {
-				colect.forEach((v: any, i: any, a: any) => {
-					a[i][0] = a[i][0].toString();
-					a[i][1] = a[i][1].toString();
-					//mkt.l("v: ", v, " i: ", i, " a: ", a)
-				});
+	forceUpdate(ignore: boolean) {
+		mkt.l("Request Update Em: ", this.getAttribute("name"));
+		// Ignora o New Map: Caso o opcoes já contem um map em vez de uma string JSON.
+		if (!ignore) {
+			// Caso o opções contem uma string JSON
+			if (mkt.isJson(this.config.opcoes)) {
+				let colect = mkt.parseJSON(this.config.opcoes);
+				if (mkt.classof(colect) == "Array") {
+					colect.forEach((v: any, i: any, a: any) => {
+						a[i][0] = a[i][0].toString();
+						a[i][1] = a[i][1].toString();
+						//mkt.l("v: ", v, " i: ", i, " a: ", a)
+					});
+				}
+				this.config._data = new Map(colect);
+			} else {
+				this.config._data = new Map(); // Inicializa sem opcoes
 			}
-			this.opcoes = new Map(colect);
-		} else {
-			this.opcoes = new Map(); // Inicializa sem opcoes
 		}
-		//mkt.l("Seletor: " + name + ", Opcoes: ", this.opcoes);
+		//mkt.l("Seletor: " + name + ", Opcoes: ", this.config._data);
 		// Popular Lista com opcoes atuais
 		this.aoPopularLista();
 		// Atualiza os selecionados pelo Value
@@ -5770,7 +5774,9 @@ slot {
 			this.config.eV.value = newValue;
 			this.atualizarDisplay();
 		} else if (name === "opcoes") {
-			this.forceUpdate();
+			// Mudou Html, executa Set do Opcoes.
+			this.opcoes = this.getAttribute("opcoes");
+			this.removeAttribute("opcoes");
 		} else if (name === "url") {
 			mkt.l("Url: ", newValue);
 		} else if (name === "scrollbarwidth") {
@@ -5830,8 +5836,8 @@ slot {
 		let ul = this.config.eList?.querySelector("ul");
 		let linha = document.createElement("template");
 		linha.innerHTML = "<li k='${0}'>${1}</li>"
-		if (mkt.classof(this.opcoes) == "Map") {
-			await mkt.moldeOA([...this.opcoes!], linha, ul);
+		if (mkt.classof(this.config._data) == "Map") {
+			await mkt.moldeOA([...this.config._data!], linha, ul);
 		}
 		mkt.Ao("click", ul, (e: any, ev: Event) => {
 			this.selecionar(ev);
@@ -5852,7 +5858,7 @@ slot {
 	}
 
 	aoAtualizaSelecionados() {
-		/* Marcar mkSelItem pra 1 onde tem K selecionado */
+		// Atualiza as marcações dos selecionados atuais.
 		Array.from(this.config.eList?.querySelector("ul").children).forEach(
 			(e: any) => {
 				e.getAttribute("k")
@@ -5872,23 +5878,40 @@ slot {
 				display = this.config.vazio;
 			}
 		}
-		if (this.opcoes.has(this.config.eV.value.toString())) {
-			display = this.opcoes.get(this.config.eV.value);
+		if (this.config._data.has(this.config.eV.value.toString())) {
+			display = this.config._data.get(this.config.eV.value);
 		}
 		this.config.eK.value = display;
 
-		if (this.opcoes.size <= 0) {
-			mkt.w("mk-sel - Nenhuma opção para selecionar: ", this.opcoes.size);
+		if (this.config._data.size <= 0) {
+			mkt.w("mk-sel - Nenhuma opção para selecionar: ", this.config._data.size);
 			this.config.eList.querySelector("ul").innerHTML = `Nenhuma Opção \u{2209}`;
 		}
 	};
 
 	get size() { return this.getAttribute("size"); }
 	get value() { return this.getAttribute("value"); }
+	get opcoes() { return this.config._data; }
 	get disabled() { return this.hasAttribute("disabled"); }
 	get hidden() { return this.hasAttribute("hidden"); }
 	set size(value) { if (value) this.setAttribute("size", value); }
 	set value(text) { if (text) this.setAttribute("value", text); }
+	set opcoes(text) {
+		//mkt.l("SET Opcões: ", text)
+		if (text) {
+			if (mkt.classof(text) == "String") {
+				this.config.opcoes = text;
+				this.forceUpdate(false);
+			} else {
+				if (mkt.classof(text) == "Map") {
+					this.forceUpdate(true);
+					this.config.opcoes = JSON.stringify([...text]);
+				} else {
+					mkt.w("mk-sel - set opcoes() - Formato inválido: ", mkt.classof(text));
+				}
+			}
+		}
+	}
 	set disabled(value) {
 		if (value) this.setAttribute("disabled", "");
 		else this.removeAttribute("disabled");
