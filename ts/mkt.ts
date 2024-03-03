@@ -5740,7 +5740,7 @@ slot {
 	forceUpdate(ignore: boolean = false) {
 		// Durante o update, o usuário não deveria estar com o seletor aberto.
 		this.removeAttribute("focused");
-		mkt.l("Request Update Em: ", this.getAttribute("name"));
+		//mkt.l("Request Update Em: ", this.getAttribute("name"));
 		// Ignora o New Map: Caso o opcoes já contem um map em vez de uma string JSON.
 		if (!ignore) {
 			// Caso o opções contem uma string JSON
@@ -5849,14 +5849,19 @@ slot {
 		});
 	}
 
+	// Atravéz do evento KeyDown do Enter do teclado é selecionado.
 	// Atravéz do evento de MouseDown, o evento é passado o selecionar.
 	selecionar(ev: Event) {
 		let li: any = ev.target;
 		if (li) {
-			let novoValor = li.getAttribute("k")
-			if (novoValor == "") this.removeAttribute("value");
-			else this.value = novoValor;
-			//mkt.l("Li Value: ", novoValor);
+			if (true) {
+				let novoValor = li.getAttribute("k")
+				if (novoValor == "") this.removeAttribute("value");
+				else this.value = novoValor;
+			}
+
+
+			mkt.l("V clicado: ", novoValor, " Novo Valor: ", this.value);
 			// Atualizar selecionado
 			this.aoAtualizaSelecionados();
 		}
