@@ -5736,7 +5736,7 @@ slot {
         if (li) {
             if (mkt.classof(this.config.selapenas) == "Number") {
                 let novoK = li.getAttribute("k");
-                let novoV = this.config._data.get(novoK);
+                let novoV = this.config._data?.get(novoK);
                 if (this.config.selapenas == 1) {
                     // UNICA SELEÇÃO
                     this.config.selecionados.clear();
@@ -5831,12 +5831,12 @@ slot {
     atualizarDisplay = () => {
         let display = "- Selecione -";
         if (this.config.vazio) {
-            if ((display != this.config.vazio) && (this.config.eV.value === "")) {
-                display = this.config.vazio;
-            }
+            //if ((display != this.config.vazio) && (this.config.eV.value === "")) {
+            display = this.config.vazio;
+            //}
         }
         if (this.config.selapenas == 1) {
-            if (this.config._data.has(this.config.eV.value.toString())) {
+            if (this.config._data?.has(this.config.eV.value.toString())) {
                 display = this.config._data.get(this.config.eV.value);
             }
         }
@@ -5847,7 +5847,7 @@ slot {
             ;
         }
         this.config.eK.value = display;
-        if (this.config._data.size <= 0) {
+        if (this.config._data?.size <= 0) {
             mkt.w("mk-sel - Nenhuma opção para selecionar: ", this.config._data.size);
             this.config.eList.querySelector("ul").innerHTML = `Nenhuma Opção \u{2209}`;
         }

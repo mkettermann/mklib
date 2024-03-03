@@ -2316,6 +2316,10 @@ svg {
 	display: flex;
 }
 
+fieldset {
+	display: flex;
+}
+
 mk-sel:not(:defined) {
 	opacity: 0;
 	display: inline-block;

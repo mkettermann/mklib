@@ -3,13 +3,12 @@
 	e não interfere nos demais elementos da página. O formato de trabalho de dados será em Map,
 	ou seja, uma array que possúi arrays com chave e valor.
 </h4>
-<br /><br />
-<input id="x" name="x" type="text" value="teste">
 <br /><br /><br />
 <div class="i">
 
 	<div class="col25">
-		<b>Seletor:</b> <mk-sel name="staAtivo" vazio="Selecione" opcoes='[["","Vazio"],["1","Sim"],[2,"Não"]]'></mk-sel>
+		<b>Seletor:</b> <mk-sel name="staAtivo" vazio="Selecione"
+			opcoes='[["","Item Vazio"],["1","Sim"],[2,"Não"]]'></mk-sel>
 	</div>
 	<div class="col25">
 		<b>Sem Opção Vazio:</b> <mk-sel name="sem" vazio="Selecione" opcoes='[[1,"Sim"],[2,"Não"]]'></mk-sel>
@@ -24,9 +23,24 @@
 	</div>
 
 </div>
+<br /><br />
+<div class="i">
+	<fieldset>
+		<legend>Elementos Relacionados</legend>
+		<div class="col25">
+			<b>Quando Seleciona aqui</b> <mk-sel name="nomLetra" vazio="Selecione" opcoes='[["A","A"],["B","B"]]'></mk-sel>
+		</div>
+		<div class="col25">
+			<b>Troca Opções Daqui:</b> <mk-sel name="nomPais" vazio="Selecione"></mk-sel>
+		</div>
+	</fieldset>
+	<div class="col50">
 
-<br /><br /><br />
-<input id="x" name="x" type="text" value="teste2">
+	</div>
+
+</div>
+
+
 <br /><br /><br /><br />
 
 <div class="fullCodigoContainer microPos5">
@@ -36,8 +50,8 @@
 1
 2</textarea>
 		<textarea class="codigo" rows="2" cols="100" onfocus="mkt.selecionarInner(this)" readonly>
-<mk-sel vazio="Selecione" opcoes="[[1,'Sim'],[2,'Não']]"></mk-sel>
-		</textarea>
+<mk-sel vazio="Selecione" opcoes="[[1,' Sim'],[2,'Não']]"></mk-sel>
+			</textarea>
 	</div>
 </div>
 
@@ -55,8 +69,14 @@
 			&nbsp; O seletor armazena a lista de opções em um Map em memória enquanto a tela estiver aberta. Para alterar as
 			opções do seletor, há duas formas, você pode colocar novamente o novo array json dentro do campo "opcoes" no
 			elemento mk-sel, ou você pode localizar o elemento na página e pegar o Map pelas opcoes 'let x =
-			mkt.Q("mk-sel").opcoes;', fazer as devidas modificações e setar novamente 'mkt.Q("mk-sel").opcoes = x;'. Obs:
+			mkt.Q("mk-sel")<b>.opcoes</b>;', fazer as devidas modificações e setar novamente 'mkt.Q("mk-sel")<b>.opcoes =
+				x</b>;'.
+			Obs:
 			Pegar o Map, alterar e resetar é mais rápido o processamento.
+			<br /><br />
+			&nbsp; O mesmo acontece para os itens já selecionados. Eles tem um armazenamento em memória e podem ser acessados
+			por mkt.Q("mk-sel")<b>.selecionadosMap</b> ou o json por mkt.Q("mk-sel")<b>.value</b> /
+			mkt.Q("mk-sel")<b>.selecionados</b>
 		</div>
 		<div class="quebra">
 			&lt;mk-sel&gt;<br />&lt;/mk-sel&gt;
