@@ -5573,6 +5573,7 @@ Object.keys(mkt).forEach((n) => {
 //  Web Component MkSel - Seletor   \\
 //___________________________________\\
 // Está faltando resolver:
+// - Ao trocar value, reseleciona.
 // - Mecanica do Refill
 // - Seletor Pós pela URL
 // - Mecânica de teclado sobe, desce, enter seleciona, esc perde foco.
@@ -6025,7 +6026,7 @@ slot {
 	get opcoes() { return this.config._data; }
 	// Alterar as opções
 	set opcoes(text) {
-		//mkt.l("SET Opcões: ", text)
+		//mkt.l("SET Opcões: ", text);
 		if (text) {
 			if (mkt.classof(text) == "String") {
 				this.config.opcoes = text;
