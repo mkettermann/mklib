@@ -4835,17 +4835,29 @@ class mkt {
 
 	static apenasNumeros = (s: string | number = ""): string => {
 		// Ignora qualquer outro caracter além de Numeros
-		return s.toString().replace(/(?![0-9])./g, "");
+		if (s) {
+			return s.toString().replace(/(?![0-9])./g, "");
+		} else {
+			return "";
+		}
 	};
 
 	static apenasLetras = (s: string = ""): string => {
 		// Ignora qualquer outro caracter além de Letras formato ocidental
-		return s.replace(/(?![a-zA-Z])./g, "");
+		if (s) {
+			return s.replace(/(?![a-zA-Z])./g, "");
+		} else {
+			return "";
+		}
 	};
 
 	static apenasNumerosLetras = (s: string = ""): string => {
 		// Ignora qualquer outro caracter além de Numeros e Letras formato ocidental
-		return s.replace(/(?![a-zA-Z0-9])./g, "");
+		if (s) {
+			return s.replace(/(?![a-zA-Z0-9])./g, "");
+		} else {
+			return "";
+		}
 	};
 
 	static nodeToScript = (node: any) => {
