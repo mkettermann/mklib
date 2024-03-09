@@ -5892,7 +5892,7 @@ slot {
             // - Foi trocado as opções!
             // - O selecionado não existe nas novas opções.
             //mkt.l("aoAtualizaSelecionados() - Name: ", this.getAttribute("name"), " MudouOpcoes? ", mudouOpcoes, " SelecionadoExiste? ", selecionadoExiste, " V: ", this.config.eV.value);
-            this.removeAttribute("value");
+            this.setAttribute("value", "");
             this.config.selecionados = new Map();
             this.config.value = "";
         }
@@ -5966,6 +5966,8 @@ slot {
         }
         else if (name === "value") {
             this.config.value = newValue;
+            mkt.l(this.getAttribute("name"), " Set Value: ", newValue);
+            this.aoAtualizaSelecionados();
             this.atualizarDisplay();
         }
         else if (name === "opcoes") {
@@ -6043,7 +6045,6 @@ slot {
     }
     set value(text) {
         if (text) {
-            mkt.l(this.getAttribute("name"), " Set Value: ", text);
             this.setAttribute("value", text);
         }
     }
