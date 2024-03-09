@@ -5471,7 +5471,7 @@ Object.keys(mkt).forEach((n) => {
 //___________________________________\\
 // Está faltando resolver:
 // - Ao trocar value, reseleciona.
-// - Mecanica do Refill
+// - Filtro
 // - Seletor Pós pela URL
 // - Mecânica de teclado sobe, desce, enter seleciona, esc perde foco.
 // - Mecânica de setas para subir e descer / Seria bom fazer carregar ao descer.
@@ -5637,12 +5637,14 @@ li{
 li:not(:first-child){
 	border-top: 1px solid #0001;
 }
+.topoSel li[selecionado]{
+	order: -1;
+}
 li[selecionado]{
 	background: #0092;
   border-left: 3px solid #0095;
   padding-left: 2px;
   border-radius: 2px;
-	order: -1;
 }
 li[selecionado]::before{
 	content: '';
@@ -5660,7 +5662,6 @@ slot {
 }
 </style>
 <div class="mkSeletor">
-	<input type="hidden" id="v" value />
 	<input type="text" placeholder="Filtro \u{1F50D}" value="${this.config.vazio}" id="k" autocomplete="off"/>
 	<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'>
 	<path class='setaCima' d='M14.6,6.9L8.4,0.7c-0.2-0.2-0.6-0.2-0.9,0L1.4,6.9c-0.2,0.2,0,0.4,0.2,0.4h4.5c0.1,0,0.3-0.1,0.4-0.2L7,6.7C7.5,6.1,8.5,6,9,6.6l0.6,0.6C9.7,7.3,9.9,7.4,10,7.4h4.4C14.6,7.4,14.7,7.1,14.6,6.9z'/>
@@ -5671,7 +5672,6 @@ slot {
         // GET / SETS Iniciais
         this.shadowRoot?.append(template.content);
         this.config.eK = this.shadowRoot?.querySelector("#k");
-        //this.config.eV = this.shadowRoot?.querySelector("#v");
         this.config.eList = this.shadowRoot?.querySelector(".lista");
         this.config.svg = this.shadowRoot?.querySelector("svg");
         if (this.getAttribute("vazio"))
@@ -5732,6 +5732,7 @@ slot {
                 });
             }
             else {
+                this.config.eList.classList.add("topoSel"); // <= Classe pra subir os selecionados
                 // Caso o opções contem uma string JSON
                 if (mkt.isJson(this.value)) {
                     let colect = mkt.parseJSON(this.value);
@@ -5872,9 +5873,7 @@ slot {
         this.classList.remove("mkEfeitoPulsar");
         let display = " -- Selecione -- ";
         if (this.config.vazio) {
-            //if ((display != this.config.vazio) && (this.config.eV.value === "")) {
             display = this.config.vazio; // Display diferenciado quando vazio == ""
-            //}
         }
         if (this.config.selecionados.size != 0) {
             if (this.config.selapenas == 1) {
@@ -5886,6 +5885,7 @@ slot {
         }
         else {
             if (this.config.selapenas != 1) {
+                // Nenhum selecionado em um Multi Seletor.
                 display = `0 selecionados`;
             }
         }
@@ -5918,7 +5918,7 @@ slot {
         if (this.config.url != "") {
             let r = await mkt.get.json({ url: this.config.url });
             if (r.retorno != null) {
-                mkt.l("Retorno Refill: ", r.retorno);
+                //mkt.l("Retorno Refill: ", r.retorno);
                 this.setAttribute("opcoes", mkt.stringify(r.retorno));
             }
         }
