@@ -5596,19 +5596,20 @@ class mkSel extends HTMLElement {
 		eK: null,
 		eV: null,
 		eList: null,
-		vazio: "- Selecione -",
+		vazio: " -- Selecione -- ",
 		svg: null,
 		selapenas: 1,
-		_data: null,
+		_data: new Map(),
 		opcoes: "",
 		url: "",
 		selecionados: new Map(),
+		fail: 0,
 		geraEvento: () => {
 			// Gera o Evento
 			this.dispatchEvent(new Event("input"));
 		},
 		mecanicaSelecionar: (novoK: any) => {
-			let novoV = this.config._data?.get(novoK);
+			let novoV = this.config._data.get(novoK);
 			//mkt.l(this.getAttribute("name") + "\tSEL: ", novoK, "\tV: ", novoV + ", Sels: ", this.config.selecionados);
 			if (mkt.classof(this.config.selapenas) == "Number") {
 				//mkt.l("Setado K: ", novoK, " V:", novoV, " Selecoes: ", this.config);
@@ -5735,6 +5736,8 @@ input {
 	background: inherit;
 }
 ul,li{
+	display: flex;
+	flex-direction: column;
 	list-style: none;
 	padding: 0px;
 	margin: 0px;
@@ -5750,6 +5753,7 @@ li[selecionado]{
   border-left: 3px solid #0095;
   padding-left: 2px;
   border-radius: 2px;
+	order: -1;
 }
 li[selecionado]::before{
 	content: '';
@@ -5778,7 +5782,7 @@ slot {
 		// GET / SETS Iniciais
 		this.shadowRoot?.append(template.content);
 		this.config.eK = this.shadowRoot?.querySelector("#k");
-		this.config.eV = this.shadowRoot?.querySelector("#v");
+		//this.config.eV = this.shadowRoot?.querySelector("#v");
 		this.config.eList = this.shadowRoot?.querySelector(".lista");
 		this.config.svg = this.shadowRoot?.querySelector("svg");
 		if (this.getAttribute("vazio")) this.config.vazio = this.getAttribute("vazio");
@@ -5916,7 +5920,7 @@ slot {
 		let linha = document.createElement("template");
 		linha.innerHTML = "<li k='${0}'>${1}</li>"
 		if (mkt.classof(this.config._data) == "Map") {
-			await mkt.moldeOA([...this.config._data!], linha, ul);
+			await mkt.moldeOA([...this.config._data], linha, ul);
 		}
 		mkt.Ao("click", ul, (e: any, ev: Event) => {
 			this.selecionar(ev);
@@ -5984,11 +5988,12 @@ slot {
 
 	// Atualiza o selecionado Atual procurando no Map
 	atualizarDisplay = () => {
-		let display = "- Selecione -";
+		this.classList.remove("mkEfeitoPulsar");
+		let display = " -- Selecione -- ";
 		if (this.config.vazio) {
-			if ((display != this.config.vazio) && (this.config.eV.value === "")) {
-				display = this.config.vazio; // Display diferenciado quando vazio == ""
-			}
+			//if ((display != this.config.vazio) && (this.config.eV.value === "")) {
+			display = this.config.vazio; // Display diferenciado quando vazio == ""
+			//}
 		}
 		if (this.config.selecionados.size != 0) {
 			if (this.config.selapenas == 1) {
@@ -5996,20 +6001,44 @@ slot {
 			} else {
 				display = `${this.config.selecionados.size} selecionados`
 			}
+		} else {
+			if (this.config.selapenas != 1) {
+				display = `0 selecionados`;
+			}
+		};
+		if (!display) {
+			// Provaveis causas externas fizeram o seletor entrar aqui.
+			display = " -- Erro -- ";
+			this.classList.add("mkEfeitoPulsar");
+			if (this.config.fail == 2) { // Tenta trocar opções
+				mkt.w("mk-sel - Refill emergencial em andamento.");
+				display = " -- Recarregando -- ";
+				this.refill();
+			}
+			if (this.config.fail < 5) { // Recarrega
+				this.forceUpdate();
+			}
+			mkt.w("Erro de Display. Tentativa: ", this.config.fail++);
+		} else {
+			this.config.fail = 0;
 		};
 		this.config.eK.value = display;
 
-		if (this.config._data?.size <= 0) {
-			mkt.w("mk-sel - Nenhuma opção para selecionar: ", this.config._data.size);
-			this.config.eList.querySelector("ul").innerHTML = `Nenhuma Opção \u{2209}`;
+		if (this.config._data.size <= 0) {
+			//mkt.l("Seletor " + this.getAttribute("name") + ": Nenhuma opção disponível: ", this.config._data.size);
+			//this.config.eList.querySelector("ul").innerHTML = ' &#45;&#45; Sem Op&#231;&#245;es &#45;&#45; ';
 		}
 	};
 
 	async refill() {
-		let r = await mkt.get.json({ url: this.config.url });
-		if (r.retorno != null) {
-			mkt.l("Retorno Refill: ", r.retorno);
-			this.setAttribute("opcoes", mkt.stringify(r.retorno));
+		if (this.config.url != "") {
+			let r = await mkt.get.json({ url: this.config.url });
+			if (r.retorno != null) {
+				mkt.l("Retorno Refill: ", r.retorno);
+				this.setAttribute("opcoes", mkt.stringify(r.retorno));
+			}
+		} else {
+			mkt.w("mk-sel - Não foi possível fazer o refill: Sem URL setada.");
 		}
 	}
 
@@ -6021,7 +6050,7 @@ slot {
 		} else if (name === "size") {
 			this.config.eK.size = newValue;
 		} else if (name === "value") {
-			this.config.eV.value = newValue;
+			//this.config.eV.value = newValue;
 			this.atualizarDisplay();
 		} else if (name === "opcoes") {
 			if (this.getAttribute("opcoes")) {
