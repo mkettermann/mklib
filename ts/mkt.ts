@@ -5797,8 +5797,8 @@ slot {
 		this.config.eK.onblur = () => {
 			this.aoBlur();
 		};
-		this.config.eK.oninput = (ev: Event) => {
-			this.aoInput(ev);
+		this.config.eK.oninput = () => {
+			this.aoInput();
 		}
 		this.config.svg.onclick = (ev: Event) => {
 			ev.stopPropagation();
@@ -5919,7 +5919,7 @@ slot {
 			}, 150);
 	}
 
-	aoInput(ev: Event) {
+	aoInput() {
 		let text = this.config.eK.value.toLowerCase();
 		let cVisivel = 0;
 		Array.from(this.config.eList.firstElementChild.children).forEach((li: any) => {
