@@ -5890,7 +5890,7 @@ slot {
         let r = await mkt.get.json({ url: this.config.url });
         if (r.retorno != null) {
             mkt.l("Retorno Refill: ", r.retorno);
-            this.opcoes = new Map(r.retorno);
+            this.setAttribute("opcoes", mkt.stringify(r.retorno));
         }
     }
     // Atributos modificados no elemento
@@ -5907,7 +5907,9 @@ slot {
             this.atualizarDisplay();
         }
         else if (name === "opcoes") {
-            this.opcoes = this.getAttribute("opcoes");
+            if (this.getAttribute("opcoes")) {
+                this.opcoes = this.getAttribute("opcoes");
+            }
             this.removeAttribute("opcoes"); // Mantem os dados em memória
         }
         else if (name === "url") {

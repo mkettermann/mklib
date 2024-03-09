@@ -7,9 +7,11 @@ mkt.Ao("input", "mk-sel[name='nomLetra']", (e) => {
 	}
 })
 
-function removerNao() {
+function removerUltimo() {
 	let novoMap = mkt.Q("mk-sel[name='staRemover']").opcoes;
-	novoMap.delete("2");
+
+	let chaves = [...novoMap.keys()];
+	novoMap.delete(chaves[chaves.length - 1]);
 	mkt.l("Opções: ", novoMap);
 	mkt.Q("mk-sel[name='staRemover']").opcoes = novoMap;
 }
