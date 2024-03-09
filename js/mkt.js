@@ -5687,6 +5687,9 @@ slot {
         this.config.eK.onblur = () => {
             this.aoBlur();
         };
+        this.config.eK.oninput = (ev) => {
+            this.aoInput(ev);
+        };
         this.config.svg.onclick = (ev) => {
             ev.stopPropagation();
             this.config.eK.focus();
@@ -5798,6 +5801,28 @@ slot {
                 this.removeAttribute("focused");
             }
         }, 150);
+    }
+    aoInput(ev) {
+        let text = this.config.eK.value.toLowerCase();
+        let cVisivel = 0;
+        Array.from(this.config.eList.firstElementChild.children).forEach((li) => {
+            let exibe = false;
+            if (mkt.like(text, li.innerHTML.toLowerCase())) {
+                exibe = true;
+                cVisivel++;
+            }
+            if (exibe) {
+                li.style.display = "";
+            }
+            else {
+                li.style.display = "none";
+            }
+        });
+        if (cVisivel > 10) {
+            this.config.eList.firstElementChild.style.display = "";
+            this.config.eList.lastElementChild.style.display = "";
+        }
+        mkt.Reposicionar(this.config.eList, true);
     }
     // Usa o MoldeOA pra criar os LI
     async aoPopularLista() {
