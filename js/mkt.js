@@ -5472,6 +5472,7 @@ Object.keys(mkt).forEach((n) => {
 // Está faltando resolver:
 // - Ao trocar value, reseleciona.
 // - Filtro
+// - Bug da Velocidade ao desselecionar varios rápido.
 // - Seletor Pós pela URL
 // - Mecânica de teclado sobe, desce, enter seleciona, esc perde foco.
 // - Mecânica de setas para subir e descer / Seria bom fazer carregar ao descer.
@@ -5486,6 +5487,7 @@ class mkSel extends HTMLElement {
         selapenas: 1,
         _data: new Map(),
         opcoes: "",
+        value: "",
         url: "",
         selecionados: new Map(),
         fail: 0,
@@ -5503,10 +5505,10 @@ class mkSel extends HTMLElement {
                     this.config.selecionados.clear();
                     this.config.selecionados.set(novoK, novoV);
                     if (novoK == "") {
-                        this.value = "";
+                        this.setAttribute("value", "");
                     }
                     else {
-                        this.value = novoK;
+                        this.setAttribute("value", novoK);
                     }
                     this.config.geraEvento();
                 }
@@ -5532,10 +5534,10 @@ class mkSel extends HTMLElement {
                     // Quando estiver vazio, reseta o campo.
                     // Seta o valor no campo de input
                     if (this.config.selecionados.size == 0) {
-                        this.value = "";
+                        this.setAttribute("value", "");
                     }
                     else {
-                        this.value = mkt.stringify([...this.config.selecionados]);
+                        this.setAttribute("value", mkt.stringify([...this.config.selecionados]));
                     }
                     this.config.geraEvento();
                 }
@@ -5726,7 +5728,7 @@ slot {
         if (mkt.classof(this.config.selapenas) == "Number") {
             if (this.config.selapenas == 1) {
                 this.config._data.forEach((v, k) => {
-                    if (k == this.value) {
+                    if (k == this.getAttribute("value")) {
                         this.config.mecanicaSelecionar(k);
                     }
                 });
@@ -5734,8 +5736,8 @@ slot {
             else {
                 this.config.eList.classList.add("topoSel"); // <= Classe pra subir os selecionados
                 // Caso o opções contem uma string JSON
-                if (mkt.isJson(this.value)) {
-                    let colect = mkt.parseJSON(this.value);
+                if (mkt.isJson(this.getAttribute("value"))) {
+                    let colect = mkt.parseJSON(this.getAttribute("value"));
                     if (mkt.classof(colect) == "Array") {
                         colect.forEach((v, i, a) => {
                             a[i][0] = a[i][0].toString();
@@ -5864,8 +5866,9 @@ slot {
             // - Foi trocado as opções!
             // - O selecionado não existe nas novas opções.
             //mkt.l("aoAtualizaSelecionados() - Name: ", this.getAttribute("name"), " MudouOpcoes? ", mudouOpcoes, " SelecionadoExiste? ", selecionadoExiste, " V: ", this.config.eV.value);
-            this.removeAttribute("value");
+            this.setAttribute("value", "");
             this.config.selecionados = new Map();
+            //mkt.l("!! " + this.getAttribute("name"), " - MudouOpcoes / Selecionado Não Existe")
         }
     }
     // Atualiza o selecionado Atual procurando no Map
@@ -5936,12 +5939,16 @@ slot {
             this.config.eK.size = newValue;
         }
         else if (name === "value") {
-            //this.config.eV.value = newValue;
-            this.atualizarDisplay();
+            if (newValue === null) {
+                this.value = "";
+            }
+            else {
+                this.value = newValue;
+            }
         }
         else if (name === "opcoes") {
-            if (this.getAttribute("opcoes")) {
-                this.opcoes = this.getAttribute("opcoes");
+            if (newValue) {
+                this.opcoes = newValue;
             }
             this.removeAttribute("opcoes"); // Mantem os dados em memória
         }
@@ -5972,7 +5979,7 @@ slot {
     get opcoes() { return this.config._data; }
     // Alterar as opções
     set opcoes(text) {
-        //mkt.l("SET Opcões: ", text);
+        //mkt.l(this.getAttribute("name"), " SET Opcões: ", text);
         if (text) {
             if (mkt.classof(text) == "String") {
                 this.config.opcoes = text;
@@ -6007,13 +6014,25 @@ slot {
             this.removeAttribute("hidden");
     }
     get value() {
-        if (this.getAttribute("value") == null) {
-            return "";
+        if (this.config.value == null) {
+            this.config.value = "";
         }
-        return this.getAttribute("value");
+        return this.config.value;
     }
-    set value(text) { if (text)
-        this.setAttribute("value", text); }
+    set value(text) {
+        if (this.getAttribute("value") != text) {
+            this.setAttribute("value", text);
+        }
+        else {
+            if (mkt.classof(text) == "String") {
+                if (text != this.config.value) {
+                    this.config.value = text;
+                    mkt.l(this.getAttribute("name"), " Set Value: ", this.config.value);
+                    this.atualizarDisplay();
+                }
+            }
+        }
+    }
     // Atributos sendo observados no elemento.
     static observedAttributes = ["disabled", "size", "value", "opcoes", "url", "scrollbarwidth", "scrollbarcolor", "selapenas", "refill"];
 }
