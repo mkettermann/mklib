@@ -5886,6 +5886,13 @@ slot {
             this.config.eList.querySelector("ul").innerHTML = `Nenhuma Opção \u{2209}`;
         }
     };
+    async refill() {
+        mkt.l("Start Refill: ", this.config.url);
+        let r = await mkt.get.json({ url: this.config.url });
+        if (r.retorno != null) {
+            mkt.l("Retorno Refill: ", r.retorno);
+        }
+    }
     // Atributos modificados no elemento
     attributeChangedCallback(name, oldValue, newValue) {
         if (name === "disabled") {
@@ -5907,7 +5914,10 @@ slot {
             this.config.url = newValue;
         }
         else if (name === "refill") {
-            this.refill();
+            this.removeAttribute("refill");
+            if (newValue == null) { // Se removeu executa
+                this.refill();
+            }
         }
         else if (name === "scrollbarwidth") {
             this.config.eList.style.scrollbarWidth = newValue;
@@ -5970,7 +5980,7 @@ slot {
     set value(text) { if (text)
         this.setAttribute("value", text); }
     // Atributos sendo observados no elemento.
-    static observedAttributes = ["disabled", "size", "value", "opcoes", "url", "scrollbarwidth", "scrollbarcolor", "selapenas"];
+    static observedAttributes = ["disabled", "size", "value", "opcoes", "url", "scrollbarwidth", "scrollbarcolor", "selapenas", "refill"];
 }
 customElements.define("mk-sel", mkSel);
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
