@@ -5609,6 +5609,18 @@ class mkSel extends HTMLElement {
 			// Gera o Evento
 			this.dispatchEvent(new Event("input"));
 		},
+		convertValueToMap: () => {
+			this.config.selecionados.clear();
+			if (this.config.selapenas == 1) {
+				this.config.selecionados.set(this.value, this.config._data.get(this.value));
+			} else {
+				let obj = mkt.parseJSON(this.value);
+				if (obj) {
+					this.config.selecionados = new Map(obj);
+
+				}
+			}
+		},
 		mecanicaSelecionar: (novoK: any) => {
 			let novoV = this.config._data.get(novoK);
 			//mkt.l(this.getAttribute("name") + "\tSEL: ", novoK, "\tV: ", novoV + ", Sels: ", this.config.selecionados);
@@ -5867,8 +5879,10 @@ slot {
 		//mkt.l("Seletor: " + this.getAttribute("name") + ", Opcoes: ", this.config._data);
 		// Popular Lista com opcoes atuais
 		this.aoPopularLista();
-		// Atualiza os selecionados pelo Value
-		this.aoAtualizaSelecionados(true);
+		// Atualizar o Map de Selecionados
+		this.config.convertValueToMap();
+		// Atualiza a lista baseado no Map da Lista e no Map de Selecionados
+		this.aoAtualizaSelecionadosNaLista(true);
 		// Atualiza o Display
 		this.atualizarDisplay();
 	}
@@ -5881,7 +5895,7 @@ slot {
 		// Limpa o Display após atualizar status.
 		this.config.eK.value = "";
 		// Atualiza Itens Selecionados, caso houve mudança sem atualizar.
-		this.aoAtualizaSelecionados();
+		this.aoAtualizaSelecionadosNaLista();
 
 		// Encontra o primeira opção selecionado
 		let ePrimeiroSel: any = null;
@@ -5910,7 +5924,7 @@ slot {
 				if (document.activeElement !== this) {
 					// SE REALMENTE Saiu do elemento:
 					// Atualiza Itens Selecionados.
-					this.aoAtualizaSelecionados();
+					//this.aoAtualizaSelecionadosNaLista();
 					// Seta Valor do display
 					this.atualizarDisplay();
 					// Remove Status de focus pra sumir
@@ -5972,7 +5986,7 @@ slot {
 			}
 
 			// Atualizar selecionado
-			this.aoAtualizaSelecionados();
+			this.aoAtualizaSelecionadosNaLista();
 		} else {
 			mkt.w("Evento sem Target: ", ev);
 		}
@@ -5980,7 +5994,7 @@ slot {
 	}
 
 	// Itera Lista e marca ou desmarca o/os elementos do value.
-	aoAtualizaSelecionados(mudouOpcoes = false) {
+	aoAtualizaSelecionadosNaLista(mudouOpcoes = false) {
 		let selecionadoExiste = false;
 		// Atualiza as marcações dos selecionados atuais.
 		if (this.config.selapenas == 1) {
@@ -6009,7 +6023,7 @@ slot {
 			// Apenas QUANDO: 
 			// - Foi trocado as opções!
 			// - O selecionado não existe nas novas opções.
-			//mkt.l("aoAtualizaSelecionados() - Name: ", this.getAttribute("name"), " MudouOpcoes? ", mudouOpcoes, " SelecionadoExiste? ", selecionadoExiste, " V: ", this.config.eV.value);
+			//mkt.l("aoAtualizaSelecionadosNaLista() - Name: ", this.getAttribute("name"), " MudouOpcoes? ", mudouOpcoes, " SelecionadoExiste? ", selecionadoExiste, " V: ", this.config.eV.value);
 			this.setAttribute("value", "");
 			this.config.selecionados = new Map();
 			this.config.value = "";
@@ -6079,10 +6093,14 @@ slot {
 		} else if (name === "size") {
 			this.config.eK.size = newValue;
 		} else if (name === "value") {
-			this.config.value = newValue;
 			mkt.l(this.getAttribute("name"), " Set Value: ", newValue)
-			this.aoAtualizaSelecionados();
-			this.atualizarDisplay();
+			if (this.config.value != newValue) {
+				this.config.value = newValue;
+				this.config.convertValueToMap();
+				//this.forceUpdate(false);
+			}
+			// this.aoAtualizaSelecionadosNaLista();
+			// this.atualizarDisplay();
 		} else if (name === "opcoes") {
 			if (this.getAttribute("opcoes")) {
 				this.opcoes = this.getAttribute("opcoes");
