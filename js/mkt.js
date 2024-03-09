@@ -5471,7 +5471,6 @@ Object.keys(mkt).forEach((n) => {
 //___________________________________\\
 // Está faltando resolver:
 // - Ao trocar value, reseleciona.
-// - Filtro
 // - Bug da Velocidade ao desselecionar varios rápido.
 // - Seletor Pós pela URL
 // - Mecânica de teclado sobe, desce, enter seleciona, esc perde foco.
@@ -5688,6 +5687,9 @@ slot {
         this.config.eK.onblur = () => {
             this.aoBlur();
         };
+        this.config.eK.oninput = () => {
+            this.aoInput();
+        };
         this.config.svg.onclick = (ev) => {
             ev.stopPropagation();
             this.config.eK.focus();
@@ -5799,6 +5801,30 @@ slot {
                 this.removeAttribute("focused");
             }
         }, 150);
+    }
+    // Exibe a lista baseado no filtro de pesquisa
+    aoInput() {
+        let strInputado = this.config.eK.value;
+        //mkt.l(strInputado);
+        let cVisivel = 0;
+        Array.from(this.config.eList.firstElementChild.children).forEach((li) => {
+            let exibe = false;
+            if (mkt.like(strInputado, li.innerHTML)) {
+                exibe = true;
+                cVisivel++;
+            }
+            if (exibe) {
+                li.style.display = "";
+            }
+            else {
+                li.style.display = "none";
+            }
+        });
+        if (cVisivel > 10) {
+            // this.config.eList.firstElementChild.firstElementChild.style.display = "";
+            // this.config.eList.firstElementChild.lastElementChild.style.display = "";
+        }
+        mkt.Reposicionar(this.config.eList, true);
     }
     // Usa o MoldeOA pra criar os LI
     async aoPopularLista() {
