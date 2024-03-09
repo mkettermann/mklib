@@ -42,13 +42,13 @@
 	</div>
 	<div class="col25">
 		<b>Iniciou Selecionado:</b> <mk-sel value="1" name="staSelecionado" vazio="Selecione"
-			opcoes='[["","Item Vazio"],["1","Sim"],[2,"Não"]]'></mk-sel>
+			opcoes='[["","Item Vazio"],["1","Sim"],[2,"Não"]]' url="refill.json"></mk-sel>
 	</div>
 	<div class="col25">
 		<b>Remover (2)"Fulano"?</b> <mk-sel name="staRemover" vazio="Selecione"
 			opcoes='[["1","Beltrano"],[2,"Fulano"]]'></mk-sel>
-		<button onclick="removerNao()" type="button" class="bBotao bVermelho"
-			style="display: block; margin:auto;">Remover</button>
+		<button onclick="removerNao()" type="button" class="bBotao bVermelho" style="display: block; margin:auto;">Remover
+			Último</button>
 	</div>
 </div>
 <br /><br />
@@ -59,8 +59,8 @@
 	<div class="col25">
 		<b>Efetual Refill do Seletor</b> <mk-sel name="staRefill" vazio="Selecione"
 			opcoes='[["","Só tem esse Aqui"]]'></mk-sel>
-		<button onclick="fazerRefill()" type="button" class="bBotao bVerde"
-			style="display: block; margin:auto;">Refill</button>
+		<button onclick="fazerRefill()" type="button" class="bBotao bVerde" style="display: block; margin:auto;">Force
+			Refill</button>
 	</div>
 </div>
 

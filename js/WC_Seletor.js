@@ -15,6 +15,5 @@ function removerNao() {
 }
 
 function fazerRefill() {
-	let novosDados = "[]"
-	mkt.Q("mk-sel[name='staRemover']").opcoes = novosDados;
+	mkt.Q("mk-sel[name='staRefill']").setAttribute("refill", "");
 }

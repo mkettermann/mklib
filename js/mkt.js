@@ -5486,6 +5486,7 @@ class mkSel extends HTMLElement {
         selapenas: 1,
         _data: null,
         opcoes: "",
+        url: "",
         selecionados: new Map(),
         geraEvento: () => {
             // Gera o Evento
@@ -5903,7 +5904,10 @@ slot {
             this.removeAttribute("opcoes"); // Mantem os dados em memória
         }
         else if (name === "url") {
-            mkt.l("Url: ", newValue);
+            this.config.url = newValue;
+        }
+        else if (name === "refill") {
+            this.refill();
         }
         else if (name === "scrollbarwidth") {
             this.config.eList.style.scrollbarWidth = newValue;
