@@ -5470,6 +5470,7 @@ Object.keys(mkt).forEach((n) => {
 //  Web Component MkSel - Seletor   \\
 //___________________________________\\
 // Está faltando resolver:
+// - Ao trocar value, reseleciona.
 // - Filtro
 // - Bug da Velocidade ao desselecionar varios rápido.
 // - Seletor Pós pela URL
@@ -5504,10 +5505,10 @@ class mkSel extends HTMLElement {
                     this.config.selecionados.clear();
                     this.config.selecionados.set(novoK, novoV);
                     if (novoK == "") {
-                        this.setAttribute("value", "");
+                        this.value = "";
                     }
                     else {
-                        this.setAttribute("value", novoK);
+                        this.value = novoK;
                     }
                     this.config.geraEvento();
                 }
@@ -5533,10 +5534,10 @@ class mkSel extends HTMLElement {
                     // Quando estiver vazio, reseta o campo.
                     // Seta o valor no campo de input
                     if (this.config.selecionados.size == 0) {
-                        this.setAttribute("value", "");
+                        this.value = "";
                     }
                     else {
-                        this.setAttribute("value", mkt.stringify([...this.config.selecionados]));
+                        this.value = mkt.stringify([...this.config.selecionados]);
                     }
                     this.config.geraEvento();
                 }
@@ -5687,9 +5688,6 @@ slot {
         this.config.eK.onblur = () => {
             this.aoBlur();
         };
-        this.config.eK.oninput = () => {
-            this.aoInput();
-        };
         this.config.svg.onclick = (ev) => {
             ev.stopPropagation();
             this.config.eK.focus();
@@ -5730,7 +5728,7 @@ slot {
         if (mkt.classof(this.config.selapenas) == "Number") {
             if (this.config.selapenas == 1) {
                 this.config._data.forEach((v, k) => {
-                    if (k == this.getAttribute("value")) {
+                    if (k == this.value) {
                         this.config.mecanicaSelecionar(k);
                     }
                 });
@@ -5738,8 +5736,8 @@ slot {
             else {
                 this.config.eList.classList.add("topoSel"); // <= Classe pra subir os selecionados
                 // Caso o opções contem uma string JSON
-                if (mkt.isJson(this.getAttribute("value"))) {
-                    let colect = mkt.parseJSON(this.getAttribute("value"));
+                if (mkt.isJson(this.value)) {
+                    let colect = mkt.parseJSON(this.value);
                     if (mkt.classof(colect) == "Array") {
                         colect.forEach((v, i, a) => {
                             a[i][0] = a[i][0].toString();
@@ -5801,28 +5799,6 @@ slot {
                 this.removeAttribute("focused");
             }
         }, 150);
-    }
-    aoInput() {
-        let text = this.config.eK.value.toLowerCase();
-        let cVisivel = 0;
-        Array.from(this.config.eList.firstElementChild.children).forEach((li) => {
-            let exibe = false;
-            if (mkt.like(text, li.innerHTML.toLowerCase())) {
-                exibe = true;
-                cVisivel++;
-            }
-            if (exibe) {
-                li.style.display = "";
-            }
-            else {
-                li.style.display = "none";
-            }
-        });
-        if (cVisivel > 10) {
-            this.config.eList.firstElementChild.style.display = "";
-            this.config.eList.lastElementChild.style.display = "";
-        }
-        mkt.Reposicionar(this.config.eList, true);
     }
     // Usa o MoldeOA pra criar os LI
     async aoPopularLista() {
@@ -5890,9 +5866,9 @@ slot {
             // - Foi trocado as opções!
             // - O selecionado não existe nas novas opções.
             //mkt.l("aoAtualizaSelecionados() - Name: ", this.getAttribute("name"), " MudouOpcoes? ", mudouOpcoes, " SelecionadoExiste? ", selecionadoExiste, " V: ", this.config.eV.value);
-            this.setAttribute("value", "");
+            this.removeAttribute("value");
             this.config.selecionados = new Map();
-            //mkt.l("!! " + this.getAttribute("name"), " - MudouOpcoes / Selecionado Não Existe")
+            this.config.value = "";
         }
     }
     // Atualiza o selecionado Atual procurando no Map
@@ -5963,16 +5939,12 @@ slot {
             this.config.eK.size = newValue;
         }
         else if (name === "value") {
-            if (newValue === null) {
-                this.value = "";
-            }
-            else {
-                this.value = newValue;
-            }
+            this.config.value = newValue;
+            this.atualizarDisplay();
         }
         else if (name === "opcoes") {
-            if (newValue) {
-                this.opcoes = newValue;
+            if (this.getAttribute("opcoes")) {
+                this.opcoes = this.getAttribute("opcoes");
             }
             this.removeAttribute("opcoes"); // Mantem os dados em memória
         }
@@ -6003,7 +5975,7 @@ slot {
     get opcoes() { return this.config._data; }
     // Alterar as opções
     set opcoes(text) {
-        //mkt.l(this.getAttribute("name"), " SET Opcões: ", text);
+        //mkt.l("SET Opcões: ", text);
         if (text) {
             if (mkt.classof(text) == "String") {
                 this.config.opcoes = text;
@@ -6038,23 +6010,15 @@ slot {
             this.removeAttribute("hidden");
     }
     get value() {
-        if (this.config.value == null) {
-            this.config.value = "";
+        if (this.getAttribute("value") == null) {
+            return "";
         }
-        return this.config.value;
+        return this.getAttribute("value");
     }
     set value(text) {
-        if (this.getAttribute("value") != text) {
+        if (text) {
+            mkt.l(this.getAttribute("name"), " Set Value: ", text);
             this.setAttribute("value", text);
-        }
-        else {
-            if (mkt.classof(text) == "String") {
-                if (text != this.config.value) {
-                    this.config.value = text;
-                    //mkt.l(this.getAttribute("name"), " Set Value: ", this.config.value);
-                    this.forceUpdate(false);
-                }
-            }
         }
     }
     // Atributos sendo observados no elemento.
