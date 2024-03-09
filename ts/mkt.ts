@@ -6006,10 +6006,10 @@ slot {
 	};
 
 	async refill() {
-		mkt.l("Start Refill: ", this.config.url);
 		let r = await mkt.get.json({ url: this.config.url });
 		if (r.retorno != null) {
 			mkt.l("Retorno Refill: ", r.retorno);
+			this.opcoes = new Map(r.retorno);
 		}
 	}
 
