@@ -5470,7 +5470,6 @@ Object.keys(mkt).forEach((n) => {
 //  Web Component MkSel - Seletor   \\
 //___________________________________\\
 // Está faltando resolver:
-// - Ao trocar value, reseleciona.
 // - Filtro
 // - Bug da Velocidade ao desselecionar varios rápido.
 // - Seletor Pós pela URL
@@ -6027,8 +6026,8 @@ slot {
             if (mkt.classof(text) == "String") {
                 if (text != this.config.value) {
                     this.config.value = text;
-                    mkt.l(this.getAttribute("name"), " Set Value: ", this.config.value);
-                    this.atualizarDisplay();
+                    //mkt.l(this.getAttribute("name"), " Set Value: ", this.config.value);
+                    this.forceUpdate(false);
                 }
             }
         }
