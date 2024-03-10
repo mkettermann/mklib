@@ -6017,15 +6017,32 @@ li[selecionado]::before{
 		linha.innerHTML = "<li k='${0}'>${1}</li>"
 		let hold = document.createElement("template");
 		let ate = inicio + total;
-		let dados = [...this.config._data].slice(inicio, ate);
+		let dados = [...this.config._data];
+		// A ideia era trazer pro início os já selecionados.
+		// A CADA JÁ SELECIONADO
+		if (this.config.name == "multiSelecionado" || this.config.name == "staPersonalizado") {
+			this.config.selecionados.keys().forEach((k: string) => {
+				// Se encontrar essa chave na array de dados
+				//mkt.l("K: ", k, " Has? ", dados.findIndex(o => { return o[0] == k }));
+				let indexof = dados.findIndex(o => { return o[0] == k });
+				if (indexof >= 0) {
+					//mkt.l("Get: ", dados[indexof]);;
+					dados.unshift(dados.splice(indexof, 1)[0]);
+				}
+
+			})
+		}
+		//
+		let dadosFiltrado = dados.slice(inicio, ate);
 		this.config.populado = Math.max(this.config.populado, ate);
-		await mkt.moldeOA(dados, linha, hold);
+		await mkt.moldeOA(dadosFiltrado, linha, hold);
 		//mkt.l("Populou do: ", inicio, " Até: ", this.config.populado);
 		this.config.eUL.append(hold.content.cloneNode(true));
 		if (this.config.populado >= 10) {
 			this.config.rolaCima.style.display = "";
 			this.config.rolaBaixo.style.display = "";
 		}
+		this.aoAtualizaSelecionadosNaLista();
 		return this.config.populado;
 	}
 
