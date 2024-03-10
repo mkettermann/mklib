@@ -429,9 +429,6 @@ ul {
 	right: 0;
 	z-index: calc(var(--mkSelIndex) + 1);
 	line-height: initial;
-	/* height: 20px;
-	min-height: 20px;
-	max-height: 20px; */
 }
 
 .mkSelItemDeCima:hover {
@@ -447,9 +444,6 @@ ul {
 	bottom: 0px;
 	right: 0;
 	line-height: initial;
-	/* height: 20px;
-	min-height: 20px;
-	max-height: 20px; */
 }
 
 .mkSelItemDeBaixo:hover {

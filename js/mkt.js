@@ -5697,7 +5697,7 @@ class mkSel extends HTMLElement {
 	display:flex;
 }
 .mkSeletor svg{
-	width: 16px;
+	width: 14px;
 	user-select: none;
 }
 .lista{
@@ -5733,6 +5733,9 @@ ul,li{
 }
 li{
 	padding: 3px 0px;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 }
 li:not(:first-child){
 	border-top: 1px solid #0001;
@@ -5747,14 +5750,12 @@ li[selecionado]{
   border-radius: 2px;
 }
 li[selecionado]::before{
-	content: '';
+	content: "\\2714";
 	position: absolute;
-	width: 5px;
-	height: 10px;
-	border-right: 2px solid var(--mkSelCorSetaSelecionado);
-	border-bottom: 2px solid var(--mkSelCorSetaSelecionado);
-	transform: rotate(45deg);
-	right: 8px;
+	padding: 0px 5px;
+	width: 8px;
+	height: 15px;
+	right: 6px;
 }
 li[m="1"] {
 	background: #ccf;
@@ -5777,6 +5778,8 @@ li[m="1"] {
 .rolaCima *,
 .rolaBaixo *{
 	pointer-events: none;
+	padding: 0px 2px;
+	height: 14px;
 }
 </style>
 <div class="mkSeletor">
@@ -5787,9 +5790,15 @@ li[m="1"] {
   </svg>
 </div>
 <div class="lista" part="lista">
-<div class="rolaCima" part="rolaCima" style="display: none;"><svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5'/></svg></div>
+<div class="rolaCima" part="rolaCima" style="display: none;">
+<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' style='-webkit-box-reflect: left;' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5'/></svg>
+<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' style='-webkit-box-reflect: right;' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5'/></svg>
+</div>
 <ul></ul>
-<div class="rolaBaixo" part="rolaBaixo" style="display: none;"><svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1'/></svg></div>
+<div class="rolaBaixo" part="rolaBaixo" style="display: none;">
+<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' style='-webkit-box-reflect: left;' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1'/></svg>
+<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' style='-webkit-box-reflect: right;' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1'/></svg>
+</div>
 </div>`;
         // GET / SETS Iniciais
         this.shadowRoot?.append(template.content);
@@ -5833,7 +5842,7 @@ li[m="1"] {
             mkt.Reposicionar(this.config.eList, true);
         });
         this.config.eList.addEventListener("scroll", () => {
-            let altura = this.config.eList.scrollHeight - this.config.eList.offsetHeight - 5; // Reduz a altura total para começar a baixar um pouco antes.
+            let altura = this.config.eList.scrollHeight - this.config.eList.offsetHeight - 10; // Reduz a altura total para começar a baixar um pouco antes.
             //mkt.l("Atual", (this.config.eList.scrollTop), " Altura:", (altura));
             if (this.config.eList.scrollTop >= altura) {
                 this.maisLinhas(this.config.populado, 10);
