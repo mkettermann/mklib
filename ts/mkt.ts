@@ -5622,50 +5622,55 @@ class mkSel extends HTMLElement {
 			}
 		},
 		mecanicaSelecionar: (novoK: any) => {
-			let novoV = this.config._data.get(novoK);
-			//mkt.l(this.getAttribute("name"), " - novoK: ", novoK, " novoV: ", novoV, ", Data: ", this.config._data);
-			if (mkt.classof(this.config.selapenas) == "Number") {
-				//mkt.l("Setado K: ", novoK, " V:", novoV, " Selecoes: ", this.config);
-				if (this.config.selapenas == 1) {
-					// UNICA SELEÇÃO
-					this.config.selecionados = new Map();
-					this.config.selecionados.set(novoK?.toString(), novoV?.toString());
-					if (novoK == "") {
-						this.value = "";
-					} else {
-						this.value = novoK;
-					}
-					this.config.geraEvento();
-				} else if ((this.config.selapenas > 1) || (this.config.selapenas < 0)) {
-					// MULTI SELEÇÃO
-					let jaSelecionado = false;
-					// Verifica já possui um selecionado. (Para saber se vai adicionar ou remover)
-					if (this.config.selecionados.has(novoK)) {
-						jaSelecionado = true;
-					};
-					if (jaSelecionado) {
-						// Remove valor da lista selecionada
-						this.config.selecionados.delete(novoK);
-					} else {
-						// Verifica se é possivel selecionar mais (Se estiver negativo, pode selecionar infinito)
-						if (this.config.selecionados.size < this.config.selapenas || this.config.selapenas < 0) {
-							// Acrescenta valor
-							this.config.selecionados.set(novoK?.toString(), novoV?.toString());
+			if (novoK != null) {
+				let novoV = this.config._data.get(novoK);
+				//mkt.l(this.getAttribute("name"), " - novoK: ", novoK, " novoV: ", novoV, ", Data: ", this.config._data);
+				if (mkt.classof(this.config.selapenas) == "Number") {
+					//mkt.l("Setado K: ", novoK, " V:", novoV, " Selecoes: ", this.config);
+					if (this.config.selapenas == 1) {
+						// UNICA SELEÇÃO
+						this.config.selecionados = new Map();
+						this.config.selecionados.set(novoK?.toString(), novoV?.toString());
+						if (novoK == "") {
+							this.value = "";
+						} else {
+							this.value = novoK;
 						}
-					}
+						this.config.geraEvento();
+					} else if ((this.config.selapenas > 1) || (this.config.selapenas < 0)) {
+						// MULTI SELEÇÃO
+						let jaSelecionado = false;
+						// Verifica já possui um selecionado. (Para saber se vai adicionar ou remover)
+						if (this.config.selecionados.has(novoK)) {
+							jaSelecionado = true;
+						};
+						if (jaSelecionado) {
+							// Remove valor da lista selecionada
+							this.config.selecionados.delete(novoK);
+						} else {
+							// Verifica se é possivel selecionar mais (Se estiver negativo, pode selecionar infinito)
+							if (this.config.selecionados.size < this.config.selapenas || this.config.selapenas < 0) {
+								// Acrescenta valor
+								this.config.selecionados.set(novoK?.toString(), novoV?.toString());
+							}
+						}
 
-					// Quando estiver vazio, reseta o campo.
-					// Seta o valor no campo de input
-					if (this.config.selecionados.size == 0) {
-						this.value = "";
-					} else {
-						this.value = mkt.stringify([...this.config.selecionados]);
-					}
-					this.config.geraEvento();
+						// Quando estiver vazio, reseta o campo.
+						// Seta o valor no campo de input
+						if (this.config.selecionados.size == 0) {
+							this.value = "";
+						} else {
+							this.value = mkt.stringify([...this.config.selecionados]);
+						}
+						this.config.geraEvento();
 
+					}
+				} else {
+					mkt.w("mk-sel - atributo 'selapenas' precisa ser número: ", mkt.classof(this.config.selapenas));
 				}
 			} else {
-				mkt.w("mk-sel - atributo 'selapenas' precisa ser número: ", mkt.classof(this.config.selapenas));
+				// Acredito que é possível clicar em alguns pixels fora da área do LI Element
+				//mkt.w("mk-sel", this.getAttribute("name"), "Erro de seleção: K: ", novoK);
 			}
 		},
 	};
@@ -6060,9 +6065,9 @@ slot {
 				mkt.w("mk-sel - Opções Inexistente Selecionada. Limpando forçada. Tentativa: ", this.config.fail, " - ", this.getAttribute("name"));
 				this.removeAttribute("value");
 			} else if (this.config.fail == 4) {
-				mkt.w("mk-sel - Opções Inexistente Selecionada. Limpando falhou. Tentativa: ", this.config.fail, " - ", this.getAttribute("name"));
+				mkt.w("mk-sel - Opções Inexistente Selecionada. Limpeza falhou. Tentativa: ", this.config.fail, " - ", this.getAttribute("name"));
 			}
-			if (this.config.fail < 3) { // Recarrega
+			if (this.config.fail < 4) { // Recarrega
 				setTimeout(() => {
 					this.forceUpdate();
 				}, 20);
