@@ -5883,6 +5883,16 @@ li[selecionado]::before{
         }
         mkt.Reposicionar(this.config.eList, true);
     }
+    async maisLinhas(inicio, total) {
+        let linha = document.createElement("template");
+        linha.innerHTML = "<li k='${0}'>${1}</li>";
+        let hold = document.createElement("template");
+        let dados = [...this.config._data].slice(inicio, (inicio + total));
+        this.config.populado = (inicio + total);
+        await mkt.moldeOA(dados, linha, hold);
+        mkt.l("Populou do: ", inicio, " Até: ", this.config.populado);
+        return hold.content.cloneNode(true);
+    }
     // Atualiza SelecionadosMap e Popula Lista (Total/Parcial)
     async aoPopularLista() {
         // Atualizar o Map de Selecionados (Para exibir os selecionados no início)
@@ -5893,16 +5903,12 @@ li[selecionado]::before{
         if (mkt.classof(this.config._data) == "Map") {
             // SE é pra popular parcialmente pelo scroll ou total.
             if (this.getAttribute("scrollcharge")?.toString().toLowerCase() == "true") {
-                let hold = document.createElement("template");
-                let dados = [...this.config._data];
-                mkz = dados;
-                await mkt.moldeOA(dados, linha, hold);
-                this.config.eUL.append(hold.content.cloneNode(true));
-                //this.config.populado
+                this.config.eUL.append(await this.maisLinhas(0, 10));
             }
             else {
                 // Carga Completa
-                await mkt.moldeOA([...this.config._data], linha, this.config.eUL);
+                this.config.eUL.append(await this.maisLinhas(0, this.config._data.size));
+                //await mkt.moldeOA([...this.config._data], linha, this.config.eUL);
             }
             if (this.config._data.size > 10) {
                 this.config.rolaCima.style.display = "";
