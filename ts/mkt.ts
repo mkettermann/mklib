@@ -5677,6 +5677,18 @@ class mkSel extends HTMLElement {
 				//mkt.w("mk-sel", this.config.name, "Erro de seleção: K: ", novoK);
 			}
 		},
+		moveScrollList: (este: HTMLDivElement, num: number, op: boolean) => {
+			op ? este.classList.add("move") : este.classList.remove("move");
+			this.config.scrollRecursiveMove(este, (4 * num));
+		},
+		scrollRecursiveMove: (este: HTMLDivElement, num: number) => {
+			this.config.eList.scrollTop = this.config.eList.scrollTop + num;
+			if (este.classList.contains("move")) {
+				mkt.wait(20).then(r => {
+					this.config.scrollRecursiveMove(este, num);
+				})
+			}
+		},
 	};
 	constructor() {
 		super();
@@ -5804,6 +5816,10 @@ li[selecionado]::before{
 .rolaBaixo{
 	bottom: 0;
 }
+.rolaCima *,
+.rolaBaixo *{
+	pointer-events: none;
+}
 </style>
 <div class="mkSeletor">
 	<input type="text" placeholder="Filtro \u{1F50D}" value="${this.config.vazio}" id="k" autocomplete="off"/>
@@ -5858,6 +5874,18 @@ li[selecionado]::before{
 				this.maisLinhas(this.config.populado, 10);
 			}
 		});
+		this.config.rolaBaixo.onmouseenter = (ev: Event) => {
+			this.config.moveScrollList(this.config.rolaBaixo, 1, true);
+		};
+		this.config.rolaBaixo.onmouseout = (ev: Event) => {
+			this.config.moveScrollList(this.config.rolaBaixo, 1, false);
+		};
+		this.config.rolaCima.onmouseenter = (ev: Event) => {
+			this.config.moveScrollList(this.config.rolaCima, -1, true);
+		};
+		this.config.rolaCima.onmouseout = (ev: Event) => {
+			this.config.moveScrollList(this.config.rolaCima, -1, false);
+		};
 		// Não precisa inicializar tudo por aqui pois quando tem opcoes, já gera get no opcoes.
 		this.atualizarDisplay();
 	} // Construtor mkSel
