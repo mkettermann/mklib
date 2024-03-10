@@ -5673,18 +5673,14 @@ li[selecionado]::before{
 	transform: rotate(45deg);
 	right: 8px;
 }
-slot {
-	cursor: default;
-	user-select: none;
-}
 .rolaCima,
 .rolaBaixo{
 	display: flex;
 	position: sticky;
-	background: #ccc;
 	border-radius: 3px;
 	z-index:1;
 	justify-content: center;
+	background-color: #ccc;
 }
 .rolaCima{
 	top: 0;
@@ -5692,7 +5688,7 @@ slot {
 .rolaBaixo{
 	bottom: 0;
 }
-</style>
+</style><slot name="style"></slot>
 <div class="mkSeletor">
 	<input type="text" placeholder="Filtro \u{1F50D}" value="${this.config.vazio}" id="k" autocomplete="off"/>
 	<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'>
@@ -5701,9 +5697,9 @@ slot {
   </svg>
 </div>
 <div class="lista">
-<div class="rolaCima"><svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5'/></svg></div>
+<div class="rolaCima" part="rolaCima"><svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5'/></svg></div>
 <ul></ul>
-<div class="rolaBaixo"><svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1'/></svg></div>
+<div class="rolaBaixo" part="rolaBaixo"><svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1'/></svg></div>
 </div>`;
         // GET / SETS Iniciais
         this.shadowRoot?.append(template.content);

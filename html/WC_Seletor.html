@@ -55,7 +55,16 @@
 <br /><br />
 <div class="i">
 	<div class="col25">
-		=)<br />
+		<b>Seletor Customizado:</b><br /><mk-sel name="staPersonalizado" vazio="Selecione"
+			opcoes='[["","Item Vazio"],["1","Sim"],[2,"Não"]]'>
+			<style slot="style">
+				.lista .rolaCima,
+				.lista .rolaBaixo {
+					background-color: red;
+					border: 1px solid red;
+				}
+			</style>
+		</mk-sel>
 	</div>
 	<div class="col25">
 		<b>Multi-Seletor Com Vazio:</b><br /><mk-sel name="codEstadosVazio"

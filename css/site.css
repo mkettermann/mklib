@@ -489,3 +489,8 @@ pre {
 mk-sel {
 	background-color: var(--bordaInput);
 }
+
+mk-sel::part(rolaCima),
+mk-sel::part(rolaBaixo) {
+	background-color: var(--tFundoHigh);
+}
