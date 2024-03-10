@@ -6017,9 +6017,9 @@ slot {
 	}
 
 	// Atualiza o selecionado Atual procurando no Map
-	atualizarDisplay = () => {
+	atualizarDisplay = async () => {
 		this.classList.remove("mkEfeitoPulsar");
-		let display = " -- Selecione -- ";
+		let display: string | null = " -- Selecione -- ";
 		if (this.config.vazio) {
 			display = this.config.vazio; // Display diferenciado quando vazio == ""
 		}
@@ -6033,6 +6033,7 @@ slot {
 					// - É um seletor único, mas o item selecionado está nulo.
 					// - E o item selecinoado não é vazio.
 					if (this.getFirstSelecionado?.[0] !== "") {
+						display = null; // <= Elementos Relacionados
 						// Se colocar grupo, os Elementos relacionados podem ser testados aqui
 						//mkt.w(this.getAttribute("name"), "Estava: ", this.getFirstSelecionado?.[0], ",", this.getFirstSelecionado?.[1])
 					}
@@ -6047,18 +6048,26 @@ slot {
 			}
 		};
 		if (!display) {
+			++this.config.fail;
 			// Provaveis causas externas fizeram o seletor entrar aqui.
 			display = " -- Erro -- ";
 			this.classList.add("mkEfeitoPulsar");
 			if (this.config.fail == 2) { // Tenta trocar opções
-				mkt.w("mk-sel - Refill emergencial em andamento.");
-				display = " -- Recarregando -- ";
-				this.refill();
+				mkt.w("mk-sel - Opções Inexistente Selecionada. Solicitando Refill. Tentativa: ", this.config.fail, " - ", this.getAttribute("name"));
+				display = " -- Carregando -- ";
+				await this.refill();
+			} else if (this.config.fail == 3) {
+				mkt.w("mk-sel - Opções Inexistente Selecionada. Limpando forçada. Tentativa: ", this.config.fail, " - ", this.getAttribute("name"));
+				this.removeAttribute("value");
+			} else if (this.config.fail == 4) {
+				mkt.w("mk-sel - Opções Inexistente Selecionada. Limpando falhou. Tentativa: ", this.config.fail, " - ", this.getAttribute("name"));
 			}
-			if (this.config.fail < 4) { // Recarrega
-				//this.forceUpdate();
+			if (this.config.fail < 3) { // Recarrega
+				setTimeout(() => {
+					this.forceUpdate();
+				}, 20);
 			}
-			mkt.w("Erro de Display. Tentativa: ", ++this.config.fail, " - ", this.getAttribute("name"));
+
 		} else {
 			this.config.fail = 0;
 		};
