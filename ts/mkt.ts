@@ -5942,14 +5942,14 @@ slot {
 		//mkt.l(strInputado);
 		if (this.pos) {
 			let strTratada = encodeURI(mkt.removeAcentos(strInputado));
-			mkt.l("Consultando: ", strTratada);
+			//mkt.l("Consultando: ", strTratada);
 			if (strTratada.length > 3) {
 				if (this.config.url != "") {
 					let novaUrl = this.config.url + "?s=" + strTratada;
 					let r = await mkt.get.json({ url: novaUrl });
 					if (r.retorno != null) {
 						let map = new Map(r.retorno)
-						mkt.l("Retorno Pesquisar: ", map);
+						//mkt.l("Retorno Pesquisar: ", map);
 						this.config._data = map;
 						this.opcoes = map;
 						this.config.eK.value = strInputado;
@@ -6178,7 +6178,7 @@ slot {
 				//this.config.opcoes = text;
 			} else {
 				if (mkt.classof(text) == "Map") {
-					mkt.l("Opções Map: ", text);
+					//mkt.l("Opções Map: ", text);
 					this.forceUpdate(true);
 					this.config.opcoes = JSON.stringify([...text]);
 				} else {
