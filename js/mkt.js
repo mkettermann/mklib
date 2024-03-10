@@ -5476,7 +5476,6 @@ Object.keys(mkt).forEach((n) => {
 //___________________________________\\
 // Está faltando resolver:
 // - Mecânica de teclado sobe, desce, enter seleciona, esc perde foco.
-// - Mecânica de setas para subir e descer / Seria bom fazer carregar ao descer.
 class mkSel extends HTMLElement {
     config = {
         name: "",
@@ -5519,7 +5518,7 @@ class mkSel extends HTMLElement {
                 let novoV = this.config._data.get(novoK);
                 //mkt.l(this.config.name, " - novoK: ", novoK, " novoV: ", novoV, ", Data: ", this.config._data);
                 if (mkt.classof(this.config.selapenas) == "Number") {
-                    //mkt.l("Setado K: ", novoK, " V:", novoV, " Selecoes: ", this.config);
+                    mkt.l("Setado K: ", novoK, " V:", novoV, " Selecoes: ", this.config);
                     if (this.config.selapenas == 1) {
                         // UNICA SELEÇÃO
                         this.config.selecionados = new Map();
@@ -5690,6 +5689,9 @@ li[selecionado]::before{
 	transform: rotate(45deg);
 	right: 8px;
 }
+li[m="1"] {
+	background: #ccf;
+}
 .rolaCima,
 .rolaBaixo{
 	display: flex;
@@ -5748,6 +5750,9 @@ li[selecionado]::before{
         };
         this.config.eK.oninput = () => {
             this.aoInput();
+        };
+        this.config.eK.onkeydown = (ev) => {
+            this.pesquisaKeyDown(ev);
         };
         this.config.svg.onclick = (ev) => {
             ev.stopPropagation();
@@ -5926,6 +5931,95 @@ li[selecionado]::before{
         }
         mkt.Reposicionar(this.config.eList, true);
     }
+    pesquisaKeyDown = (ev) => {
+        let isNegado = false;
+        mkt.l(ev);
+        if (ev.key == "Escape") {
+            this.config.eK.blur();
+        }
+        if (ev.key == "ArrowUp" || ev.key == "ArrowDown" || ev.key == "Enter") {
+            isNegado = true;
+            let eListItem;
+            let array = Array.from(this.config.eUL.children).filter((e) => {
+                return e.style.display != "none";
+            });
+            // Procura o atual alvo move
+            let eAlvo = array.find((e) => e.getAttribute("m") == "1");
+            Array.from(this.config.eUL.children).forEach((e) => e.removeAttribute("m"));
+            // Se é enter, tenta selecionar o alvo.
+            if (ev.key == "Enter") {
+                if (eAlvo) {
+                    this.config.mecanicaSelecionar(eAlvo.getAttribute("k"));
+                }
+                this.config.eK.blur();
+            }
+            if (ev.key == "ArrowUp") {
+                isNegado = true;
+                let ultimo = array[array.length - 1];
+                let peNultimo = array[array.length - 2];
+                if (eAlvo) {
+                    let indexProximo = array.indexOf(eAlvo) - 1;
+                    if (array[indexProximo] &&
+                        !array[indexProximo].classList.contains("mkSelItemDeCima")) {
+                        eListItem = array[indexProximo];
+                    }
+                    else {
+                        if (ultimo?.classList.contains("mkSelItemDeBaixo")) {
+                            eListItem = peNultimo;
+                        }
+                        else {
+                            eListItem = ultimo;
+                        }
+                    }
+                }
+                else {
+                    if (ultimo?.classList.contains("mkSelItemDeBaixo")) {
+                        eListItem = peNultimo;
+                    }
+                    else {
+                        eListItem = ultimo;
+                    }
+                }
+                eListItem?.setAttribute("m", "1");
+                let alvoOffsetTop = eListItem?.offsetTop || 0;
+                this.config.eList.scrollTop =
+                    alvoOffsetTop - 120 - (this.config.eList.offsetHeight - this.config.eList.clientHeight) / 2;
+            }
+            if (ev.key == "ArrowDown") {
+                isNegado = true;
+                if (eAlvo) {
+                    let indexProximo = array.indexOf(eAlvo) + 1;
+                    if (array[indexProximo] &&
+                        !array[indexProximo].classList.contains("mkSelItemDeBaixo")) {
+                        eListItem = array[indexProximo];
+                    }
+                    else {
+                        if (array[0]?.classList.contains("mkSelItemDeCima")) {
+                            eListItem = array[1];
+                        }
+                        else {
+                            eListItem = array[0];
+                        }
+                    }
+                }
+                else {
+                    if (array[0]?.classList.contains("mkSelItemDeCima")) {
+                        eListItem = array[1];
+                    }
+                    else {
+                        eListItem = array[0];
+                    }
+                }
+                eListItem?.setAttribute("m", "1");
+                let alvoOffsetTop = eListItem?.offsetTop || 0;
+                this.config.eList.scrollTop =
+                    alvoOffsetTop - 120 - (this.config.eList.clientHeight - this.config.eList.offsetHeight) / 2;
+            }
+        }
+        if (isNegado) {
+            ev.preventDefault();
+        }
+    };
     async maisLinhas(inicio, total) {
         let linha = document.createElement("template");
         linha.innerHTML = "<li k='${0}'>${1}</li>";
@@ -6111,7 +6205,7 @@ li[selecionado]::before{
     attributeChangedCallback(name, oldValue, newValue) {
         if (name === "disabled") {
             this.config.eK.disabled = newValue !== null;
-            this.aoBlur();
+            this.config.eK.blur();
         }
         else if (name === "size") {
             this.config.eK.size = newValue;
