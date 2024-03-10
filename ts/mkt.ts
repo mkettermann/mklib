@@ -4806,7 +4806,7 @@ class mkt {
 		});
 	};
 
-	static removeEspecias = (s: string) => {
+	static removeAcentos = (s: string) => {
 		// Remove acentos e depois chama Apenas Números e Letras.
 		s = s.toString();
 		let r = "";
@@ -4820,8 +4820,13 @@ class mkt {
 				r += s.charAt(p);
 			}
 		}
-		r = mkt.apenasNumerosLetras(r); // <== Apenas Numeros e Letras já convertidas passam
 		return r;
+	};
+
+	static removeEspecias = (s: string) => {
+		// Remove acentos e depois chama Apenas Números e Letras.
+		if (s) s = s.toString();
+		return mkt.apenasNumerosLetras(mkt.removeAcentos(s));
 	};
 
 	static removerAspas = (s: any) => {
@@ -5828,10 +5833,11 @@ slot {
 
 	// Funçao que refaz a lista, Coleta, Popula, Seleciona e Exibe o selecionado.
 	forceUpdate(ignore: boolean = false) {
-		// Durante o update, o usuário não deveria estar com o seletor aberto.
-		this.removeAttribute("focused");
 		// Ignora o New Map: Caso o opcoes já contem um map em vez de uma string JSON.
 		if (!ignore) {
+			// Durante o update, o usuário não deveria estar com o seletor aberto.
+			this.removeAttribute("focused");
+
 			// Caso o opções contem uma string JSON
 			if (mkt.isJson(this.config.opcoes)) {
 				let colect = mkt.parseJSON(this.config.opcoes);
@@ -5931,9 +5937,29 @@ slot {
 	}
 
 	// Exibe a lista baseado no filtro de pesquisa
-	aoInput() {
+	async aoInput() {
 		let strInputado = this.config.eK.value;
 		//mkt.l(strInputado);
+		if (this.pos) {
+			let strTratada = encodeURI(mkt.removeAcentos(strInputado));
+			mkt.l("Consultando: ", strTratada);
+			if (strTratada.length > 3) {
+				if (this.config.url != "") {
+					let novaUrl = this.config.url + "?s=" + strTratada;
+					let r = await mkt.get.json({ url: novaUrl });
+					if (r.retorno != null) {
+						let map = new Map(r.retorno)
+						mkt.l("Retorno Pesquisar: ", map);
+						this.config._data = map;
+						this.opcoes = map;
+						this.config.eK.value = strInputado;
+					}
+				} else {
+					mkt.w("mk-sel - Não foi possível fazer o refill: Sem URL setada.");
+				}
+			}
+		}
+
 		let cVisivel = 0;
 		Array.from(this.config.eList.firstElementChild.children).forEach((li: any) => {
 			let exibe = false;
@@ -6114,7 +6140,6 @@ slot {
 			this.config.url = newValue;
 		} else if (name === "pos") {
 			if (mkt.classof(this.config.url) == "String") {
-				mkt.l("URL OK: ", this.config.url);
 				this.config.eK.placeholder = "Pesquisar 🔍";
 				this.config.vazio = "Pesquisar 🔍";
 				this.atualizarDisplay();
@@ -6150,9 +6175,10 @@ slot {
 			if (mkt.classof(text) == "String") {
 				this.config.opcoes = text;
 				this.forceUpdate(false);
-				this.config.opcoes = text;
+				//this.config.opcoes = text;
 			} else {
 				if (mkt.classof(text) == "Map") {
+					mkt.l("Opções Map: ", text);
 					this.forceUpdate(true);
 					this.config.opcoes = JSON.stringify([...text]);
 				} else {
