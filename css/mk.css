@@ -690,7 +690,6 @@ button.CarregadorMkTopoDireito:hover {
 =========================*/
 .divInputInput {
 	min-height: 33px;
-	padding: 1px;
 }
 
 .divInputInput:has(.iConsultas) .field-validation-error {

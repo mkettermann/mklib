@@ -6404,7 +6404,11 @@ li[m="1"] {
 			this.setAttribute("value", text);
 		}
 	}
-	get [Symbol.toStringTag]() { return "HTMLInputElement"; }
+	get [Symbol.toStringTag]() { return "mk-sel"; }
+
+	[Symbol.iterator]() {
+		return this;
+	}
 
 	// Atributos sendo observados no elemento.
 	static observedAttributes: Array<string> = ["disabled", "size", "value", "opcoes", "url", "scrollbarwidth", "scrollbarcolor", "selapenas", "refill", "pos"];

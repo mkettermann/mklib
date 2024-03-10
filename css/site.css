@@ -487,6 +487,10 @@ pre {
 }
 
 
+.divInputInput {
+	padding: 2px 10px;
+}
+
 /* Personalizando mk-sel*/
 mk-sel {
 	background-color: var(--bordaInput);
@@ -494,7 +498,8 @@ mk-sel {
 
 mk-sel::part(rolaCima),
 mk-sel::part(rolaBaixo) {
-	background-color: var(--tFundoHigh);
+	background-color: var(--fundoMenu);
+	color: var(--corMenu);
 }
 
 mk-sel::part(lista) {
