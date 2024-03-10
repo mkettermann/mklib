@@ -5629,7 +5629,7 @@ class mkSel extends HTMLElement {
 				if (this.config.selapenas == 1) {
 					// UNICA SELEÇÃO
 					this.config.selecionados = new Map();
-					this.config.selecionados.set(novoK.toString(), novoV.toString());
+					this.config.selecionados.set(novoK?.toString(), novoV?.toString());
 					if (novoK == "") {
 						this.value = "";
 					} else {
@@ -5650,7 +5650,7 @@ class mkSel extends HTMLElement {
 						// Verifica se é possivel selecionar mais (Se estiver negativo, pode selecionar infinito)
 						if (this.config.selecionados.size < this.config.selapenas || this.config.selapenas < 0) {
 							// Acrescenta valor
-							this.config.selecionados.set(novoK.toString(), novoV.toString());
+							this.config.selecionados.set(novoK?.toString(), novoV?.toString());
 						}
 					}
 
@@ -6029,9 +6029,13 @@ slot {
 				if (this.getFirstSelecionado?.[1]) {
 					display = this.getFirstSelecionado?.[1];
 				} else {
+					// O que exibir?
+					// - É um seletor único, mas o item selecionado está nulo.
+					// - E o item selecinoado não é vazio.
 					if (this.getFirstSelecionado?.[0] !== "") {
+						//display = "";
 						// Se colocar grupo, os Elementos relacionados podem ser testados aqui
-						mkt.w("Estava Selecionado: ", this.getFirstSelecionado?.[0], ",", this.getFirstSelecionado?.[1])
+						//mkt.w(this.getAttribute("name"), "Estava: ", this.getFirstSelecionado?.[0], ",", this.getFirstSelecionado?.[1])
 					}
 				}
 			} else {
@@ -6043,7 +6047,7 @@ slot {
 				display = `0 selecionados`;
 			}
 		};
-		if (!display) {
+		if (display == null) {
 			// Provaveis causas externas fizeram o seletor entrar aqui.
 			display = " -- Erro -- ";
 			this.classList.add("mkEfeitoPulsar");
@@ -6053,7 +6057,7 @@ slot {
 				this.refill();
 			}
 			if (this.config.fail < 4) { // Recarrega
-				//this.forceUpdate();
+				this.forceUpdate();
 			}
 			mkt.w("Erro de Display. Tentativa: ", ++this.config.fail, " - ", this.getAttribute("name"));
 		} else {
