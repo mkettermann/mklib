@@ -6006,7 +6006,12 @@ li[selecionado]::before{
 		let linha = document.createElement("template");
 		linha.innerHTML = "<li k='${0}'>${1}</li>"
 		if (mkt.classof(this.config._data) == "Map") {
-			await mkt.moldeOA([...this.config._data], linha, this.config.eUL);
+			if (this.getAttribute("scrollcharge")?.toString().toLowerCase() == "true") {
+
+			} else {
+				// Carga Completa
+				await mkt.moldeOA([...this.config._data], linha, this.config.eUL);
+			}
 
 			if (this.config._data.size > 10) {
 				this.config.rolaCima.style.display = "";
