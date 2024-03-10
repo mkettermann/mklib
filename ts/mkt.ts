@@ -5623,13 +5623,13 @@ class mkSel extends HTMLElement {
 		},
 		mecanicaSelecionar: (novoK: any) => {
 			let novoV = this.config._data.get(novoK);
-			//mkt.l(this.getAttribute("name") + "\tSEL: ", novoK, "\tV: ", novoV + ", Sels: ", this.config.selecionados);
+			//mkt.l(this.getAttribute("name"), " - novoK: ", novoK, " novoV: ", novoV, ", Data: ", this.config._data);
 			if (mkt.classof(this.config.selapenas) == "Number") {
 				//mkt.l("Setado K: ", novoK, " V:", novoV, " Selecoes: ", this.config);
 				if (this.config.selapenas == 1) {
 					// UNICA SELEÇÃO
-					this.config.selecionados.clear();
-					this.config.selecionados.set(novoK, novoV);
+					this.config.selecionados = new Map();
+					this.config.selecionados.set(novoK.toString(), novoV.toString());
 					if (novoK == "") {
 						this.value = "";
 					} else {
@@ -5650,7 +5650,7 @@ class mkSel extends HTMLElement {
 						// Verifica se é possivel selecionar mais (Se estiver negativo, pode selecionar infinito)
 						if (this.config.selecionados.size < this.config.selapenas || this.config.selapenas < 0) {
 							// Acrescenta valor
-							this.config.selecionados.set(novoK, novoV);
+							this.config.selecionados.set(novoK.toString(), novoV.toString());
 						}
 					}
 
@@ -5882,7 +5882,7 @@ slot {
 		// Atualizar o Map de Selecionados
 		this.config.convertValueToMap();
 		// Atualiza a lista baseado no Map da Lista e no Map de Selecionados
-		this.aoAtualizaSelecionadosNaLista(true);
+		this.aoAtualizaSelecionadosNaLista();
 		// Atualiza o Display
 		this.atualizarDisplay();
 	}
@@ -5992,8 +5992,7 @@ slot {
 	}
 
 	// Itera Lista e marca ou desmarca o/os elementos do value.
-	aoAtualizaSelecionadosNaLista(mudouOpcoes = false) {
-		let selecionadoExiste = false;
+	aoAtualizaSelecionadosNaLista() {
 		// Atualiza as marcações dos selecionados atuais.
 		if (this.config.selapenas == 1) {
 			// Value é Unico
@@ -6001,7 +6000,6 @@ slot {
 				//mkt.l("Name: ", this.getAttribute("name"), " K_LI: ", li.getAttribute("k"), " selHas: ", this.config.selecionados.has(li.getAttribute("k")));
 				if (this.config.selecionados.has(li.getAttribute("k"))) {
 					li.setAttribute("selecionado", "");
-					selecionadoExiste = true;
 				} else {
 					li.removeAttribute("selecionado");
 				}
@@ -6011,31 +6009,10 @@ slot {
 			Array.from(this.config.eList?.querySelector("ul").children).forEach((li: any) => {
 				if (this.config.selecionados.has(li.getAttribute("k"))) {
 					li.setAttribute("selecionado", "");
-					selecionadoExiste = true;
 				} else {
 					li.removeAttribute("selecionado");
 				}
 			});
-		}
-
-		if (mudouOpcoes) {
-			if (!selecionadoExiste) {
-				if (this.value !== null) {
-					// Apenas QUANDO: 
-					// - Foi trocado as opções!
-					// - O selecionado não existe nas novas opções.
-					mkt.w({
-						"Valor:": this.config.value,
-						"Opcoes: ": this.config.selecionados,
-						"Campo: ": this.getAttribute("name"),
-						"MudouOpcoes? ": mudouOpcoes,
-						"EncontrouSelecionado? ": selecionadoExiste,
-					});
-					//this.setAttribute("value", "");
-					this.config.selecionados = new Map();
-					//this.config.value = "";
-				}
-			}
 		}
 	}
 
@@ -6048,7 +6025,15 @@ slot {
 		}
 		if (this.config.selecionados.size != 0) {
 			if (this.config.selapenas == 1) {
-				display = this.getFirstSelecionado?.[1];
+				// Seletor Unico que VALUE vem antes do OPCOES, fica NULL no [1]
+				if (this.getFirstSelecionado?.[1]) {
+					display = this.getFirstSelecionado?.[1];
+				} else {
+					if (this.getFirstSelecionado?.[0] !== "") {
+						// Se colocar grupo, os Elementos relacionados podem ser testados aqui
+						mkt.w("Estava Selecionado: ", this.getFirstSelecionado?.[0], ",", this.getFirstSelecionado?.[1])
+					}
+				}
 			} else {
 				display = `${this.config.selecionados.size} selecionados`
 			}
@@ -6068,9 +6053,9 @@ slot {
 				this.refill();
 			}
 			if (this.config.fail < 4) { // Recarrega
-				this.forceUpdate();
+				//this.forceUpdate();
 			}
-			mkt.w("Erro de Display. Tentativa: ", this.config.fail++);
+			mkt.w("Erro de Display. Tentativa: ", ++this.config.fail, " - ", this.getAttribute("name"));
 		} else {
 			this.config.fail = 0;
 		};
@@ -6102,12 +6087,11 @@ slot {
 		} else if (name === "size") {
 			this.config.eK.size = newValue;
 		} else if (name === "value") {
-			mkt.l(this.getAttribute("name"), " Set Value: ", newValue)
+			//mkt.l(this.getAttribute("name"), " Set Value: ", newValue)
 			if (this.config.value != newValue) {
 				this.config.value = newValue;
 				// Atualizar o Map de Selecionados
 				this.config.convertValueToMap();
-				// this.aoAtualizaSelecionadosNaLista();
 				this.atualizarDisplay()
 			}
 
