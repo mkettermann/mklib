@@ -5599,6 +5599,8 @@ class mkSel extends HTMLElement {
 		eV: null,
 		eList: null,
 		eUL: null,
+		rolaCima: null,
+		rolaBaixo: null,
 		vazio: " -- Selecione -- ",
 		svg: null,
 		selapenas: 1,
@@ -5808,15 +5810,17 @@ li[selecionado]::before{
   </svg>
 </div>
 <div class="lista" part="lista">
-<div class="rolaCima" part="rolaCima"><svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5'/></svg></div>
+<div class="rolaCima" part="rolaCima" style="display: none;"><svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5'/></svg></div>
 <ul></ul>
-<div class="rolaBaixo" part="rolaBaixo"><svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1'/></svg></div>
+<div class="rolaBaixo" part="rolaBaixo" style="display: none;"><svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1'/></svg></div>
 </div>`
 		// GET / SETS Iniciais
 		this.shadowRoot?.append(template.content);
 		this.config.eK = this.shadowRoot?.querySelector("#k");
 		this.config.eList = this.shadowRoot?.querySelector(".lista");
 		this.config.eUL = this.shadowRoot?.querySelector(".lista ul");
+		this.config.rolaCima = this.shadowRoot?.querySelector(".lista .rolaCima");
+		this.config.rolaBaixo = this.shadowRoot?.querySelector(".lista .rolaBaixo");
 		this.config.svg = this.shadowRoot?.querySelector("svg");
 		if (this.getAttribute("vazio")) this.config.vazio = this.getAttribute("vazio");
 		if (this.getAttribute("selapenas")) this.config.selapenas = Number(this.getAttribute("selapenas"));
@@ -5976,6 +5980,8 @@ li[selecionado]::before{
 		}
 
 		let cVisivel = 0;
+		this.config.rolaCima.style.display = "none";
+		this.config.rolaBaixo.style.display = "none";
 		Array.from(this.config.eUL.children).forEach((li: any) => {
 			let exibe = false;
 			if (mkt.like(strInputado, li.innerHTML)) {
@@ -5989,19 +5995,23 @@ li[selecionado]::before{
 			}
 		});
 		if (cVisivel > 10) {
-			this.config.eList.firstElementChild.style.display = "";
-			this.config.eList.lastElementChild.style.display = "";
+			this.config.rolaCima.style.display = "";
+			this.config.rolaBaixo.style.display = "";
 		}
 		mkt.Reposicionar(this.config.eList, true);
 	}
 
 	// Usa o MoldeOA pra criar os LI
 	async aoPopularLista() {
-
 		let linha = document.createElement("template");
 		linha.innerHTML = "<li k='${0}'>${1}</li>"
 		if (mkt.classof(this.config._data) == "Map") {
 			await mkt.moldeOA([...this.config._data], linha, this.config.eUL);
+
+			if (this.config._data.size > 10) {
+				this.config.rolaCima.style.display = "";
+				this.config.rolaBaixo.style.display = "";
+			}
 		}
 		mkt.Ao("click", this.config.eUL, (e: any, ev: Event) => {
 			this.selecionar(ev);

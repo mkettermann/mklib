@@ -486,6 +486,8 @@ pre {
 	border-radius: 5px;
 }
 
+
+/* Personalizando mk-sel*/
 mk-sel {
 	background-color: var(--bordaInput);
 }
@@ -493,4 +495,8 @@ mk-sel {
 mk-sel::part(rolaCima),
 mk-sel::part(rolaBaixo) {
 	background-color: var(--tFundoHigh);
+}
+
+mk-sel::part(lista) {
+	max-height: 200px;
 }
