@@ -6033,7 +6033,6 @@ slot {
 					// - É um seletor único, mas o item selecionado está nulo.
 					// - E o item selecinoado não é vazio.
 					if (this.getFirstSelecionado?.[0] !== "") {
-						//display = "";
 						// Se colocar grupo, os Elementos relacionados podem ser testados aqui
 						//mkt.w(this.getAttribute("name"), "Estava: ", this.getFirstSelecionado?.[0], ",", this.getFirstSelecionado?.[1])
 					}
@@ -6047,7 +6046,7 @@ slot {
 				display = `0 selecionados`;
 			}
 		};
-		if (display == null) {
+		if (!display) {
 			// Provaveis causas externas fizeram o seletor entrar aqui.
 			display = " -- Erro -- ";
 			this.classList.add("mkEfeitoPulsar");
@@ -6057,7 +6056,7 @@ slot {
 				this.refill();
 			}
 			if (this.config.fail < 4) { // Recarrega
-				this.forceUpdate();
+				//this.forceUpdate();
 			}
 			mkt.w("Erro de Display. Tentativa: ", ++this.config.fail, " - ", this.getAttribute("name"));
 		} else {
