@@ -5601,6 +5601,7 @@ class mkSel extends HTMLElement {
 		eUL: null,
 		rolaCima: null,
 		rolaBaixo: null,
+		populado: 0,
 		vazio: " -- Selecione -- ",
 		svg: null,
 		selapenas: 1,
@@ -5903,8 +5904,6 @@ li[selecionado]::before{
 		//mkt.l("Seletor: " + this.getAttribute("name") + ", Opcoes: ", this.config._data);
 		// Popular Lista com opcoes atuais
 		this.aoPopularLista();
-		// Atualizar o Map de Selecionados
-		this.config.convertValueToMap();
 		// Atualiza a lista baseado no Map da Lista e no Map de Selecionados
 		this.aoAtualizaSelecionadosNaLista();
 		// Atualiza o Display
@@ -6001,13 +6000,22 @@ li[selecionado]::before{
 		mkt.Reposicionar(this.config.eList, true);
 	}
 
-	// Usa o MoldeOA pra criar os LI
+	// Atualiza SelecionadosMap e Popula Lista (Total/Parcial)
 	async aoPopularLista() {
+		// Atualizar o Map de Selecionados (Para exibir os selecionados no início)
+		this.config.convertValueToMap();
+		// Template da Linha
 		let linha = document.createElement("template");
 		linha.innerHTML = "<li k='${0}'>${1}</li>"
 		if (mkt.classof(this.config._data) == "Map") {
+			// SE é pra popular parcialmente pelo scroll ou total.
 			if (this.getAttribute("scrollcharge")?.toString().toLowerCase() == "true") {
-
+				let hold = document.createElement("template");
+				let dados = [...this.config._data];
+				mkz = dados;
+				await mkt.moldeOA(dados, linha, hold);
+				this.config.eUL.append(hold.content.cloneNode(true));
+				//this.config.populado
 			} else {
 				// Carga Completa
 				await mkt.moldeOA([...this.config._data], linha, this.config.eUL);
@@ -6112,7 +6120,7 @@ li[selecionado]::before{
 				display = " -- Carregando -- ";
 				await this.refill();
 			} else if (this.config.fail == 3) {
-				mkt.w("mk-sel - Opções Inexistente Selecionada. Limpando forçada. Tentativa: ", this.config.fail, " - ", this.getAttribute("name"));
+				mkt.w("mk-sel - Opções Inexistente Selecionada. Limpeza forçada. Tentativa: ", this.config.fail, " - ", this.getAttribute("name"));
 				this.removeAttribute("value");
 			} else if (this.config.fail == 4) {
 				mkt.w("mk-sel - Opções Inexistente Selecionada. Limpeza falhou. Tentativa: ", this.config.fail, " - ", this.getAttribute("name"));
