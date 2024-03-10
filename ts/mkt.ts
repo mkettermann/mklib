@@ -5923,8 +5923,6 @@ slot {
 			() => {
 				if (document.activeElement !== this) {
 					// SE REALMENTE Saiu do elemento:
-					// Atualiza Itens Selecionados.
-					//this.aoAtualizaSelecionadosNaLista();
 					// Seta Valor do display
 					this.atualizarDisplay();
 					// Remove Status de focus pra sumir
@@ -6019,14 +6017,25 @@ slot {
 				}
 			});
 		}
-		if ((mudouOpcoes) && (!selecionadoExiste)) {
-			// Apenas QUANDO: 
-			// - Foi trocado as opções!
-			// - O selecionado não existe nas novas opções.
-			//mkt.l("aoAtualizaSelecionadosNaLista() - Name: ", this.getAttribute("name"), " MudouOpcoes? ", mudouOpcoes, " SelecionadoExiste? ", selecionadoExiste, " V: ", this.config.eV.value);
-			this.setAttribute("value", "");
-			this.config.selecionados = new Map();
-			this.config.value = "";
+
+		if (mudouOpcoes) {
+			if (!selecionadoExiste) {
+				if (this.value !== null) {
+					// Apenas QUANDO: 
+					// - Foi trocado as opções!
+					// - O selecionado não existe nas novas opções.
+					mkt.w({
+						"Valor:": this.config.value,
+						"Opcoes: ": this.config.selecionados,
+						"Campo: ": this.getAttribute("name"),
+						"MudouOpcoes? ": mudouOpcoes,
+						"EncontrouSelecionado? ": selecionadoExiste,
+					});
+					//this.setAttribute("value", "");
+					this.config.selecionados = new Map();
+					//this.config.value = "";
+				}
+			}
 		}
 	}
 
@@ -6058,7 +6067,7 @@ slot {
 				display = " -- Recarregando -- ";
 				this.refill();
 			}
-			if (this.config.fail < 5) { // Recarrega
+			if (this.config.fail < 4) { // Recarrega
 				this.forceUpdate();
 			}
 			mkt.w("Erro de Display. Tentativa: ", this.config.fail++);
@@ -6096,11 +6105,12 @@ slot {
 			mkt.l(this.getAttribute("name"), " Set Value: ", newValue)
 			if (this.config.value != newValue) {
 				this.config.value = newValue;
+				// Atualizar o Map de Selecionados
 				this.config.convertValueToMap();
-				//this.forceUpdate(false);
+				// this.aoAtualizaSelecionadosNaLista();
+				this.atualizarDisplay()
 			}
-			// this.aoAtualizaSelecionadosNaLista();
-			// this.atualizarDisplay();
+
 		} else if (name === "opcoes") {
 			if (this.getAttribute("opcoes")) {
 				this.opcoes = this.getAttribute("opcoes");
@@ -6131,11 +6141,12 @@ slot {
 	get opcoes() { return this.config._data; }
 	// Alterar as opções
 	set opcoes(text) {
-		//mkt.l("SET Opcões: ", text);
+		//mkt.l("SET Opcões: ", text, " Old: ", this.config.opcoes);
 		if (text) {
 			if (mkt.classof(text) == "String") {
 				this.config.opcoes = text;
 				this.forceUpdate(false);
+				this.config.opcoes = text;
 			} else {
 				if (mkt.classof(text) == "Map") {
 					this.forceUpdate(true);
