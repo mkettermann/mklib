@@ -5585,8 +5585,6 @@ Object.keys(mkt).forEach((n) => {
 //  Web Component MkSel - Seletor   \\
 //___________________________________\\
 // Está faltando resolver:
-// - Ao trocar value, reseleciona.
-// - Bug da Velocidade ao desselecionar varios rápido.
 // - Seletor Pós pela URL
 // - Mecânica de teclado sobe, desce, enter seleciona, esc perde foco.
 // - Mecânica de setas para subir e descer / Seria bom fazer carregar ao descer.
@@ -5631,11 +5629,7 @@ class mkSel extends HTMLElement {
 						// UNICA SELEÇÃO
 						this.config.selecionados = new Map();
 						this.config.selecionados.set(novoK?.toString(), novoV?.toString());
-						if (novoK == "") {
-							this.value = "";
-						} else {
-							this.value = novoK;
-						}
+						this.value = novoK;
 						this.config.geraEvento();
 					} else if ((this.config.selapenas > 1) || (this.config.selapenas < 0)) {
 						// MULTI SELEÇÃO
