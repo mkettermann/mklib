@@ -6105,7 +6105,6 @@ slot {
 				this.config.convertValueToMap();
 				this.atualizarDisplay()
 			}
-
 		} else if (name === "opcoes") {
 			if (this.getAttribute("opcoes")) {
 				this.opcoes = this.getAttribute("opcoes");
@@ -6113,6 +6112,16 @@ slot {
 			this.removeAttribute("opcoes"); // Mantem os dados em memória
 		} else if (name === "url") {
 			this.config.url = newValue;
+		} else if (name === "pos") {
+			if (mkt.classof(this.config.url) == "String") {
+				mkt.l("URL OK: ", this.config.url);
+				this.config.eK.placeholder = "Pesquisar 🔍";
+				this.config.vazio = "Pesquisar 🔍";
+				this.atualizarDisplay();
+			} else {
+				mkt.w("mk-sel - Seletor Pós precisam de uma URL para consulta: ", this.config.url);
+				this.removeAttribute("pos");
+			}
 		} else if (name === "refill") {
 			this.removeAttribute("refill");
 			if (newValue == null) { // Se removeu executa
@@ -6155,6 +6164,7 @@ slot {
 
 	get size() { return this.getAttribute("size"); }
 	get disabled() { return this.hasAttribute("disabled"); }
+	get pos() { return this.hasAttribute("pos"); }
 	get hidden() { return this.hasAttribute("hidden"); }
 	set size(value) { if (value) this.setAttribute("size", value); }
 	set disabled(value) {
@@ -6164,6 +6174,10 @@ slot {
 	set hidden(value) {
 		if (value) this.setAttribute("hidden", "");
 		else this.removeAttribute("hidden");
+	}
+	set pos(value) {
+		if (value) this.setAttribute("pos", "");
+		else this.removeAttribute("pos");
 	}
 	get value() {
 		if (this.getAttribute("value") == null) {
@@ -6178,7 +6192,7 @@ slot {
 	}
 
 	// Atributos sendo observados no elemento.
-	static observedAttributes: Array<string> = ["disabled", "size", "value", "opcoes", "url", "scrollbarwidth", "scrollbarcolor", "selapenas", "refill"];
+	static observedAttributes: Array<string> = ["disabled", "size", "value", "opcoes", "url", "scrollbarwidth", "scrollbarcolor", "selapenas", "refill", "pos"];
 }
 customElements.define("mk-sel", mkSel);
 
