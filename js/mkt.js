@@ -5479,6 +5479,7 @@ Object.keys(mkt).forEach((n) => {
 // - Mecânica de setas para subir e descer / Seria bom fazer carregar ao descer.
 class mkSel extends HTMLElement {
     config = {
+        name: "",
         filtrado: "",
         eK: null,
         eV: null,
@@ -5489,6 +5490,7 @@ class mkSel extends HTMLElement {
         populado: 0,
         vazio: " -- Selecione -- ",
         svg: null,
+        scrollcharge: false,
         selapenas: 1,
         _data: new Map(),
         opcoes: "",
@@ -5515,7 +5517,7 @@ class mkSel extends HTMLElement {
         mecanicaSelecionar: (novoK) => {
             if (novoK != null) {
                 let novoV = this.config._data.get(novoK);
-                //mkt.l(this.getAttribute("name"), " - novoK: ", novoK, " novoV: ", novoV, ", Data: ", this.config._data);
+                //mkt.l(this.config.name, " - novoK: ", novoK, " novoV: ", novoV, ", Data: ", this.config._data);
                 if (mkt.classof(this.config.selapenas) == "Number") {
                     //mkt.l("Setado K: ", novoK, " V:", novoV, " Selecoes: ", this.config);
                     if (this.config.selapenas == 1) {
@@ -5561,7 +5563,7 @@ class mkSel extends HTMLElement {
             }
             else {
                 // Acredito que é possível clicar em alguns pixels fora da área do LI Element
-                //mkt.w("mk-sel", this.getAttribute("name"), "Erro de seleção: K: ", novoK);
+                //mkt.w("mk-sel", this.config.name, "Erro de seleção: K: ", novoK);
             }
         },
     };
@@ -5712,10 +5714,14 @@ li[selecionado]::before{
         this.config.rolaCima = this.shadowRoot?.querySelector(".lista .rolaCima");
         this.config.rolaBaixo = this.shadowRoot?.querySelector(".lista .rolaBaixo");
         this.config.svg = this.shadowRoot?.querySelector("svg");
+        if (this.getAttribute("scrollcharge"))
+            this.config.scrollcharge = this.getAttribute("scrollcharge")?.toString().toLowerCase() == "true";
         if (this.getAttribute("vazio"))
             this.config.vazio = this.getAttribute("vazio");
         if (this.getAttribute("selapenas"))
             this.config.selapenas = Number(this.getAttribute("selapenas"));
+        if (this.getAttribute("name"))
+            this.config.name = this.getAttribute("name");
         // Eventos
         this.config.eK.onfocus = () => {
             this.setAttribute("focused", "");
@@ -5737,6 +5743,13 @@ li[selecionado]::before{
         });
         window.addEventListener("resize", (event) => {
             mkt.Reposicionar(this.config.eList, true);
+        });
+        this.config.eList.addEventListener("scroll", () => {
+            let altura = this.config.eList.scrollHeight - this.config.eList.offsetHeight - 5; // Reduz a altura total para começar a baixar um pouco antes.
+            //mkt.l("Atual", (this.config.eList.scrollTop), " Altura:", (altura));
+            if (this.config.eList.scrollTop >= altura) {
+                this.maisLinhas(this.config.populado, 10);
+            }
         });
         // Não precisa inicializar tudo por aqui pois quando tem opcoes, já gera get no opcoes.
         this.atualizarDisplay();
@@ -5763,6 +5776,7 @@ li[selecionado]::before{
                 this.config._data = new Map(); // Inicializa sem opcoes
             }
         }
+        this.config.eUL.classList.add("topoSel"); // <= Classe pra subir os selecionados
         // Aqui Seleciona inicialmente ou Seleciona novamente ao trocar o Opcoes.
         if (mkt.classof(this.config.selapenas) == "Number") {
             if (this.config.selapenas == 1) {
@@ -5773,7 +5787,6 @@ li[selecionado]::before{
                 });
             }
             else {
-                this.config.eUL.classList.add("topoSel"); // <= Classe pra subir os selecionados
                 // Multi seletor guarda um json no value.
                 if (mkt.isJson(this.value)) {
                     let colect = mkt.parseJSON(this.value);
@@ -5792,7 +5805,7 @@ li[selecionado]::before{
                 //mkt.l("Map Selecionados:", this.config.selecionados);
             }
         }
-        //mkt.l("Seletor: " + this.getAttribute("name") + ", Opcoes: ", this.config._data);
+        //mkt.l("Seletor: " + this.config.name + ", Opcoes: ", this.config._data);
         // Popular Lista com opcoes atuais
         this.aoPopularLista();
         // Atualiza a lista baseado no Map da Lista e no Map de Selecionados
@@ -5818,9 +5831,11 @@ li[selecionado]::before{
                 ePrimeiroSel = li;
         });
         // Faz movimento no scroll até a primeira opção selecionada
+        //if (this.config.scrollcharge) {
         let primeiroOffSet = ePrimeiroSel?.offsetTop || 0;
         this.config.eList.scrollTop =
             primeiroOffSet - 120 - (this.config.eList.offsetHeight - this.config.eList.clientHeight) / 2;
+        //}
         // Atualizar posição da Lista.
         mkt.Reposicionar(this.config.eList, true);
     }
@@ -5887,32 +5902,34 @@ li[selecionado]::before{
         let linha = document.createElement("template");
         linha.innerHTML = "<li k='${0}'>${1}</li>";
         let hold = document.createElement("template");
-        let dados = [...this.config._data].slice(inicio, (inicio + total));
-        this.config.populado = (inicio + total);
+        let ate = inicio + total;
+        let dados = [...this.config._data].slice(inicio, ate);
+        this.config.populado = Math.max(this.config.populado, ate);
         await mkt.moldeOA(dados, linha, hold);
-        mkt.l("Populou do: ", inicio, " Até: ", this.config.populado);
-        return hold.content.cloneNode(true);
+        //mkt.l("Populou do: ", inicio, " Até: ", this.config.populado);
+        this.config.eUL.append(hold.content.cloneNode(true));
+        if (this.config.populado >= 10) {
+            this.config.rolaCima.style.display = "";
+            this.config.rolaBaixo.style.display = "";
+        }
+        return this.config.populado;
     }
-    // Atualiza SelecionadosMap e Popula Lista (Total/Parcial)
+    // Atualiza SelecionadosMap e Popula Lista do Zero (Total/Parcial)
     async aoPopularLista() {
+        //if (this.config.name == "staSelecionado") mkt.w("Popular: ", this.config.name);
         // Atualizar o Map de Selecionados (Para exibir os selecionados no início)
         this.config.convertValueToMap();
-        // Template da Linha
-        let linha = document.createElement("template");
-        linha.innerHTML = "<li k='${0}'>${1}</li>";
+        // Reseta populados atuais
+        this.config.eUL.innerHTML = "";
+        this.config.populado = 0;
         if (mkt.classof(this.config._data) == "Map") {
             // SE é pra popular parcialmente pelo scroll ou total.
-            if (this.getAttribute("scrollcharge")?.toString().toLowerCase() == "true") {
-                this.config.eUL.append(await this.maisLinhas(0, 10));
+            if (this.config.scrollcharge) {
+                await this.maisLinhas(this.config.populado, 10);
             }
             else {
                 // Carga Completa
-                this.config.eUL.append(await this.maisLinhas(0, this.config._data.size));
-                //await mkt.moldeOA([...this.config._data], linha, this.config.eUL);
-            }
-            if (this.config._data.size > 10) {
-                this.config.rolaCima.style.display = "";
-                this.config.rolaBaixo.style.display = "";
+                await this.maisLinhas(this.config.populado, this.config._data.size);
             }
         }
         mkt.Ao("click", this.config.eUL, (e, ev) => {
@@ -5945,7 +5962,7 @@ li[selecionado]::before{
         if (this.config.selapenas == 1) {
             // Value é Unico
             Array.from(this.config.eUL.children).forEach((li) => {
-                //mkt.l("Name: ", this.getAttribute("name"), " K_LI: ", li.getAttribute("k"), " selHas: ", this.config.selecionados.has(li.getAttribute("k")));
+                //mkt.l("Name: ", this.config.name, " K_LI: ", li.getAttribute("k"), " selHas: ", this.config.selecionados.has(li.getAttribute("k")));
                 if (this.config.selecionados.has(li.getAttribute("k"))) {
                     li.setAttribute("selecionado", "");
                 }
@@ -5986,7 +6003,7 @@ li[selecionado]::before{
                     if (this.getFirstSelecionado?.[0] !== "") {
                         display = null; // <= Elementos Relacionados
                         // Se colocar grupo, os Elementos relacionados podem ser testados aqui
-                        //mkt.w(this.getAttribute("name"), "Estava: ", this.getFirstSelecionado?.[0], ",", this.getFirstSelecionado?.[1])
+                        //mkt.w(this.config.name, "Estava: ", this.getFirstSelecionado?.[0], ",", this.getFirstSelecionado?.[1])
                     }
                 }
             }
@@ -6007,16 +6024,16 @@ li[selecionado]::before{
             display = " -- Erro -- ";
             this.classList.add("mkEfeitoPulsar");
             if (this.config.fail == 2) { // Tenta trocar opções
-                mkt.w("mk-sel - Opções Inexistente Selecionada. Solicitando Refill. Tentativa: ", this.config.fail, " - ", this.getAttribute("name"));
+                mkt.w("mk-sel - Opções Inexistente Selecionada. Solicitando Refill. Tentativa: ", this.config.fail, " - ", this.config.name);
                 display = " -- Carregando -- ";
                 await this.refill();
             }
             else if (this.config.fail == 3) {
-                mkt.w("mk-sel - Opções Inexistente Selecionada. Limpeza forçada. Tentativa: ", this.config.fail, " - ", this.getAttribute("name"));
+                mkt.w("mk-sel - Opções Inexistente Selecionada. Limpeza forçada. Tentativa: ", this.config.fail, " - ", this.config.name);
                 this.removeAttribute("value");
             }
             else if (this.config.fail == 4) {
-                mkt.w("mk-sel - Opções Inexistente Selecionada. Limpeza falhou. Tentativa: ", this.config.fail, " - ", this.getAttribute("name"));
+                mkt.w("mk-sel - Opções Inexistente Selecionada. Limpeza falhou. Tentativa: ", this.config.fail, " - ", this.config.name);
             }
             if (this.config.fail < 4) { // Recarrega
                 setTimeout(() => {
@@ -6030,7 +6047,7 @@ li[selecionado]::before{
         ;
         this.config.eK.value = display;
         if (this.config._data.size <= 0) {
-            //mkt.l("Seletor " + this.getAttribute("name") + ": Nenhuma opção disponível: ", this.config._data.size);
+            //mkt.l("Seletor " + this.config.name + ": Nenhuma opção disponível: ", this.config._data.size);
             //this.config.eUL.innerHTML = ' &#45;&#45; Sem Op&#231;&#245;es &#45;&#45; ';
         }
     };
@@ -6056,7 +6073,7 @@ li[selecionado]::before{
             this.config.eK.size = newValue;
         }
         else if (name === "value") {
-            //mkt.l(this.getAttribute("name"), " Set Value: ", newValue)
+            //mkt.l(this.config.name, " Set Value: ", newValue)
             if (this.config.value != newValue) {
                 this.config.value = newValue;
                 // Atualizar o Map de Selecionados
