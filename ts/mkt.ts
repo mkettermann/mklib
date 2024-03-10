@@ -5764,6 +5764,7 @@ class mkSel extends HTMLElement {
 	border: 1px inset #9aa7b3;
 	border-radius: 4px;
 	background: #EEE;
+	width:100%;
 }
 :host .setaCima {
 	opacity: 0;
@@ -5807,9 +5808,13 @@ class mkSel extends HTMLElement {
 	display:flex;
 	width:100%;
 }
+.mkSeletor input{
+    width:100%;
+}
 .mkSeletor svg{
 	width: 14px;
 	user-select: none;
+    justify-self: end;
 }
 .lista{
 	display: none;
@@ -6399,6 +6404,7 @@ li[m="1"] {
 			this.setAttribute("value", text);
 		}
 	}
+	get [Symbol.toStringTag]() { return "HTMLInputElement"; }
 
 	// Atributos sendo observados no elemento.
 	static observedAttributes: Array<string> = ["disabled", "size", "value", "opcoes", "url", "scrollbarwidth", "scrollbarcolor", "selapenas", "refill", "pos"];
