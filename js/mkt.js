@@ -4962,14 +4962,16 @@ class mkt {
             e.setSelectionRange(len, len);
         }, 1);
     };
-    static geraObjForm = (este) => {
+    static geraObjForm = (form) => {
         // Gerar Objeto a partir de um Form Entries
-        let form = este;
-        if (mkt.classof(este) != "Object") {
+        if (mkt.classof(form) != "Object") {
             // Se vier o Elemento Form / o Query do Form
-            form = mkt.Q(este);
+            form = mkt.Q(form);
         }
         let rObjeto = mkt.limparOA(Object.fromEntries(new FormData(form).entries()));
+        Array.from(mkt.Q("form").querySelectorAll("mk-sel")).forEach(mks => {
+            rObjeto[mks.name] = mks.value;
+        });
         mkt.gc("Objeto Gerado: ");
         mkt.l(rObjeto);
         mkt.ge();
@@ -6309,12 +6311,13 @@ li[m="1"] {
             this.setAttribute("value", text);
         }
     }
+    get name() { return this.getAttribute("name"); }
+    set name(text) { if (text) {
+        this.setAttribute("name", text);
+    } }
     get [Symbol.toStringTag]() { return "mk-sel"; }
-    [Symbol.iterator]() {
-        return this;
-    }
     // Atributos sendo observados no elemento.
-    static observedAttributes = ["disabled", "size", "value", "opcoes", "url", "scrollbarwidth", "scrollbarcolor", "selapenas", "refill", "pos"];
+    static observedAttributes = ["disabled", "size", "value", "name", "opcoes", "url", "scrollbarwidth", "scrollbarcolor", "selapenas", "refill", "pos"];
 }
 customElements.define("mk-sel", mkSel);
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
