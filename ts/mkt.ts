@@ -5065,7 +5065,7 @@ class mkt {
 			form = mkt.Q(form);
 		}
 		let rObjeto: any = mkt.limparOA(Object.fromEntries(new FormData(form).entries()));
-		Array.from(mkt.Q("form").querySelectorAll("mk-sel")).forEach((mks: any) => {
+		Array.from(form.querySelectorAll("mk-sel")).forEach((mks: any) => {
 			rObjeto[mks.getAttribute("name")] = mks.getAttribute("value");
 		});
 		mkt.gc("Objeto Gerado: ");
