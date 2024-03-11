@@ -6400,7 +6400,7 @@ li[m="1"] {
 		return this.getAttribute("value");
 	}
 	set value(text) {
-		if (text) {
+		if (text != null) {
 			this.setAttribute("value", text);
 		}
 	}
