@@ -502,12 +502,9 @@ class mkt {
 		this.updateFiltro();
 		this.efeitoSort();
 		// Remove oculto, caso encontre a tag
-		if (mkt.Q(this.c.tableResultado))
+		if (mkt.Q(this.c.tableResultado)) {
 			mkt.Q(this.c.tableResultado).classList.remove("oculto");
-
-		// Inicia download do resto da lista
-		//this.startDownloadContinuo();
-
+		}
 
 	};
 
@@ -571,6 +568,8 @@ class mkt {
 	 * Executa a filtragem dos dados;
 	 */
 	atualizarListagem = async () => {
+		// A cada atualizar listagem, atualiza o filtro por garantia.
+		this._updateObjFiltro();
 		let pagBotoes = mkt.Q(this.c.pagBotoes);
 		// Processo de filtro que usa o objFiltro nos dadosFull e retorna dadosFiltrado já filtrado.
 		this.dadosFiltrado = mkt.processoFiltragem(
@@ -772,14 +771,18 @@ class mkt {
 		});
 	};
 
-	// Limpa e Gera Filtro. Padrao class ".iConsultas".
-	updateFiltro = () => {
+	_updateObjFiltro = () => {
 		// Limpa filtro atual
 		this.c.objFiltro = {};
 		// Gera filtro os nos campos
 		mkt.QAll(this.c.filtro).forEach((e: HTMLElement) => {
 			this.gerarFiltro(e);
 		});
+	}
+
+	// Limpa e Gera Filtro. Padrao class ".iConsultas".
+	updateFiltro = () => {
+		this._updateObjFiltro();
 		this.atualizaNaPaginaUm();
 	};
 
