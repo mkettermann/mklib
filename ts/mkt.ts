@@ -5069,7 +5069,7 @@ class mkt {
 			rObjeto[mks.name] = mks.value;
 		});
 		mkt.gc("Objeto Gerado: ");
-		mkt.l(rObjeto);
+		mkt.w(rObjeto);
 		mkt.ge();
 		return rObjeto;
 	}
