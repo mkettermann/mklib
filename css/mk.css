@@ -1913,6 +1913,14 @@ ul.mkUlFase li.disabled a {
 	user-select: none;
 }
 
+.tableResultado {
+	display: flex;
+}
+
+.tableInicioFim {
+	display: flex;
+}
+
 
 /* =======================
 	HEAD MENU
