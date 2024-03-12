@@ -271,7 +271,7 @@ class mkt {
 			this.headAtivar();
 
 			//Adiciona eventos aos botões do filtro
-			this.setFiltroListener();
+			if (this.c.filtro) this.setFiltroListener();
 		}
 
 		// A partir daqui o New e o Reset seguem iguais
@@ -500,7 +500,7 @@ class mkt {
 		mkt.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
 
 		// Executa um filtro inicial e na sequencia processa a exibição.
-		this.updateFiltro();
+		if (this.c.filtro) this.updateFiltro();
 		this.efeitoSort();
 		// Remove oculto, caso encontre a tag
 		if (mkt.Q(this.c.tableResultado)) {
