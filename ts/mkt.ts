@@ -453,6 +453,7 @@ class mkt {
 						this.dadosCheck();
 						r(p.retorno.length);
 					} else {
+						document.dispatchEvent(new Event("getListFalhou"));
 						r(null);
 					}
 				});
@@ -984,7 +985,7 @@ class mkt {
 	// Gera Listeners na THEAD da tabela (Requer classe: "sort-campo")
 	headAtivar = () => {
 		let eTrHeadPai = mkt.Q(this.c.container + " thead tr");
-		let opcoes = this.getModel().map(o => { if (o.f) return o.k; }).filter(r => { return r != null });
+		let opcoes = this.getModel().map(o => { if (o.f) { return o.k; } }).filter(r => { return r != null });
 		if (eTrHeadPai) {
 			Array.from(eTrHeadPai.children).forEach((th: any) => {
 				let possui: any = false;
@@ -5607,7 +5608,7 @@ class mkSel extends HTMLElement {
 		populado: 0,
 		vazio: " -- Selecione -- ",
 		svg: null,
-		scrollcharge: false,
+		scrollcharge: true, // Padrao é true: Com scroll carregando
 		selapenas: 1,
 		_data: new Map(),
 		opcoes: "", // String das opções
@@ -5691,10 +5692,12 @@ class mkSel extends HTMLElement {
 			if (this.config.selapenas == 1) {
 				this.config.selecionados.set(this.value, this.config._data.get(this.value));
 			} else {
-				let obj = mkt.parseJSON(this.value);
-				if (obj) {
-					this.config.selecionados = new Map(obj);
-
+				if (this.value) {
+					let obj = this.value.split(",");
+					if (obj) {
+						let map: any = obj.map(s => { return [s.toString(), ""] });
+						this.config.selecionados = new Map(map);
+					}
 				}
 			}
 		},
@@ -5733,7 +5736,7 @@ class mkSel extends HTMLElement {
 						if (this.config.selecionados.size == 0) {
 							this.value = "";
 						} else {
-							this.value = mkt.stringify([...this.config.selecionados]);
+							this.value = [...this.config.selecionados.keys()].join(",");
 						}
 						this.config.geraEvento();
 
@@ -5927,7 +5930,7 @@ li[m="1"] {
 		this.config.rolaCima = this.shadowRoot?.querySelector(".lista .rolaCima");
 		this.config.rolaBaixo = this.shadowRoot?.querySelector(".lista .rolaBaixo");
 		this.config.svg = this.shadowRoot?.querySelector("svg");
-		if (this.getAttribute("scrollcharge")) this.config.scrollcharge = this.getAttribute("scrollcharge")?.toString().toLowerCase() == "true";
+		if (this.getAttribute("scrollcharge")) this.config.scrollcharge = this.getAttribute("scrollcharge")?.toString().toLowerCase() != "false";
 		if (this.getAttribute("vazio")) this.config.vazio = this.getAttribute("vazio");
 		if (this.getAttribute("selapenas")) this.config.selapenas = Number(this.getAttribute("selapenas"));
 		if (this.getAttribute("name")) this.config.name = this.getAttribute("name");
@@ -5994,7 +5997,7 @@ li[m="1"] {
 						//Formato Map
 						//[["","Todos"],["False","N\u00E3o"],["True","Sim"]]
 						colect.forEach((v: any, i: any, a: any) => {
-							a[i][0] = a[i][0].toString();
+							a[i][0] = a[i][0].toString().replaceAll(",", ""); // Proibido Virgula na Key
 							a[i][1] = a[i][1].toString();
 							//mkt.l("v: ", v, " i: ", i, " a: ", a)
 						});
@@ -6002,8 +6005,9 @@ li[m="1"] {
 						if (mkt.classof(colect[0]) == "Object") {
 							// Formato KV
 							//[{"k":"","v":"Todos"},{"k":"False","v":"N\\u00E3o"},{"k":"True","v":"Sim"}]
-							colect = colect.map((r: any) => { return [r.k?.toString(), r.v?.toString()] });
-						} else {
+							colect = colect.map((r: any) => { return [r.k?.toString().replaceAll(",", ""), r.v?.toString()]; });
+						}
+						else {
 							colect = null;
 						}
 					}
@@ -6098,6 +6102,10 @@ li[m="1"] {
 	// Exibe a lista baseado no filtro de pesquisa
 	async aoInput() {
 		let strInputado = this.config.eK.value;
+		// Quando está pesquisando, precisa estar com todas as linhas já populadas pra filtrar sobre elas
+		if (this.config.eUL.children.length < this.config._data.size) {
+			await this.maisLinhas(this.config.populado, this.config._data.size);
+		}
 		//mkt.l(strInputado);
 		if (this.pos) {
 			let strTratada = encodeURI(mkt.removeAcentos(strInputado));
@@ -6134,7 +6142,7 @@ li[m="1"] {
 				li.style.display = "none";
 			}
 		});
-		if (cVisivel > 10) {
+		if (cVisivel >= 10) {
 			this.config.rolaCima.style.display = "";
 			this.config.rolaBaixo.style.display = "";
 		}
@@ -6166,7 +6174,8 @@ li[m="1"] {
 		await mkt.moldeOA(dadosFiltrado, linha, hold);
 		//mkt.l("Populou do: ", inicio, " Até: ", this.config.populado);
 		this.config.eUL.append(hold.content.cloneNode(true));
-		if (this.config.populado >= 10) {
+		if (this.config.eUL.children.length >= 10) {
+			//mkt.l(this.name, this.config.eUL.children.length);
 			this.config.rolaCima.style.display = "";
 			this.config.rolaBaixo.style.display = "";
 		}
