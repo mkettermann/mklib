@@ -5607,7 +5607,7 @@ class mkSel extends HTMLElement {
 		populado: 0,
 		vazio: " -- Selecione -- ",
 		svg: null,
-		scrollcharge: false,
+		scrollcharge: true, // Padrao é true: Com scroll carregando
 		selapenas: 1,
 		_data: new Map(),
 		opcoes: "", // String das opções
@@ -5927,7 +5927,7 @@ li[m="1"] {
 		this.config.rolaCima = this.shadowRoot?.querySelector(".lista .rolaCima");
 		this.config.rolaBaixo = this.shadowRoot?.querySelector(".lista .rolaBaixo");
 		this.config.svg = this.shadowRoot?.querySelector("svg");
-		if (this.getAttribute("scrollcharge")) this.config.scrollcharge = this.getAttribute("scrollcharge")?.toString().toLowerCase() == "true";
+		if (this.getAttribute("scrollcharge")) this.config.scrollcharge = this.getAttribute("scrollcharge")?.toString().toLowerCase() != "false";
 		if (this.getAttribute("vazio")) this.config.vazio = this.getAttribute("vazio");
 		if (this.getAttribute("selapenas")) this.config.selapenas = Number(this.getAttribute("selapenas"));
 		if (this.getAttribute("name")) this.config.name = this.getAttribute("name");
@@ -6086,6 +6086,10 @@ li[m="1"] {
 	// Exibe a lista baseado no filtro de pesquisa
 	async aoInput() {
 		let strInputado = this.config.eK.value;
+		// Quando está pesquisando, precisa estar com todas as linhas já populadas pra filtrar sobre elas
+		if (this.config.eUL.children.length < this.config._data.size) {
+			await this.maisLinhas(this.config.populado, this.config._data.size);
+		}
 		//mkt.l(strInputado);
 		if (this.pos) {
 			let strTratada = encodeURI(mkt.removeAcentos(strInputado));
@@ -6122,7 +6126,7 @@ li[m="1"] {
 				li.style.display = "none";
 			}
 		});
-		if (cVisivel > 10) {
+		if (cVisivel >= 10) {
 			this.config.rolaCima.style.display = "";
 			this.config.rolaBaixo.style.display = "";
 		}
@@ -6154,7 +6158,8 @@ li[m="1"] {
 		await mkt.moldeOA(dadosFiltrado, linha, hold);
 		//mkt.l("Populou do: ", inicio, " Até: ", this.config.populado);
 		this.config.eUL.append(hold.content.cloneNode(true));
-		if (this.config.populado >= 10) {
+		if (this.config.eUL.children.length >= 10) {
+			//mkt.l(this.name, this.config.eUL.children.length);
 			this.config.rolaCima.style.display = "";
 			this.config.rolaBaixo.style.display = "";
 		}
