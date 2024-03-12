@@ -573,7 +573,9 @@ class mkt {
      */
     atualizarListagem = async () => {
         // A cada atualizar listagem, atualiza o filtro por garantia.
-        this._updateObjFiltro();
+        if (this.c.filtroDinamico) { // Não refiltrar caso for por consulta
+            this._updateObjFiltro();
+        }
         let pagBotoes = mkt.Q(this.c.pagBotoes);
         // Processo de filtro que usa o objFiltro nos dadosFull e retorna dadosFiltrado já filtrado.
         this.dadosFiltrado = mkt.processoFiltragem(this.dadosFull, this.c.objFiltro, this);
@@ -968,11 +970,9 @@ class mkt {
     // Gera Listeners na THEAD da tabela (Requer classe: "sort-campo")
     headAtivar = () => {
         let eTrHeadPai = mkt.Q(this.c.container + " thead tr");
-        let opcoes = this.getModel().map(o => {
-            if (o.f) {
-                return o.k;
-            }
-        }).filter(r => { return r != null; });
+        let opcoes = this.getModel().map(o => { if (o.f) {
+            return o.k;
+        } }).filter(r => { return r != null; });
         if (eTrHeadPai) {
             Array.from(eTrHeadPai.children).forEach((th) => {
                 let possui = false;
@@ -1306,10 +1306,8 @@ class mkt {
                 // iof == indexOf mkt.a.build
                 if ((mkt.classof(iof) == "String") && (mkt.classof(colName) == "String")) {
                     // Sempre que abre o menu, da o replace do this na estática.
-                    let opcoes = mkt.getThis(Number(iof)).getModel().map((o) => {
-                        if (o.f)
-                            return o.k;
-                    }).filter((r) => { return r != null; });
+                    let opcoes = mkt.getThis(Number(iof)).getModel().map((o) => { if (o.f)
+                        return o.k; }).filter((r) => { return r != null; });
                     let posAtual = opcoes.indexOf(colName);
                     let posAnterior = 0;
                     if (posAtual >= 0) { // Se o atual existe
@@ -1327,10 +1325,8 @@ class mkt {
             },
             Next: (colName, iof) => {
                 if (mkt.classof(iof) == "String") {
-                    let opcoes = mkt.getThis(Number(iof)).getModel().map((o) => {
-                        if (o.f)
-                            return o.k;
-                    }).filter((r) => { return r != null; });
+                    let opcoes = mkt.getThis(Number(iof)).getModel().map((o) => { if (o.f)
+                        return o.k; }).filter((r) => { return r != null; });
                     let posAtual = opcoes.indexOf(colName);
                     let posSeguinte = 0;
                     if (posAtual >= 0) { // Se o atual existe
@@ -1558,41 +1554,41 @@ class mkt {
         timers: [],
         util: {
             cpf: ["000.000.000-00", /^([0-9]{3}([\.]?[0-9]{3}){2}[-]?[0-9]{2})$/, (cpf) => {
-                let m1 = [10, 9, 8, 7, 6, 5, 4, 3, 2];
-                let m2 = [11, 10, 9, 8, 7, 6, 5, 4, 3, 2];
-                if (!cpf) {
-                    return false;
-                }
-                cpf = mkt.apenasNumeros(cpf);
-                if (cpf.length != 11) {
-                    return false;
-                }
-                let temp = cpf.slice(0, 9);
-                let c = 0;
-                for (let i = 0; i < 9; i++) {
-                    c += Number(temp.charAt(i)) * m1[i];
-                }
-                let r = c % 11;
-                (r < 2) ? r = 0 : r = 11 - r;
-                temp += r.toString();
-                c = 0;
-                for (let i = 0; i < 10; i++) {
-                    c += Number(temp.charAt(i)) * m2[i];
-                }
-                r = c % 11;
-                (r < 2) ? r = 0 : r = 11 - r;
-                return cpf.charAt(10) == r.toString();
-            }],
+                    let m1 = [10, 9, 8, 7, 6, 5, 4, 3, 2];
+                    let m2 = [11, 10, 9, 8, 7, 6, 5, 4, 3, 2];
+                    if (!cpf) {
+                        return false;
+                    }
+                    cpf = mkt.apenasNumeros(cpf);
+                    if (cpf.length != 11) {
+                        return false;
+                    }
+                    let temp = cpf.slice(0, 9);
+                    let c = 0;
+                    for (let i = 0; i < 9; i++) {
+                        c += Number(temp.charAt(i)) * m1[i];
+                    }
+                    let r = c % 11;
+                    (r < 2) ? r = 0 : r = 11 - r;
+                    temp += r.toString();
+                    c = 0;
+                    for (let i = 0; i < 10; i++) {
+                        c += Number(temp.charAt(i)) * m2[i];
+                    }
+                    r = c % 11;
+                    (r < 2) ? r = 0 : r = 11 - r;
+                    return cpf.charAt(10) == r.toString();
+                }],
             cep: ["00.000-000", /^([0-9]{2}[\.]?[0-9]{3}[-]?[0-9]{3})$/, (cep) => {
-                if (!cep) {
-                    return false;
-                }
-                cep = mkt.apenasNumeros(cep);
-                if (cep.length != 8) {
-                    return false;
-                }
-                return true;
-            }],
+                    if (!cep) {
+                        return false;
+                    }
+                    cep = mkt.apenasNumeros(cep);
+                    if (cep.length != 8) {
+                        return false;
+                    }
+                    return true;
+                }],
             cnpj: [
                 "00.000.000/0000-00",
                 /^([0-9]{2}([\.]?[0-9]{3}){2}[\/]?[0-9]{4}[-]?[0-9]{2})$/, (cnpj) => {
@@ -1637,15 +1633,15 @@ class mkt {
                 }
             ],
             cnh: ["00000000000", /^([0-9]{11})$/, (cnh) => {
-                if (!cnh) {
-                    return false;
-                }
-                cnh = mkt.apenasNumeros(cnh);
-                if (cnh.length != 11) {
-                    return false;
-                }
-                return true;
-            }],
+                    if (!cnh) {
+                        return false;
+                    }
+                    cnh = mkt.apenasNumeros(cnh);
+                    if (cnh.length != 11) {
+                        return false;
+                    }
+                    return true;
+                }],
             placa: ["AAA-0S00", /^([A-Za-z]{3}[-]?[0-9]{1}[A-Za-z0-9]{1}[0-9]{2})$/],
             placaAntesMercosul: ["AAA-0000", /^([A-Za-z]{3}[-]?[0-9]{4})$/],
             placaMercosul: [
@@ -6316,10 +6312,8 @@ li[m="1"] {
     get disabled() { return this.hasAttribute("disabled"); }
     get pos() { return this.hasAttribute("pos"); }
     get hidden() { return this.hasAttribute("hidden"); }
-    set size(value) {
-        if (value)
-            this.setAttribute("size", value);
-    }
+    set size(value) { if (value)
+        this.setAttribute("size", value); }
     set disabled(value) {
         if (value)
             this.setAttribute("disabled", "");
@@ -6350,11 +6344,9 @@ li[m="1"] {
         }
     }
     get name() { return this.getAttribute("name"); }
-    set name(text) {
-        if (text) {
-            this.setAttribute("name", text);
-        }
-    }
+    set name(text) { if (text) {
+        this.setAttribute("name", text);
+    } }
     get [Symbol.toStringTag]() { return "mk-sel"; }
     // Atributos sendo observados no elemento.
     static observedAttributes = ["disabled", "size", "value", "name", "opcoes", "url", "scrollbarwidth", "scrollbarcolor", "selapenas", "refill", "pos"];
