@@ -985,7 +985,7 @@ class mkt {
 	// Gera Listeners na THEAD da tabela (Requer classe: "sort-campo")
 	headAtivar = () => {
 		let eTrHeadPai = mkt.Q(this.c.container + " thead tr");
-		let opcoes = this.getModel().map(o => { if (o.f) return o.k; }).filter(r => { return r != null });
+		let opcoes = this.getModel().map(o => { if (o.f) { return o.k; } }).filter(r => { return r != null });
 		if (eTrHeadPai) {
 			Array.from(eTrHeadPai.children).forEach((th: any) => {
 				let possui: any = false;
