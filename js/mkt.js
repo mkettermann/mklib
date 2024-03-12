@@ -509,13 +509,15 @@ class mkt {
         // Ordena a lista geral com base na primeira propriedade.
         mkt.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
         // Executa um filtro inicial e na sequencia processa a exibição.
-        if (this.c.filtro)
-            this.updateFiltro();
+        if (this.c.filtro) {
+            this._updateObjFiltro();
+        }
         this.efeitoSort();
         // Remove oculto, caso encontre a tag
         if (mkt.Q(this.c.tableResultado)) {
             mkt.Q(this.c.tableResultado).classList.remove("oculto");
         }
+        this.atualizaNaPaginaUm();
     };
     dadosCheck = () => {
         // Verificação de ChavesRepetidas
