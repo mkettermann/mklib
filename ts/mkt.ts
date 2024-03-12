@@ -5735,7 +5735,7 @@ class mkSel extends HTMLElement {
 						if (this.config.selecionados.size == 0) {
 							this.value = "";
 						} else {
-							this.value = mkt.stringify([...this.config.selecionados]);
+							this.value = [...this.config.selecionados.keys()].join(",");
 						}
 						this.config.geraEvento();
 

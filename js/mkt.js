@@ -5629,7 +5629,7 @@ class mkSel extends HTMLElement {
                             this.value = "";
                         }
                         else {
-                            this.value = mkt.stringify([...this.config.selecionados]);
+                            this.value = [...this.config.selecionados.keys()].join(",");
                         }
                         this.config.geraEvento();
                     }
