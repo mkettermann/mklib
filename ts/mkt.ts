@@ -453,6 +453,7 @@ class mkt {
 						this.dadosCheck();
 						r(p.retorno.length);
 					} else {
+						mkt.Q(this.c.container).dispatchEvent(new CustomEvent("getListFalhou"));
 						r(null);
 					}
 				});
