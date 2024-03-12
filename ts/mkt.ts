@@ -5691,10 +5691,12 @@ class mkSel extends HTMLElement {
 			if (this.config.selapenas == 1) {
 				this.config.selecionados.set(this.value, this.config._data.get(this.value));
 			} else {
-				let obj = mkt.parseJSON(this.value);
-				if (obj) {
-					this.config.selecionados = new Map(obj);
-
+				if (this.value) {
+					let obj = this.value.split(",");
+					if (obj) {
+						let map: any = obj.map(s => { return [s.toString(), ""] });
+						this.config.selecionados = new Map(map);
+					}
 				}
 			}
 		},
