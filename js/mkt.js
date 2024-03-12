@@ -466,7 +466,7 @@ class mkt {
                         r(p.retorno.length);
                     }
                     else {
-                        mkt.Q(this.c.container).dispatchEvent(new CustomEvent("getListFalhou"));
+                        document.dispatchEvent(new Event("getListFalhou"));
                         r(null);
                     }
                 });
