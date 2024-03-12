@@ -5889,11 +5889,25 @@ li[m="1"] {
             if (mkt.isJson(this.config.opcoes)) {
                 let colect = mkt.parseJSON(this.config.opcoes);
                 if (mkt.classof(colect) == "Array") {
-                    colect.forEach((v, i, a) => {
-                        a[i][0] = a[i][0].toString();
-                        a[i][1] = a[i][1].toString();
-                        //mkt.l("v: ", v, " i: ", i, " a: ", a)
-                    });
+                    if (mkt.classof(colect[0]) == "Array") {
+                        //Formato Map
+                        //[["","Todos"],["False","N\u00E3o"],["True","Sim"]]
+                        colect.forEach((v, i, a) => {
+                            a[i][0] = a[i][0].toString().replaceAll(",", ""); // Proibido Virgula na Key
+                            a[i][1] = a[i][1].toString();
+                            //mkt.l("v: ", v, " i: ", i, " a: ", a)
+                        });
+                    }
+                    else {
+                        if (mkt.classof(colect[0]) == "Object") {
+                            // Formato KV
+                            //[{"k":"","v":"Todos"},{"k":"False","v":"N\\u00E3o"},{"k":"True","v":"Sim"}]
+                            colect = colect.map((r) => { return [r.k?.toString().replaceAll(",", ""), r.v?.toString()]; });
+                        }
+                        else {
+                            colect = null;
+                        }
+                    }
                 }
                 this.config._data = new Map(colect);
             }
