@@ -6079,6 +6079,8 @@ li[m="1"] {
         await mkt.moldeOA(dadosFiltrado, linha, hold);
         //mkt.l("Populou do: ", inicio, " Até: ", this.config.populado);
         this.config.eUL.append(hold.content.cloneNode(true));
+        this.config.rolaCima.style.display = "none";
+        this.config.rolaBaixo.style.display = "none";
         if (this.config.eUL.children.length >= 10) {
             //mkt.l(this.name, this.config.eUL.children.length);
             this.config.rolaCima.style.display = "";
