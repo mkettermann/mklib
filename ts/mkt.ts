@@ -5778,6 +5778,7 @@ class mkSel extends HTMLElement {
 	border-radius: 4px;
 	background: #EEE;
 	width:100%;
+	line-height: normal;
 }
 :host .setaCima {
 	opacity: 0;
@@ -5816,6 +5817,9 @@ class mkSel extends HTMLElement {
 }
 :host([focused]) #lista{
 	display: block;
+}
+:host(:not([focused])) *{
+	cursor: pointer;
 }
 #mkSeletor{
 	display:flex;
