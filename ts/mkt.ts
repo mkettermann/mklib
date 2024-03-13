@@ -6329,17 +6329,18 @@ li[m="1"] {
 	};
 
 	async refill(url = null) {
-		if (url != null) {
-			this.config.url = url;
+		let urlExecutar = this.config.url; // Padrão a do atributo
+		if (url != null) { // Se informar url
+			urlExecutar = url; // Url a ser executada é do parametro
 		}
-		if (this.config.url != "") {
+		if (urlExecutar) { // Apenas URL não vazia
 			let r = await mkt.get.json({ url: this.config.url });
 			if (r.retorno != null) {
 				//mkt.l("Retorno Refill: ", r.retorno);
 				this.setAttribute("opcoes", mkt.stringify(r.retorno));
 			}
 		} else {
-			mkt.w("mk-sel - Não foi possível fazer o refill: Sem URL setada.");
+			mkt.w("mk-sel - Não foi possível fazer o refill: Sem URL setada: ", urlExecutar);
 		}
 	}
 
