@@ -6294,7 +6294,12 @@ li[m="1"] {
     get getFirstSelecionado() { return [...this.selecionadosMap]?.[0] || null; }
     get selecionadosMap() { return this.config.selecionados; }
     get values() { return [...this.selecionadosMap.values()]; }
-    get valuesOk() { return this.values.map(i => { return mkt.removeEspecias(i).toLowerCase(); }); }
+    get valuesOk() { return this.values.map(i => { if (i) {
+        return mkt.removeEspecias(i).toLowerCase();
+    }
+    else {
+        return null;
+    } }); }
     get keys() { return [...this.selecionadosMap.keys()]; }
     // Recuperar as opções
     get opcoes() { return this.config._data; }
