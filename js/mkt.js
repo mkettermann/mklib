@@ -6298,7 +6298,7 @@ li[m="1"] {
         return mkt.removeEspecias(i).toLowerCase();
     }
     else {
-        return null;
+        return "";
     } }); }
     get keys() { return [...this.selecionadosMap.keys()]; }
     // Recuperar as opções
