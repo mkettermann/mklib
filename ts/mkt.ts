@@ -6331,7 +6331,7 @@ li[m="1"] {
 	async refill(url = null) {
 		let urlExecutar = this.config.url; // Padrão a do atributo
 		if (url != null) { // Se informar url
-			urlExecutar = url; // Url a ser executada é do parametro
+			urlExecutar = urlExecutar + url; // Url entra atrás do URL informado manualmente no atributo
 		}
 		if (urlExecutar) { // Apenas URL não vazia
 			let r = await mkt.get.json({ url: this.config.url });
