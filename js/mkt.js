@@ -6230,7 +6230,7 @@ li[m="1"] {
             urlExecutar = urlExecutar + url; // Url entra atrás do URL informado manualmente no atributo
         }
         if (urlExecutar) { // Apenas URL não vazia
-            let r = await mkt.get.json({ url: this.config.url });
+            let r = await mkt.get.json({ url: urlExecutar });
             if (r.retorno != null) {
                 //mkt.l("Retorno Refill: ", r.retorno);
                 this.setAttribute("opcoes", mkt.stringify(r.retorno));
