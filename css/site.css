@@ -494,7 +494,7 @@ pre {
 /* Personalizando mk-sel*/
 mk-sel {
 	background-color: var(--bordaInput);
-	height: 35px;
+	height: 28px;
 }
 
 mk-sel::part(rolaCima),

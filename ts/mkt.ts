@@ -5814,7 +5814,7 @@ class mkSel extends HTMLElement {
 	transition: 0.5s ease-in-out;
 	transform: translate(0px, 0px);
 }
-:host([focused]) .lista{
+:host([focused]) #lista{
 	display: block;
 }
 #mkSeletor{
@@ -5823,14 +5823,14 @@ class mkSel extends HTMLElement {
 	height: 100%;
 }
 #mkSeletor input{
-    width:100%;
+	width:100%;
 }
 #mkSeletor svg{
 	width: 14px;
 	user-select: none;
-    justify-self: end;
+  justify-self: end;
 }
-.lista{
+#lista{
 	display: none;
 	position: fixed;
 	border: 1px solid black;
@@ -5888,8 +5888,8 @@ li[selecionado]::before{
 li[m="1"] {
 	background: #ccf;
 }
-.rolaCima,
-.rolaBaixo{
+#rolaCima,
+#rolaBaixo{
 	display: flex;
 	position: sticky;
 	border-radius: 3px;
@@ -5897,14 +5897,14 @@ li[m="1"] {
 	justify-content: center;
 	background-color: #ccc;
 }
-.rolaCima{
+#rolaCima{
 	top: 0;
 }
-.rolaBaixo{
+#rolaBaixo{
 	bottom: 0;
 }
-.rolaCima *,
-.rolaBaixo *{
+#rolaCima *,
+#rolaBaixo *{
 	pointer-events: none;
 	padding: 0px 2px;
 	height: 14px;
@@ -5912,18 +5912,18 @@ li[m="1"] {
 </style>
 <div id="mkSeletor" part="mkSeletor">
 	<input type="text" placeholder="Filtro \u{1F50D}" value="${this.config.vazio}" id="k" autocomplete="off"/>
-	<svg xmlns='http://www.w3.org/2000/svg' part='arrowAbreFecha' viewBox='0 0 16 16'>
+	<svg xmlns='http://www.w3.org/2000/svg' id="arrowAbreFecha" part='arrowAbreFecha' viewBox='0 0 16 16'>
 	<path class='setaCima' d='M14.6,6.9L8.4,0.7c-0.2-0.2-0.6-0.2-0.9,0L1.4,6.9c-0.2,0.2,0,0.4,0.2,0.4h4.5c0.1,0,0.3-0.1,0.4-0.2L7,6.7C7.5,6.1,8.5,6,9,6.6l0.6,0.6C9.7,7.3,9.9,7.4,10,7.4h4.4C14.6,7.4,14.7,7.1,14.6,6.9z'/>
 	<path class='setaBaixo' d='M1.4,8.9l6.1,6.3c0.2,0.2,0.6,0.2,0.9,0l6.1-6.3c0.2-0.2,0-0.4-0.2-0.4H9.9c-0.1,0-0.3,0.1-0.4,0.2L9,9.2C8.5,9.8,7.5,9.9,7,9.3L6.4,8.7C6.3,8.6,6.1,8.5,6,8.5H1.6C1.4,8.5,1.3,8.8,1.4,8.9z'/>
   </svg>
 </div>
-<div class="lista" part="lista">
-<div class="rolaCima" part="rolaCima" style="display: none;">
+<div id="lista" part="lista">
+<div id="rolaCima" part="rolaCima" style="display: none;">
 <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' style='-webkit-box-reflect: left;' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5'/></svg>
 <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' style='-webkit-box-reflect: right;' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5'/></svg>
 </div>
 <ul></ul>
-<div class="rolaBaixo" part="rolaBaixo" style="display: none;">
+<div id="rolaBaixo" part="rolaBaixo" style="display: none;">
 <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' style='-webkit-box-reflect: left;' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1'/></svg>
 <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' style='-webkit-box-reflect: right;' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1'/></svg>
 </div>
@@ -5931,11 +5931,11 @@ li[m="1"] {
 		// GET / SETS Iniciais
 		this.shadowRoot?.append(template.content);
 		this.config.eK = this.shadowRoot?.querySelector("#k");
-		this.config.eList = this.shadowRoot?.querySelector(".lista");
-		this.config.eUL = this.shadowRoot?.querySelector(".lista ul");
-		this.config.rolaCima = this.shadowRoot?.querySelector(".lista .rolaCima");
-		this.config.rolaBaixo = this.shadowRoot?.querySelector(".lista .rolaBaixo");
-		this.config.svg = this.shadowRoot?.querySelector("svg");
+		this.config.eList = this.shadowRoot?.querySelector("#lista");
+		this.config.eUL = this.shadowRoot?.querySelector("#lista ul");
+		this.config.rolaCima = this.shadowRoot?.querySelector("#rolaCima");
+		this.config.rolaBaixo = this.shadowRoot?.querySelector("#rolaBaixo");
+		this.config.svg = this.shadowRoot?.querySelector("#arrowAbreFecha");
 		if (this.getAttribute("scrollcharge")) this.config.scrollcharge = this.getAttribute("scrollcharge")?.toString().toLowerCase() != "false";
 		if (this.getAttribute("vazio")) this.config.vazio = this.getAttribute("vazio");
 		if (this.getAttribute("selapenas")) this.config.selapenas = Number(this.getAttribute("selapenas"));
