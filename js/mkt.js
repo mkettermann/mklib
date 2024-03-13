@@ -5714,15 +5714,15 @@ class mkSel extends HTMLElement {
 :host([focused]) .lista{
 	display: block;
 }
-.mkSeletor{
+#mkSeletor{
 	display:flex;
-	width:100%;	
+	width:100%;
 	height: 100%;
 }
-.mkSeletor input{
+#mkSeletor input{
     width:100%;
 }
-.mkSeletor svg{
+#mkSeletor svg{
 	width: 14px;
 	user-select: none;
     justify-self: end;
@@ -5807,7 +5807,7 @@ li[m="1"] {
 	height: 14px;
 }
 </style>
-<div class="mkSeletor">
+<div id="mkSeletor" part="mkSeletor">
 	<input type="text" placeholder="Filtro \u{1F50D}" value="${this.config.vazio}" id="k" autocomplete="off"/>
 	<svg xmlns='http://www.w3.org/2000/svg' part='arrowAbreFecha' viewBox='0 0 16 16'>
 	<path class='setaCima' d='M14.6,6.9L8.4,0.7c-0.2-0.2-0.6-0.2-0.9,0L1.4,6.9c-0.2,0.2,0,0.4,0.2,0.4h4.5c0.1,0,0.3-0.1,0.4-0.2L7,6.7C7.5,6.1,8.5,6,9,6.6l0.6,0.6C9.7,7.3,9.9,7.4,10,7.4h4.4C14.6,7.4,14.7,7.1,14.6,6.9z'/>
