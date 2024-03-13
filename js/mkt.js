@@ -6294,6 +6294,8 @@ li[m="1"] {
     get getFirstSelecionado() { return [...this.selecionadosMap]?.[0] || null; }
     get selecionadosMap() { return this.config.selecionados; }
     get selecionados() { return JSON.stringify([...this.config.selecionados]); }
+    get values() { return [...this.selecionadosMap.values()]; }
+    get keys() { return [...this.selecionadosMap.keys()]; }
     // Recuperar as opções
     get opcoes() { return this.config._data; }
     // Alterar as opções
