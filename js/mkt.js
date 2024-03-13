@@ -6224,7 +6224,10 @@ li[m="1"] {
             //this.config.eUL.innerHTML = ' &#45;&#45; Sem Op&#231;&#245;es &#45;&#45; ';
         }
     };
-    async refill() {
+    async refill(url = null) {
+        if (url != null) {
+            this.config.url = url;
+        }
         if (this.config.url != "") {
             let r = await mkt.get.json({ url: this.config.url });
             if (r.retorno != null) {

@@ -6328,7 +6328,10 @@ li[m="1"] {
 		}
 	};
 
-	async refill() {
+	async refill(url = null) {
+		if (url != null) {
+			this.config.url = url;
+		}
 		if (this.config.url != "") {
 			let r = await mkt.get.json({ url: this.config.url });
 			if (r.retorno != null) {
