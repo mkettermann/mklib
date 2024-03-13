@@ -6361,7 +6361,7 @@ li[m="1"] {
 			}
 			this.removeAttribute("opcoes"); // Mantem os dados em memória
 		} else if (name === "url") {
-			this.config.url = newValue;
+			this.url = newValue;
 		} else if (name === "pos") {
 			if (mkt.classof(this.config.url) == "String") {
 				this.config.eK.placeholder = "Pesquisar 🔍";
@@ -6413,6 +6413,9 @@ li[m="1"] {
 			}
 		}
 	}
+
+	get url() { return this.config.url; }
+	set url(text) { if (text != null) this.config.url = text; }
 
 	get size() { return this.getAttribute("size"); }
 	get disabled() { return this.hasAttribute("disabled"); }
