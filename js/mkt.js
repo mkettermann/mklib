@@ -5601,6 +5601,7 @@ class mkSel extends HTMLElement {
                     if (obj) {
                         let map = obj.map(s => { return [s.toString(), ""]; });
                         this.config.selecionados = new Map(map);
+                        this.config.updateSelecionadosValues();
                     }
                 }
             }
