@@ -5999,14 +5999,14 @@ li[m="1"] {
 			// Durante o update, o usuário não deveria estar com o seletor aberto.
 			this.removeAttribute("focused");
 			// Caso o opções contem uma string JSON
-			mkt.w({
-				"Nome": this.name,
-				"Opções": this.config.opcoes,
-				"Value": this.value,
-				"isJson?": mkt.isJson(this.config.opcoes),
-				"colect": mkt.parseJSON(this.config.opcoes),
-				"classOfColect": mkt.classof(mkt.parseJSON(this.config.opcoes)),
-			})
+			// mkt.w({
+			// 	"Nome": this.name,
+			// 	"Opções": this.config.opcoes,
+			// 	"Value": this.value,
+			// 	"isJson?": mkt.isJson(this.config.opcoes),
+			// 	"colect": mkt.parseJSON(this.config.opcoes),
+			// 	"classOfColect": mkt.classof(mkt.parseJSON(this.config.opcoes)),
+			// })
 			if (mkt.isJson(this.config.opcoes)) {
 				let colect = mkt.parseJSON(this.config.opcoes);
 				if (mkt.classof(colect) == "Array") {
@@ -6044,17 +6044,29 @@ li[m="1"] {
 					}
 				});
 			} else {
+				mkt.w({
+					"Nome": this.name,
+					"Data": this.config._data,
+					"Value": this.value,
+					"isJson?": mkt.isJson(this.value),
+					"colect": mkt.parseJSON(this.values),
+					"classOfColect": mkt.classof(mkt.parseJSON(this.value)),
+				})
 				// Multi seletor guarda um json no value.
 				if (mkt.isJson(this.value)) {
-					let colect = mkt.parseJSON(this.value);
+					let colect: any = mkt.parseJSON(this.value);
 					if (mkt.classof(colect) == "Array") {
 						colect.forEach((v: any, i: any, a: any) => {
 							a[i][0] = a[i][0].toString();
 							a[i][1] = a[i][1].toString();
 							//mkt.l("v: ", v, " i: ", i)
 						});
+						this.config.selecionados = new Map(colect);
+					} else {
+						let array = colect.split(",").map((a: any) => { return [a?.toString(), ""] });
+						mkt.l("Array: ", array, " Map:", new Map(array));
+						this.config.selecionados = new Map([array]);
 					}
-					this.config.selecionados = new Map(colect);
 				} else {
 					this.config.selecionados = new Map(); // Inicializa sem opcoes
 				}
