@@ -6049,7 +6049,7 @@ li[m="1"] {
 					"Data": this.config._data,
 					"Value": this.value,
 					"isJson?": mkt.isJson(this.value),
-					"colect": mkt.parseJSON(this.values),
+					"colect": mkt.parseJSON(this.value),
 					"classOfColect": mkt.classof(mkt.parseJSON(this.value)),
 				})
 				// Multi seletor guarda um json no value.
@@ -6063,12 +6063,18 @@ li[m="1"] {
 						});
 						this.config.selecionados = new Map(colect);
 					} else {
-						let array = colect.split(",").map((a: any) => { return [a?.toString(), ""] });
-						mkt.l("Array: ", array, " Map:", new Map(array));
-						this.config.selecionados = new Map([array]);
+						if (colect != null) {
+							let array = this.value?.split(",").map((a: any) => { return [a?.toString(), ""] });
+							mkt.l("Array: ", array, " Map:", new Map(array));
+							this.config.selecionados = new Map([array]);
+						} else {
+							mkt.l("this.value: ", this.value, " Map:", new Map([[this.value]]));
+							this.config.selecionados = new Map([[this.value?.toString()]]); // Inicializa sem selecionados
+						}
+
 					}
 				} else {
-					this.config.selecionados = new Map(); // Inicializa sem opcoes
+					this.config.selecionados = new Map(); // Inicializa sem selecionados
 				}
 				//mkt.l("Map Selecionados:", this.config.selecionados);
 			}
