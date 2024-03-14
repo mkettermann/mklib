@@ -5975,12 +5975,11 @@ li[m="1"] {
                     else {
                         if (colect != null) {
                             let array = this.value?.split(",").map((a) => { return [a?.toString(), ""]; });
-                            mkt.l("Array: ", array, " Map:", new Map(array));
+                            mkt.l("Array: ", array, " Map:", new Map([array]));
                             this.config.selecionados = new Map([array]);
                         }
                         else {
-                            mkt.l("this.value: ", this.value, " Map:", new Map([[this.value]]));
-                            this.config.selecionados = new Map([[this.value?.toString()]]); // Inicializa sem selecionados
+                            this.config.selecionados = new Map(); // Inicializa sem selecionados
                         }
                     }
                 }
