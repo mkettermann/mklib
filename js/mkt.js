@@ -5598,6 +5598,7 @@ class mkSel extends HTMLElement {
             else {
                 if (this.value) {
                     let obj = this.value.split(",");
+                    mkt.l("Obj Value: ", obj);
                     if (obj) {
                         let map = obj.map(s => { return [s.toString(), ""]; });
                         this.config.selecionados = new Map(map);
@@ -6305,7 +6306,7 @@ li[m="1"] {
             if (this.getAttribute("opcoes")) {
                 this.opcoes = this.getAttribute("opcoes");
             }
-            this.removeAttribute("opcoes"); // Mantem os dados em memória
+            //this.removeAttribute("opcoes"); // Mantem os dados em memória
         }
         else if (name === "url") {
             this.url = newValue;
@@ -6361,9 +6362,9 @@ li[m="1"] {
             }
             else {
                 if (mkt.classof(text) == "Map") {
-                    //mkt.l("Opções Map: ", text);
-                    this.forceUpdate(true);
+                    mkt.l("Opções Map: ", text);
                     this.config.opcoes = JSON.stringify([...text]);
+                    this.forceUpdate(true);
                 }
                 else {
                     mkt.w("mk-sel - set opcoes() - Formato inválido: ", mkt.classof(text));
