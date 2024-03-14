@@ -6002,6 +6002,7 @@ li[m="1"] {
 			mkt.w({
 				"Nome": this.name,
 				"Opções": this.config.opcoes,
+				"Value": this.value,
 				"isJson?": mkt.isJson(this.config.opcoes),
 				"colect": mkt.parseJSON(this.config.opcoes),
 				"classOfColect": mkt.classof(mkt.parseJSON(this.config.opcoes)),
