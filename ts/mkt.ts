@@ -262,7 +262,7 @@ class mkt {
 			// Seta Gatilho do indicador de quantidade por pagina.
 			if (mkt.Q(this.c.tablePorPagina)) {
 				mkt.Ao("input", this.c.tablePorPagina, async (e: HTMLInputElement) => {
-					mkt.l("TablePorPagina: ", this.c.tablePorPagina);
+					//mkt.l("TablePorPagina: ", this.c.tablePorPagina);
 					this.atualizaNaPaginaUm();
 				});
 			}
