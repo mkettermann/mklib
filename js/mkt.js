@@ -5953,14 +5953,14 @@ li[m="1"] {
                 });
             }
             else {
-                mkt.w({
-                    "Nome": this.name,
-                    "Data": this.config._data,
-                    "Value": this.value,
-                    "isJson?": mkt.isJson(this.value),
-                    "colect": mkt.parseJSON(this.value),
-                    "classOfColect": mkt.classof(mkt.parseJSON(this.value)),
-                });
+                // mkt.w({
+                // 	"Nome": this.name,
+                // 	"Data": this.config._data,
+                // 	"Value": this.value,
+                // 	"isJson?": mkt.isJson(this.value),
+                // 	"colect": mkt.parseJSON(this.value),
+                // 	"classOfColect": mkt.classof(mkt.parseJSON(this.value)),
+                // })
                 // Multi seletor guarda um json no value.
                 if (mkt.isJson(this.value)) {
                     let colect = mkt.parseJSON(this.value);
@@ -5974,9 +5974,9 @@ li[m="1"] {
                     }
                     else {
                         if (colect != null) {
-                            let array = this.value?.split(",").map((a) => { return [a?.toString(), ""]; });
-                            mkt.l("Array: ", array, " Map:", new Map([array]));
-                            this.config.selecionados = new Map([array]);
+                            let array = this.value?.split(",").map((a) => { return [a?.toString()]; });
+                            //mkt.l("Array: ", array, " Map:", new Map(array));
+                            this.config.selecionados = new Map(array);
                         }
                         else {
                             this.config.selecionados = new Map(); // Inicializa sem selecionados
