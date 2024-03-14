@@ -3087,44 +3087,44 @@ class mkt {
 		mkt.mkSelSetDisplay(e, KV);
 	};
 
-	static mkSelDelRefillProcesso = async (
-		eName: string | HTMLElement,
-		cod = null
-	) => {
-		return new Promise(async (r) => {
-			let e = mkt.Q(eName);
-			if (e) {
-				// Se há o elemento, e para evitar puxar várias veses a mesma lista, adiciona-se uma classe no inicio e tira-se quando concluiu. Se já tem, não refaz.
-				if (!e.classList.contains("refilling")) {
-					e.classList.add("refilling");
-					let url = appPath + e.getAttribute("data-refill");
-					cod != null ? (url += cod) : null;
-					let p = await mkt.get.json(url);
-					if (p.retorno != null) {
-						let kv = p.retorno;
-						// Se vier um Json em string, Tenta virar pra objeto pra ter certeza que o sistema vai conseguir fazer isso depois.
-						if (mkt.isJson(kv)) {
-							kv = mkt.parseJSON(kv);
-						}
-						// Se o KV está em forma de objeto, então prepara para colocar no campo.
-						let tipoKV = mkt.classof(kv)
-						if (tipoKV == "Array") {
-							kv = mkt.stringify(p.retorno);
-							e.setAttribute("data-selarray", kv);
-							e.classList.remove("refilling");
-							r(e);
-						} else {
-							mkt.erro("mkSelDelRefillProcesso() - Refill precisa receber uma Array de KVs: ", tipoKV);
-						}
-					}
-				} // Apenas 1 rewfill por vez
-			} else {
-				mkt.w(
-					"Função (mkSelDlRefill) solicitou Refill em um campo inexistente (JS)"
-				);
-			}
-		});
-	};
+	// static mkSelDelRefillProcesso = async (
+	// 	eName: string | HTMLElement,
+	// 	cod = null
+	// ) => {
+	// 	return new Promise(async (r) => {
+	// 		let e = mkt.Q(eName);
+	// 		if (e) {
+	// 			// Se há o elemento, e para evitar puxar várias veses a mesma lista, adiciona-se uma classe no inicio e tira-se quando concluiu. Se já tem, não refaz.
+	// 			if (!e.classList.contains("refilling")) {
+	// 				e.classList.add("refilling");
+	// 				let url = appPath + e.getAttribute("data-refill");
+	// 				cod != null ? (url += cod) : null;
+	// 				let p = await mkt.get.json(url);
+	// 				if (p.retorno != null) {
+	// 					let kv = p.retorno;
+	// 					// Se vier um Json em string, Tenta virar pra objeto pra ter certeza que o sistema vai conseguir fazer isso depois.
+	// 					if (mkt.isJson(kv)) {
+	// 						kv = mkt.parseJSON(kv);
+	// 					}
+	// 					// Se o KV está em forma de objeto, então prepara para colocar no campo.
+	// 					let tipoKV = mkt.classof(kv)
+	// 					if (tipoKV == "Array") {
+	// 						kv = mkt.stringify(p.retorno);
+	// 						e.setAttribute("data-selarray", kv);
+	// 						e.classList.remove("refilling");
+	// 						r(e);
+	// 					} else {
+	// 						mkt.erro("mkSelDelRefillProcesso() - Refill precisa receber uma Array de KVs: ", tipoKV);
+	// 					}
+	// 				}
+	// 			} // Apenas 1 rewfill por vez
+	// 		} else {
+	// 			mkt.w(
+	// 				"Função (mkSelDlRefill) solicitou Refill em um campo inexistente (JS)"
+	// 			);
+	// 		}
+	// 	});
+	// };
 
 	static mkSelGetKV = (e: any): any[] => {
 		let kSels: any[];
@@ -3323,7 +3323,7 @@ class mkt {
 			if (e.parentElement?.classList.contains("mkSelBloco")) {
 				// Se não tem array, mas tem o refill e entrou para atualizar, faz o processo de refill genérico
 				if (!e.getAttribute("data-selarray") && e.getAttribute("data-refill")) {
-					await mkt.mkSelDelRefillProcesso(e as HTMLElement);
+					//await mkt.mkSelDelRefillProcesso(e as HTMLElement);
 				}
 				// Atualiza a lista com base na classe "atualizar" (Gera Evento input e change)
 				if (e.classList.contains("atualizar")) {
@@ -3443,16 +3443,16 @@ class mkt {
 		}
 	};
 
-	static mkSelDlRefill = async (
-		eName: string | HTMLElement,
-		cod: any,
-		clear: boolean = true
-	): Promise<void> => {
-		mkt.mkSelDelRefillProcesso(eName, cod).then((e: any) => {
-			if (clear) e.value = "";
-			e.classList.add("atualizar");
-		});
-	}
+	// static mkSelDlRefill = async (
+	// 	eName: string | HTMLElement,
+	// 	cod: any,
+	// 	clear: boolean = true
+	// ): Promise<void> => {
+	// 	mkt.mkSelDelRefillProcesso(eName, cod).then((e: any) => {
+	// 		if (clear) e.value = "";
+	// 		e.classList.add("atualizar");
+	// 	});
+	// }
 
 	static mkSelLeftSel = (e: any) => {
 		let eAlvo = null;
