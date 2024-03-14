@@ -5669,6 +5669,12 @@ class mkSel extends HTMLElement {
                 });
             }
         },
+        updateSelecionadosValues: () => {
+            // A cada chave no selecionado, seta o valor correspondente no opções
+            [...this.config.selecionados.keys()].forEach(k => {
+                this.config.selecionados.set(k, this.opcoes.get(k));
+            });
+        },
     };
     constructor() {
         super();
@@ -5968,12 +5974,14 @@ li[m="1"] {
                         let map = new Map(mkt.parseJSON(this.value).map((a) => { return [a?.toString()]; }));
                         mkt.l("Map: ", map);
                         this.config.selecionados = map;
+                        this.config.updateSelecionadosValues();
                     }
                     else {
                         if (colect != null) {
                             let array = this.value?.split(",").map((a) => { return [a?.toString()]; });
                             //mkt.l("Array: ", array, " Map:", new Map(array));
                             this.config.selecionados = new Map(array);
+                            this.config.updateSelecionadosValues();
                         }
                         else {
                             this.config.selecionados = new Map(); // Inicializa sem selecionados
