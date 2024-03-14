@@ -5953,24 +5953,20 @@ li[m="1"] {
                 });
             }
             else {
-                // mkt.w({
-                // 	"Nome": this.name,
-                // 	"Data": this.config._data,
-                // 	"Value": this.value,
-                // 	"isJson?": mkt.isJson(this.value),
-                // 	"colect": mkt.parseJSON(this.value),
-                // 	"classOfColect": mkt.classof(mkt.parseJSON(this.value)),
-                // })
+                mkt.w({
+                    "Nome": this.name,
+                    "Data": this.config._data,
+                    "Value": this.value,
+                    "isJson?": mkt.isJson(this.value),
+                    "Colect": mkt.parseJSON(this.value),
+                    "ClassOf Colect": mkt.classof(mkt.parseJSON(this.value)),
+                    "Map": new Map(mkt.parseJSON(this.value).map((a) => { return [a?.toString()]; })),
+                });
                 // Multi seletor guarda um json no value.
                 if (mkt.isJson(this.value)) {
                     let colect = mkt.parseJSON(this.value);
                     if (mkt.classof(colect) == "Array") {
-                        colect.forEach((v, i, a) => {
-                            a[i][0] = a[i][0].toString();
-                            a[i][1] = a[i][1].toString();
-                            //mkt.l("v: ", v, " i: ", i)
-                        });
-                        this.config.selecionados = new Map(colect);
+                        this.config.selecionados = new Map(colect.map((a) => { return [a?.toString()]; }));
                     }
                     else {
                         if (colect != null) {
