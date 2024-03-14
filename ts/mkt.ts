@@ -6044,20 +6044,21 @@ li[m="1"] {
 					}
 				});
 			} else {
-				mkt.w({
-					"Nome": this.name,
-					"Data": this.config._data,
-					"Value": this.value,
-					"isJson?": mkt.isJson(this.value),
-					"Colect": mkt.parseJSON(this.value),
-					"ClassOf Colect": mkt.classof(mkt.parseJSON(this.value)),
-					"Map": new Map(mkt.parseJSON(this.value).map((a: any) => { return [a?.toString()] })),
-				})
+				// mkt.w({
+				// 	"Nome": this.name,
+				// 	"Data": this.config._data,
+				// 	"Value": this.value,
+				// 	"isJson?": mkt.isJson(this.value),
+				// 	"Colect": mkt.parseJSON(this.value),
+				// 	"ClassOf Colect": mkt.classof(mkt.parseJSON(this.value)),
+				// })
 				// Multi seletor guarda um json no value.
 				if (mkt.isJson(this.value)) {
 					let colect: any = mkt.parseJSON(this.value);
 					if (mkt.classof(colect) == "Array") {
-						this.config.selecionados = new Map(colect.map((a: any) => { return [a?.toString()] }));
+						let map = new Map(mkt.parseJSON(this.value).map((a: any) => { return [a?.toString()] }));
+						mkt.l("Map: ", map);
+						this.config.selecionados = map;
 					} else {
 						if (colect != null) {
 							let array: any = this.value?.split(",").map((a: any) => { return [a?.toString()] });
