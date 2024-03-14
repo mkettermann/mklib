@@ -5998,8 +5998,14 @@ li[m="1"] {
 		if (!ignore) {
 			// Durante o update, o usuário não deveria estar com o seletor aberto.
 			this.removeAttribute("focused");
-
 			// Caso o opções contem uma string JSON
+			mkt.w({
+				"Nome": this.name,
+				"Opções": this.config.opcoes,
+				"isJson?": mkt.isJson(this.config.opcoes),
+				"colect": mkt.parseJSON(this.config.opcoes),
+				"classOfColect": mkt.classof(mkt.parseJSON(this.config.opcoes)),
+			})
 			if (mkt.isJson(this.config.opcoes)) {
 				let colect = mkt.parseJSON(this.config.opcoes);
 				if (mkt.classof(colect) == "Array") {
