@@ -6399,7 +6399,7 @@ li[m="1"] {
 			if (this.getAttribute("opcoes")) {
 				this.opcoes = this.getAttribute("opcoes");
 			}
-			//this.removeAttribute("opcoes"); // Mantem os dados em memória
+			this.removeAttribute("opcoes"); // Mantem os dados em memória
 		} else if (name === "url") {
 			this.url = newValue;
 		} else if (name === "pos") {
@@ -6438,13 +6438,13 @@ li[m="1"] {
 	set opcoes(text) {
 		//mkt.l("SET Opcões: ", text, " Old: ", this.config.opcoes);
 		if (text) {
+			//mkt.w("Opções: ", text);
 			if (mkt.classof(text) == "String") {
 				this.config.opcoes = text;
 				this.forceUpdate(false);
 				//this.config.opcoes = text;
 			} else {
 				if (mkt.classof(text) == "Map") {
-					mkt.l("Opções Map: ", text);
 					this.config.opcoes = JSON.stringify([...text]);
 					this.forceUpdate(true);
 				} else {
