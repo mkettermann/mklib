@@ -5598,7 +5598,7 @@ class mkSel extends HTMLElement {
             else {
                 if (this.value) {
                     let obj = this.value.split(",");
-                    mkt.l("Obj Value: ", obj);
+                    //mkt.l("Obj Value: ", obj);
                     if (obj) {
                         let map = obj.map(s => { return [s.toString(), ""]; });
                         this.config.selecionados = new Map(map);
@@ -5910,9 +5910,9 @@ li[m="1"] {
         this.atualizarDisplay();
     } // Construtor mkSel
     // Funçao que refaz a lista, Coleta, Popula, Seleciona e Exibe o selecionado.
-    forceUpdate(ignore = false) {
+    forceUpdate(fromMap = false) {
         // Ignora o New Map: Caso o opcoes já contem um map em vez de uma string JSON.
-        if (!ignore) {
+        if (!fromMap) {
             // Durante o update, o usuário não deveria estar com o seletor aberto.
             this.removeAttribute("focused");
             // Caso o opções contem uma string JSON
@@ -5952,6 +5952,9 @@ li[m="1"] {
             else {
                 this.config._data = new Map(); // Inicializa sem opcoes
             }
+        }
+        else {
+            this.config._data = this.config.opcoes;
         }
         this.config.eUL.classList.add("topoSel"); // <= Classe pra subir os selecionados
         // Aqui Seleciona inicialmente ou Seleciona novamente ao trocar o Opcoes.
@@ -6357,13 +6360,13 @@ li[m="1"] {
         if (text) {
             //mkt.w("Opções: ", text);
             if (mkt.classof(text) == "String") {
-                this.config.opcoes = text;
+                this.config.opcoes = text; // Guardar JSON de OPCOES
                 this.forceUpdate(false);
                 //this.config.opcoes = text;
             }
             else {
                 if (mkt.classof(text) == "Map") {
-                    this.config.opcoes = JSON.stringify([...text]);
+                    this.config.opcoes = text; // JSON.stringify([...text]);
                     this.forceUpdate(true);
                 }
                 else {
