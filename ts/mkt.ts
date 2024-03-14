@@ -5755,6 +5755,7 @@ class mkSel extends HTMLElement {
 				// Acredito que é possível clicar em alguns pixels fora da área do LI Element
 				//mkt.w("mk-sel", this.config.name, "Erro de seleção: K: ", novoK);
 			}
+			this.config.updateSelecionadosValues();
 		},
 		moveScrollList: (este: HTMLDivElement, num: number, op: boolean) => {
 			op ? este.classList.add("move") : este.classList.remove("move");

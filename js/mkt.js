@@ -5616,6 +5616,7 @@ class mkSel extends HTMLElement {
                         this.config.selecionados = new Map();
                         this.config.selecionados.set(novoK?.toString(), novoV?.toString());
                         this.value = novoK;
+                        this.config.updateSelecionadosValues();
                         this.config.geraEvento();
                     }
                     else if ((this.config.selapenas > 1) || (this.config.selapenas < 0)) {
@@ -5645,6 +5646,7 @@ class mkSel extends HTMLElement {
                         else {
                             this.value = [...this.config.selecionados.keys()].join(",");
                         }
+                        this.config.updateSelecionadosValues();
                         this.config.geraEvento();
                     }
                 }
@@ -5656,6 +5658,7 @@ class mkSel extends HTMLElement {
                 // Acredito que é possível clicar em alguns pixels fora da área do LI Element
                 //mkt.w("mk-sel", this.config.name, "Erro de seleção: K: ", novoK);
             }
+            this.config.updateSelecionadosValues();
         },
         moveScrollList: (este, num, op) => {
             op ? este.classList.add("move") : este.classList.remove("move");
