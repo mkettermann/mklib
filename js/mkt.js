@@ -4857,16 +4857,23 @@ class mkt {
     };
     static allParentOffset = (e) => {
         let conta = 0;
+        let last = null;
         while (e != null) {
             e = e.offsetParent;
             if (e) {
+                last = e;
                 conta += e.offsetTop;
             }
             else {
                 break;
             }
         }
-        return conta;
+        if (last?.tagName == "BODY") {
+            return 0;
+        }
+        else {
+            return conta;
+        }
     };
     static Reposicionar = (e, largura = null) => {
         // REPOSICIONA o elemento E abaixo do elemento anterior.
@@ -4876,32 +4883,40 @@ class mkt {
         let eAnterior = e.previousElementSibling;
         let oDinBloco = eAnterior.getBoundingClientRect();
         let oDinList = e.getBoundingClientRect();
+        let apoff = mkt.allParentOffset(eAnterior);
         // TAMANHO (min e max with baseado no pai)
         if (largura) {
             e.style.minWidth = (eAnterior.offsetWidth - 3) + "px";
             e.style.maxWidth = (eAnterior.offsetWidth - 3) + "px";
         }
-        // POSICAO e FUGA em Y (em baixo)
-        // Lista = Bloco Fixed Top + Altura do Pai;
-        let novaPos = oDinBloco.top + oDinBloco.height;
-        // SE PosicaoAtual + AlturaAtual estiver na tela
-        if ((novaPos + oDinList.height) <= window.innerHeight) {
-            mkt.l({
-                E: eAnterior.getBoundingClientRect(),
-                L: e.getBoundingClientRect(),
-                ATop: oDinBloco.top,
-                AAlt: oDinBloco.height,
-                WHeight: window.innerHeight,
-                NovaPos: novaPos + "px",
-                "offsetHeight: ": e.offsetHeight,
-                "clientHeight: ": e.clientHeight,
-            });
-            e.style.top = novaPos + "px";
-            e.style.bottom = null;
+        mkt.l("apoff", apoff);
+        if (apoff <= 0) {
+            // POSICAO e FUGA em Y (em baixo)
+            // Lista = Bloco Fixed Top + Altura do Pai;
+            let novaPos = oDinBloco.top + oDinBloco.height;
+            // SE PosicaoAtual + AlturaAtual estiver na tela
+            if ((novaPos + oDinList.height) <= window.innerHeight) {
+                mkt.l({
+                    "E": oDinBloco,
+                    "L": oDinList,
+                    "E AllOff": mkt.allParentOffset(eAnterior),
+                    "L AllOff": mkt.allParentOffset(e),
+                    "ATop": oDinBloco.top,
+                    "AAlt": oDinBloco.height,
+                    "WHeight": window.innerHeight,
+                    "NovaPos": novaPos + "px",
+                    "offsetHeight": eAnterior.offsetHeight,
+                });
+                e.style.top = novaPos + "px";
+                e.style.bottom = null;
+            }
+            else {
+                e.style.top = null;
+                e.style.bottom = "0px";
+            }
         }
         else {
-            e.style.top = null;
-            e.style.bottom = "0px";
+            e.style.bottom = null;
         }
         // FUGA em Y (em cima)
         if (oDinBloco.top <= 0) {
@@ -4910,16 +4925,6 @@ class mkt {
         else {
             e.classList.remove("oculto");
         }
-        mkt.l({
-            E: eAnterior.getBoundingClientRect(),
-            L: e.getBoundingClientRect(),
-            ATop: oDinBloco.top,
-            AAlt: oDinBloco.height,
-            WHeight: window.innerHeight,
-            NovaPos: novaPos + "px",
-            "offsetHeight: ": e.offsetHeight,
-            "clientHeight: ": e.clientHeight,
-        });
     };
     static BoolToSimNaoSOA = (soa) => {
         // Converter (OBJ / ARRAY) Formato Booleano em Sim/Não
