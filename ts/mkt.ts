@@ -4933,6 +4933,19 @@ class mkt {
 		return true;
 	};
 
+	static allParentOffset = (e: any) => {
+		let conta = 0;
+		while (e != null) {
+			e = e.offsetParent;
+			if (e) {
+				conta += e.offsetTop;
+			} else {
+				break;
+			}
+		}
+		return conta;
+	}
+
 	static Reposicionar = (e: any, largura: boolean | null = null) => {
 		// REPOSICIONA o elemento E abaixo do elemento anterior.
 		// Precisa de position: fixed;
