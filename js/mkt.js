@@ -4855,7 +4855,7 @@ class mkt {
         }
         return true;
     };
-    static Reposicionar = (e, largura = null, position = "") => {
+    static Reposicionar = (e, largura = null) => {
         // REPOSICIONA o elemento E abaixo do elemento anterior.
         // Precisa de position: fixed;
         // Atenção: Essa função precisa ser rápida.
@@ -4868,41 +4868,45 @@ class mkt {
             e.style.minWidth = (eAnterior.offsetWidth - 3) + "px";
             e.style.maxWidth = (eAnterior.offsetWidth - 3) + "px";
         }
-        if (position != "relative") {
-            // POSICAO e FUGA em Y (em baixo)
-            // Lista = Bloco Fixed Top + Altura do Pai;
-            let novaPos = oDinBloco.top + oDinBloco.height;
-            // SE PosicaoAtual + AlturaAtual estiver na tela
-            if ((novaPos + oDinList.height) <= window.innerHeight) {
-                mkt.l({
-                    E: eAnterior.getBoundingClientRect(),
-                    L: e.getBoundingClientRect(),
-                    ATop: oDinBloco.top,
-                    AAlt: oDinBloco.height,
-                    WHeight: window.innerHeight,
-                    NovaPos: novaPos + "px",
-                    "offsetHeight: ": e.offsetHeight,
-                    "clientHeight: ": e.clientHeight,
-                });
-                e.style.top = novaPos + "px";
-                e.style.bottom = null;
-            }
-            else {
-                e.style.top = null;
-                e.style.bottom = "0px";
-            }
-            // FUGA em Y (em cima)
-            if (oDinBloco.top <= 0) {
-                e.classList.add("oculto");
-            }
-            else {
-                e.classList.remove("oculto");
-            }
-        }
-        else {
-            e.style.top = oDinBloco.height + "px";
+        // POSICAO e FUGA em Y (em baixo)
+        // Lista = Bloco Fixed Top + Altura do Pai;
+        let novaPos = oDinBloco.top + oDinBloco.height;
+        // SE PosicaoAtual + AlturaAtual estiver na tela
+        if ((novaPos + oDinList.height) <= window.innerHeight) {
+            mkt.l({
+                E: eAnterior.getBoundingClientRect(),
+                L: e.getBoundingClientRect(),
+                ATop: oDinBloco.top,
+                AAlt: oDinBloco.height,
+                WHeight: window.innerHeight,
+                NovaPos: novaPos + "px",
+                "offsetHeight: ": e.offsetHeight,
+                "clientHeight: ": e.clientHeight,
+            });
+            e.style.top = novaPos + "px";
             e.style.bottom = null;
         }
+        else {
+            e.style.top = null;
+            e.style.bottom = "0px";
+        }
+        // FUGA em Y (em cima)
+        if (oDinBloco.top <= 0) {
+            e.classList.add("oculto");
+        }
+        else {
+            e.classList.remove("oculto");
+        }
+        mkt.l({
+            E: eAnterior.getBoundingClientRect(),
+            L: e.getBoundingClientRect(),
+            ATop: oDinBloco.top,
+            AAlt: oDinBloco.height,
+            WHeight: window.innerHeight,
+            NovaPos: novaPos + "px",
+            "offsetHeight: ": e.offsetHeight,
+            "clientHeight: ": e.clientHeight,
+        });
     };
     static BoolToSimNaoSOA = (soa) => {
         // Converter (OBJ / ARRAY) Formato Booleano em Sim/Não
@@ -5709,7 +5713,6 @@ class mkSel extends HTMLElement {
 	background: #EEE;
 	width:100%;
 	line-height: normal;
-	position: relative;
 }
 :host .setaCima {
 	opacity: 0;
@@ -5767,7 +5770,7 @@ class mkSel extends HTMLElement {
 }
 #lista{
 	display: none;
-	position: absolute;
+	position: fixed;
 	border: 1px solid black;
 	border-radius: 5px;
 	cursor: pointer;
@@ -5899,10 +5902,10 @@ li[m="1"] {
         };
         // Seguir o Elemento durante o scroll e resize
         document.addEventListener("scroll", (event) => {
-            mkt.Reposicionar(this.config.eList, false, "relative");
+            mkt.Reposicionar(this.config.eList, false);
         });
         window.addEventListener("resize", (event) => {
-            mkt.Reposicionar(this.config.eList, true, "relative");
+            mkt.Reposicionar(this.config.eList, true);
         });
         this.config.eList.addEventListener("scroll", () => {
             let altura = this.config.eList.scrollHeight - this.config.eList.offsetHeight - 10; // Reduz a altura total para começar a baixar um pouco antes.
@@ -6051,7 +6054,7 @@ li[m="1"] {
             primeiroOffSet - 120 - (this.config.eList.offsetHeight - this.config.eList.clientHeight) / 2;
         //}
         // Atualizar posição da Lista.
-        mkt.Reposicionar(this.config.eList, true, "relative");
+        mkt.Reposicionar(this.config.eList, true);
     }
     // Quando sai do botão de pesquisar principal
     aoBlur() {
@@ -6114,7 +6117,7 @@ li[m="1"] {
             this.config.rolaCima.style.display = "";
             this.config.rolaBaixo.style.display = "";
         }
-        mkt.Reposicionar(this.config.eList, true, "relative");
+        mkt.Reposicionar(this.config.eList, true);
     }
     async maisLinhas(inicio, total) {
         let linha = document.createElement("template");
