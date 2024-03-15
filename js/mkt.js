@@ -4889,24 +4889,24 @@ class mkt {
             e.style.minWidth = (eAnterior.offsetWidth - 3) + "px";
             e.style.maxWidth = (eAnterior.offsetWidth - 3) + "px";
         }
-        mkt.l("apoff", apoff);
+        // mkt.l("apoff", apoff);
         if (apoff <= 0) {
             // POSICAO e FUGA em Y (em baixo)
             // Lista = Bloco Fixed Top + Altura do Pai;
             let novaPos = oDinBloco.top + oDinBloco.height;
             // SE PosicaoAtual + AlturaAtual estiver na tela
             if ((novaPos + oDinList.height) <= window.innerHeight) {
-                mkt.l({
-                    "E": oDinBloco,
-                    "L": oDinList,
-                    "E AllOff": mkt.allParentOffset(eAnterior),
-                    "L AllOff": mkt.allParentOffset(e),
-                    "ATop": oDinBloco.top,
-                    "AAlt": oDinBloco.height,
-                    "WHeight": window.innerHeight,
-                    "NovaPos": novaPos + "px",
-                    "offsetHeight": eAnterior.offsetHeight,
-                });
+                // mkt.l({
+                // 	"E": oDinBloco,
+                // 	"L": oDinList,
+                // 	"E AllOff": mkt.allParentOffset(eAnterior),
+                // 	"L AllOff": mkt.allParentOffset(e),
+                // 	"ATop": oDinBloco.top,
+                // 	"AAlt": oDinBloco.height,
+                // 	"WHeight": window.innerHeight,
+                // 	"NovaPos": novaPos + "px",
+                // 	"offsetHeight": eAnterior.offsetHeight,
+                // })
                 e.style.top = novaPos + "px";
                 e.style.bottom = null;
             }
