@@ -2839,7 +2839,7 @@ class mkt {
 
 	static masterFormatarSOA = (soa: object | object[]) => {
 		// Converter (OBJ / ARRAY) Formatar para normalizar com a exibicao ao usuario.
-		return mkt.BoolToSimNaoSOA(mkt.dataFormatarSOA(mkt.limparOA(soa)));
+		return mkt.dataFormatarSOA(mkt.limparOA(soa));
 	}
 
 	static dataToLocale = (data: string): string => {

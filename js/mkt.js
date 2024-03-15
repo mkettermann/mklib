@@ -2821,7 +2821,7 @@ class mkt {
     };
     static masterFormatarSOA = (soa) => {
         // Converter (OBJ / ARRAY) Formatar para normalizar com a exibicao ao usuario.
-        return mkt.BoolToSimNaoSOA(mkt.dataFormatarSOA(mkt.limparOA(soa)));
+        return mkt.dataFormatarSOA(mkt.limparOA(soa));
     };
     static dataToLocale = (data) => {
         // com Objeto DATA, STRING ou MS, retorna data BR.
