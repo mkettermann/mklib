@@ -6297,7 +6297,7 @@ li[m="1"] {
 
 
 		}
-		mkt.Ao("click", this.config.eUL, (e: any, ev: Event) => {
+		mkt.Ao("mousedown", this.config.eUL, (e: any, ev: Event) => {
 			this.selecionar(ev);
 		});
 	}

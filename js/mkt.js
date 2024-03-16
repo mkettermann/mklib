@@ -6196,7 +6196,7 @@ li[m="1"] {
                 await this.maisLinhas(this.config.populado, this.config._data.size);
             }
         }
-        mkt.Ao("click", this.config.eUL, (e, ev) => {
+        mkt.Ao("mousedown", this.config.eUL, (e, ev) => {
             this.selecionar(ev);
         });
     }
