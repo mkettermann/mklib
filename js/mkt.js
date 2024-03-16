@@ -5750,23 +5750,16 @@ li[m="1"] {
     set url(text) { if (text != null)
         this.config.url = text; }
     get size() { return this.getAttribute("size"); }
-    get disabled() { return this.hasAttribute("disabled"); }
-    get pos() { return this.hasAttribute("pos"); }
-    get hidden() { return this.hasAttribute("hidden"); }
     set size(value) { if (value)
         this.setAttribute("size", value); }
+    get disabled() { return this.hasAttribute("disabled"); }
     set disabled(value) {
         if (value)
             this.setAttribute("disabled", "");
         else
             this.removeAttribute("disabled");
     }
-    set hidden(value) {
-        if (value)
-            this.setAttribute("hidden", "");
-        else
-            this.removeAttribute("hidden");
-    }
+    get pos() { return this.hasAttribute("pos"); }
     set pos(value) {
         if (value)
             this.setAttribute("pos", "");
@@ -5793,6 +5786,31 @@ li[m="1"] {
     static observedAttributes = ["disabled", "size", "value", "name", "opcoes", "url", "scrollbarwidth", "scrollbarcolor", "selapenas", "refill", "pos"];
 }
 customElements.define("mk-sel", mkSel);
+class mkBotaoValue extends HTMLElement {
+    // ATRIBUTOS
+    get [Symbol.toStringTag]() { return "mk-bot"; }
+    get value() {
+        if (this.getAttribute("value") == null)
+            return "";
+        return this.getAttribute("value");
+    }
+    set value(text) {
+        if (text != null)
+            this.setAttribute("value", text);
+    }
+    get name() { return this.getAttribute("name"); }
+    set name(text) { if (text) {
+        this.setAttribute("name", text);
+    } }
+    get disabled() { return this.hasAttribute("disabled"); }
+    set disabled(value) {
+        if (value)
+            this.setAttribute("disabled", "");
+        else
+            this.removeAttribute("disabled");
+    }
+}
+customElements.define("mk-bot", mkBotaoValue);
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //   Auto Inicializar               \\
 //___________________________________\\
