@@ -2327,6 +2327,10 @@ mk-sel:not(:defined) {
 	height: 28px;
 }
 
-mk-sel.valid {
-	border: 2px solid #090;
+mk-sel.input-validation-error::part(arrowAbreFecha) {
+	fill: red;
+}
+
+mk-sel.valid::part(arrowAbreFecha) {
+	fill: #090;
 }
