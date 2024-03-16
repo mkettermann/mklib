@@ -2325,6 +2325,7 @@ fieldset {
 	display: flex;
 }
 
+/* SELETOR */
 mk-sel:not(:defined) {
 	opacity: 0;
 	display: inline-block;
@@ -2338,4 +2339,12 @@ mk-sel.input-validation-error::part(arrowAbreFecha) {
 
 mk-sel.valid::part(arrowAbreFecha) {
 	fill: #090;
+}
+
+/* BOTAOVALUE */
+mk-bot:not(:defined) {
+	opacity: 0;
+	display: inline-block;
+	width: 211px;
+	height: 28px;
 }

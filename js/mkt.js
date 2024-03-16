@@ -5278,7 +5278,7 @@ li[m="1"] {
                 this.maisLinhas(this.config.populado, 10);
             }
         });
-    } // Construtor mkSel
+    } // Fim Construtor mkSel
     // Funçao que refaz a lista, Coleta, Popula, Seleciona e Exibe o selecionado.
     forceUpdate(fromMap = false) {
         // Ignora o New Map: Caso o opcoes já contem um map em vez de uma string JSON.
@@ -5787,6 +5787,24 @@ li[m="1"] {
 }
 customElements.define("mk-sel", mkSel);
 class mkBotaoValue extends HTMLElement {
+    constructor() {
+        super();
+        this.attachShadow({ mode: "open" });
+        let template = document.createElement("template");
+        template.innerHTML = `<style>
+:host {
+	display: flex;
+	border: 1px inset #9aa7b3;
+	border-radius: 8px;
+	background: transparent;
+	width:100%;
+	cursor: pointer;
+}
+</style>
+<div>BOTAO</div>`;
+        // GET / SETS Iniciais
+        this.shadowRoot?.append(template.content);
+    } // Fim Construtor mkBotaoValue
     // ATRIBUTOS
     get [Symbol.toStringTag]() { return "mk-bot"; }
     get value() {
@@ -5808,6 +5826,15 @@ class mkBotaoValue extends HTMLElement {
             this.setAttribute("disabled", "");
         else
             this.removeAttribute("disabled");
+    }
+    get inicial() {
+        if (this.getAttribute("inicial") == null)
+            return "";
+        return this.getAttribute("inicial");
+    }
+    set inicial(text) {
+        if (text != null)
+            this.setAttribute("inicial", text);
     }
 }
 customElements.define("mk-bot", mkBotaoValue);
