@@ -5891,7 +5891,11 @@ class mkBotaoValue extends HTMLElement {
 		return this.getAttribute("value");
 	}
 	set value(text) {
-		if (text != null) this.setAttribute("value", text);
+		if (text != null) {
+			this.setAttribute("value", text)
+			this.dispatchEvent(new Event("input"));
+			this.dispatchEvent(new Event("change"));
+		};
 	}
 	get name() { return this.getAttribute("name"); }
 	set name(text) { if (text) { this.setAttribute("name", text); } }

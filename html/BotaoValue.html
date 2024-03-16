@@ -22,9 +22,13 @@
 <br />
 
 <div class="i">
-	<div class="col25 microPos5">
-		<mk-bot name="mkico" inicial="./img/mkico.jpg" onclick="console.log('clicaram no primeiro');"
-			style="width: 150px; height: 150px;"></mk-bot>
+	<div class="col25 microPos5" style="flex-direction: column;">
+		<mk-bot name="mkico" inicial="./img/Anonimo.png" onclick="console.log('clicaram no primeiro');"
+			oninput="console.log('Input: Modificou Primeiro')" style="width: 150px; height: 150px;"
+			title="Trocar Imagem"></mk-bot>
+		<br /><button onclick="trocarValor()" type="button" class="bBotao bVerde"
+			style="display: block; margin:auto;">Trocar
+			Valor</button>
 	</div>
 	<div class="col25 microPos5">
 		=)
