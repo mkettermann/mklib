@@ -4320,37 +4320,20 @@ class mkt {
         let classes = "";
         let div = document.createElement("div");
         if (e) {
-            let paiSimples = true;
             let ePai = e.parentElement;
             classes = e.classList.toString();
             if (mkt.classof(e) == "HTMLTextAreaElement") {
                 v = e.innerHTML;
             }
             if (mkt.classof(e) == "HTMLInputElement") {
-                if (e.classList.contains("mkSel")) {
-                    if (!e.closest(".mkSelBloco")) { // Se estiver dentro de um mkSelBloco já renderizou
-                        mkt.mkSelRenderizarElemento(e);
-                    }
-                    v = [...mkt.mkSelGetMap(e).values()].join(", ");
-                    paiSimples = false;
-                    ePai = e.closest(".mkSelBloco");
-                }
-                else {
-                    v = e.value;
-                }
+                v = e.value;
+            }
+            else if (mkt.classof(e) == "mk-sel") {
+                v = e.values.join(", ");
             }
             div.innerHTML = v;
             div.setAttribute("class", classes);
-            if (paiSimples) {
-                ePai?.insertBefore(div, ePai?.children[Array.from(ePai?.children).indexOf(e) + 1]);
-            }
-            else {
-                div.classList.remove("mkSel");
-                div.classList.remove("mkSecreto");
-                e = ePai;
-                ePai = e.parentElement;
-                ePai?.insertBefore(div, ePai?.children[Array.from(ePai?.children).indexOf(e) + 1]);
-            }
+            ePai?.insertBefore(div, ePai?.children[Array.from(ePai?.children).indexOf(e) + 1]);
             e.remove();
             return div;
         }
@@ -4414,14 +4397,6 @@ class mkt {
             if (!mkt.isOculto(e)) {
                 // Aqui não verifica se está dentro da viewport.
                 return true;
-            }
-            else {
-                if (e.classList.contains("mkSel") && e.classList.contains("mkSecreto")) {
-                    if (!mkt.isOculto(e.parentElement)) {
-                        // Aqui não verifica se está dentro da viewport.
-                        return true;
-                    }
-                }
             }
             ;
         }
@@ -5126,15 +5101,15 @@ class mkSel extends HTMLElement {
 :host(:not([focused])) *{
 	cursor: pointer;
 }
-#mkSeletor{
+.mkSeletor{
 	display:flex;
 	width:100%;
 	height: 100%;
 }
-#mkSeletor input{
+.mkSeletor input{
 	width:100%;
 }
-#mkSeletor svg{
+.mkSeletor svg{
 	width: 14px;
 	user-select: none;
   justify-self: end;
@@ -5220,7 +5195,7 @@ li[m="1"] {
 	height: 14px;
 }
 </style>
-<div id="mkSeletor" part="mkSeletor">
+<div class="mkSeletor" part="mkSeletor">
 	<input type="text" placeholder="Filtro \u{1F50D}" value="${this.config.vazio}" class="k" autocomplete="off"/>
 	<svg xmlns='http://www.w3.org/2000/svg' class="arrowAbreFecha" part='arrowAbreFecha' viewBox='0 0 16 16'>
 	<path class='setaCima' d='M14.6,6.9L8.4,0.7c-0.2-0.2-0.6-0.2-0.9,0L1.4,6.9c-0.2,0.2,0,0.4,0.2,0.4h4.5c0.1,0,0.3-0.1,0.4-0.2L7,6.7C7.5,6.1,8.5,6,9,6.6l0.6,0.6C9.7,7.3,9.9,7.4,10,7.4h4.4C14.6,7.4,14.7,7.1,14.6,6.9z'/>
