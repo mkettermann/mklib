@@ -19,3 +19,8 @@ function removerUltimo() {
 function fazerRefill() {
 	mkt.Q("mk-sel[name='staRefill']").setAttribute("refill", "");
 }
+
+async function validarSeletor() {
+	await mkt.regrasValidas(".testeForm");
+}
+mkt.regrar(".testeForm", "staRegrado", { k: "obrigatorio" });

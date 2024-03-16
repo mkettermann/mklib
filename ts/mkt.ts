@@ -5658,10 +5658,12 @@ class mkSel extends HTMLElement {
 		value: "", // String dos selecionados
 		url: "",
 		selecionados: new Map(),
+		changed: false,
 		fail: 0,
-		geraEvento: () => {
-			// Gera o Evento
+		geraInputEvent: () => {
+			// Gera o Evento			
 			this.dispatchEvent(new Event("input"));
+			this.config.changed = true;
 		},
 		pesquisaKeyDown: (ev: KeyboardEvent) => {
 			let isNegado = false;
@@ -5758,7 +5760,7 @@ class mkSel extends HTMLElement {
 						this.config.selecionados.set(novoK?.toString(), novoV?.toString());
 						this.value = novoK;
 						this.config.updateSelecionadosValues();
-						this.config.geraEvento();
+						this.config.geraInputEvent();
 					} else if ((this.config.selapenas > 1) || (this.config.selapenas < 0)) {
 						// MULTI SELEÇÃO
 						let jaSelecionado = false;
@@ -5785,7 +5787,7 @@ class mkSel extends HTMLElement {
 							this.value = [...this.config.selecionados.keys()].join(",");
 						}
 						this.config.updateSelecionadosValues();
-						this.config.geraEvento();
+						this.config.geraInputEvent();
 
 					}
 				} else {
@@ -5994,6 +5996,11 @@ li[m="1"] {
 		if (this.getAttribute("vazio")) this.config.vazio = this.getAttribute("vazio");
 		if (this.getAttribute("selapenas")) this.config.selapenas = Number(this.getAttribute("selapenas"));
 		if (this.getAttribute("name")) this.config.name = this.getAttribute("name");
+
+
+		// Não precisa inicializar tudo por aqui pois quando tem opcoes, já gera get no opcoes.
+		this.atualizarDisplay();
+
 		// Eventos
 		this.config.eK.onfocus = () => {
 			this.setAttribute("focused", "");
@@ -6012,6 +6019,18 @@ li[m="1"] {
 			ev.stopPropagation();
 			this.config.eK.focus();
 		};
+		this.config.rolaBaixo.onmouseenter = (ev: Event) => {
+			this.config.moveScrollList(this.config.rolaBaixo, 1, true);
+		};
+		this.config.rolaBaixo.onmouseout = (ev: Event) => {
+			this.config.moveScrollList(this.config.rolaBaixo, 1, false);
+		};
+		this.config.rolaCima.onmouseenter = (ev: Event) => {
+			this.config.moveScrollList(this.config.rolaCima, -1, true);
+		};
+		this.config.rolaCima.onmouseout = (ev: Event) => {
+			this.config.moveScrollList(this.config.rolaCima, -1, false);
+		};
 		// Seguir o Elemento durante o scroll e resize
 		document.addEventListener("scroll", (event) => {
 			mkt.Reposicionar(this.config.eList, false);
@@ -6026,20 +6045,6 @@ li[m="1"] {
 				this.maisLinhas(this.config.populado, 10);
 			}
 		});
-		this.config.rolaBaixo.onmouseenter = (ev: Event) => {
-			this.config.moveScrollList(this.config.rolaBaixo, 1, true);
-		};
-		this.config.rolaBaixo.onmouseout = (ev: Event) => {
-			this.config.moveScrollList(this.config.rolaBaixo, 1, false);
-		};
-		this.config.rolaCima.onmouseenter = (ev: Event) => {
-			this.config.moveScrollList(this.config.rolaCima, -1, true);
-		};
-		this.config.rolaCima.onmouseout = (ev: Event) => {
-			this.config.moveScrollList(this.config.rolaCima, -1, false);
-		};
-		// Não precisa inicializar tudo por aqui pois quando tem opcoes, já gera get no opcoes.
-		this.atualizarDisplay();
 	} // Construtor mkSel
 
 	// Funçao que refaz a lista, Coleta, Popula, Seleciona e Exibe o selecionado.
@@ -6179,6 +6184,10 @@ li[m="1"] {
 					this.atualizarDisplay();
 					// Remove Status de focus pra sumir
 					this.removeAttribute("focused");
+					if (this.config.changed) {
+						this.config.changed = false;
+						this.dispatchEvent(new Event("change"));
+					}
 				}
 			}, 150);
 	}

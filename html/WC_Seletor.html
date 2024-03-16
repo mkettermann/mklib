@@ -4,7 +4,7 @@
 	ou seja, uma array que possúi arrays com chave e valor.
 </h4>
 <br /><br /><br />
-<form method="get" name="testeForm">
+<form method="get" name="testeForm" class="testeForm">
 	<input name="testeK" value="testeV" />
 	<div class="i">
 
@@ -105,6 +105,30 @@
 				<button onclick="fazerRefill()" type="button" class="bBotao bVerde" style="display: block; margin:auto;">Force
 					Refill</button>
 			</div>
+		</div>
+	</div>
+
+
+	<br /><br />
+
+	<div class="i">
+		<div class="col25">
+			<div class="divInputInput">
+				<b>Seletor + Regrar</b><br /><mk-sel name="staRegrado" vazio="Selecione"
+					opcoes='[["","Esse Não Pode"],[2,"Esse Pode"]]'></mk-sel>
+				<span class="text-danger mkRegrar" data-valmsg-for="staRegrado"></span>
+				<button onclick="validarSeletor()" type="button" class="bBotao bVermelho"
+					style="display: block; margin:auto;">Validar</button>
+			</div>
+		</div>
+		<div class="col25">
+			=)
+		</div>
+		<div class="col25">
+			=)
+		</div>
+		<div class="col25">
+			=)
 		</div>
 	</div>
 </form>
