@@ -5787,23 +5787,71 @@ li[m="1"] {
 }
 customElements.define("mk-sel", mkSel);
 class mkBotaoValue extends HTMLElement {
+    config = {
+        img: null,
+    };
     constructor() {
         super();
         this.attachShadow({ mode: "open" });
         let template = document.createElement("template");
         template.innerHTML = `<style>
 :host {
-	display: flex;
-	border: 1px inset #9aa7b3;
+	border: 1px outset #999;
 	border-radius: 8px;
-	background: transparent;
+	background: #0008;
 	width:100%;
+	height: 100%;
 	cursor: pointer;
+	padding: 0px;
+  margin: 0px;
+	transition: 0.2s;
+  user-select: none;
+	box-shadow: 1px 2px 2px 0px #0009;
+	overflow: hidden;
+}
+:host(:hover){
+	border: 1px inset #999;
+	transform: translate(1px, 1px);
+	box-shadow: 0px -1px 2px 0px #0009;
+}
+.all{
+	display: flex;
+	border-radius: inherit;
+	justify-content: center;
+	width: 100%;
+	height: 100%;
+	position: relative;
+}
+.area{
+	border-radius: 3px;
+	overflow: hidden;
+	box-shadow: 0px 0px 2px 0px #0009;
+}
+.imagem{
+	object-fit: contain;
+	border-radius: inherit;
+	width: 100%;
+	height: 100%;
+}
+.botao{
+	position: absolute;
+	background: transparent;	
+	width: 100%;
+	height: 100%;
 }
 </style>
-<div>BOTAO</div>`;
+<div class="all">
+<div class="area" part="area">
+<img class="imagem" part="imagem">
+</div>
+<div class="botao"></div>
+`;
         // GET / SETS Iniciais
         this.shadowRoot?.append(template.content);
+        this.config.img = this.shadowRoot?.querySelector(".imagem");
+        // SET Imagem Inicial
+        let inicial = this.getAttribute("inicial");
+        this.config.img.src = inicial;
     } // Fim Construtor mkBotaoValue
     // ATRIBUTOS
     get [Symbol.toStringTag]() { return "mk-bot"; }
