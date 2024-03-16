@@ -29,6 +29,7 @@
 
 	/* WC Seletor*/
 	--mkSelCorSetaSelecionado: black;
+	--mkSelListShadow: #0009;
 
 	/* Seletor mkSel*/
 	--mkSelArrowSize: 0px;
@@ -2251,6 +2252,10 @@ thead td:hover .mkhmHeadIco {
 	border-bottom-left-radius: 0px;
 	border-bottom-right-radius: 0px;
 	display: flex;
+}
+
+.valid {
+	border: 2px solid #090;
 }
 
 .mkRegrar {
