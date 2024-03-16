@@ -29,7 +29,7 @@
 
 	/* WC Seletor*/
 	--mkSelCorSetaSelecionado: black;
-	--mkSelListShadow: #0009;
+	--mkSelListBorder: #0009;
 
 	/* Seletor mkSel*/
 	--mkSelArrowSize: 0px;

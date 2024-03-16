@@ -5882,7 +5882,7 @@ class mkSel extends HTMLElement {
 .lista{
 	display: none;
 	position: fixed;
-	border: 1px solid black;
+	border: 1px solid var(--mkSelListBorder);
 	border-radius: 5px;
 	cursor: pointer;
 	user-select: none;
@@ -5894,7 +5894,7 @@ class mkSel extends HTMLElement {
 	scrollbar-color: #777 transparent;
 	scrollbar-width: none;
 	background: #EEE;
-	box-shadow: 0px 0px 1rem var(--mkSelListShadow);
+	box-shadow: 1px 2px 2px 0px var(--mkSelListBorder);
 }
 input {
 	border: 0px;
