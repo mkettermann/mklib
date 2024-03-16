@@ -2246,12 +2246,11 @@ thead td:hover .mkhmHeadIco {
 }
 
 /* MK REGRAR */
-input.input-validation-error {
+.input-validation-error {
 	border: 1px solid red;
 	border-bottom-left-radius: 0px;
 	border-bottom-right-radius: 0px;
 	display: flex;
-	font-size: 0.7rem;
 }
 
 .mkRegrar {
