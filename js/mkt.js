@@ -5918,6 +5918,9 @@ li[m="1"] {
         this.config.eK.onkeydown = (ev) => {
             this.config.pesquisaKeyDown(ev);
         };
+        mkt.Ao("mousedown", this.config.eUL, (e, ev) => {
+            this.selecionar(ev); // Não vai direto pra mecanicaSelecionar
+        });
         this.config.svg.onclick = (ev) => {
             ev.stopPropagation();
             this.config.eK.focus();
@@ -6196,9 +6199,6 @@ li[m="1"] {
                 await this.maisLinhas(this.config.populado, this.config._data.size);
             }
         }
-        mkt.Ao("mousedown", this.config.eUL, (e, ev) => {
-            this.selecionar(ev);
-        });
     }
     // Atravéz do evento KeyDown do Enter do teclado é selecionado.
     // Atravéz do evento de MouseDown, o evento é passado o selecionar.

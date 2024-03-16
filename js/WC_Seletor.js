@@ -7,6 +7,11 @@ mkt.Ao("input", "mk-sel[name='nomLetra']", (e) => {
 	}
 })
 
+// Visualizando Inputs Totais
+mkt.Ao("input", "mk-sel[name='multiSelecionado']", (e) => {
+	mkt.l("Input: (" + e.name + ") ", e.value);
+})
+
 function removerUltimo() {
 	let novoMap = mkt.Q("mk-sel[name='staRemover']").opcoes;
 
