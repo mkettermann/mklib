@@ -4815,7 +4815,8 @@ class mkt {
 		});
 	};
 
-	static removeAcentos = (s: string) => {
+	static removeAcentos = (s: string): string => {
+		if (s == null) return "";
 		// Remove acentos e depois chama Apenas Números e Letras.
 		s = s.toString();
 		let r = "";
@@ -4832,9 +4833,10 @@ class mkt {
 		return r;
 	};
 
-	static removeEspecias = (s: string) => {
+	static removeEspecias = (s: string): string => {
+		if (s == null) return "";
 		// Remove acentos e depois chama Apenas Números e Letras.
-		if (s) s = s.toString();
+		s = s.toString();
 		return mkt.apenasNumerosLetras(mkt.removeAcentos(s));
 	};
 
@@ -4848,30 +4850,21 @@ class mkt {
 	};
 
 	static apenasNumeros = (s: string | number = ""): string => {
+		if (s == null) return "";
 		// Ignora qualquer outro caracter além de Numeros
-		if (s) {
-			return s.toString().replace(/(?![0-9])./g, "");
-		} else {
-			return "";
-		}
+		return s.toString().replace(/(?![0-9])./g, "");
 	};
 
 	static apenasLetras = (s: string = ""): string => {
+		if (s == null) return "";
 		// Ignora qualquer outro caracter além de Letras formato ocidental
-		if (s) {
-			return s.replace(/(?![a-zA-Z])./g, "");
-		} else {
-			return "";
-		}
+		return s.replace(/(?![a-zA-Z])./g, "");
 	};
 
 	static apenasNumerosLetras = (s: string = ""): string => {
+		if (s == null) return "";
 		// Ignora qualquer outro caracter além de Numeros e Letras formato ocidental
-		if (s) {
-			return s.replace(/(?![a-zA-Z0-9])./g, "");
-		} else {
-			return "";
-		}
+		return s.replace(/(?![a-zA-Z0-9])./g, "");
 	};
 
 	static nodeToScript = (node: any) => {
