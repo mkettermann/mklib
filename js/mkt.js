@@ -1881,7 +1881,6 @@ class mkt {
         // A um determinado tempo, reexecuta essas funções.
         // Quando trocar essas funções para Web Component, será possivel manter observado por dentro da classe.
         mkt.mkRecRenderizar();
-        mkt.mkBotCheck();
         // Recursiva
         setTimeout(mkt.exeTimer, mkt.a.exeTimer);
     };
@@ -3052,69 +3051,6 @@ class mkt {
         else {
             mkt.w("mkRecUpdate(e): Elemento não encontrado ou selarray dele está vazia.", e);
         }
-    };
-    static mkBotCheck = async () => {
-        // Botao incluido uma imagem/pdf visualizavel e clicavel.
-        // Valor inicial no value, quando não presente, exibe data-value.
-        mkt.QAll("button.mkBot").forEach(async (e) => {
-            // Apenas quando contem Atualizar
-            let semEvento = e.classList.contains("atualizarSemEvento");
-            if (e.classList.contains("atualizar") || semEvento) {
-                e.classList.remove("atualizar");
-                e.classList.remove("atualizarSemEvento");
-                e.classList.add("atualizando");
-                // - Remove conteudo
-                e.innerHTML = "";
-                // - Coleta value do campo (ex: botao tem value="/img/teste.jpg")
-                let v = e.getAttribute("value");
-                // - Caso Nulo, Tentar pelo dataset
-                if (v == null || v == "") {
-                    v = e.dataset.value;
-                }
-                let clicavel = e.dataset.clicavel;
-                let exibirbarra = e.dataset.exibirbarra;
-                if (v != null && v != "") {
-                    let tipo = null;
-                    let terminacao = v.slice(v.length - 3, v.length).toString().toLowerCase();
-                    // Verificar aqui se trata-se de um link ou de uma base64 direto no elemento.					
-                    // - Verifica se terminacao do arquivo é PDF ou OUTRO,
-                    if ((v.includes("application/pdf")) || (terminacao == "pdf")) {
-                        tipo = "pdf";
-                    }
-                    // << Inicio do conteúdo
-                    let retornar = "<";
-                    // FORMATOS DE ARQUIVO
-                    if (tipo == "pdf") {
-                        retornar += "embed type='application/pdf' class='mkCem mkBotEmbed' src='" + v;
-                    }
-                    else {
-                        retornar +=
-                            e.innerHTML = "img class='mkCem' src='" + v;
-                    }
-                    if (exibirbarra) {
-                        retornar += "#toolbar=0";
-                    }
-                    // << Fim o conteúdo
-                    retornar += "'>";
-                    // Se é ou não clicavel
-                    if (!clicavel) {
-                        retornar += "<div class='mkBotSobre'></div>";
-                    }
-                    // Set
-                    e.innerHTML = retornar;
-                    // Ao concluir, tenta executar atributo onchange, se houver
-                    if (!semEvento) {
-                        if (e.onchange) {
-                            e.onchange();
-                        }
-                    }
-                }
-                else {
-                    mkt.w("Elemento com 'value' nulo. Esperava-se conteudo: ", v);
-                }
-                e.classList.remove("atualizando");
-            }
-        });
     };
     // ======================== REGRAR | VALIDAR | MASCARAR =========================== \\
     // ================================================================================= \\
@@ -5962,11 +5898,7 @@ class mkBot extends HTMLElement {
     }
     // HTML Set
     attributeChangedCallback(name, oldValue, newValue) {
-        if (name === "disabled") {
-            this.disabled = newValue !== null;
-            this.blur();
-        }
-        else if (name === "value") {
+        if (name === "value") {
             if (newValue != "" && newValue != null) {
                 if (this.config.dados != newValue) {
                     //mkt.l(this.config.name, " Set Value: ", newValue)
