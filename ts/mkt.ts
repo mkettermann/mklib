@@ -5951,6 +5951,7 @@ class mkBot extends HTMLElement {
 			this.editou("set value");
 			this.dispatchEvent(new Event("input"));
 			this.dispatchEvent(new Event("change"));
+			this.classList.add("changed");
 		};
 	}
 	get name() { return this.getAttribute("name"); }

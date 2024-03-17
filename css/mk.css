@@ -2325,6 +2325,10 @@ fieldset {
 	display: flex;
 }
 
+.mkReflexo {
+	-webkit-box-reflect: below -10px linear-gradient(0deg, #FFF9, #FFF5, #FFF1, transparent, transparent);
+}
+
 /* SELETOR */
 mk-sel:not(:defined) {
 	opacity: 0;
@@ -2347,4 +2351,8 @@ mk-bot:not(:defined) {
 	display: inline-block;
 	width: 211px;
 	height: 28px;
+}
+
+mk-bot.changed {
+	outline: 2px solid #4499;
 }
