@@ -5928,25 +5928,14 @@ class mkBot extends HTMLElement {
 			} else {
 				retornar += "img class='imagem' part='imagem' src='" + this.config.dados;
 			}
-
-
-			// << Fim o conteúdo
 			retornar += "'>";
-			// Se é ou não clicavel
+
 			if (!this.config.clicavel) {
-				// Exibe o sobreposto
+				// Se entrar aquim é pra clica no botão em vez do elemento
 				this.config.sobreposto.style.display = "";
 			}
-			//mkt.l(retornar);
 			// Display
 			this.config.area.innerHTML = retornar;
-
-			// Ao concluir, tenta executar atributo onchange, se houver
-			// if (!semEvento) {
-			// 	if (e.onchange) {
-			// 		e.onchange();
-			// 	}
-			// }
 		}
 	}
 
