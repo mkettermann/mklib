@@ -5711,6 +5711,8 @@ li[m="1"] {
 			this.config.eK.blur();
 		} else if (name === "size") {
 			this.config.eK.size = newValue;
+		} else if (name === "name") {
+			this.config.name = newValue;
 		} else if (name === "value") {
 			//mkt.l(this.config.name, " Set Value: ", newValue)
 			if (this.config.value != newValue) {
@@ -5819,12 +5821,11 @@ customElements.define("mk-sel", mkSel);
 // Faltando o callback dos atributos
 class mkBot extends HTMLElement {
 	config: any = {
-		img: null,
 		dados: null,
 		area: null,
 		sobreposto: null,
 		clicavel: false,
-		exibirbarra: true,
+		exibirbarra: false,
 	}
 	constructor() {
 		super();
@@ -5832,7 +5833,7 @@ class mkBot extends HTMLElement {
 		let template = document.createElement("template");
 		template.innerHTML = `<style>
 :host {
-	border: 1px outset #999;
+	display: flex;
 	border-radius: 8px;
 	background: #0008;
 	width:100%;
@@ -5879,18 +5880,16 @@ class mkBot extends HTMLElement {
 }
 </style>
 <div class="all">
-<div class="area" part="area">
-<img class="imagem" part="imagem">
-</div>
+<div class="area" part="area"></div>
 <div class='sobreposto' style="display: none;"></div>
 `;
 		// GET / SETS Iniciais
 		this.shadowRoot?.append(template.content);
-		this.config.img = this.shadowRoot?.querySelector(".imagem");
 		this.config.area = this.shadowRoot?.querySelector(".area");
 		this.config.sobreposto = this.shadowRoot?.querySelector(".sobreposto");
 
-		// SET Imagem Inicial
+		// GET Atributos
+		this.config.name = this.getAttribute("name");
 		this.config.inicial = this.getAttribute("inicial");
 		this.removeAttribute("inicial");
 		this.config.dados = this.getAttribute("value");
@@ -5901,7 +5900,7 @@ class mkBot extends HTMLElement {
 		this.removeAttribute("exibirbarra");
 		if (this.config.inicial == null) this.config.inicial = "";
 		if (this.config.dados == null) this.config.dados = "";
-		this.editou("build");
+		this.editou("#BUILD");
 
 	} // Fim Construtor mkBotaoValue
 
@@ -5909,13 +5908,18 @@ class mkBot extends HTMLElement {
 		//mkt.l("Editou " + this.name + " From: ", from)
 		if (this.config.dados == "") {
 			// Se editar para vazio, volta a exibir inicial
-			this.config.img.src = this.config.inicial;
+			if (this.config.inicial == "") {
+				// Quando ambos estão vazio, exibe um svg
+				this.config.area.innerHTML = "<svg xmlns='http://www.w3.org/2000/svg' class='imagem' part='imagem' viewBox='0 0 24 24' fill='none'><path stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M21 12v7a2 2 0 0 1-2 2h-3m5-9c-6.442 0-10.105 1.985-12.055 4.243M21 12v-1.5M3 16v3a2 2 0 0 0 2 2v0h11M3 16V5a2 2 0 0 1 2-2h8M3 16c1.403-.234 3.637-.293 5.945.243M16 21c-1.704-2.768-4.427-4.148-7.055-4.757M8.5 7C8 7 7 7.3 7 8.5S8 10 8.5 10 10 9.7 10 8.5 9 7 8.5 7zM19 2v3m0 3V5m0 0h3m-3 0h-3'/></svg>";
+			} else {
+				// Se não exibe o inicial num src
+				this.config.area.innerHTML = "<img class='imagem' part='imagem' src='" + this.config.inicial + "'>";
+			}
 		} else {
 			let tipo = null;
 			let retornar = "<";
-
 			let terminacao = this.config.dados.slice(this.config.dados.length - 3, this.config.dados.length).toString().toLowerCase();
-			mkt.l("mkBot - Terminação Arquivo: ", terminacao);
+			//mkt.l("mkBot - Terminação Arquivo: ", terminacao);
 			// Verificar aqui se trata-se de um link ou de uma base64 direto no elemento.					
 			// - Verifica se terminacao do arquivo é PDF ou OUTRO,
 			if ((this.config.dados.includes("application/pdf")) || (terminacao == "pdf")) {
@@ -5925,14 +5929,13 @@ class mkBot extends HTMLElement {
 			// FORMATOS DE ARQUIVO
 			if (tipo == "pdf") {
 				retornar += "embed type='application/pdf' class='imagem' part='imagem' src='" + this.config.dados;
-				if (this.config.exibirbarra) {
+				if (!this.config.exibirbarra) {
 					retornar += "#toolbar=0"
 				}
 			} else {
 				retornar += "img class='imagem' part='imagem' src='" + this.config.dados;
 			}
 			retornar += "'>";
-
 			if (!this.config.clicavel) {
 				// Se entrar aquim é pra clica no botão em vez do elemento
 				this.config.sobreposto.style.display = "";
@@ -5942,7 +5945,7 @@ class mkBot extends HTMLElement {
 		}
 	}
 
-	// ATRIBUTOS
+	// JS Get Set
 	get [Symbol.toStringTag]() { return "mk-bot"; }
 	get value() {
 		if (this.config.dados == null) return "";
@@ -5951,7 +5954,7 @@ class mkBot extends HTMLElement {
 	set value(text) {
 		if (text != null) {
 			this.config.dados = text;
-			this.editou("set value");
+			this.editou("#VALUE");
 			this.dispatchEvent(new Event("input"));
 			this.dispatchEvent(new Event("change"));
 			this.classList.add("changed");
@@ -5974,6 +5977,31 @@ class mkBot extends HTMLElement {
 			this.config.inicial = text;
 		}
 	}
+
+	// HTML Set
+	attributeChangedCallback(name: string, oldValue: string, newValue: string) {
+		if (name === "disabled") {
+			this.disabled = newValue !== null;
+			this.blur();
+		} else if (name === "value") {
+			if (newValue != "" && newValue != null) {
+				if (this.config.dados != newValue) {
+					//mkt.l(this.config.name, " Set Value: ", newValue)
+					this.value = newValue;
+				}
+				this.removeAttribute("value");
+			}
+		} else if (name === "name") {
+			this.config.name = newValue;
+		} else if (name === "inicial") {
+			if (this.config.inicial != newValue) {
+				this.config.inicial = newValue;
+			}
+		}
+	}
+
+	// Atributos sendo observados no elemento.
+	static observedAttributes: Array<string> = ["disabled", "value", "name", "inicial"];
 }
 customElements.define("mk-bot", mkBot);
 

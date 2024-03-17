@@ -5,25 +5,20 @@
 
 
 <div class="i">
-	<div class="col25 microPos2">
-		<div>Trocar por JS</div>
+	<div class="col25 microPos5 tb">
+		<div>Mk Bot sem atributos</div>
 		<div class="microPos5 tam150">
-			<mk-bot name="mkico" inicial="./img/Anonimo.png" onclick="console.log('Click no Primeiro funciona msm');"
-				oninput="console.log('Input: Modificou Primeiro')" onchange="console.log('Change: Modificou Primeiro')"
-				title="Trocar Imagem"></mk-bot>
+			<mk-bot></mk-bot>
 		</div>
-		<br /><button onclick="trocarValor()" type="button" class="bBotao bVerde"
-			style="display: block; margin:auto;">Trocar
-			Valor</button>
 	</div>
-	<div class="col25 microPos2">
-		<div>Já Selecionado</div>
+	<div class="col25 microPos5 tb">
+		<div>Iniciou com Value</div>
 		<div class="microPos5 tam150">
 			<mk-bot name="mkBotSelecionado" inicial="./img/Anonimo.png" value="./img/mkico.jpg"
 				onclick="console.log('Aqui sempre vai funcionar');"></mk-bot>
 		</div>
 	</div>
-	<div class="col25 microPos2">
+	<div class="col25 microPos5 tb">
 		<div>Clica no Botao</div>
 		<div class="microPos5 tam150">
 			<mk-bot name="mkBotClicavel" inicial="./img/Anonimo.png"
@@ -31,11 +26,37 @@
 				value="./img/mkico.pdf"></mk-bot>
 		</div>
 	</div>
-	<div class="col25 microPos2">
+	<div class="col25 microPos5 tb">
 		<div>Clica no PDF</div>
 		<div class="microPos5 tam150">
 			<mk-bot name="mkBotPdf" inicial="./img/Anonimo.png" value="./img/mkico.pdf" clicavel
 				onclick="console.log('NAO FUNCIONA: Está clicando dentro do pdf');"></mk-bot>
+		</div>
+	</div>
+</div>
+
+<br />
+<br />
+
+<div class="i">
+	<div class="col25 microPos5 tb">
+		<div>Trocar por JS</div>
+		<div class="microPos5 tam150">
+			<mk-bot name="mkico" inicial="./img/Anonimo.png" onclick="console.log('Click no Primeiro funciona msm');"
+				oninput="console.log('OnInput() OK')" onchange="console.log('OnChange() OK')" title="Trocar Imagem"></mk-bot>
+		</div>
+		<br /><button onclick="trocarValor()" type="button" class="bBotao bVerde"
+			style="display: block; margin:auto;">Trocar
+			Valor</button>
+	</div>
+	<div class="col25 microPos5 tb">
+		=)
+	</div>
+	<div class="col50 tb">
+		<div>PDF com Barra</div>
+		<div class="">
+			<mk-bot name="mkBotPdfImprimir" inicial="./img/Anonimo.png" value="./img/mkico.pdf" clicavel exibirbarra
+				style="height:280px;"></mk-bot>
 		</div>
 	</div>
 </div>
