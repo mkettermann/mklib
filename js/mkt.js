@@ -5793,6 +5793,7 @@ class mkBot extends HTMLElement {
         area: null,
         sobreposto: null,
         clicavel: false,
+        exibirbarra: true,
     };
     constructor() {
         super();
@@ -5830,6 +5831,8 @@ class mkBot extends HTMLElement {
 	border-radius: 3px;
 	overflow: hidden;
 	box-shadow: 0px 0px 2px 0px #0009;
+	width: 100%;
+	height: 100%;
 }
 .imagem{
 	object-fit: contain;
@@ -5862,6 +5865,8 @@ class mkBot extends HTMLElement {
         this.removeAttribute("value");
         this.config.clicavel = this.hasAttribute("clicavel");
         this.removeAttribute("clicavel");
+        this.config.exibirbarra = this.hasAttribute("exibirbarra");
+        this.removeAttribute("exibirbarra");
         if (this.config.inicial == null)
             this.config.inicial = "";
         if (this.config.dados == null)
@@ -5876,6 +5881,7 @@ class mkBot extends HTMLElement {
         }
         else {
             let tipo = null;
+            let retornar = "<";
             let terminacao = this.config.dados.slice(this.config.dados.length - 3, this.config.dados.length).toString().toLowerCase();
             mkt.l("mkBot - Terminação Arquivo: ", terminacao);
             // Verificar aqui se trata-se de um link ou de uma base64 direto no elemento.					
@@ -5883,18 +5889,16 @@ class mkBot extends HTMLElement {
             if ((this.config.dados.includes("application/pdf")) || (terminacao == "pdf")) {
                 tipo = "pdf";
             }
-            // << Inicio do conteúdo
-            let retornar = "<";
             // FORMATOS DE ARQUIVO
             if (tipo == "pdf") {
-                retornar += "embed type='application/pdf' class='mkCem mkBotEmbed' src='" + this.config.dados;
+                retornar += "embed type='application/pdf' class='imagem' part='imagem' src='" + this.config.dados;
+                if (this.config.exibirbarra) {
+                    retornar += "#toolbar=0";
+                }
             }
             else {
                 retornar += "img class='imagem' part='imagem' src='" + this.config.dados;
             }
-            // if (exibirbarra) {
-            // 	retornar += "#toolbar=0"
-            // }
             // << Fim o conteúdo
             retornar += "'>";
             // Se é ou não clicavel
@@ -5902,7 +5906,7 @@ class mkBot extends HTMLElement {
                 // Exibe o sobreposto
                 this.config.sobreposto.style.display = "";
             }
-            mkt.l(retornar);
+            //mkt.l(retornar);
             // Display
             this.config.area.innerHTML = retornar;
             // Ao concluir, tenta executar atributo onchange, se houver
