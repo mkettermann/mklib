@@ -2612,9 +2612,12 @@ class mkt {
 	}
 
 
-	// ==================== Gerenciamento Monetário / Numérico ======================== \\
+	// ================ Gerenciamento Monetário / Numérico / Locale =================== \\
 	// ================================================================================= \\
 
+	static getCountry = (): string => {
+		return Intl.DateTimeFormat().resolvedOptions().locale.toUpperCase().slice(3);
+	}
 
 	static numToDisplay = (num: any, c: any = {}): string => {
 		// Formata o número para uma string com casas fixas atrás da vírgula.

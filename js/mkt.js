@@ -2593,8 +2593,11 @@ class mkt {
             }
         });
     };
-    // ==================== Gerenciamento Monetário / Numérico ======================== \\
+    // ================ Gerenciamento Monetário / Numérico / Locale =================== \\
     // ================================================================================= \\
+    static getCountry = () => {
+        return Intl.DateTimeFormat().resolvedOptions().locale.toUpperCase().slice(3);
+    };
     static numToDisplay = (num, c = {}) => {
         // Formata o número para uma string com casas fixas atrás da vírgula.
         if (c.casas == null)
