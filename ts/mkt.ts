@@ -4397,6 +4397,9 @@ class mkt {
 			Array.from(form.querySelectorAll("mk-sel")).forEach((mks: any) => {
 				rObjeto[mks.name] = mks.value;
 			});
+			Array.from(form.querySelectorAll("mk-bot")).forEach((mkb: any) => {
+				rObjeto[mkb.name] = mkb.value;
+			});
 		}
 		mkt.gc("Objeto Gerado: ");
 		mkt.w(rObjeto);
