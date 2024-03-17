@@ -5818,7 +5818,6 @@ customElements.define("mk-sel", mkSel);
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //  Web Component MkBot - Botao PDF \\
 //___________________________________\\
-// Faltando o callback dos atributos
 class mkBot extends HTMLElement {
 	config: any = {
 		dados: null,
