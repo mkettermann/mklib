@@ -22,22 +22,37 @@
 <br />
 
 <div class="i">
-	<div class="col25 microPos5" style="flex-direction: column;">
-		<mk-bot name="mkico" inicial="./img/Anonimo.png" onclick="console.log('clicaram no primeiro');"
-			oninput="console.log('Input: Modificou Primeiro')" style="width: 150px; height: 150px;"
-			title="Trocar Imagem"></mk-bot>
+	<div class="col25 microPos2">
+		<div>Trocar por JS</div>
+		<div class="microPos5 tam150">
+			<mk-bot name="mkico" inicial="./img/Anonimo.png" onclick="console.log('Click no Primeiro funciona msm');"
+				oninput="console.log('Input: Modificou Primeiro')" title="Trocar Imagem"></mk-bot>
+		</div>
 		<br /><button onclick="trocarValor()" type="button" class="bBotao bVerde"
 			style="display: block; margin:auto;">Trocar
 			Valor</button>
 	</div>
-	<div class="col25 microPos5">
-		=)
+	<div class="col25 microPos2">
+		<div>Já Selecionado</div>
+		<div class="microPos5 tam150">
+			<mk-bot name="mkBotSelecionado" inicial="./img/Anonimo.png" value="./img/mkico.jpg"
+				onclick="console.log('Aqui sempre vai funcionar');"></mk-bot>
+		</div>
 	</div>
-	<div class="col25 microPos5">
-		=)
+	<div class="col25 microPos2">
+		<div>Clicavel (Interage)</div>
+		<div class="microPos5 tam150">
+			<mk-bot name="mkBotClicavel" inicial="./img/Anonimo.png"
+				onclick="console.log('Click Funcionou por que não era PDF');" title="Trocar Imagem" value="./img/mkico.jpg"
+				clicavel></mk-bot>
+		</div>
 	</div>
-	<div class="col25 microPos5">
-		=)
+	<div class="col25 microPos2">
+		<div>PDF clicável</div>
+		<div class="microPos5 tam150">
+			<mk-bot name="mkBotPdf" inicial="./img/Anonimo.png" value="./img/mkico.pdf" clicavel
+				onclick="console.log('NAO VAI FUNCIONAR');"></mk-bot>
+		</div>
 	</div>
 </div>
 

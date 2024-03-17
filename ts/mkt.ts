@@ -5814,9 +5814,13 @@ li[m="1"] {
 customElements.define("mk-sel", mkSel);
 
 
-class mkBotaoValue extends HTMLElement {
+class mkBot extends HTMLElement {
 	config: any = {
 		img: null,
+		dados: null,
+		area: null,
+		sobreposto: null,
+		clicavel: false,
 	}
 	constructor() {
 		super();
@@ -5861,7 +5865,7 @@ class mkBotaoValue extends HTMLElement {
 	width: 100%;
 	height: 100%;
 }
-.botao{
+.sobreposto{
 	position: absolute;
 	background: transparent;	
 	width: 100%;
@@ -5872,27 +5876,85 @@ class mkBotaoValue extends HTMLElement {
 <div class="area" part="area">
 <img class="imagem" part="imagem">
 </div>
-<div class="botao"></div>
+<div class='sobreposto' style="display: none;"></div>
 `;
 		// GET / SETS Iniciais
 		this.shadowRoot?.append(template.content);
 		this.config.img = this.shadowRoot?.querySelector(".imagem");
+		this.config.area = this.shadowRoot?.querySelector(".area");
+		this.config.sobreposto = this.shadowRoot?.querySelector(".sobreposto");
 
 		// SET Imagem Inicial
-		let inicial = this.getAttribute("inicial");
-		this.config.img.src = inicial;
+		this.config.inicial = this.getAttribute("inicial");
+		this.removeAttribute("inicial");
+		this.config.dados = this.getAttribute("value");
+		this.removeAttribute("value");
+		this.config.clicavel = this.hasAttribute("clicavel");
+		this.removeAttribute("clicavel");
+		if (this.config.inicial == null) this.config.inicial = "";
+		if (this.config.dados == null) this.config.dados = "";
+		this.editou("build");
 
 	} // Fim Construtor mkBotaoValue
+
+	editou(from: string) {
+		//mkt.l("Editou " + this.name + " From: ", from)
+		if (this.config.dados == "") {
+			// Se editar para vazio, volta a exibir inicial
+			this.config.img.src = this.config.inicial;
+		} else {
+			let tipo = null;
+			let terminacao = this.config.dados.slice(this.config.dados.length - 3, this.config.dados.length).toString().toLowerCase();
+			mkt.l("mkBot - Terminação Arquivo: ", terminacao);
+			// Verificar aqui se trata-se de um link ou de uma base64 direto no elemento.					
+			// - Verifica se terminacao do arquivo é PDF ou OUTRO,
+			if ((this.config.dados.includes("application/pdf")) || (terminacao == "pdf")) {
+				tipo = "pdf";
+			}
+
+			// << Inicio do conteúdo
+			let retornar = "<";
+
+			// FORMATOS DE ARQUIVO
+			if (tipo == "pdf") {
+				retornar += "embed type='application/pdf' class='mkCem mkBotEmbed' src='" + this.config.dados;
+			} else {
+				retornar += "img class='imagem' part='imagem' src='" + this.config.dados;
+			}
+			// if (exibirbarra) {
+			// 	retornar += "#toolbar=0"
+			// }
+
+			// << Fim o conteúdo
+			retornar += "'>";
+			// Se é ou não clicavel
+			if (!this.config.clicavel) {
+				// Exibe o sobreposto
+				this.config.sobreposto.style.display = "";
+			}
+			mkt.l(retornar);
+			// Display
+			this.config.area.innerHTML = retornar;
+
+			// Ao concluir, tenta executar atributo onchange, se houver
+			// if (!semEvento) {
+			// 	if (e.onchange) {
+			// 		e.onchange();
+			// 	}
+			// }
+		}
+	}
 
 	// ATRIBUTOS
 	get [Symbol.toStringTag]() { return "mk-bot"; }
 	get value() {
-		if (this.getAttribute("value") == null) return "";
-		return this.getAttribute("value");
+		if (this.config.dados == null) return "";
+		return this.config.dados;
 	}
 	set value(text) {
 		if (text != null) {
-			this.setAttribute("value", text)
+			this.config.dados = text;
+			this.editou("set value");
 			this.dispatchEvent(new Event("input"));
 			this.dispatchEvent(new Event("change"));
 		};
@@ -5904,15 +5966,18 @@ class mkBotaoValue extends HTMLElement {
 		if (value) this.setAttribute("disabled", "");
 		else this.removeAttribute("disabled");
 	}
+	// Atualizar config do Inicial
 	get inicial() {
-		if (this.getAttribute("inicial") == null) return "";
-		return this.getAttribute("inicial");
+		if (this.config.inicial == null) return "";
+		return this.config.inicial;
 	}
 	set inicial(text) {
-		if (text != null) this.setAttribute("inicial", text);
+		if (text != null) {
+			this.config.inicial = text;
+		}
 	}
 }
-customElements.define("mk-bot", mkBotaoValue);
+customElements.define("mk-bot", mkBot);
 
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //   Auto Inicializar               \\

@@ -506,3 +506,8 @@ mk-sel::part(rolaBaixo) {
 mk-sel::part(lista) {
 	max-height: 200px;
 }
+
+.tam150 {
+	width: 150px;
+	height: 150px;
+}
