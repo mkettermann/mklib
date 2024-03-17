@@ -5786,6 +5786,10 @@ li[m="1"] {
     static observedAttributes = ["disabled", "size", "value", "name", "opcoes", "url", "scrollbarwidth", "scrollbarcolor", "selapenas", "refill", "pos"];
 }
 customElements.define("mk-sel", mkSel);
+//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+//  Web Component MkBot - Botao PDF \\
+//___________________________________\\
+// Faltando o callback dos atributos
 class mkBot extends HTMLElement {
     config = {
         img: null,
