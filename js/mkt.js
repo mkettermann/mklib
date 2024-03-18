@@ -3212,19 +3212,17 @@ class mkt {
                                     if (re.v == null)
                                         re.v = "true";
                                     if (re.v == "true") {
-                                        if ((!ev) && (re.ev != "blur")) {
-                                            if (e[re.target] == "") {
-                                                if (!re.m) {
-                                                    if (mkt.classof(e) == "mk-sel") {
-                                                        re.m = mkt.a.msg.so;
-                                                    }
-                                                    else {
-                                                        re.m = mkt.a.msg.po;
-                                                    }
+                                        if (e[re.target] == "") {
+                                            if (!re.m) {
+                                                if (mkt.classof(e) == "mk-sel") {
+                                                    re.m = mkt.a.msg.so;
                                                 }
-                                                erros.push(re);
+                                                else {
+                                                    re.m = mkt.a.msg.po;
+                                                }
                                             }
-                                        } // Gera erro apenas no blur
+                                            erros.push(re);
+                                        }
                                     }
                                     prom(re.k);
                                     break;
