@@ -1764,32 +1764,36 @@ class mkt {
 
 	static QSetAll = (
 		query: string = "input[name='#PROP#']",
-		o: object | null = null,
+		dados: object | null = null,
 		comEvento: boolean | null = true
 	) => {
 		// Seta todos os query com os valores das propriedades informadas nos campos.
 		// O nome da propriedade precisa ser compatível com o PROPNAME do query.
 		let eAfetados = [];
-		if (o != null) {
-			if (typeof o == "object" && !Array.isArray(o)) {
-				for (let p in o) {
-					let eDynamicQuery = mkt.Q(
-						query.replace("#PROP#", p)
-					) as HTMLInputElement;
-					if (eDynamicQuery) {
-						if (o[p as keyof typeof o]) {
-							eDynamicQuery.value = o[p as keyof typeof o];
-							if (comEvento) {
-								eDynamicQuery.classList.add("atualizar");
-							} else {
-								eDynamicQuery.classList.add("atualizarSemEvento");
-							}
-							eAfetados.push(eDynamicQuery);
+		if (mkt.classof(dados) == "Object") { // Apenas Objeto
+			for (let p in dados) {
+				let eDynamicQuery = mkt.Q(
+					query.replace("#PROP#", p)
+				) as HTMLInputElement;
+				if (eDynamicQuery) {
+					if (dados[p as keyof typeof dados]) {
+						eDynamicQuery.value = dados[p as keyof typeof dados];
+						if (comEvento) {
+							eDynamicQuery.classList.add("atualizar");
+						} else {
+							eDynamicQuery.classList.add("atualizarSemEvento");
 						}
+						eAfetados.push(eDynamicQuery);
 					}
 				}
-			} else mkt.w("QSetAll - Precisa receber um objeto: " + o);
-		} else mkt.w("QSetAll - Objeto não pode ser nulo: " + o);
+			}
+		} else if (mkt.classof(dados) == "String") {
+			mkt.QAll(query).forEach((e: any) => {
+				e.value = dados;
+			})
+		} else {
+			mkt.w("QSetAll - Tipo de dado não implementado: " + mkt.classof(dados))
+		}
 		return eAfetados;
 	}
 

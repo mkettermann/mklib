@@ -1768,33 +1768,35 @@ class mkt {
     static wait = (ms) => {
         return new Promise(r => setTimeout(r, ms));
     };
-    static QSetAll = (query = "input[name='#PROP#']", o = null, comEvento = true) => {
+    static QSetAll = (query = "input[name='#PROP#']", dados = null, comEvento = true) => {
         // Seta todos os query com os valores das propriedades informadas nos campos.
         // O nome da propriedade precisa ser compatível com o PROPNAME do query.
         let eAfetados = [];
-        if (o != null) {
-            if (typeof o == "object" && !Array.isArray(o)) {
-                for (let p in o) {
-                    let eDynamicQuery = mkt.Q(query.replace("#PROP#", p));
-                    if (eDynamicQuery) {
-                        if (o[p]) {
-                            eDynamicQuery.value = o[p];
-                            if (comEvento) {
-                                eDynamicQuery.classList.add("atualizar");
-                            }
-                            else {
-                                eDynamicQuery.classList.add("atualizarSemEvento");
-                            }
-                            eAfetados.push(eDynamicQuery);
+        if (mkt.classof(dados) == "Object") { // Apenas Objeto
+            for (let p in dados) {
+                let eDynamicQuery = mkt.Q(query.replace("#PROP#", p));
+                if (eDynamicQuery) {
+                    if (dados[p]) {
+                        eDynamicQuery.value = dados[p];
+                        if (comEvento) {
+                            eDynamicQuery.classList.add("atualizar");
                         }
+                        else {
+                            eDynamicQuery.classList.add("atualizarSemEvento");
+                        }
+                        eAfetados.push(eDynamicQuery);
                     }
                 }
             }
-            else
-                mkt.w("QSetAll - Precisa receber um objeto: " + o);
         }
-        else
-            mkt.w("QSetAll - Objeto não pode ser nulo: " + o);
+        else if (mkt.classof(dados) == "String") {
+            mkt.QAll(query).forEach((e) => {
+                e.value = dados;
+            });
+        }
+        else {
+            mkt.w("QSetAll - Tipo de dado não implementado: " + mkt.classof(dados));
+        }
         return eAfetados;
     };
     static Qison = (query = "body") => {
