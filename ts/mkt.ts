@@ -5182,7 +5182,7 @@ li[m="1"] {
 }
 </style>
 <div class="mkSeletor" part="mkSeletor">
-	<input type="text" placeholder="Filtro \u{1F50D}" value="${this.config.vazio}" class="k" autocomplete="off"/>
+	<input part="k" type="text" placeholder="Filtro \u{1F50D}" value="${this.config.vazio}" class="k" autocomplete="off"/>
 	<svg xmlns='http://www.w3.org/2000/svg' class="arrowAbreFecha" part='arrowAbreFecha' viewBox='0 0 16 16'>
 	<path class='setaCima' d='M14.6,6.9L8.4,0.7c-0.2-0.2-0.6-0.2-0.9,0L1.4,6.9c-0.2,0.2,0,0.4,0.2,0.4h4.5c0.1,0,0.3-0.1,0.4-0.2L7,6.7C7.5,6.1,8.5,6,9,6.6l0.6,0.6C9.7,7.3,9.9,7.4,10,7.4h4.4C14.6,7.4,14.7,7.1,14.6,6.9z'/>
 	<path class='setaBaixo' d='M1.4,8.9l6.1,6.3c0.2,0.2,0.6,0.2,0.9,0l6.1-6.3c0.2-0.2,0-0.4-0.2-0.4H9.9c-0.1,0-0.3,0.1-0.4,0.2L9,9.2C8.5,9.8,7.5,9.9,7,9.3L6.4,8.7C6.3,8.6,6.1,8.5,6,8.5H1.6C1.4,8.5,1.3,8.8,1.4,8.9z'/>
