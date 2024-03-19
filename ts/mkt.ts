@@ -4229,11 +4229,11 @@ class mkt {
 				// 	"NovaPos": novaPos + "px",
 				// 	"offsetHeight": eAnterior.offsetHeight,
 				// })
-				mkt.l({
-					"ANT Rect": oDinBloco,
-					"LISTA Rect": oDinList,
-					"offsetWidth": eAnterior.offsetWidth,
-				})
+				// mkt.l({
+				// 	"ANT Rect": oDinBloco,
+				// 	"LISTA Rect": oDinList,
+				// 	"offsetWidth": eAnterior.offsetWidth,
+				// })
 				e.style.left = (oDinBloco.x) + "px";
 				e.style.top = novaPos + "px";
 				e.style.bottom = null;
