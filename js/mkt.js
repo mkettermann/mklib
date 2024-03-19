@@ -4766,9 +4766,9 @@ class mkt {
         // Efeito de terremoto no elemento
         if (e) {
             e.classList.add("mkTerremoto");
-            setTimeout(() => {
+            mkt.wait(500).then(r => {
                 e.classList.remove("mkTerremoto");
-            }, 500);
+            });
         }
     };
     // DEPRECATED - Utiliza em Fichas (Substituir por Faseador)
@@ -5353,7 +5353,7 @@ li[m="1"] {
     // Quando sai do botão de pesquisar principal
     aoBlur() {
         // Ao perder foco
-        setTimeout(() => {
+        mkt.wait(150).then(r => {
             if (document.activeElement !== this) {
                 // SE REALMENTE Saiu do elemento:
                 // Seta Valor do display
@@ -5365,7 +5365,7 @@ li[m="1"] {
                     this.dispatchEvent(new Event("change"));
                 }
             }
-        }, 150);
+        });
     }
     // Exibe a lista baseado no filtro de pesquisa
     async aoInput() {

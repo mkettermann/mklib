@@ -4805,9 +4805,9 @@ class mkt {
 		// Efeito de terremoto no elemento
 		if (e) {
 			e.classList.add("mkTerremoto");
-			setTimeout(() => {
+			mkt.wait(500).then(r => {
 				e.classList.remove("mkTerremoto");
-			}, 500);
+			});
 		}
 	};
 
@@ -5395,20 +5395,19 @@ li[m="1"] {
 	// Quando sai do botão de pesquisar principal
 	aoBlur() {
 		// Ao perder foco
-		setTimeout(
-			() => {
-				if (document.activeElement !== this) {
-					// SE REALMENTE Saiu do elemento:
-					// Seta Valor do display
-					this.atualizarDisplay();
-					// Remove Status de focus pra sumir
-					this.removeAttribute("focused");
-					if (this.config.changed) {
-						this.config.changed = false;
-						this.dispatchEvent(new Event("change"));
-					}
+		mkt.wait(150).then(r => {
+			if (document.activeElement !== this) {
+				// SE REALMENTE Saiu do elemento:
+				// Seta Valor do display
+				this.atualizarDisplay();
+				// Remove Status de focus pra sumir
+				this.removeAttribute("focused");
+				if (this.config.changed) {
+					this.config.changed = false;
+					this.dispatchEvent(new Event("change"));
 				}
-			}, 150);
+			}
+		});
 	}
 
 	// Exibe a lista baseado no filtro de pesquisa
