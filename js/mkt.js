@@ -7017,7 +7017,9 @@ li[m="1"] {
             primeiroOffSet - 120 - (this.config.eList.offsetHeight - this.config.eList.clientHeight) / 2;
         //}
         // Atualizar posição da Lista.
+        //mkt.l("Resposicionou:", this.name);
         mkt.Reposicionar(this.config.eList, true);
+        mkt.a.poppers.get(this.config.eList).update();
     }
     // Quando sai do botão de pesquisar principal
     aoBlur() {

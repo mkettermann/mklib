@@ -7623,7 +7623,9 @@ li[m="1"] {
 		//}
 
 		// Atualizar posição da Lista.
+		//mkt.l("Resposicionou:", this.name);
 		mkt.Reposicionar(this.config.eList, true);
+		mkt.a.poppers.get(this.config.eList).update();
 	}
 
 	// Quando sai do botão de pesquisar principal
