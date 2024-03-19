@@ -896,37 +896,37 @@ class mkt {
 			// GATILHOS Só no ato a construção do elemento
 			mkt.Ao("click", ".mkHeadMenu .hmPrevious", (e: HTMLDivElement) => {
 				let eHmenu = mkt.Q("body .mkHeadMenu");
-				mkt.a.hm.Previous(eHmenu?.getAttribute("data-colname"), eHmenu?.getAttribute("data-mkt"));
+				mkt.hm.Previous(eHmenu?.getAttribute("data-colname"), eHmenu?.getAttribute("data-mkt"));
 			})
 			mkt.Ao("click", ".mkHeadMenu .hmNext", (e: HTMLDivElement) => {
 				let eHmenu = mkt.Q("body .mkHeadMenu");
-				mkt.a.hm.Next(eHmenu?.getAttribute("data-colname"), eHmenu?.getAttribute("data-mkt"));
+				mkt.hm.Next(eHmenu?.getAttribute("data-colname"), eHmenu?.getAttribute("data-mkt"));
 			})
 			mkt.Ao("click", ".mkHeadMenu .hmHide", (e: HTMLDivElement) => {
 				mkt.Q("body .mkHeadMenu")?.classList.add("oculto");
 			})
 			mkt.Ao("click", ".mkHeadMenu .hmCrescente", (e: HTMLLIElement) => {
 				let eHmenu = mkt.Q("body .mkHeadMenu");
-				mkt.a.hm.Crescente(eHmenu?.getAttribute("data-colname"), eHmenu?.getAttribute("data-mkt"));
+				mkt.hm.Crescente(eHmenu?.getAttribute("data-colname"), eHmenu?.getAttribute("data-mkt"));
 			})
 			mkt.Ao("click", ".mkHeadMenu .hmDecrescente", (e: HTMLLIElement) => {
 				let eHmenu = mkt.Q("body .mkHeadMenu");
-				mkt.a.hm.Decrescente(eHmenu?.getAttribute("data-colname"), eHmenu?.getAttribute("data-mkt"));
+				mkt.hm.Decrescente(eHmenu?.getAttribute("data-colname"), eHmenu?.getAttribute("data-mkt"));
 			})
 			mkt.Ao("click", ".mkHeadMenu .hmLimpar", (e: HTMLLIElement) => {
 				let eHmenu = mkt.Q("body .mkHeadMenu");
-				mkt.a.hm.Limpar(eHmenu?.getAttribute("data-colname"), eHmenu?.getAttribute("data-mkt"));
+				mkt.hm.Limpar(eHmenu?.getAttribute("data-colname"), eHmenu?.getAttribute("data-mkt"));
 			})
 			mkt.Ao("click", ".mkHeadMenu .hmLimparTodos", (e: HTMLLIElement) => {
 				let eHmenu = mkt.Q("body .mkHeadMenu");
-				mkt.a.hm.LimparTodos(eHmenu?.getAttribute("data-colname"), eHmenu?.getAttribute("data-mkt"));
+				mkt.hm.LimparTodos(eHmenu?.getAttribute("data-colname"), eHmenu?.getAttribute("data-mkt"));
 			})
 			mkt.Ao("input", ".mkHeadMenu .hmFiltraExclusivo", (e: HTMLInputElement) => {
-				mkt.a.hm.FiltraExclusivo(e.value, e.closest(".mkHeadMenu")?.getAttribute("data-mkt"));
+				mkt.hm.FiltraExclusivo(e.value, e.closest(".mkHeadMenu")?.getAttribute("data-mkt"));
 			})
 			mkt.Ao("input", ".mkHeadMenu .hmContemInput", (e: HTMLInputElement) => {
 				let eHmenu = mkt.Q("body .mkHeadMenu");
-				mkt.a.hm.ContemInput(e.value, eHmenu?.getAttribute("data-colname"), e.closest(".mkHeadMenu")?.getAttribute("data-mkt"));
+				mkt.hm.ContemInput(e.value, eHmenu?.getAttribute("data-colname"), e.closest(".mkHeadMenu")?.getAttribute("data-mkt"));
 			})
 		}
 		// Reexecuta o query pois agora já criou.
@@ -962,9 +962,9 @@ class mkt {
 		}
 		if (!this.exclusivos) { this.exclusivos = [] };
 		// Popula .possibilidades usando a Lista de exclusivos
-		mkt.a.hm.FiltraExclusivo("", thisList);
+		mkt.hm.FiltraExclusivo("", thisList);
 
-		mkt.atribuir(mkt.Q("body"), () => { mkt.a.hm.Hide(event) }, "onclick");
+		mkt.atribuir(mkt.Q("body"), () => { mkt.hm.Hide(event) }, "onclick");
 		let colNameLabel = colName;
 		let esteLabel = this.getModel()?.filter((f) => { return f.k == colName })?.[0]?.l;
 		if (esteLabel) {
@@ -1325,220 +1325,6 @@ class mkt {
 		definePropertyExceptions: ["regras"],
 		espaco: "&nbsp;",
 		exeTimer: 500,
-		hm: { // Representa o Head Menu
-			Hide: (ev: any) => {
-				// Ocultar ao clicar fora.
-				let ehm = mkt.Q("body .mkHeadMenu");
-				let ethm = ev.target.closest('.mkHeadMenu');
-				if (!ethm) {
-					ehm?.classList.add("oculto");
-				}
-			},
-			Previous: (colName: string, iof: string | null | undefined) => {
-				// iof == indexOf mkt.a.build
-				if ((mkt.classof(iof) == "String") && (mkt.classof(colName) == "String")) {
-					// Sempre que abre o menu, da o replace do this na estática.
-					let opcoes = mkt.getThis(Number(iof)).getModel().map((o: any) => { if (o.f) return o.k; }).filter((r: any) => { return r != null });
-					let posAtual = opcoes.indexOf(colName);
-					let posAnterior = 0;
-					if (posAtual >= 0) { // Se o atual existe
-						posAnterior = posAtual - 1;
-					}
-					if (posAnterior < 0) {// Era o primeiro
-						posAnterior = opcoes.length - 1;//Vira Última Posição
-					}
-					if (opcoes[posAnterior]) mkt.getThis(Number(iof)).headMenuAbrir(opcoes[posAnterior] as string);
-				} else {
-					mkt.w("mkt.a.hm.Previous() - Parametros precisam ser duas string: ", colName, iof);
-				}
-
-			},
-			Next: (colName: string, iof: string | null | undefined) => {
-				if (mkt.classof(iof) == "String") {
-					let opcoes = mkt.getThis(Number(iof)).getModel().map((o: any) => { if (o.f) return o.k; }).filter((r: any) => { return r != null });
-					let posAtual = opcoes.indexOf(colName);
-					let posSeguinte = 0;
-					if (posAtual >= 0) { // Se o atual existe
-						posSeguinte = posAtual + 1;
-					}
-					if (posSeguinte >= opcoes.length) {// Era o último
-						posSeguinte = 0;//Vira Primeira Posição
-					}
-					if (opcoes[posSeguinte]) mkt.getThis(Number(iof)).headMenuAbrir(opcoes[posSeguinte] as string);
-				} else {
-					mkt.w("mkt.a.hm.Next() - Parametros precisam ser uma string: ", colName, iof);
-				}
-			},
-			Crescente: (colName: string, iof: string | null | undefined) => {
-				if (mkt.classof(iof) == "String") {
-					mkt.getThis(Number(iof)).orderBy(colName, 0);
-				} else {
-					mkt.w("mkt.a.hm.Crescente() - Parametros precisam ser string: ", colName, iof);
-				}
-			},
-			Decrescente: (colName: string, iof: string | null | undefined) => {
-				if (mkt.classof(iof) == "String") {
-					mkt.getThis(Number(iof)).orderBy(colName, 1);
-				} else {
-					mkt.w("mkt.a.hm.Decrescente() - Parametros precisam ser string: ", colName, iof);
-				}
-			},
-			Limpar: (colName: string, iof: string | null | undefined) => {
-				mkt.Q(".mkHeadMenu input[name='filtrarCampo']").value = "";
-				mkt.getThis(Number(iof)).hmunsel = [];
-				mkt.a.hm.FiltraExclusivo("", iof);
-				mkt.getThis(Number(iof)).clearFiltro(colName);
-				mkt.getThis(Number(iof)).atualizarListagem();
-			},
-			LimparTodos: (colName: string, iof: string | null | undefined) => {
-				mkt.Q(".mkHeadMenu input[name='filtrarCampo']").value = "";
-				mkt.getThis(Number(iof)).hmunsel = [];
-				mkt.a.hm.FiltraExclusivo("", iof);
-				mkt.getThis(Number(iof)).clearFiltro();
-				mkt.getThis(Number(iof)).atualizarListagem();
-			},
-			ContemInput: (v: any, colName: string, iof: string | null | undefined) => {
-				mkt.getThis(Number(iof)).c.objFiltro[colName] = {
-					formato: "string",
-					operador: "",
-					conteudo: v,
-				};
-				mkt.getThis(Number(iof)).atualizaNaPaginaUm();
-				// Limpar outros filtros
-				mkt.getThis(Number(iof)).hmunsel = [];
-				mkt.a.hm.FiltraExclusivo("", iof);
-			},
-			FiltraExclusivo: (v: string, iof: string | null | undefined) => {
-				if (mkt.classof(iof) == "String") {
-					let vProcessado = mkt.removeEspecias(v).toLowerCase().trim();
-					let exFiltrado = mkt.getThis(Number(iof)).exclusivos?.filter((f: string) => {
-						return mkt.removeEspecias(f).toLowerCase().trim().includes(vProcessado);
-					});
-					let muitosExclusivos = false;
-					if (exFiltrado) {
-						if (exFiltrado.length > 100) {
-							muitosExclusivos = true;
-						}
-					} else {
-						exFiltrado = [];
-					};
-					if (mkt.getThis(Number(iof)).hmunsel.length <= 0) {
-						mkt.Q("body .mkHeadMenu .possibilidades").classList.remove("st");
-					}
-					let htmlPossiveis = "<ul class='filtravel'>";
-
-					if (exFiltrado.length > 0) {
-						let fullsel = "sel";
-						if (mkt.Q("body .mkHeadMenu .possibilidades").classList.contains("st")) {
-							fullsel = "";
-						}
-						htmlPossiveis += "<li class='hmMarcarExclusivos nosel botao " + fullsel + "' id='headMenuTodos'>" + mkt.a.SVGINI + mkt.a.svgSquare + mkt.a.SVGFIM + mkt.a.espaco + "Selecionar Todos (" + exFiltrado.length + ")";
-						if (v != "") {
-							htmlPossiveis += " Pesquisados";
-						}
-						htmlPossiveis += "</li>";
-						exFiltrado.forEach((v: any) => {
-							let sel = "sel";
-							let v2 = mkt.removeEspecias(v).toLowerCase().trim();
-							mkt.getThis(Number(iof)).hmunsel.forEach((hm: any) => {
-								if (mkt.removeEspecias(hm).toLowerCase().trim() == v2) {
-									sel = "";
-								}
-							});
-							// Tratamento das possíveis saída de dados diferentes.
-							let vOut: any = v;
-							if (mkt.a.util.data[1].test(vOut)) {
-								vOut = mkt.dataToLocale(vOut);
-							} else if (mkt.a.util.dataIso8601[1].test(vOut)) {
-								vOut = mkt.dataToLocale(vOut);
-							}
-							vOut = vOut.toString();
-							if (vOut.length > 40) {
-								vOut = vOut.slice(0, 37) + "...";
-							}
-							htmlPossiveis += "<li name='" + mkt.removerAspas(v2) + "' class='hmMarcarExclusivos nosel botao " + sel + "'>" + mkt.a.SVGINI + mkt.a.svgSquare + mkt.a.SVGFIM + mkt.a.espaco + vOut + "</li>";
-						})
-					}
-					htmlPossiveis += "</ul>"
-					mkt.Q("body .mkHeadMenu .possibilidades").innerHTML = htmlPossiveis;
-					// Gatilhos para as Possibilidades assim que inseridas;
-					mkt.Ao("click", ".mkHeadMenu .hmMarcarExclusivos", (e: HTMLInputElement | null) => {
-						let eHmenu = mkt.Q("body .mkHeadMenu");
-						if (e?.id == "headMenuTodos") {
-							e = null;
-						}
-						mkt.a.hm.MarcarExclusivos(e, eHmenu?.getAttribute("data-colname"), eHmenu?.getAttribute("data-mkt"));
-					})
-				} else {
-					mkt.w("mkt.a.hm.FiltraExclusivo() - Parametros precisam ser string: ", v, iof);
-				}
-			},
-			MarcarExclusivos: (e: HTMLElement | null, colName: string, iof: string | null | undefined) => {
-				// Marca de Desmarca
-				if (mkt.classof(iof) == "String") {
-					let este = mkt.getThis(Number(iof));
-					if (e) {
-						let name = e.getAttribute("name");
-						if (name) {
-							if (este.hmunsel.includes(name)) {
-								e.classList.add("sel");
-								if (name != null) {
-									este.hmunsel.splice(este.hmunsel.indexOf(name), 1);
-									if (este.hmunsel.length == 0) {
-										mkt.Q("#headMenuTodos").classList.add("sel");
-										mkt.Q("body .mkHeadMenu .possibilidades").classList.toggle("st");
-									}
-								}
-							} else {
-								e.classList.remove("sel");
-								if (name != null) {
-									este.hmunsel.push(name);
-									if (este.hmunsel.length == este.exclusivos.length) {
-										mkt.Q("#headMenuTodos").classList.remove("sel");
-										mkt.Q("body .mkHeadMenu .possibilidades").classList.toggle("st");
-									}
-								}
-							}
-						} else {
-							mkt.w("mkt.a.hm.MarcarExclusivos() - Atributo NAME não encontrado em: ", e);
-						}
-					} else {
-						mkt.Q("body .mkHeadMenu .possibilidades").classList.toggle("st");
-						if (mkt.Q("body .mkHeadMenu .possibilidades").classList.contains("st")) {
-							mkt.QAll(".mkHeadMenu .possibilidades li").forEach((el: HTMLLIElement) => {
-								let name = el.getAttribute("name");
-								el.classList.remove("sel");
-								if (name != null) {
-									if (!este.hmunsel.includes(name)) {
-										este.hmunsel.push(name);
-									}
-								}
-							})
-						} else {
-							mkt.QAll(".mkHeadMenu .possibilidades li").forEach((el: HTMLLIElement) => {
-								let name = el.getAttribute("name");
-								el.classList.add("sel");
-								if (name != null) {
-									este.hmunsel.splice(este.hmunsel.indexOf(name), 1);
-								}
-							})
-						}
-					}
-					este.c.objFiltro[colName] = {
-						formato: "mkHeadMenuSel",
-						operador: "",
-						conteudo: este.hmunsel,
-					};
-					este.atualizaNaPaginaUm();
-					// Limpar outros filtros
-					mkt.Q(".mkHeadMenu input[name='filtrarCampo']").value = "";
-				} else {
-					mkt.w("mkt.a.hm.MarcarExclusivos() - Parametros colName, iof precisam ser string: ", colName, iof);
-				}
-			},
-			HideX: Function,
-
-		},
 		limparIndivisual: "Limpar filtros de",
 		limparTodos: "Limpar todos filtros",
 		log: true, // Desliga / Liga Log do console
@@ -2177,6 +1963,221 @@ class mkt {
 			}
 		}
 		return listaDados;
+	};
+
+	static hm = { // Representa o Head Menu
+		Hide: (ev: any) => {
+			// Ocultar ao clicar fora.
+			let ehm = mkt.Q("body .mkHeadMenu");
+			let ethm = ev.target.closest('.mkHeadMenu');
+			if (!ethm) {
+				ehm?.classList.add("oculto");
+			}
+		},
+		Previous: (colName: string, iof: string | null | undefined) => {
+			// iof == indexOf mkt.a.build
+			if ((mkt.classof(iof) == "String") && (mkt.classof(colName) == "String")) {
+				// Sempre que abre o menu, da o replace do this na estática.
+				let opcoes = mkt.getThis(Number(iof)).getModel().map((o: any) => { if (o.f) return o.k; }).filter((r: any) => { return r != null });
+				let posAtual = opcoes.indexOf(colName);
+				let posAnterior = 0;
+				if (posAtual >= 0) { // Se o atual existe
+					posAnterior = posAtual - 1;
+				}
+				if (posAnterior < 0) {// Era o primeiro
+					posAnterior = opcoes.length - 1;//Vira Última Posição
+				}
+				if (opcoes[posAnterior]) mkt.getThis(Number(iof)).headMenuAbrir(opcoes[posAnterior] as string);
+			} else {
+				mkt.w("mkt.hm.Previous() - Parametros precisam ser duas string: ", colName, iof);
+			}
+
+		},
+		Next: (colName: string, iof: string | null | undefined) => {
+			if (mkt.classof(iof) == "String") {
+				let opcoes = mkt.getThis(Number(iof)).getModel().map((o: any) => { if (o.f) return o.k; }).filter((r: any) => { return r != null });
+				let posAtual = opcoes.indexOf(colName);
+				let posSeguinte = 0;
+				if (posAtual >= 0) { // Se o atual existe
+					posSeguinte = posAtual + 1;
+				}
+				if (posSeguinte >= opcoes.length) {// Era o último
+					posSeguinte = 0;//Vira Primeira Posição
+				}
+				if (opcoes[posSeguinte]) mkt.getThis(Number(iof)).headMenuAbrir(opcoes[posSeguinte] as string);
+			} else {
+				mkt.w("mkt.hm.Next() - Parametros precisam ser uma string: ", colName, iof);
+			}
+		},
+		Crescente: (colName: string, iof: string | null | undefined) => {
+			if (mkt.classof(iof) == "String") {
+				mkt.getThis(Number(iof)).orderBy(colName, 0);
+			} else {
+				mkt.w("mkt.hm.Crescente() - Parametros precisam ser string: ", colName, iof);
+			}
+		},
+		Decrescente: (colName: string, iof: string | null | undefined) => {
+			if (mkt.classof(iof) == "String") {
+				mkt.getThis(Number(iof)).orderBy(colName, 1);
+			} else {
+				mkt.w("mkt.hm.Decrescente() - Parametros precisam ser string: ", colName, iof);
+			}
+		},
+		Limpar: (colName: string, iof: string | null | undefined) => {
+			mkt.Q(".mkHeadMenu input[name='filtrarCampo']").value = "";
+			mkt.getThis(Number(iof)).hmunsel = [];
+			mkt.hm.FiltraExclusivo("", iof);
+			mkt.getThis(Number(iof)).clearFiltro(colName);
+			mkt.getThis(Number(iof)).atualizarListagem();
+		},
+		LimparTodos: (colName: string, iof: string | null | undefined) => {
+			mkt.Q(".mkHeadMenu input[name='filtrarCampo']").value = "";
+			mkt.getThis(Number(iof)).hmunsel = [];
+			mkt.hm.FiltraExclusivo("", iof);
+			mkt.getThis(Number(iof)).clearFiltro();
+			mkt.getThis(Number(iof)).atualizarListagem();
+		},
+		ContemInput: (v: any, colName: string, iof: string | null | undefined) => {
+			mkt.getThis(Number(iof)).c.objFiltro[colName] = {
+				formato: "string",
+				operador: "",
+				conteudo: v,
+			};
+			mkt.getThis(Number(iof)).atualizaNaPaginaUm();
+			// Limpar outros filtros
+			mkt.getThis(Number(iof)).hmunsel = [];
+			mkt.hm.FiltraExclusivo("", iof);
+		},
+		FiltraExclusivo: (v: string, iof: string | null | undefined) => {
+			if (mkt.classof(iof) == "String") {
+				let vProcessado = mkt.removeEspecias(v).toLowerCase().trim();
+				let exFiltrado = mkt.getThis(Number(iof)).exclusivos?.filter((f: string) => {
+					return mkt.removeEspecias(f).toLowerCase().trim().includes(vProcessado);
+				});
+				let muitosExclusivos = false;
+				if (exFiltrado) {
+					if (exFiltrado.length > 100) {
+						muitosExclusivos = true;
+					}
+				} else {
+					exFiltrado = [];
+				};
+				if (mkt.getThis(Number(iof)).hmunsel.length <= 0) {
+					mkt.Q("body .mkHeadMenu .possibilidades").classList.remove("st");
+				}
+				let htmlPossiveis = "<ul class='filtravel'>";
+
+				if (exFiltrado.length > 0) {
+					let fullsel = "sel";
+					if (mkt.Q("body .mkHeadMenu .possibilidades").classList.contains("st")) {
+						fullsel = "";
+					}
+					htmlPossiveis += "<li class='hmMarcarExclusivos nosel botao " + fullsel + "' id='headMenuTodos'>" + mkt.a.SVGINI + mkt.a.svgSquare + mkt.a.SVGFIM + mkt.a.espaco + "Selecionar Todos (" + exFiltrado.length + ")";
+					if (v != "") {
+						htmlPossiveis += " Pesquisados";
+					}
+					htmlPossiveis += "</li>";
+					exFiltrado.forEach((v: any) => {
+						let sel = "sel";
+						let v2 = mkt.removeEspecias(v).toLowerCase().trim();
+						mkt.getThis(Number(iof)).hmunsel.forEach((hm: any) => {
+							if (mkt.removeEspecias(hm).toLowerCase().trim() == v2) {
+								sel = "";
+							}
+						});
+						// Tratamento das possíveis saída de dados diferentes.
+						let vOut: any = v;
+						if (mkt.a.util.data[1].test(vOut)) {
+							vOut = mkt.dataToLocale(vOut);
+						} else if (mkt.a.util.dataIso8601[1].test(vOut)) {
+							vOut = mkt.dataToLocale(vOut);
+						}
+						vOut = vOut.toString();
+						if (vOut.length > 40) {
+							vOut = vOut.slice(0, 37) + "...";
+						}
+						htmlPossiveis += "<li name='" + mkt.removerAspas(v2) + "' class='hmMarcarExclusivos nosel botao " + sel + "'>" + mkt.a.SVGINI + mkt.a.svgSquare + mkt.a.SVGFIM + mkt.a.espaco + vOut + "</li>";
+					})
+				}
+				htmlPossiveis += "</ul>"
+				mkt.Q("body .mkHeadMenu .possibilidades").innerHTML = htmlPossiveis;
+				// Gatilhos para as Possibilidades assim que inseridas;
+				mkt.Ao("click", ".mkHeadMenu .hmMarcarExclusivos", (e: HTMLInputElement | null) => {
+					let eHmenu = mkt.Q("body .mkHeadMenu");
+					if (e?.id == "headMenuTodos") {
+						e = null;
+					}
+					mkt.hm.MarcarExclusivos(e, eHmenu?.getAttribute("data-colname"), eHmenu?.getAttribute("data-mkt"));
+				})
+			} else {
+				mkt.w("mkt.hm.FiltraExclusivo() - Parametros precisam ser string: ", v, iof);
+			}
+		},
+		MarcarExclusivos: (e: HTMLElement | null, colName: string, iof: string | null | undefined) => {
+			// Marca de Desmarca
+			if (mkt.classof(iof) == "String") {
+				let este = mkt.getThis(Number(iof));
+				if (e) {
+					let name = e.getAttribute("name");
+					if (name) {
+						if (este.hmunsel.includes(name)) {
+							e.classList.add("sel");
+							if (name != null) {
+								este.hmunsel.splice(este.hmunsel.indexOf(name), 1);
+								if (este.hmunsel.length == 0) {
+									mkt.Q("#headMenuTodos").classList.add("sel");
+									mkt.Q("body .mkHeadMenu .possibilidades").classList.toggle("st");
+								}
+							}
+						} else {
+							e.classList.remove("sel");
+							if (name != null) {
+								este.hmunsel.push(name);
+								if (este.hmunsel.length == este.exclusivos.length) {
+									mkt.Q("#headMenuTodos").classList.remove("sel");
+									mkt.Q("body .mkHeadMenu .possibilidades").classList.toggle("st");
+								}
+							}
+						}
+					} else {
+						mkt.w("mkt.hm.MarcarExclusivos() - Atributo NAME não encontrado em: ", e);
+					}
+				} else {
+					mkt.Q("body .mkHeadMenu .possibilidades").classList.toggle("st");
+					if (mkt.Q("body .mkHeadMenu .possibilidades").classList.contains("st")) {
+						mkt.QAll(".mkHeadMenu .possibilidades li").forEach((el: HTMLLIElement) => {
+							let name = el.getAttribute("name");
+							el.classList.remove("sel");
+							if (name != null) {
+								if (!este.hmunsel.includes(name)) {
+									este.hmunsel.push(name);
+								}
+							}
+						})
+					} else {
+						mkt.QAll(".mkHeadMenu .possibilidades li").forEach((el: HTMLLIElement) => {
+							let name = el.getAttribute("name");
+							el.classList.add("sel");
+							if (name != null) {
+								este.hmunsel.splice(este.hmunsel.indexOf(name), 1);
+							}
+						})
+					}
+				}
+				este.c.objFiltro[colName] = {
+					formato: "mkHeadMenuSel",
+					operador: "",
+					conteudo: este.hmunsel,
+				};
+				este.atualizaNaPaginaUm();
+				// Limpar outros filtros
+				mkt.Q(".mkHeadMenu input[name='filtrarCampo']").value = "";
+			} else {
+				mkt.w("mkt.hm.MarcarExclusivos() - Parametros colName, iof precisam ser string: ", colName, iof);
+			}
+		},
+		HideX: Function,
+
 	};
 
 	// ============================= Web Generic Component ============================ \\	
