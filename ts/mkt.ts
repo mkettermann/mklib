@@ -4251,7 +4251,6 @@ class mkt {
 
 		// Popper
 		if (mkt.a.poppers.get(e) == null) {
-			mkt.l("criou");
 			mkt.a.poppers.set(e, Popper.createPopper(
 				eAnterior,
 				e,
