@@ -2329,6 +2329,16 @@ fieldset {
 	-webkit-box-reflect: below -10px linear-gradient(0deg, #FFF9, #FFF5, #FFF1, transparent, transparent);
 }
 
+/* DIALOG */
+dialog {
+	padding: 5px;
+	border: 3px double navy;
+}
+
+dialog::backdrop {
+	background-color: #0004;
+}
+
 /* SELETOR */
 mk-sel:not(:defined) {
 	opacity: 0;

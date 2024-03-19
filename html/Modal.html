@@ -1,0 +1,44 @@
+<h1 class="microPos2 h1">Modal</h1>
+<h4>&nbsp; Essa é uma ferramenta de configurar os modais e suas respostas. Utilizar formulários em SPA (Single Pages
+	Application) para rapidamente realizar CRUD (Create, Read, Update, Delete) dos dados sem perder os dados anteriores
+	previamente carregados.
+</h4>
+<dialog id="modal1">
+	<form name="teste" class="microPos5 tb">
+		<section>
+			Modal Nível 1.
+			<br /><br />
+			<input name="primeiroElemento" value="teste" class="primeiroElemento">
+			<br /><br />
+			<mk-sel name="seletor1" vazio="Selecione" opcoes='[[1,"Sim"],[2,"Não"]]'></mk-sel>
+			<br /><br />
+
+		</section>
+		<div class="flex">
+			<button type="button" onclick="abrirModal2()">Abrir Modal 2</button>
+			<button type="button" onclick="fecharModal1()">Fechar</button>
+			</di>
+	</form>
+</dialog>
+
+<dialog id="modal2">
+	<form name="teste2" class="microPos5 tb">
+		<section>
+			Modal Nível 2.
+			<br /><br />
+			<mk-sel name="seletor2" vazio="Selecione" value="1" opcoes='[[1,"Sim"],[2,"Não"]]'></mk-sel>
+			<br /><br />
+		</section>
+		<div class="flex">
+			<button type="button" onclick="fecharModal1()">Fechar 1</button>
+			<button type="button" onclick="fecharModal2()">Fechar 2</button>
+		</div>
+	</form>
+</dialog>
+<br />
+<div class="microPos5">
+	<button type="button" onclick="abrirModal1()">Abrir Modal Nível 1</button>
+</div>
+<br />
+.<br />.<br />.<br />.<br />.<br />.<br />.<br />.<br />.<br />.<br />.<br />.<br />.<br />.<br />.<br />.<br />.<br />.<br />.<br />.<br />.<br />.<br />.<br />.<br />.<br />.<br />.<br />.<br />.<br />.<br />.<br />.<br />.<br />.<br />
+<script src="./js/modal.js"></script>
