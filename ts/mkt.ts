@@ -1680,7 +1680,9 @@ class mkt {
 		// Quando trocar essas funções para Web Component, será possivel manter observado por dentro da classe.
 		mkt.mkRecRenderizar();
 		// Recursiva
-		setTimeout(mkt.exeTimer, mkt.a.exeTimer);
+		mkt.wait(mkt.a.exeTimer).then(r => {
+			mkt.exeTimer();
+		});
 	};
 
 	static Inicializar = () => {
@@ -2966,7 +2968,10 @@ class mkt {
 		let e = recItem?.parentElement?.previousElementSibling
 		if (e) {
 			e.value = texto;
-			setTimeout(() => { mkt.mkRecUpdate(e); e.focus() }, 10);
+			mkt.wait(10).then(r => {
+				mkt.mkRecUpdate(e);
+				e.focus();
+			});
 		} else {
 			mkt.w("Não foi possível alterar o elemento: ", e);
 		}
@@ -4198,6 +4203,7 @@ class mkt {
 		let eAnterior = e.previousElementSibling;
 		let oDinBloco = eAnterior.getBoundingClientRect();
 		let oDinList = e.getBoundingClientRect();
+		//mkz = e;
 		let apoff = mkt.allParentOffset(eAnterior);
 		// TAMANHO (min e max with baseado no pai)
 		if (largura) {
@@ -4223,6 +4229,12 @@ class mkt {
 				// 	"NovaPos": novaPos + "px",
 				// 	"offsetHeight": eAnterior.offsetHeight,
 				// })
+				mkt.l({
+					"ANT Rect": oDinBloco,
+					"LISTA Rect": oDinList,
+					"offsetWidth": eAnterior.offsetWidth,
+				})
+				e.style.left = (oDinBloco.x) + "px";
 				e.style.top = novaPos + "px";
 				e.style.bottom = null;
 			} else {
@@ -5612,9 +5624,9 @@ li[m="1"] {
 				mkt.w("mk-sel - Opções Inexistente Selecionada. Limpeza falhou. Tentativa: ", this.config.fail, " - ", this.config.name);
 			}
 			if (this.config.fail < 4) { // Recarrega
-				setTimeout(() => {
+				mkt.wait(20).then(r => {
 					this.forceUpdate();
-				}, 20);
+				})
 			}
 
 		} else {
