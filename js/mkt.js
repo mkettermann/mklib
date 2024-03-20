@@ -1539,7 +1539,16 @@ class mkt {
         return e;
     };
     static wait = (ms) => {
+        // Essa mecânica usa um setTimeout. Ver waitUntil()
         return new Promise(r => setTimeout(r, ms));
+    };
+    static waitUntil = (ms) => {
+        // Similar ao wait, mas só executa após atingir o MS final
+        let msFinal = mkt.dataGetMs() + ms;
+        //(mkt.dataGetMs() - tempoFinal) >= 0
+        return new Promise(r => {
+            setTimeout(r, ms);
+        });
     };
     static QSetAll = (query = "input[name='#PROP#']", dados = null, comEvento = true) => {
         // Seta todos os query com os valores das propriedades informadas nos campos.
@@ -4302,9 +4311,9 @@ class mkt {
     static cursorFim = (e) => {
         // Move o cursor para o fim do VALUE do elemento.
         let len = e.value.length;
-        setTimeout(() => {
+        mkt.wait(1).then(r => {
             e.setSelectionRange(len, len);
-        }, 1);
+        });
     };
     static geraObjForm = (form) => {
         // Gerar Objeto a partir de um Form Entries

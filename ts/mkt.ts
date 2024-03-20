@@ -1548,8 +1548,18 @@ class mkt {
 	};
 
 	static wait = (ms: number) => {
+		// Essa mecânica usa um setTimeout. Ver waitUntil()
 		return new Promise(r => setTimeout(r, ms))
 	};
+
+	static waitUntil = (ms: number) => {
+		// Similar ao wait, mas só executa após atingir o MS final
+		let msFinal = mkt.dataGetMs() + ms;
+		//(mkt.dataGetMs() - tempoFinal) >= 0
+		return new Promise(r => {
+			setTimeout(r, ms)
+		});
+	}
 
 	static QSetAll = (
 		query: string = "input[name='#PROP#']",
@@ -4341,9 +4351,9 @@ class mkt {
 	static cursorFim = (e: any) => {
 		// Move o cursor para o fim do VALUE do elemento.
 		let len = e.value.length;
-		setTimeout(() => {
+		mkt.wait(1).then(r => {
 			e.setSelectionRange(len, len);
-		}, 1)
+		})
 	}
 
 	static geraObjForm = (form: any) => {
