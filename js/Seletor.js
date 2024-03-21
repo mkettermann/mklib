@@ -30,6 +30,9 @@ async function validarSeletor() {
 }
 mkt.regrar(".testeForm", "staRegrado", { k: "obrigatorio" });
 
+// AO INPUT Primeiro Seletor Teste
 mkt.Ao("input", "mk-sel[name='staAtivo']", (e) => {
-	mkt.l("Input: (" + e.name + ") ", e.value);
+	let msg = "Input: (" + e.name + ") = " + e.value;
+	mkt.l(msg);
+	alert(msg);
 })
