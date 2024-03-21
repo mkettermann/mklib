@@ -11,6 +11,7 @@ var mkz = null;
 //  FUNCOES EXTERNAS                \\
 //___________________________________\\
 String.prototype.removeRaw = function (fix = false) {
+    // Função que tira os elementos de quebra de linha e tabela da string.
     let r = this.replaceAll("\n", "")
         .replaceAll("\r", "")
         .replaceAll("\t", "")
@@ -27,12 +28,14 @@ String.prototype.removeRaw = function (fix = false) {
     return r;
 };
 String.prototype.toEntities = function () {
+    // Transforma todas os caracteres especiais em entidades HTML.
     // "'".toEntities() == '&#39;'
     return this.replace(/./gm, function (s) {
         return (s.match(/[a-z0-9\s]+/i)) ? s : "&#" + s.charCodeAt(0) + ";";
     });
 };
 String.prototype.fromEntities = function () {
+    // Transforma todas entidades HTML numeradas em caracteres especiáis.
     // '&#39;'.fromEntities() == "'"
     return (this + "").replace(/&#\d+;/gm, function (s) {
         return String.fromCharCode(s.match(/\d+/gm)[0]);
@@ -43,6 +46,7 @@ String.prototype.fromEntities = function () {
 //___________________________________\\
 // CLASSE Do Design das colunas para formar a listagem da classe mktm.
 class mktm {
+    // Classe Modelo: Serve para assossiar uma regra / tipo / padronização a um campo
     pk = false; // Este campo é Primary Key?
     k = null; // Key / Chave (Propriedade do objeto)
     v = null; // Valor (Inicialmente nulo, mas ao recuperar o objeto da lista ele vem preenchido)
@@ -80,8 +84,8 @@ class mktm {
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //  PRÉ CONFIGURAÇÃO DA LISTAGEM    \\
 //___________________________________\\
-// CLASSE que de configuração para que a listagem seja iniciada de forma personalizada.
 class mktc {
+    // CLASSE que de configuração para que a listagem seja iniciada de forma personalizada.
     url = window.location.href.split("?")[0] + "/GetList"; // Requer a URL para o fetch dos dados. Se não tiver, passar os dados no parametros dados e tornar esse null.
     dados = null; // Caso a tela já tenha os dados, podem ser passador por aqui, se não deixar 
     nomeTabela = null; // Nome da tabela (Usado pra contruir o banco de dados)
@@ -172,8 +176,8 @@ class mktc {
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 //  CLASSE MKT ESTÁTICA e LISTAGEM  \\
 //___________________________________\\
-// Classe contendo uma grande ferramenta de gerenciamento de dados em massa é construida e diveras funções estáticas facilitadoras.
 class mkt {
+    // Classe contendo uma grande ferramenta de gerenciamento de dados em massa é construida e diveras funções estáticas facilitadoras.
     c;
     started = false;
     db = null;
@@ -252,6 +256,7 @@ class mkt {
     //  INICIO DOS MÉTODOS MKT          \\
     //___________________________________\\
     autoStartConfig = async (arg = {}) => {
+        // Apos instanciar a classe mkt, essa função tenta iniciar a listagem baseado nas regras.
         if (!this.started) { // <= Previne que Reset duplique os Listners
             // SE for importar: Espera o container para então continuar.
             if (this.c.container_importar) {
