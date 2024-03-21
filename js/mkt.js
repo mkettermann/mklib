@@ -503,8 +503,8 @@ class mkt {
             }
         });
     };
-    // Inicia a listagem com os dados atuais.
     startListagem = async (arg = {}) => {
+        // Inicia a listagem com os dados atuais.
         //EVENT: aoIniciarListagem
         mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoIniciarListagem"));
         this.c.aoIniciarListagem(this);
@@ -540,8 +540,8 @@ class mkt {
             }
         });
     };
-    // Gera uma instancia de conexão ao banco de dados Client-Side indexavel
     dbCon = async () => {
+        // Gera uma instancia de conexão ao banco de dados Client-Side indexavel
         return new Promise((r) => {
             if (mkt.classof(this.c.nomeTabela) == "String") {
                 let dbConOpen = indexedDB.open(this.c.nomeTabela, this.c.versaoDb);
@@ -583,6 +583,7 @@ class mkt {
      * Executa a filtragem dos dados;
      */
     atualizarListagem = async () => {
+        // Atualiza Status, Filtra, Botão Mais...
         // A cada atualizar listagem, atualiza o filtro por garantia.
         if (this.c.filtroDinamico) { // Não refiltrar caso for por consulta
             this._updateObjFiltro();
@@ -649,8 +650,8 @@ class mkt {
             await this.c.aoConcluirExibicao(this);
         }
     };
-    // Atualiza o objeto que contem os dados desta instancia.
     atualizarStatusListagem = () => {
+        // Atualiza o objeto que contem os dados desta instancia.
         if (mkt.Q(this.c.tablePorPagina) != null) {
             this.c.pagPorPagina = Number(mkt.Q(this.c.tablePorPagina).value);
         }
@@ -669,13 +670,14 @@ class mkt {
         mkt.html(this.c.tableIni, this.c.pagItensIni.toString());
         mkt.html(this.c.tableFim, this.c.pagItensFim.toString());
     };
-    // Retorna a pagina 1 e atualiza
     atualizaNaPaginaUm = async () => {
+        // Retorna a pagina 1 e atualiza
+        // Procedimento padrão ao modificar um filtro / modificar o conteúdo.
         this.c.pagAtual = 1;
         this.atualizarListagem();
     };
-    // Gatilho para trocar a pagina
     mudaPag = (e) => {
+        // Gatilhos para trocar a pagina (Parte de baixo da lista 1,2,3,4,5,6)
         if (e.classList.contains("pag0")) {
             // Anterior
             if (this.c.pagAtual >= 2)
@@ -690,9 +692,8 @@ class mkt {
         }
         this.atualizarListagem();
     };
-    // Monta os botoes de numero de pagina
     processoPaginar = () => {
-        // Links
+        // Exibe Diferenciado dependendo em que página está (Antrerior,1,2,3,Proximo)
         mkt.html(this.c.pag + "7", this.c.totPags.toString());
         this.c.pagAtual == 1 ? mkt.Qoff(this.c.pag + "0") : mkt.Qon(this.c.pag + "0");
         if (this.c.totPags > 1) {
@@ -773,6 +774,7 @@ class mkt {
         });
     };
     _updateObjFiltro = () => {
+        // Limpa e Recoleta o filtro baseado no filtro contruído.
         // Limpa filtro atual
         this.c.objFiltro = {};
         // Gera filtro os nos campos
@@ -780,13 +782,13 @@ class mkt {
             this.gerarFiltro(e);
         });
     };
-    // Limpa e Gera Filtro. Padrao class ".iConsultas".
     updateFiltro = () => {
+        // Limpa, Gera Filtro e Atualiza. Padrao class ".iConsultas".
         this._updateObjFiltro();
         this.atualizaNaPaginaUm();
     };
-    // Gerar Filtro baseado nos atributos do MKF gerados no campo.
     gerarFiltro = (e) => {
+        // Gerar Filtro baseado nos atributos do MKF gerados no campo.
         // Para ignorar filtro: data-mkfignore="true" (Ou nao colocar o atributo mkfformato no elemento)
         if (e.value != null && e.getAttribute("data-mkfignore") != "true") {
             this.c.objFiltro[e.name] = {
@@ -804,12 +806,13 @@ class mkt {
         }
     };
     gerarParametros = () => {
+        // A cada filtro disponível, gera um valor parametro na consulta Query
         return mkt.QAll(this.c.filtro)
             .map((i) => { return "&" + i.name + "=" + encodeURIComponent(i.value); })
             .join("");
     };
-    // Gerar Gatilhos de FILTRO
     setFiltroListener = () => {
+        // Gerar Gatilhos de FILTRO
         // Onclick do botao
         if (this.c.botaoNovaConsulta != null) {
             mkt.Ao("click", this.c.botaoNovaConsulta, (e) => {
@@ -838,6 +841,7 @@ class mkt {
         });
     };
     headSeeMenuAbrir = (colName, e) => {
+        // Cria o botão que abre o menuzinho do Filtro
         e.classList.add("relative");
         if (!e.querySelector(".mkhmHeadIco")) {
             let mkhmIco = document.createElement("div");
@@ -849,9 +853,9 @@ class mkt {
             e.appendChild(mkhmIco);
         }
     };
-    // HEAD MENU (O mesmo por documento)
-    // Função que cria, exibe e seta as funções para filtrar baseado na coluna.
     headMenuAbrir = async (colName) => {
+        // HEAD MENU (O mesmo por documento)
+        // Função que cria, exibe e seta as funções para filtrar baseado na coluna.
         let eHead = mkt.Q(this.c.container + " .sort-" + colName);
         let eHm = mkt.Q("body .mkHeadMenu");
         // CRIA A ESTRUTURA
@@ -978,8 +982,8 @@ class mkt {
         eHm.classList.remove("oculto");
         mkt.Q(".mkHeadMenu input[name='filtrarCampo']").focus();
     };
-    // Gera Listeners na THEAD da tabela (Requer classe: "sort-campo")
     headAtivar = () => {
+        // Gera Listeners na THEAD da tabela (Requer classe: "sort-campo")
         let eTrHeadPai = mkt.Q(this.c.container + " thead tr");
         let opcoes = this.getModel().map(o => { if (o.f) {
             return o.k;
@@ -1014,10 +1018,11 @@ class mkt {
             });
         }
     };
-    // Direção 0: Crescente
-    // Direção 1: Decrescente
-    // Direção 2: Toogle
     setDirSort = (propriedade, direcao = 2) => {
+        // Ordena os dados baseados na direção
+        // Direção 0: Crescente
+        // Direção 1: Decrescente
+        // Direção 2: Toogle
         if (propriedade != null) {
             if (direcao == 2) {
                 if (propriedade != this.c.sortBy) {
@@ -1037,8 +1042,8 @@ class mkt {
         }
         //mkt.l("By: ", this.c.sortBy, " | Dir: ", this.c.sortDir);
     };
-    // Ordena a lista e atualiza (Direcao: 0(Cre),1(Dec),2(toogle))
     orderBy = (propriedade, direcao = 2) => {
+        // Seta, Ordena e Atualiza uma nova Ordem (Direcao: 0(Cre),1(Dec),2(toogle))
         // Atualiza atual Sort
         this.setDirSort(propriedade, Number(direcao));
         // Executa Ordenador da lista principal
@@ -1048,7 +1053,7 @@ class mkt {
         this.atualizarListagem();
     };
     efeitoSort = () => {
-        // Limpa efeito
+        // Gera o Efeito de flexinha no cabeçalho da tabela.
         let thsAll = mkt.QAll(this.c.ths);
         if (thsAll.length != 0) {
             thsAll.forEach((th) => {
@@ -1069,8 +1074,8 @@ class mkt {
             });
         }
     };
-    // LIMPAR FILTRO
     clearFiltro = (campoEspecifico = null) => {
+        // Limpa o Filtro específico ou tudo.
         if (campoEspecifico) {
             // LIMPAR APENAS ESTE
             if (this.c.objFiltro[campoEspecifico]) {
@@ -1089,13 +1094,13 @@ class mkt {
             });
         }
     };
-    // LIMPAR FILTRO  LimparFiltro("#consulta_form"); //Passar o form que contem os SELECT/INPUT de filtro (search).
     clearFiltroUpdate = () => {
+        // LIMPAR FILTRO  LimparFiltro("#consulta_form"); //Passar o form que contem os SELECT/INPUT de filtro (search).
         this.clearFiltro();
         this.atualizarListagem();
     };
-    // Retorna o último objeto da lista onde a chave primaria bateu.
     getObj = (valorKey) => {
+        // Retorna o último objeto da lista onde a chave primaria bateu.
         let temp = null;
         if (Array.isArray(this.dadosFull) && mkt.classof(this.c.pk) == "String") {
             this.dadosFull.forEach((o) => {
@@ -1106,8 +1111,8 @@ class mkt {
         }
         return temp;
     };
-    // Retorna uma lista de todos objetos encontrados onde o KV bateu.
     getObjs = (k, v) => {
+        // Retorna uma lista de todos objetos encontrados onde o KV bateu.
         let array = [];
         let errNotPresent = false;
         let errKeyInvalid = false;
@@ -1135,6 +1140,7 @@ class mkt {
         return array;
     };
     setObj = (v, objeto) => {
+        // Troca o conteúdo do objeto todo
         let temp = null;
         if (Array.isArray(this.dadosFull) && (mkt.classof(this.c.pk) == "String")) {
             let o = this.find(this.c.pk, v);
@@ -1153,12 +1159,13 @@ class mkt {
         }
         return temp;
     };
-    // Verifique mais na classe mktm
     getModel = () => {
+        // Retorna os modelos setados
         return this.c.model; // <= Classe mktm
     };
-    // Cria um Set retorna um array de Keys Usadas
     getUsedKeys = (formatoKV = false) => {
+        // Retorna todas as chaves utilizadas em todos os registros.
+        // Cria um Set retorna um array de Keys Usadas
         let kv = [];
         let chaves = new Set();
         this.dadosFull.forEach((o) => {
@@ -1179,6 +1186,7 @@ class mkt {
         }
     };
     getNewPK = () => {
+        // Através da chave primaria setada, retorna 1 acima do maior.
         let maior = 0;
         if (mkt.classof(this.c.pk) == "String") {
             this.dadosFull.forEach((o) => {
@@ -1190,32 +1198,38 @@ class mkt {
         return Number(maior) + 1;
     };
     getAllTr = () => {
+        // Retorna todas as TR atuais sendo visualizadas.
         return Array.from(mkt.QAll(this.c.container + " tbody tr"));
     };
     // USER INTERFACE - UI FOR CRUD
     add = (objDados) => {
+        // Adicionar na listagem
         objDados = this.c.aoReceberDados(objDados, this);
         this.dadosFull.push(objDados);
         mkt.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
         this.atualizarListagem();
     };
     edit = (objDados, k, v) => {
+        // Editar na listagem
         objDados = this.c.aoReceberDados(objDados, this);
         this.dadosFull = mkt.setObjetoFromId(k, v, objDados, this.dadosFull);
         mkt.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
         this.atualizarListagem();
     };
     del = (k, v) => {
+        // Remover da listagem
         this.dadosFull = mkt.delObjetoFromId(k, v, this.dadosFull);
         mkt.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
         this.atualizarListagem();
     };
     // mkt.aoReceberDados e mkt.ordenar Não se executam pra acelerar a inserção assincrona da listagem
     addMany = (arrayDados) => {
+        // Adiciona uma lista de dados na listagem
         this.dadosFull.push(...arrayDados);
         this.atualizarListagem();
     };
     find = (k, v) => {
+        // Procura um objeto inserido na listagem
         return this.dadosFull.find((o) => o[k] == v);
     };
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
