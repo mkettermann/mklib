@@ -371,6 +371,7 @@ class mkt {
         this.startListagem();
     };
     mais = async (parametros = null, novaurl = null) => {
+        // Aqui representa a solicitação do novo
         return new Promise((r) => {
             if (novaurl == null) {
                 this.c.url = this.c.urlOrigem;
@@ -395,6 +396,7 @@ class mkt {
         });
     };
     appendList = async (data_url, parametros = "", fromMais = false) => {
+        // Manipula URL e dados. Executa um acrescimo nos dados se o parametro for o mesmo
         return new Promise((r) => {
             if (mkt.classof(data_url) == "Array") {
                 for (let i = 0; i < data_url.length; i++) {
@@ -6858,7 +6860,8 @@ li[m="1"] {
         this.config.eK.onblur = () => {
             this.aoBlur();
         };
-        this.config.eK.oninput = () => {
+        this.config.eK.oninput = (ev) => {
+            ev.stopPropagation(); // Input interno propaga pro elemento mk-sel
             this.aoInput();
         };
         this.config.eK.onkeydown = (ev) => {
@@ -7550,6 +7553,7 @@ class mkBot extends HTMLElement {
         if (text != null) {
             this.config.dados = text;
             this.editou("#VALUE");
+            //mkt.l(this.name + " SET VALUE TO: " + text);
             this.dispatchEvent(new Event("input"));
             this.dispatchEvent(new Event("change"));
             this.classList.add("changed");

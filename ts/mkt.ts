@@ -7467,7 +7467,8 @@ li[m="1"] {
 		this.config.eK.onblur = () => {
 			this.aoBlur();
 		};
-		this.config.eK.oninput = () => {
+		this.config.eK.oninput = (ev: Event) => {
+			ev.stopPropagation(); // Input interno propaga pro elemento mk-sel
 			this.aoInput();
 		};
 		this.config.eK.onkeydown = (ev: KeyboardEvent) => {
@@ -8138,6 +8139,7 @@ class mkBot extends HTMLElement {
 		if (text != null) {
 			this.config.dados = text;
 			this.editou("#VALUE");
+			//mkt.l(this.name + " SET VALUE TO: " + text);
 			this.dispatchEvent(new Event("input"));
 			this.dispatchEvent(new Event("change"));
 			this.classList.add("changed");

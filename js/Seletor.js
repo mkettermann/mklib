@@ -29,3 +29,7 @@ async function validarSeletor() {
 	await mkt.regrasValidas(".testeForm");
 }
 mkt.regrar(".testeForm", "staRegrado", { k: "obrigatorio" });
+
+mkt.Ao("input", "mk-sel[name='staAtivo']", (e) => {
+	mkt.l("Input: (" + e.name + ") ", e.value);
+})
