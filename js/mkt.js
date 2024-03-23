@@ -7366,14 +7366,15 @@ li[m="1"] {
         if (text) {
             //mkt.w("Opções: ", text);
             if (mkt.classof(text) == "String") {
+                // Mantém o JSON do último opções recebido
                 this.config.opcoes = text; // Guardar JSON de OPCOES
                 this.forceUpdate();
                 //this.config.opcoes = text;
             }
             else {
                 if (mkt.classof(text) == "Map") {
+                    // Mantém o JSON do último opções recebido
                     this.config.opcoes = mkt.stringify([...mkt.Q(".conPessoa .iNovo[name='codTipoVinculo']").config.opcoes]);
-                    //this.config.opcoes = text; // JSON.stringify([...text]);
                     this.forceUpdate();
                 }
                 else {
