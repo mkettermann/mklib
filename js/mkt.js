@@ -6916,51 +6916,45 @@ li[m="1"] {
         });
     } // Fim Construtor mkSel
     // Funçao que refaz a lista, Coleta, Popula, Seleciona e Exibe o selecionado.
-    forceUpdate(fromMap = false) {
-        // Ignora o New Map: Caso o opcoes já contem um map em vez de uma string JSON.
-        if (!fromMap) {
-            // Durante o update, o usuário não deveria estar com o seletor aberto.
-            this.removeAttribute("focused");
-            // Caso o opções contem uma string JSON
-            // mkt.w({
-            // 	"Nome": this.name,
-            // 	"Opções": this.config.opcoes,
-            // 	"Value": this.value,
-            // 	"isJson?": mkt.isJson(this.config.opcoes),
-            // 	"colect": mkt.parseJSON(this.config.opcoes),
-            // 	"classOfColect": mkt.classof(mkt.parseJSON(this.config.opcoes)),
-            // })
-            if (mkt.isJson(this.config.opcoes)) {
-                let colect = mkt.parseJSON(this.config.opcoes);
-                if (mkt.classof(colect) == "Array") {
-                    if (mkt.classof(colect[0]) == "Array") {
-                        //Formato Map
-                        //[["","Todos"],["False","N\u00E3o"],["True","Sim"]]
-                        colect.forEach((v, i, a) => {
-                            a[i][0] = a[i][0].toString().replaceAll(",", ""); // Proibido Virgula na Key
-                            a[i][1] = a[i][1].toString();
-                            //mkt.l("v: ", v, " i: ", i, " a: ", a)
-                        });
+    forceUpdate() {
+        // Durante o update, o usuário não deveria estar com o seletor aberto.
+        this.removeAttribute("focused");
+        // Caso o opções contem uma string JSON
+        // mkt.w({
+        // 	"Nome": this.name,
+        // 	"Opções": this.config.opcoes,
+        // 	"Value": this.value,
+        // 	"isJson?": mkt.isJson(this.config.opcoes),
+        // 	"colect": mkt.parseJSON(this.config.opcoes),
+        // 	"classOfColect": mkt.classof(mkt.parseJSON(this.config.opcoes)),
+        // })
+        if (mkt.isJson(this.config.opcoes)) {
+            let colect = mkt.parseJSON(this.config.opcoes);
+            if (mkt.classof(colect) == "Array") {
+                if (mkt.classof(colect[0]) == "Array") {
+                    //Formato Map
+                    //[["","Todos"],["False","N\u00E3o"],["True","Sim"]]
+                    colect.forEach((v, i, a) => {
+                        a[i][0] = a[i][0].toString().replaceAll(",", ""); // Proibido Virgula na Key
+                        a[i][1] = a[i][1].toString();
+                        //mkt.l("v: ", v, " i: ", i, " a: ", a)
+                    });
+                }
+                else {
+                    if (mkt.classof(colect[0]) == "Object") {
+                        // Formato KV
+                        //[{"k":"","v":"Todos"},{"k":"False","v":"N\\u00E3o"},{"k":"True","v":"Sim"}]
+                        colect = colect.map((r) => { return [r.k?.toString().replaceAll(",", ""), r.v?.toString()]; });
                     }
                     else {
-                        if (mkt.classof(colect[0]) == "Object") {
-                            // Formato KV
-                            //[{"k":"","v":"Todos"},{"k":"False","v":"N\\u00E3o"},{"k":"True","v":"Sim"}]
-                            colect = colect.map((r) => { return [r.k?.toString().replaceAll(",", ""), r.v?.toString()]; });
-                        }
-                        else {
-                            colect = null;
-                        }
+                        colect = null;
                     }
                 }
-                this.config._data = new Map(colect);
             }
-            else {
-                this.config._data = new Map(); // Inicializa sem opcoes
-            }
+            this.config._data = new Map(colect);
         }
         else {
-            this.config._data = this.config.opcoes;
+            this.config._data = new Map(); // Inicializa sem opcoes
         }
         this.config.eUL.classList.add("topoSel"); // <= Classe pra subir os selecionados
         // Aqui Seleciona inicialmente ou Seleciona novamente ao trocar o Opcoes.
@@ -7373,13 +7367,14 @@ li[m="1"] {
             //mkt.w("Opções: ", text);
             if (mkt.classof(text) == "String") {
                 this.config.opcoes = text; // Guardar JSON de OPCOES
-                this.forceUpdate(false);
+                this.forceUpdate();
                 //this.config.opcoes = text;
             }
             else {
                 if (mkt.classof(text) == "Map") {
-                    this.config.opcoes = text; // JSON.stringify([...text]);
-                    this.forceUpdate(true);
+                    this.config.opcoes = mkt.stringify([...mkt.Q(".conPessoa .iNovo[name='codTipoVinculo']").config.opcoes]);
+                    //this.config.opcoes = text; // JSON.stringify([...text]);
+                    this.forceUpdate();
                 }
                 else {
                     mkt.w("mk-sel - set opcoes() - Formato inválido: ", mkt.classof(text));
