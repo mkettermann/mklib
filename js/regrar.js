@@ -6,8 +6,8 @@ mkt.Ao("click", ".btnTestarValidar", async (e) => {
 	}
 });
 
-mkt.Ao("click", ".btnTestarValidarAll", async (e) => {
-	if (await mkt.regrasValidas("body")) {
+mkt.Ao("click", ".btnTestarValidarAll", async (e, ev) => {
+	if (await mkt.regrasValidas("body", ev)) {
 		console.log("Validou");
 	} else {
 		console.log("Não validou");

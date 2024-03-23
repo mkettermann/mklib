@@ -3089,7 +3089,8 @@ class mkt {
     // ======================== REGRAR | VALIDAR | MASCARAR =========================== \\
     // ================================================================================= \\
     static regras = [];
-    static regraExe = async (e, ev = null) => {
+    static regraExe = async (e, tipoEvento = "blur", ev = null) => {
+        //mkt.l("Regrar " + tipoEvento + ":", ev);
         // Função que executa as regras deste campo com base nos objetos salvos
         // Quando concluir (onChange), executar novamentepra remover erros já corrigidos (justamente no último caracter).
         return new Promise((resolver) => {
@@ -3238,6 +3239,7 @@ class mkt {
                                     prom(re.k);
                                     break;
                                 case "obrigatorio": // INFO
+                                    // A regra obrigatório se executa em todas: full, blur, input, inicial(se houver);
                                     if (re.v == null)
                                         re.v = "true";
                                     if (re.v == "true") {
@@ -3256,77 +3258,93 @@ class mkt {
                                     prom(re.k);
                                     break;
                                 case "regex": // INFO
-                                    if (!(new RegExp(re.v).test(e[re.target]))) {
-                                        if (!re.m)
-                                            re.m = mkt.a.msg.fi;
-                                        erros.push(re);
+                                    if ((tipoEvento == "full") || (tipoEvento == "blur")) {
+                                        if (!(new RegExp(re.v).test(e[re.target]))) {
+                                            if (!re.m)
+                                                re.m = mkt.a.msg.fi;
+                                            erros.push(re);
+                                        }
                                     }
                                     prom(re.k);
                                     break;
                                 case "some": // INFO 
-                                    // (Ao menos 1 ocorrencia do regex informado) (Pode gerar varios erros)
-                                    let _vs;
-                                    re.vmfail = [];
-                                    let b = false;
-                                    Array.isArray(re.v) ? _vs = re.v : _vs = [re.v];
-                                    for (let i = 0; i < _vs.length; i++) {
-                                        if (!([...e[re.target]].some(le => new RegExp(_vs[i]).test(le)))) {
-                                            if (!re.m) {
-                                                re.m = mkt.a.msg.some;
+                                    if ((tipoEvento == "full") || (tipoEvento == "blur")) {
+                                        // (Ao menos 1 ocorrencia do regex informado) (Pode gerar varios erros)
+                                        let _vs;
+                                        re.vmfail = [];
+                                        let b = false;
+                                        Array.isArray(re.v) ? _vs = re.v : _vs = [re.v];
+                                        for (let i = 0; i < _vs.length; i++) {
+                                            if (!([...e[re.target]].some(le => new RegExp(_vs[i]).test(le)))) {
+                                                if (!re.m) {
+                                                    re.m = mkt.a.msg.some;
+                                                }
+                                                re.vmfail.push(re.vm[i]);
+                                                b = true;
                                             }
-                                            re.vmfail.push(re.vm[i]);
-                                            b = true;
                                         }
-                                    }
-                                    if (b) {
-                                        erros.push(re);
+                                        if (b) {
+                                            erros.push(re);
+                                        }
                                     }
                                     prom(re.k);
                                     break;
                                 case "mincharsinfo": // INFO
-                                    e.setAttribute("minlength", re.v);
-                                    if (e[re.target].length < Number(re.v)) {
-                                        if (!re.m)
-                                            re.m = mkt.a.msg.minc + re.v;
-                                        erros.push(re);
+                                    if ((tipoEvento == "full") || (tipoEvento == "blur")) {
+                                        e.setAttribute("minlength", re.v);
+                                        if (e[re.target].length < Number(re.v)) {
+                                            if (!re.m)
+                                                re.m = mkt.a.msg.minc + re.v;
+                                            erros.push(re);
+                                        }
                                     }
                                     prom(re.k);
                                     break;
                                 case "maxcharsinfo": // INFO
-                                    if (e[re.target].length > Number(re.v)) {
-                                        if (!re.m)
-                                            re.m = mkt.a.msg.maxc + re.v;
-                                        erros.push(re);
+                                    if ((tipoEvento == "full") || (tipoEvento == "blur")) {
+                                        if (e[re.target].length > Number(re.v)) {
+                                            if (!re.m)
+                                                re.m = mkt.a.msg.maxc + re.v;
+                                            erros.push(re);
+                                        }
                                     }
                                     prom(re.k);
                                     break;
                                 case "fn": // INFO
-                                    if (!(re.v(e[re.target]))) {
-                                        if (!re.m)
-                                            re.m = mkt.a.msg.negado;
-                                        erros.push(re);
+                                    if ((tipoEvento == "full") || (tipoEvento == "blur")) {
+                                        if (!(re.v(e[re.target]))) {
+                                            if (!re.m)
+                                                re.m = mkt.a.msg.negado;
+                                            erros.push(re);
+                                        }
                                     }
                                     prom(re.k);
                                     break;
                                 case "datamaiorque": // INFO
-                                    if (mkt.dataGetMs(e[re.target]) < mkt.dataGetMs(re.v)) {
-                                        if (!re.m)
-                                            re.m = mkt.a.msg.datamaiorque;
-                                        erros.push(re);
+                                    if ((tipoEvento == "full") || (tipoEvento == "blur")) {
+                                        if (mkt.dataGetMs(e[re.target]) < mkt.dataGetMs(re.v)) {
+                                            if (!re.m)
+                                                re.m = mkt.a.msg.datamaiorque;
+                                            erros.push(re);
+                                        }
                                     }
                                     prom(re.k);
                                     break;
                                 case "datamenorque": // INFO
-                                    if (mkt.dataGetMs(e[re.target]) > mkt.dataGetMs(re.v)) {
-                                        if (!re.m)
-                                            re.m = mkt.a.msg.datamenorque;
-                                        erros.push(re);
+                                    if ((tipoEvento == "full") || (tipoEvento == "blur")) {
+                                        if (mkt.dataGetMs(e[re.target]) > mkt.dataGetMs(re.v)) {
+                                            if (!re.m)
+                                                re.m = mkt.a.msg.datamenorque;
+                                            erros.push(re);
+                                        }
                                     }
                                     prom(re.k);
                                     break;
                                 case "server": // INFO - ASYNC EVENT
                                     //(Verificação remota, DB / API)
-                                    if (ev) {
+                                    if ((tipoEvento == "full") || (tipoEvento == "blur")) {
+                                        // Apenas executa server no blur
+                                        mkt.l("Server Check Event: ", ev);
                                         if (!re.m)
                                             re.m = mkt.a.msg.in;
                                         if (e[re.target] != "") {
@@ -3364,7 +3382,7 @@ class mkt {
                                         }
                                     }
                                     else {
-                                        // Apenas executa quando não tem evento
+                                        // Entrou aqui por que o evento não é blur. Então finaliza a promise.
                                         prom(re.k);
                                     }
                                     break;
@@ -3396,7 +3414,7 @@ class mkt {
             }); // Promise All
         }); // Return Promise regraExe
     };
-    static regrasValidas = async (container) => {
+    static regrasValidas = async (container, ev = null) => {
         // Retorna um booleano indicando se este container está ok ou não.
         container = mkt.Q(container);
         let validou = false;
@@ -3404,7 +3422,7 @@ class mkt {
         let promises = [];
         mkt.regras.forEach((regra) => {
             if (mkt.isInside(regra.e, container)) {
-                promises.push(mkt.regraExe(regra.e, "full"));
+                promises.push(mkt.regraExe(regra.e, "full", ev));
             }
         });
         let resultado = [];
@@ -3412,7 +3430,7 @@ class mkt {
         validou = resultado.flat().length <= 0;
         if (!validou) {
             mkt.vibrar(false);
-            mkt.gc("Validou a ação? ", (validou ? "Sim." : "Não."));
+            mkt.gc("Validou a ação? ", (validou ? "Sim." : "Não."), " TipoEvento: full");
             resultado.flat().forEach((r) => {
                 mkt.gc("Regra:", r.k?.toString().toUpperCase(), "Campo: " + r.e?.name);
                 mkt.l(r.e);
@@ -3421,7 +3439,7 @@ class mkt {
             mkt.ge();
         }
         else {
-            mkt.l("Validou a ação? Sim.");
+            mkt.l("Validou a ação? Sim. TipoEvento: full");
         }
         return validou;
     };
@@ -3474,8 +3492,7 @@ class mkt {
         mkt.regras = tempRegras; // Requer Propriedade destravada
     };
     static regrar = (container, nome, ...obj) => {
-        /**
-         * Informar o C (Container), N (Nome do input) e OBJ (Regra)
+        /** Informar o Container, Nome do input e OBJ (Regra)
          * Atributos do Objeto
          * k:		nome da regra a ser utilizada
          * v: 	atributo da regra escolhida
@@ -3489,9 +3506,10 @@ class mkt {
         }
         container = mkt.Q(container);
         let e = container?.querySelector("*[name='" + nome + "']");
+        // Se elemento for encontrado dentro do container
         if (e) {
-            mkt.atribuir(e, () => { mkt.regraExe(e); }, "oninput");
-            mkt.atribuir(e, () => { mkt.regraExe(e, event); }, "onblur");
+            mkt.atribuir(e, () => { mkt.regraExe(e, "input"); }, "oninput");
+            mkt.atribuir(e, (ev) => { mkt.regraExe(e, "blur", ev); }, "onblur");
             // Buscar Elemento e regra
             let auto = false;
             let novaregra = { c: container, n: nome, e: e, r: [...obj] };
