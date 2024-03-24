@@ -29,7 +29,7 @@ lista_mkt.aoAntesDePopularTabela = (x) => { // Aqui modificamos a exibicao de um
 var lista = new mkt(lista_mkt);
 
 // A lista 2 inicia com 0, e também busca na url.
-var lista_mkt2 = new mktc(modeloList1);
+var lista_mkt2 = new mktc();
 lista_mkt2.dados = [];
 lista_mkt2.url = "http://127.0.0.1:5501/GetList2";
 lista_mkt2.nomeTabela = "Listagem2";

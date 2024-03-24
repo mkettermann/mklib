@@ -1002,7 +1002,8 @@ class mkt {
 	headAtivar = () => {
 		// Gera Listeners na THEAD da tabela (Requer classe: "sort-campo")
 		let eTrHeadPai = mkt.Q(this.c.container + " thead tr");
-		let opcoes = this.getModel().map(o => { if (o.f) { return o.k; } }).filter(r => { return r != null });
+		// Coleta as labels
+		let opcoes = this.getModel().map(o => { if (o.f == false) { return o.k; } }).filter(r => { return r != null });
 		if (eTrHeadPai) {
 			Array.from(eTrHeadPai.children).forEach((th: any) => {
 				let possui: any = false;
@@ -1014,6 +1015,7 @@ class mkt {
 				});
 				if (possui != false) {
 					let colName = possui.replace("sort-", "");
+					//mkt.l("HM?", this.c.headMenu, "Col:", colName, "Model:", opcoes);
 					if (colName != "") {
 						if (this.c.headSort == true) {
 							mkt.Ao("click", th, (e: HTMLTableCellElement) => {
@@ -1021,8 +1023,8 @@ class mkt {
 							});
 						}
 						if (this.c.headMenu == true) { // Se Ativo
-							// Se coluna atual permite filtrar.
-							if (opcoes?.includes(colName)) {
+							// Ignora caso a coluna estiver impedida de filtrar. mktm({f:false})
+							if (!opcoes?.includes(colName)) {
 								mkt.Ao("mousemove", th, (e: HTMLTableCellElement) => {
 									this.headSeeMenuAbrir(colName, e);
 								});
