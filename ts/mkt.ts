@@ -1502,22 +1502,25 @@ class mkt {
 		}
 	};
 
-	static QverOff = (query: HTMLElement | string | null = "body") => {
-		// Oculta pela classe "oculto" todos elementos deste query.
+	static QverOff = (query: HTMLElement | string | null = "body"): any[] => {
+		// Adiciona Classe Oculto em todos os elementos do Query
+		// Retorna uma array de elementos por causa do QAll
 		return mkt.aCadaElemento(query, (e: any) => {
 			e?.classList.add("oculto");
 		});
 	};
 
 	static QverOn = (query: HTMLElement | string | null = "body") => {
-		// Visualiza elemento removendo a classe "oculto";
+		// Remove classe Oculto em todos os elementos do Query
+		// Retorna uma array de elementos por causa do QAll
 		return mkt.aCadaElemento(query, (e: any) => {
 			e?.classList.remove("oculto");
 		});
 	};
 
 	static Qoff = (query: any = "body") => {
-		// Coloca atributo disabled e classe disabled nos elementos do query e seta tab até o campo desativado.
+		// Desabilita o campo e Remove acesso ao Tab nesses campos do Query
+		// Retorna uma array de elementos por causa do QAll
 		return mkt.aCadaElemento(query, (e: any) => {
 			e.setAttribute("disabled", "");
 			e.classList.add("disabled");
@@ -1526,7 +1529,8 @@ class mkt {
 	};
 
 	static Qon = (query: any = "body") => {
-		// Remove atributo disabled e classe disabled nos elementos do query e seta tab até o campo ativo.
+		// Habilita o campo e Libera acesso ao Tab nesses campos do Query
+		// Retorna uma array de elementos por causa do QAll
 		return mkt.aCadaElemento(query, (e: any) => {
 			e.removeAttribute("disabled");
 			e.classList.remove("disabled");
@@ -3390,7 +3394,7 @@ class mkt {
 									//(Verificação remota, DB / API)
 									if ((tipoEvento == "full") || (tipoEvento == "blur")) {
 										// Apenas executa server no blur
-										mkt.l("Server Check Event: ", ev);
+										if (!ev) mkt.w("Server Check Event Null Track. tipoEvento: ", tipoEvento);
 										if (!re.m) re.m = mkt.a.msg.in;
 										if (e[re.target] != "") {
 											e.classList.add("pending");

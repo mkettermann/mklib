@@ -1491,19 +1491,22 @@ class mkt {
         }
     };
     static QverOff = (query = "body") => {
-        // Oculta pela classe "oculto" todos elementos deste query.
+        // Adiciona Classe Oculto em todos os elementos do Query
+        // Retorna uma array de elementos por causa do QAll
         return mkt.aCadaElemento(query, (e) => {
             e?.classList.add("oculto");
         });
     };
     static QverOn = (query = "body") => {
-        // Visualiza elemento removendo a classe "oculto";
+        // Remove classe Oculto em todos os elementos do Query
+        // Retorna uma array de elementos por causa do QAll
         return mkt.aCadaElemento(query, (e) => {
             e?.classList.remove("oculto");
         });
     };
     static Qoff = (query = "body") => {
-        // Coloca atributo disabled e classe disabled nos elementos do query e seta tab até o campo desativado.
+        // Desabilita o campo e Remove acesso ao Tab nesses campos do Query
+        // Retorna uma array de elementos por causa do QAll
         return mkt.aCadaElemento(query, (e) => {
             e.setAttribute("disabled", "");
             e.classList.add("disabled");
@@ -1511,7 +1514,8 @@ class mkt {
         });
     };
     static Qon = (query = "body") => {
-        // Remove atributo disabled e classe disabled nos elementos do query e seta tab até o campo ativo.
+        // Habilita o campo e Libera acesso ao Tab nesses campos do Query
+        // Retorna uma array de elementos por causa do QAll
         return mkt.aCadaElemento(query, (e) => {
             e.removeAttribute("disabled");
             e.classList.remove("disabled");
@@ -3352,7 +3356,8 @@ class mkt {
                                     //(Verificação remota, DB / API)
                                     if ((tipoEvento == "full") || (tipoEvento == "blur")) {
                                         // Apenas executa server no blur
-                                        mkt.l("Server Check Event: ", ev);
+                                        if (!ev)
+                                            mkt.w("Server Check Event Null Track. tipoEvento: ", tipoEvento);
                                         if (!re.m)
                                             re.m = mkt.a.msg.in;
                                         if (e[re.target] != "") {
