@@ -3861,26 +3861,6 @@ class mkt {
 		return elementos;
 	};
 
-	static AllFromCadaExe = (query: any, fn: Function) => {
-		// Executa função aCada Elemento do QAll e junta os resultados.
-		// Retorna uma array de resultados de cada execucao.
-		let retorno: any = [];
-		if (typeof query == "string") {
-			let elementos = mkt.QAll(query);
-			elementos.forEach((e: any) => {
-				retorno.push(fn(e));
-			});
-		} else if (Array.isArray(query)) {
-			query.forEach((e) => {
-				retorno.push(fn(e));
-			});
-		} else {
-			let e = mkt.Q(query);
-			retorno.push(fn(e));
-		}
-		return retorno;
-	};
-
 	static parseJSON = (t: any, removeRaw: boolean | number | null = false) => {
 		// Se for um JSON válido. Retorna o objeto, se não null.
 		if (removeRaw) {
@@ -3898,7 +3878,7 @@ class mkt {
 	};
 
 	static stringify = (o: any): string => {
-		// Camada de tratamento de envio de JSON.
+		// Converte o Objeto em String JSON, e aproveita e já remove alguns caracteres de controle.
 		return JSON.stringify(o)
 			?.replaceAll("\n", "")
 			?.replaceAll("\r", "")
@@ -7973,7 +7953,7 @@ li[m="1"] {
 			} else {
 				if (mkt.classof(text) == "Map") {
 					// Mantém o JSON do último opções recebido
-					this.config.opcoes = mkt.stringify([...mkt.Q(".conPessoa .iNovo[name='codTipoVinculo']").config.opcoes]);
+					this.config.opcoes = mkt.stringify([...text]);
 					this.forceUpdate();
 				} else {
 					mkt.w("mkSelElement - set opcoes() - Formato inválido: ", mkt.classof(text));
