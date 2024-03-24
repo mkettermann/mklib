@@ -1472,12 +1472,18 @@ class mkt {
         return query;
     };
     static QAll = (query = "body") => {
-        // Atalho para QuerySelectorAll. List []
+        // Sempre retorna uma array de encontrados. Inclusive uma array com um mkt.Q
         if (mkt.classof(query) == "String") {
+            // Se buscando uma string, retorna a array do select encontrado
             return Array.from(document.querySelectorAll(query));
         }
         else if (mkt.classof(query).endsWith("Element")) {
+            // Quando buscar um elemento, retorna a array do elemento
             return [query];
+        }
+        else if (mkt.classof(query) == "Array") {
+            // Quando buscar uma array, retorna a propria array.
+            return query;
         }
         else {
             mkt.w("QAll() - Requer String / Elemento. ClassOf: ", mkt.classof(query), " Query: ", query);
@@ -3819,31 +3825,13 @@ class mkt {
         return oa;
     };
     static aCadaElemento = (query, fn) => {
-        // Executa a cada elemento, similar ao QAll.
-        // Query: String, Element, [Element,Element]
-        if (mkt.classof(query) == "String") {
-            let retorno;
-            let elementos = mkt.QAll(query);
-            if (elementos.length == 1)
-                retorno = elementos[0];
-            else
-                retorno = elementos;
-            elementos.forEach((e) => {
-                fn(e);
-            });
-            return retorno;
-        }
-        else if (mkt.classof(query) == "Array") {
-            query.forEach((e) => {
-                fn(e);
-            });
-            return query;
-        }
-        else {
-            let e = mkt.Q(query);
+        // A cada elemento encontrado pelo QAll executa a funcao
+        let elementos = mkt.QAll(query);
+        elementos.forEach((e) => {
             fn(e);
-            return e;
-        }
+        });
+        // Sempre retorna uma array por caus do QAll
+        return elementos;
     };
     static AllFromCadaExe = (query, fn) => {
         // Executa função aCada Elemento do QAll e junta os resultados.
