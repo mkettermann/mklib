@@ -4399,6 +4399,7 @@ class mkt {
 			Array.from(form.querySelectorAll("mk-sel")).forEach((mks: any) => {
 				rObjeto[mks.name] = mks.value;
 			});
+			// Aqui apenas coleta os mkBot que foram modificados pelo usuário.
 			Array.from(form.querySelectorAll("mk-bot.changed")).forEach((mkb: any) => {
 				rObjeto[mkb.name] = mkb.value;
 			});
