@@ -3288,8 +3288,10 @@ class mkt {
 									break;
 
 								case "obrigatorio": // INFO
+									mkt.l("Regrar OBRIGATORIO " + tipoEvento + ":", ev);
 									// A regra obrigatório se executa em todas: full, blur, input, inicial(se houver);
-									if ((tipoEvento == "full") || (tipoEvento == "blur") || (tipoEvento == "inicial")) {
+									if (e.getAttribute("type")?.toLowerCase() != "file") { // Se Não for um input FILE, que gera blur
+										// Aqui tem que arrumar, para poder permitir a regra em input file de alguma forma.
 										if (re.v == null) re.v = "true";
 										if (re.v == "true") {
 											if (e[re.target] == "") {
