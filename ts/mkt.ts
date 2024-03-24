@@ -3289,17 +3289,19 @@ class mkt {
 
 								case "obrigatorio": // INFO
 									// A regra obrigatório se executa em todas: full, blur, input, inicial(se houver);
-									if (re.v == null) re.v = "true";
-									if (re.v == "true") {
-										if (e[re.target] == "") {
-											if (!re.m) {
-												if (mkt.classof(e) == "mkSelElement") {
-													re.m = mkt.a.msg.so;
-												} else {
-													re.m = mkt.a.msg.po;
+									if ((tipoEvento == "full") || (tipoEvento == "blur") || (tipoEvento == "inicial")) {
+										if (re.v == null) re.v = "true";
+										if (re.v == "true") {
+											if (e[re.target] == "") {
+												if (!re.m) {
+													if (mkt.classof(e) == "mkSelElement") {
+														re.m = mkt.a.msg.so;
+													} else {
+														re.m = mkt.a.msg.po;
+													}
 												}
+												erros.push(re);
 											}
-											erros.push(re);
 										}
 									}
 									prom(re.k);
