@@ -1095,7 +1095,7 @@ class mkt {
         }
     };
     clearFiltroUpdate = () => {
-        // LIMPAR FILTRO  LimparFiltro("#consulta_form"); //Passar o form que contem os SELECT/INPUT de filtro (search).
+        // LIMPAR FILTRO E ATUALIZA
         this.clearFiltro();
         this.atualizarListagem();
     };
@@ -1224,7 +1224,7 @@ class mkt {
     };
     // mkt.aoReceberDados e mkt.ordenar Não se executam pra acelerar a inserção assincrona da listagem
     addMany = (arrayDados) => {
-        // Adiciona uma lista de dados na listagem
+        // Acrescenta uma lista no fim da lista previamente acrescentada
         this.dadosFull.push(...arrayDados);
         this.atualizarListagem();
     };
@@ -1235,34 +1235,36 @@ class mkt {
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //  DEFINIÇÕES DA CLASSE MKT        \\
     //___________________________________\\
-    // Retorna a Posição do container local
     getIndexOf = () => {
+        // Retorna a Posição deste Build (new mkt) no container local
         return mkt.a.build.indexOf(this);
     };
-    // Retorna a instância da posicao
     static getThis = (build) => {
+        // Retorna a instância da posicao
         return mkt.a.build[build];
     };
-    // Return Json
     toJSON = () => {
+        // Return Json
         return this.dadosFull;
     };
-    // Return String Instancia
     toString = () => {
+        // Return String Instancia
         return mkt.stringify(this.dadosFull);
     };
-    // Return String Classe
     static toString = () => {
+        // Return String Classe
         return 'class mkt { /* classe gerenciadora de listagens */ }';
     };
-    // Return Number
     valueOf = () => {
+        // Return Number
         return this.dadosFull;
     };
-    // Get
-    get [Symbol.toStringTag]() { return "mkt"; }
-    // Iterator
+    get [Symbol.toStringTag]() {
+        // Get Name
+        return "mkt";
+    }
     [Symbol.iterator]() {
+        // Iterator
         let iteratorArray = this.dadosFull[Symbol.iterator]();
         // Iteration result
         return {
@@ -1286,7 +1288,7 @@ class mkt {
     //==========================================================================\\
     // mkt.a. - XXX UTIL
     static a = {
-        // Armazenadores / Constantes
+        // Configurações, Armazenadores, Constantes, Funcões uteis...
         ALL: "*/*",
         FORMDATA: "multipart/form-data",
         GET: "GET",
@@ -1464,10 +1466,10 @@ class mkt {
     // ============================ ATALHOS PERSONALIZADOS ============================ \\
     // ================================================================================= \\
     static Q = (query) => {
-        // Atalho para QuerySelector que retorna apenas o primeiro elemento da query.
-        if (mkt.classof(query) != "String")
-            return query;
-        return document.querySelector(query);
+        // Permite buscar por um elemento em string ou ele mesmo. Formando uma bufurcação ao elemento quando buscar por ele mais de uma vez.
+        if (mkt.classof(query) == "String")
+            return document.querySelector(query);
+        return query;
     };
     static QAll = (query = "body") => {
         // Atalho para QuerySelectorAll. List []
@@ -3245,7 +3247,7 @@ class mkt {
                                     if (re.v == "true") {
                                         if (e[re.target] == "") {
                                             if (!re.m) {
-                                                if (mkt.classof(e) == "mk-sel") {
+                                                if (mkt.classof(e) == "mkSelElement") {
                                                     re.m = mkt.a.msg.so;
                                                 }
                                                 else {
@@ -4323,7 +4325,7 @@ class mkt {
             if (mkt.classof(e) == "HTMLInputElement") {
                 v = e.value;
             }
-            else if (mkt.classof(e) == "mk-sel") {
+            else if (mkt.classof(e) == "mkSelElement") {
                 v = e.values.join(", ");
             }
             div.innerHTML = v;
@@ -6673,12 +6675,12 @@ class mkSel extends HTMLElement {
                     }
                 }
                 else {
-                    mkt.w("mk-sel - atributo 'selapenas' precisa ser número: ", mkt.classof(this.config.selapenas));
+                    mkt.w("mkSelElement - atributo 'selapenas' precisa ser número: ", mkt.classof(this.config.selapenas));
                 }
             }
             else {
                 // Acredito que é possível clicar em alguns pixels fora da área do LI Element
-                //mkt.w("mk-sel", this.config.name, "Erro de seleção: K: ", novoK);
+                //mkt.w("mkSelElement", this.config.name, "Erro de seleção: K: ", novoK);
             }
             this.config.updateSelecionadosValues();
         },
@@ -6894,7 +6896,7 @@ li[m="1"] {
             this.aoBlur();
         };
         this.config.eK.oninput = (ev) => {
-            ev.stopPropagation(); // Input interno propaga pro elemento mk-sel
+            ev.stopPropagation(); // Input interno propaga pro elemento mkSelElement
             this.aoInput();
         };
         this.config.eK.onkeydown = (ev) => {
@@ -7098,7 +7100,7 @@ li[m="1"] {
                     }
                 }
                 else {
-                    mkt.w("mk-sel - Não foi possível fazer o refill: Sem URL setada.");
+                    mkt.w("mkSelElement - Não foi possível fazer o refill: Sem URL setada.");
                 }
             }
         }
@@ -7266,16 +7268,16 @@ li[m="1"] {
             display = " -- Erro -- ";
             this.classList.add("mkEfeitoPulsar");
             if (this.config.fail == 2) { // Tenta trocar opções
-                mkt.w("mk-sel - Opções Inexistente Selecionada. Solicitando Refill. Tentativa: ", this.config.fail, " - ", this.config.name);
+                mkt.w("mkSelElement - Opções Inexistente Selecionada. Solicitando Refill. Tentativa: ", this.config.fail, " - ", this.config.name);
                 display = " -- Carregando -- ";
                 await this.refill();
             }
             else if (this.config.fail == 3) {
-                mkt.w("mk-sel - Opções Inexistente Selecionada. Limpeza forçada. Tentativa: ", this.config.fail, " - ", this.config.name);
+                mkt.w("mkSelElement - Opções Inexistente Selecionada. Limpeza forçada. Tentativa: ", this.config.fail, " - ", this.config.name);
                 this.removeAttribute("value");
             }
             else if (this.config.fail == 4) {
-                mkt.w("mk-sel - Opções Inexistente Selecionada. Limpeza falhou. Tentativa: ", this.config.fail, " - ", this.config.name);
+                mkt.w("mkSelElement - Opções Inexistente Selecionada. Limpeza falhou. Tentativa: ", this.config.fail, " - ", this.config.name);
             }
             if (this.config.fail < 4) { // Recarrega
                 mkt.wait(20).then(r => {
@@ -7306,7 +7308,7 @@ li[m="1"] {
             }
         }
         else {
-            mkt.w("mk-sel - Não foi possível fazer o refill: Sem URL setada: ", urlExecutar);
+            mkt.w("mkSelElement - Não foi possível fazer o refill: Sem URL setada: ", urlExecutar);
         }
     }
     // Atributos modificados no elemento
@@ -7346,7 +7348,7 @@ li[m="1"] {
                 this.atualizarDisplay();
             }
             else {
-                mkt.w("mk-sel - Seletor Pós precisam de uma URL para consulta: ", this.config.url);
+                mkt.w("mkSelElement - Seletor Pós precisam de uma URL para consulta: ", this.config.url);
                 this.removeAttribute("pos");
             }
         }
@@ -7397,7 +7399,7 @@ li[m="1"] {
                     this.forceUpdate();
                 }
                 else {
-                    mkt.w("mk-sel - set opcoes() - Formato inválido: ", mkt.classof(text));
+                    mkt.w("mkSelElement - set opcoes() - Formato inválido: ", mkt.classof(text));
                 }
             }
         }
@@ -7437,7 +7439,7 @@ li[m="1"] {
     set name(text) { if (text) {
         this.setAttribute("name", text);
     } }
-    get [Symbol.toStringTag]() { return "mk-sel"; }
+    get [Symbol.toStringTag]() { return "mkSelElement"; }
     // Atributos sendo observados no elemento.
     static observedAttributes = ["disabled", "size", "value", "name", "opcoes", "url", "scrollbarwidth", "scrollbarcolor", "selapenas", "refill", "pos"];
 }
