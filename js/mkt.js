@@ -3526,7 +3526,7 @@ class mkt {
         if (e) {
             // Quando o elemento é um Input File, atribui o OnChange, em vez do blur e input.
             if (e.getAttribute("type") == "file") {
-                mkt.atribuir(e, () => { mkt.regraExe(e, "change"); }, "onchange");
+                mkt.Ao("change", e, () => { mkt.regraExe(e, "change"); });
             }
             else {
                 mkt.atribuir(e, () => { mkt.regraExe(e, "input"); }, "oninput");
