@@ -36,3 +36,8 @@ mkt.Ao("input", "mk-sel[name='staAtivo']", (e) => {
 	mkt.l(msg);
 	alert(msg);
 })
+
+// DESABILITAR
+async function desabilitarSeletor() {
+	mkt.Qoff("mk-sel[name='staDesabilitado']");
+}

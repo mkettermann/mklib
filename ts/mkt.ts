@@ -1622,14 +1622,10 @@ class mkt {
 	}
 
 	static Qison = (query: any = "body") => {
-		// Retorna uma array do estado DISABLED de todos da query.
-		return mkt.AllFromCadaExe(query, (e: any) => {
-			let b = false;
-			if (!e.classList.contains("disabled")) {
-				b = true;
-			}
-			return b;
-		});
+		// Responde se Todos elementos deste query estão ON
+		return (mkt.QAll(query).some((e: any) => { return e.classList.contains("disabled") }))
+			? false
+			: true;
 	}
 
 	static QverToggle = (query: HTMLElement | string | null = "body") => {
@@ -3139,9 +3135,10 @@ class mkt {
 	static regras: any[] = [];
 
 	static regraExe = async (e: any, tipoEvento = "blur", ev: Event | null = null) => {
-		//mkt.l("Regrar " + tipoEvento + ":", ev);
 		// Função que executa as regras deste campo com base nos objetos salvos
+		// O EVENTO pode estar nulo no FULL, pois a função que chamou regrasValidas() não passou o evento.
 		// Quando concluir (onChange), executar novamentepra remover erros já corrigidos (justamente no último caracter).
+		//mkt.l("Regrar " + tipoEvento + ":", ev);
 		return new Promise((resolver) => {
 			// Antes de buscar a regra para esse elemento, limpa os que estão fora do dom
 			let tempRegras: any[] = [];
@@ -3394,7 +3391,6 @@ class mkt {
 									//(Verificação remota, DB / API)
 									if ((tipoEvento == "full") || (tipoEvento == "blur")) {
 										// Apenas executa server no blur
-										if (!ev) mkt.w("Server Check Event Null Track. tipoEvento: ", tipoEvento);
 										if (!re.m) re.m = mkt.a.msg.in;
 										if (e[re.target] != "") {
 											e.classList.add("pending");
@@ -3511,6 +3507,7 @@ class mkt {
 	};
 
 	static regraOcultar = (container: any) => {
+		// Atualiza Displays .mkRegrar baseado no Container
 		container = mkt.Q(container);
 		// A cada regra envia um OCULTAR ERROS
 		mkt.regras.forEach((r: any) => {
@@ -3527,7 +3524,8 @@ class mkt {
 	};
 
 	static regraRemover = async (container: any) => {
-		// Remove as regras de um determinado container
+		// Remove (Elimina) as regras de um determinado container
+		// Para refazer a regra, precisa utilizar mkt.regrar novamente.
 		container = mkt.Q(container);
 		let tempRegras: any[] = [];
 		mkt.regras.forEach((r) => {
@@ -3722,20 +3720,14 @@ class mkt {
 	// ============================ TOOLS e JS HELPERS ================================ \\
 	// ================================================================================= \\
 
-	static contem = (
-		strMaior: string,
-		strMenor: string,
-	): boolean => {
+	static contem = (strMaior: string, strMenor: string): boolean => {
 		// Comparardor de string CONTEM
 		strMaior = mkt.removeEspecias(strMaior).toLowerCase();
 		strMenor = mkt.removeEspecias(strMenor).toLowerCase();
 		return (strMaior.includes(strMenor));
 	};
 
-	static like = (
-		strMenor: string,
-		strMaior: string,
-	): boolean => {
+	static like = (strMenor: string, strMaior: string): boolean => {
 		// Comparardor de string LIKE
 		let result = false;
 		// Apenas Numeros e Letras está presente,
@@ -3830,7 +3822,7 @@ class mkt {
 	};
 
 	static aCadaSubPropriedade = (OA: any, funcao: Function | null = null, exceto: string = "Object") => {
-		// Executa a FUNCAO em todas as propriedades deste OA. Inclusive Obj.Obj...
+		// Executa a FUNCAO em todas as propriedades deste OA. Inclusive Obj.Obj... (Matriz de Dados)
 		let c = 0;
 		for (let a in OA) {
 			if (mkt.classof(OA[a]) != exceto) {
@@ -3847,10 +3839,7 @@ class mkt {
 		return c;
 	};
 
-	static aCadaObjExecuta = (
-		oa: object | object[],
-		func: any
-	): object | object[] => {
+	static aCadaObjExecuta = (oa: object | object[], func: any): object | object[] => {
 		// Verifica se ARRAY ou OBJETO e executa a função FUNC a cada objeto dentro de OA.
 		if (Array.isArray(oa)) {
 			for (let i = 0; i < oa.length; i++) {

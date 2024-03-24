@@ -1608,14 +1608,10 @@ class mkt {
         return eAfetados;
     };
     static Qison = (query = "body") => {
-        // Retorna uma array do estado DISABLED de todos da query.
-        return mkt.AllFromCadaExe(query, (e) => {
-            let b = false;
-            if (!e.classList.contains("disabled")) {
-                b = true;
-            }
-            return b;
-        });
+        // Responde se Todos elementos deste query estão ON
+        return (mkt.QAll(query).some((e) => { return e.classList.contains("disabled"); }))
+            ? false
+            : true;
     };
     static QverToggle = (query = "body") => {
         // Inverte oculto dos campos da query
@@ -3102,9 +3098,10 @@ class mkt {
     // ================================================================================= \\
     static regras = [];
     static regraExe = async (e, tipoEvento = "blur", ev = null) => {
-        //mkt.l("Regrar " + tipoEvento + ":", ev);
         // Função que executa as regras deste campo com base nos objetos salvos
+        // O EVENTO pode estar nulo no FULL, pois a função que chamou regrasValidas() não passou o evento.
         // Quando concluir (onChange), executar novamentepra remover erros já corrigidos (justamente no último caracter).
+        //mkt.l("Regrar " + tipoEvento + ":", ev);
         return new Promise((resolver) => {
             // Antes de buscar a regra para esse elemento, limpa os que estão fora do dom
             let tempRegras = [];
@@ -3356,8 +3353,6 @@ class mkt {
                                     //(Verificação remota, DB / API)
                                     if ((tipoEvento == "full") || (tipoEvento == "blur")) {
                                         // Apenas executa server no blur
-                                        if (!ev)
-                                            mkt.w("Server Check Event Null Track. tipoEvento: ", tipoEvento);
                                         if (!re.m)
                                             re.m = mkt.a.msg.in;
                                         if (e[re.target] != "") {
@@ -3477,6 +3472,7 @@ class mkt {
             eDisplay.innerHTML = mensagem;
     };
     static regraOcultar = (container) => {
+        // Atualiza Displays .mkRegrar baseado no Container
         container = mkt.Q(container);
         // A cada regra envia um OCULTAR ERROS
         mkt.regras.forEach((r) => {
@@ -3493,7 +3489,8 @@ class mkt {
         });
     };
     static regraRemover = async (container) => {
-        // Remove as regras de um determinado container
+        // Remove (Elimina) as regras de um determinado container
+        // Para refazer a regra, precisa utilizar mkt.regrar novamente.
         container = mkt.Q(container);
         let tempRegras = [];
         mkt.regras.forEach((r) => {
@@ -3801,7 +3798,7 @@ class mkt {
         return mkt.aCadaObjExecuta(oa, limparO_Execute);
     };
     static aCadaSubPropriedade = (OA, funcao = null, exceto = "Object") => {
-        // Executa a FUNCAO em todas as propriedades deste OA. Inclusive Obj.Obj...
+        // Executa a FUNCAO em todas as propriedades deste OA. Inclusive Obj.Obj... (Matriz de Dados)
         let c = 0;
         for (let a in OA) {
             if (mkt.classof(OA[a]) != exceto) {
