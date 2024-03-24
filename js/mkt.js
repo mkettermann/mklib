@@ -3252,24 +3252,24 @@ class mkt {
                                 case "obrigatorio": // INFO
                                     mkt.l("Regrar OBRIGATORIO " + tipoEvento + ":", ev);
                                     // A regra obrigatório se executa em todas: full, blur, input, inicial(se houver);
-                                    if (e.getAttribute("type")?.toLowerCase() != "file") { // Se Não for um input FILE, que gera blur
-                                        // Aqui tem que arrumar, para poder permitir a regra em input file de alguma forma.
-                                        if (re.v == null)
-                                            re.v = "true";
-                                        if (re.v == "true") {
-                                            if (e[re.target] == "") {
-                                                if (!re.m) {
-                                                    if (mkt.classof(e) == "mkSelElement") {
-                                                        re.m = mkt.a.msg.so;
-                                                    }
-                                                    else {
-                                                        re.m = mkt.a.msg.po;
-                                                    }
+                                    //	if (e.getAttribute("type")?.toLowerCase() != "file") { // Se Não for um input FILE, que gera blur
+                                    // Aqui tem que arrumar, para poder permitir a regra em input file de alguma forma.
+                                    if (re.v == null)
+                                        re.v = "true";
+                                    if (re.v == "true") {
+                                        if (e[re.target] == "") {
+                                            if (!re.m) {
+                                                if (mkt.classof(e) == "mkSelElement") {
+                                                    re.m = mkt.a.msg.so;
                                                 }
-                                                erros.push(re);
+                                                else {
+                                                    re.m = mkt.a.msg.po;
+                                                }
                                             }
+                                            erros.push(re);
                                         }
                                     }
+                                    //}
                                     prom(re.k);
                                     break;
                                 case "regex": // INFO
@@ -3524,8 +3524,14 @@ class mkt {
         let e = container?.querySelector("*[name='" + nome + "']");
         // Se elemento for encontrado dentro do container
         if (e) {
-            mkt.atribuir(e, () => { mkt.regraExe(e, "input"); }, "oninput");
-            mkt.atribuir(e, (ev) => { mkt.regraExe(e, "blur", ev); }, "onblur");
+            // Quando o elemento é um Input File, atribui o OnChange, em vez do blur e input.
+            if (e.getAttribute("type") == "file") {
+                mkt.atribuir(e, () => { mkt.regraExe(e, "change"); }, "onchange");
+            }
+            else {
+                mkt.atribuir(e, () => { mkt.regraExe(e, "input"); }, "oninput");
+                mkt.atribuir(e, (ev) => { mkt.regraExe(e, "blur", ev); }, "onblur");
+            }
             // Buscar Elemento e regra
             let auto = false;
             let novaregra = { c: container, n: nome, e: e, r: [...obj] };
