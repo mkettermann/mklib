@@ -985,7 +985,8 @@ class mkt {
     headAtivar = () => {
         // Gera Listeners na THEAD da tabela (Requer classe: "sort-campo")
         let eTrHeadPai = mkt.Q(this.c.container + " thead tr");
-        let opcoes = this.getModel().map(o => { if (o.f) {
+        // Coleta as labels
+        let opcoes = this.getModel().map(o => { if (o.f == false) {
             return o.k;
         } }).filter(r => { return r != null; });
         if (eTrHeadPai) {
@@ -999,6 +1000,7 @@ class mkt {
                 });
                 if (possui != false) {
                     let colName = possui.replace("sort-", "");
+                    //mkt.l("HM?", this.c.headMenu, "Col:", colName, "Model:", opcoes);
                     if (colName != "") {
                         if (this.c.headSort == true) {
                             mkt.Ao("click", th, (e) => {
@@ -1006,8 +1008,8 @@ class mkt {
                             });
                         }
                         if (this.c.headMenu == true) { // Se Ativo
-                            // Se coluna atual permite filtrar.
-                            if (opcoes?.includes(colName)) {
+                            // Ignora caso a coluna estiver impedida de filtrar. mktm({f:false})
+                            if (!opcoes?.includes(colName)) {
                                 mkt.Ao("mousemove", th, (e) => {
                                     this.headSeeMenuAbrir(colName, e);
                                 });
@@ -1095,7 +1097,7 @@ class mkt {
         }
     };
     clearFiltroUpdate = () => {
-        // LIMPAR FILTRO  LimparFiltro("#consulta_form"); //Passar o form que contem os SELECT/INPUT de filtro (search).
+        // LIMPAR FILTRO E ATUALIZA
         this.clearFiltro();
         this.atualizarListagem();
     };
@@ -1224,7 +1226,7 @@ class mkt {
     };
     // mkt.aoReceberDados e mkt.ordenar Não se executam pra acelerar a inserção assincrona da listagem
     addMany = (arrayDados) => {
-        // Adiciona uma lista de dados na listagem
+        // Acrescenta uma lista no fim da lista previamente acrescentada
         this.dadosFull.push(...arrayDados);
         this.atualizarListagem();
     };
@@ -1235,34 +1237,36 @@ class mkt {
     //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
     //  DEFINIÇÕES DA CLASSE MKT        \\
     //___________________________________\\
-    // Retorna a Posição do container local
     getIndexOf = () => {
+        // Retorna a Posição deste Build (new mkt) no container local
         return mkt.a.build.indexOf(this);
     };
-    // Retorna a instância da posicao
     static getThis = (build) => {
+        // Retorna a instância da posicao
         return mkt.a.build[build];
     };
-    // Return Json
     toJSON = () => {
+        // Return Json
         return this.dadosFull;
     };
-    // Return String Instancia
     toString = () => {
+        // Return String Instancia
         return mkt.stringify(this.dadosFull);
     };
-    // Return String Classe
     static toString = () => {
+        // Return String Classe
         return 'class mkt { /* classe gerenciadora de listagens */ }';
     };
-    // Return Number
     valueOf = () => {
+        // Return Number
         return this.dadosFull;
     };
-    // Get
-    get [Symbol.toStringTag]() { return "mkt"; }
-    // Iterator
+    get [Symbol.toStringTag]() {
+        // Get Name
+        return "mkt";
+    }
     [Symbol.iterator]() {
+        // Iterator
         let iteratorArray = this.dadosFull[Symbol.iterator]();
         // Iteration result
         return {
@@ -1286,7 +1290,7 @@ class mkt {
     //==========================================================================\\
     // mkt.a. - XXX UTIL
     static a = {
-        // Armazenadores / Constantes
+        // Configurações, Armazenadores, Constantes, Funcões uteis...
         ALL: "*/*",
         FORMDATA: "multipart/form-data",
         GET: "GET",
@@ -1464,18 +1468,24 @@ class mkt {
     // ============================ ATALHOS PERSONALIZADOS ============================ \\
     // ================================================================================= \\
     static Q = (query) => {
-        // Atalho para QuerySelector que retorna apenas o primeiro elemento da query.
-        if (mkt.classof(query) != "String")
-            return query;
-        return document.querySelector(query);
+        // Permite buscar por um elemento em string ou ele mesmo. Formando uma bufurcação ao elemento quando buscar por ele mais de uma vez.
+        if (mkt.classof(query) == "String")
+            return document.querySelector(query);
+        return query;
     };
     static QAll = (query = "body") => {
-        // Atalho para QuerySelectorAll. List []
+        // Sempre retorna uma array de encontrados. Inclusive uma array com um mkt.Q
         if (mkt.classof(query) == "String") {
+            // Se buscando uma string, retorna a array do select encontrado
             return Array.from(document.querySelectorAll(query));
         }
         else if (mkt.classof(query).endsWith("Element")) {
+            // Quando buscar um elemento, retorna a array do elemento
             return [query];
+        }
+        else if (mkt.classof(query) == "Array") {
+            // Quando buscar uma array, retorna a propria array.
+            return query;
         }
         else {
             mkt.w("QAll() - Requer String / Elemento. ClassOf: ", mkt.classof(query), " Query: ", query);
@@ -1483,19 +1493,22 @@ class mkt {
         }
     };
     static QverOff = (query = "body") => {
-        // Oculta pela classe "oculto" todos elementos deste query.
+        // Adiciona Classe Oculto em todos os elementos do Query
+        // Retorna uma array de elementos por causa do QAll
         return mkt.aCadaElemento(query, (e) => {
             e?.classList.add("oculto");
         });
     };
     static QverOn = (query = "body") => {
-        // Visualiza elemento removendo a classe "oculto";
+        // Remove classe Oculto em todos os elementos do Query
+        // Retorna uma array de elementos por causa do QAll
         return mkt.aCadaElemento(query, (e) => {
             e?.classList.remove("oculto");
         });
     };
     static Qoff = (query = "body") => {
-        // Coloca atributo disabled e classe disabled nos elementos do query e seta tab até o campo desativado.
+        // Desabilita o campo e Remove acesso ao Tab nesses campos do Query
+        // Retorna uma array de elementos por causa do QAll
         return mkt.aCadaElemento(query, (e) => {
             e.setAttribute("disabled", "");
             e.classList.add("disabled");
@@ -1503,7 +1516,8 @@ class mkt {
         });
     };
     static Qon = (query = "body") => {
-        // Remove atributo disabled e classe disabled nos elementos do query e seta tab até o campo ativo.
+        // Habilita o campo e Libera acesso ao Tab nesses campos do Query
+        // Retorna uma array de elementos por causa do QAll
         return mkt.aCadaElemento(query, (e) => {
             e.removeAttribute("disabled");
             e.classList.remove("disabled");
@@ -1596,14 +1610,10 @@ class mkt {
         return eAfetados;
     };
     static Qison = (query = "body") => {
-        // Retorna uma array do estado DISABLED de todos da query.
-        return mkt.AllFromCadaExe(query, (e) => {
-            let b = false;
-            if (!e.classList.contains("disabled")) {
-                b = true;
-            }
-            return b;
-        });
+        // Responde se Todos elementos deste query estão ON
+        return (mkt.QAll(query).some((e) => { return e.classList.contains("disabled"); }))
+            ? false
+            : true;
     };
     static QverToggle = (query = "body") => {
         // Inverte oculto dos campos da query
@@ -3089,9 +3099,11 @@ class mkt {
     // ======================== REGRAR | VALIDAR | MASCARAR =========================== \\
     // ================================================================================= \\
     static regras = [];
-    static regraExe = async (e, ev = null) => {
+    static regraExe = async (e, tipoEvento = "blur", ev = null) => {
         // Função que executa as regras deste campo com base nos objetos salvos
+        // O EVENTO pode estar nulo no FULL, pois a função que chamou regrasValidas() não passou o evento.
         // Quando concluir (onChange), executar novamentepra remover erros já corrigidos (justamente no último caracter).
+        //mkt.l("Regrar " + tipoEvento + ":", ev);
         return new Promise((resolver) => {
             // Antes de buscar a regra para esse elemento, limpa os que estão fora do dom
             let tempRegras = [];
@@ -3238,12 +3250,16 @@ class mkt {
                                     prom(re.k);
                                     break;
                                 case "obrigatorio": // INFO
+                                    mkt.l("Regrar OBRIGATORIO " + tipoEvento + ":", ev);
+                                    // A regra obrigatório se executa em todas: full, blur, input, inicial(se houver);
+                                    //	if (e.getAttribute("type")?.toLowerCase() != "file") { // Se Não for um input FILE, que gera blur
+                                    // Aqui tem que arrumar, para poder permitir a regra em input file de alguma forma.
                                     if (re.v == null)
                                         re.v = "true";
                                     if (re.v == "true") {
                                         if (e[re.target] == "") {
                                             if (!re.m) {
-                                                if (mkt.classof(e) == "mk-sel") {
+                                                if (mkt.classof(e) == "mkSelElement") {
                                                     re.m = mkt.a.msg.so;
                                                 }
                                                 else {
@@ -3253,80 +3269,96 @@ class mkt {
                                             erros.push(re);
                                         }
                                     }
+                                    //}
                                     prom(re.k);
                                     break;
                                 case "regex": // INFO
-                                    if (!(new RegExp(re.v).test(e[re.target]))) {
-                                        if (!re.m)
-                                            re.m = mkt.a.msg.fi;
-                                        erros.push(re);
+                                    if ((tipoEvento == "full") || (tipoEvento == "blur")) {
+                                        if (!(new RegExp(re.v).test(e[re.target]))) {
+                                            if (!re.m)
+                                                re.m = mkt.a.msg.fi;
+                                            erros.push(re);
+                                        }
                                     }
                                     prom(re.k);
                                     break;
                                 case "some": // INFO 
-                                    // (Ao menos 1 ocorrencia do regex informado) (Pode gerar varios erros)
-                                    let _vs;
-                                    re.vmfail = [];
-                                    let b = false;
-                                    Array.isArray(re.v) ? _vs = re.v : _vs = [re.v];
-                                    for (let i = 0; i < _vs.length; i++) {
-                                        if (!([...e[re.target]].some(le => new RegExp(_vs[i]).test(le)))) {
-                                            if (!re.m) {
-                                                re.m = mkt.a.msg.some;
+                                    if ((tipoEvento == "full") || (tipoEvento == "blur")) {
+                                        // (Ao menos 1 ocorrencia do regex informado) (Pode gerar varios erros)
+                                        let _vs;
+                                        re.vmfail = [];
+                                        let b = false;
+                                        Array.isArray(re.v) ? _vs = re.v : _vs = [re.v];
+                                        for (let i = 0; i < _vs.length; i++) {
+                                            if (!([...e[re.target]].some(le => new RegExp(_vs[i]).test(le)))) {
+                                                if (!re.m) {
+                                                    re.m = mkt.a.msg.some;
+                                                }
+                                                re.vmfail.push(re.vm[i]);
+                                                b = true;
                                             }
-                                            re.vmfail.push(re.vm[i]);
-                                            b = true;
                                         }
-                                    }
-                                    if (b) {
-                                        erros.push(re);
+                                        if (b) {
+                                            erros.push(re);
+                                        }
                                     }
                                     prom(re.k);
                                     break;
                                 case "mincharsinfo": // INFO
-                                    e.setAttribute("minlength", re.v);
-                                    if (e[re.target].length < Number(re.v)) {
-                                        if (!re.m)
-                                            re.m = mkt.a.msg.minc + re.v;
-                                        erros.push(re);
+                                    if ((tipoEvento == "full") || (tipoEvento == "blur")) {
+                                        e.setAttribute("minlength", re.v);
+                                        if (e[re.target].length < Number(re.v)) {
+                                            if (!re.m)
+                                                re.m = mkt.a.msg.minc + re.v;
+                                            erros.push(re);
+                                        }
                                     }
                                     prom(re.k);
                                     break;
                                 case "maxcharsinfo": // INFO
-                                    if (e[re.target].length > Number(re.v)) {
-                                        if (!re.m)
-                                            re.m = mkt.a.msg.maxc + re.v;
-                                        erros.push(re);
+                                    if ((tipoEvento == "full") || (tipoEvento == "blur")) {
+                                        if (e[re.target].length > Number(re.v)) {
+                                            if (!re.m)
+                                                re.m = mkt.a.msg.maxc + re.v;
+                                            erros.push(re);
+                                        }
                                     }
                                     prom(re.k);
                                     break;
                                 case "fn": // INFO
-                                    if (!(re.v(e[re.target]))) {
-                                        if (!re.m)
-                                            re.m = mkt.a.msg.negado;
-                                        erros.push(re);
+                                    if ((tipoEvento == "full") || (tipoEvento == "blur")) {
+                                        if (!(re.v(e[re.target]))) {
+                                            if (!re.m)
+                                                re.m = mkt.a.msg.negado;
+                                            erros.push(re);
+                                        }
                                     }
                                     prom(re.k);
                                     break;
                                 case "datamaiorque": // INFO
-                                    if (mkt.dataGetMs(e[re.target]) < mkt.dataGetMs(re.v)) {
-                                        if (!re.m)
-                                            re.m = mkt.a.msg.datamaiorque;
-                                        erros.push(re);
+                                    if ((tipoEvento == "full") || (tipoEvento == "blur")) {
+                                        if (mkt.dataGetMs(e[re.target]) < mkt.dataGetMs(re.v)) {
+                                            if (!re.m)
+                                                re.m = mkt.a.msg.datamaiorque;
+                                            erros.push(re);
+                                        }
                                     }
                                     prom(re.k);
                                     break;
                                 case "datamenorque": // INFO
-                                    if (mkt.dataGetMs(e[re.target]) > mkt.dataGetMs(re.v)) {
-                                        if (!re.m)
-                                            re.m = mkt.a.msg.datamenorque;
-                                        erros.push(re);
+                                    if ((tipoEvento == "full") || (tipoEvento == "blur")) {
+                                        if (mkt.dataGetMs(e[re.target]) > mkt.dataGetMs(re.v)) {
+                                            if (!re.m)
+                                                re.m = mkt.a.msg.datamenorque;
+                                            erros.push(re);
+                                        }
                                     }
                                     prom(re.k);
                                     break;
                                 case "server": // INFO - ASYNC EVENT
                                     //(Verificação remota, DB / API)
-                                    if (ev) {
+                                    if ((tipoEvento == "full") || (tipoEvento == "blur")) {
+                                        // Apenas executa server no blur
                                         if (!re.m)
                                             re.m = mkt.a.msg.in;
                                         if (e[re.target] != "") {
@@ -3364,7 +3396,7 @@ class mkt {
                                         }
                                     }
                                     else {
-                                        // Apenas executa quando não tem evento
+                                        // Entrou aqui por que o evento não é blur. Então finaliza a promise.
                                         prom(re.k);
                                     }
                                     break;
@@ -3396,7 +3428,7 @@ class mkt {
             }); // Promise All
         }); // Return Promise regraExe
     };
-    static regrasValidas = async (container) => {
+    static regrasValidas = async (container, ev = null) => {
         // Retorna um booleano indicando se este container está ok ou não.
         container = mkt.Q(container);
         let validou = false;
@@ -3404,7 +3436,7 @@ class mkt {
         let promises = [];
         mkt.regras.forEach((regra) => {
             if (mkt.isInside(regra.e, container)) {
-                promises.push(mkt.regraExe(regra.e, "full"));
+                promises.push(mkt.regraExe(regra.e, "full", ev));
             }
         });
         let resultado = [];
@@ -3412,7 +3444,7 @@ class mkt {
         validou = resultado.flat().length <= 0;
         if (!validou) {
             mkt.vibrar(false);
-            mkt.gc("Validou a ação? ", (validou ? "Sim." : "Não."));
+            mkt.gc("Validou a ação? ", (validou ? "Sim." : "Não."), " TipoEvento: full");
             resultado.flat().forEach((r) => {
                 mkt.gc("Regra:", r.k?.toString().toUpperCase(), "Campo: " + r.e?.name);
                 mkt.l(r.e);
@@ -3421,7 +3453,7 @@ class mkt {
             mkt.ge();
         }
         else {
-            mkt.l("Validou a ação? Sim.");
+            mkt.l("Validou a ação? Sim. TipoEvento: full");
         }
         return validou;
     };
@@ -3446,6 +3478,7 @@ class mkt {
             eDisplay.innerHTML = mensagem;
     };
     static regraOcultar = (container) => {
+        // Atualiza Displays .mkRegrar baseado no Container
         container = mkt.Q(container);
         // A cada regra envia um OCULTAR ERROS
         mkt.regras.forEach((r) => {
@@ -3462,7 +3495,8 @@ class mkt {
         });
     };
     static regraRemover = async (container) => {
-        // Remove as regras de um determinado container
+        // Remove (Elimina) as regras de um determinado container
+        // Para refazer a regra, precisa utilizar mkt.regrar novamente.
         container = mkt.Q(container);
         let tempRegras = [];
         mkt.regras.forEach((r) => {
@@ -3474,8 +3508,7 @@ class mkt {
         mkt.regras = tempRegras; // Requer Propriedade destravada
     };
     static regrar = (container, nome, ...obj) => {
-        /**
-         * Informar o C (Container), N (Nome do input) e OBJ (Regra)
+        /** Informar o Container, Nome do input e OBJ (Regra)
          * Atributos do Objeto
          * k:		nome da regra a ser utilizada
          * v: 	atributo da regra escolhida
@@ -3489,9 +3522,16 @@ class mkt {
         }
         container = mkt.Q(container);
         let e = container?.querySelector("*[name='" + nome + "']");
+        // Se elemento for encontrado dentro do container
         if (e) {
-            mkt.atribuir(e, () => { mkt.regraExe(e); }, "oninput");
-            mkt.atribuir(e, () => { mkt.regraExe(e, event); }, "onblur");
+            // Quando o elemento é um Input File, atribui o OnChange, em vez do blur e input.
+            if (e.getAttribute("type") == "file") {
+                mkt.Ao("change", e, () => { mkt.regraExe(e, "change"); });
+            }
+            else {
+                mkt.atribuir(e, () => { mkt.regraExe(e, "input"); }, "oninput");
+                mkt.atribuir(e, (ev) => { mkt.regraExe(e, "blur", ev); }, "onblur");
+            }
             // Buscar Elemento e regra
             let auto = false;
             let novaregra = { c: container, n: nome, e: e, r: [...obj] };
@@ -3770,7 +3810,7 @@ class mkt {
         return mkt.aCadaObjExecuta(oa, limparO_Execute);
     };
     static aCadaSubPropriedade = (OA, funcao = null, exceto = "Object") => {
-        // Executa a FUNCAO em todas as propriedades deste OA. Inclusive Obj.Obj...
+        // Executa a FUNCAO em todas as propriedades deste OA. Inclusive Obj.Obj... (Matriz de Dados)
         let c = 0;
         for (let a in OA) {
             if (mkt.classof(OA[a]) != exceto) {
@@ -3799,52 +3839,13 @@ class mkt {
         return oa;
     };
     static aCadaElemento = (query, fn) => {
-        // Executa a cada elemento, similar ao QAll.
-        // Query: String, Element, [Element,Element]
-        if (mkt.classof(query) == "String") {
-            let retorno;
-            let elementos = mkt.QAll(query);
-            if (elementos.length == 1)
-                retorno = elementos[0];
-            else
-                retorno = elementos;
-            elementos.forEach((e) => {
-                fn(e);
-            });
-            return retorno;
-        }
-        else if (mkt.classof(query) == "Array") {
-            query.forEach((e) => {
-                fn(e);
-            });
-            return query;
-        }
-        else {
-            let e = mkt.Q(query);
+        // A cada elemento encontrado pelo QAll executa a funcao
+        let elementos = mkt.QAll(query);
+        elementos.forEach((e) => {
             fn(e);
-            return e;
-        }
-    };
-    static AllFromCadaExe = (query, fn) => {
-        // Executa função aCada Elemento do QAll e junta os resultados.
-        // Retorna uma array de resultados de cada execucao.
-        let retorno = [];
-        if (typeof query == "string") {
-            let elementos = mkt.QAll(query);
-            elementos.forEach((e) => {
-                retorno.push(fn(e));
-            });
-        }
-        else if (Array.isArray(query)) {
-            query.forEach((e) => {
-                retorno.push(fn(e));
-            });
-        }
-        else {
-            let e = mkt.Q(query);
-            retorno.push(fn(e));
-        }
-        return retorno;
+        });
+        // Sempre retorna uma array por caus do QAll
+        return elementos;
     };
     static parseJSON = (t, removeRaw = false) => {
         // Se for um JSON válido. Retorna o objeto, se não null.
@@ -3864,7 +3865,7 @@ class mkt {
         }
     };
     static stringify = (o) => {
-        // Camada de tratamento de envio de JSON.
+        // Converte o Objeto em String JSON, e aproveita e já remove alguns caracteres de controle.
         return JSON.stringify(o)
             ?.replaceAll("\n", "")
             ?.replaceAll("\r", "")
@@ -4305,7 +4306,7 @@ class mkt {
             if (mkt.classof(e) == "HTMLInputElement") {
                 v = e.value;
             }
-            else if (mkt.classof(e) == "mk-sel") {
+            else if (mkt.classof(e) == "mkSelElement") {
                 v = e.values.join(", ");
             }
             div.innerHTML = v;
@@ -4340,7 +4341,8 @@ class mkt {
             Array.from(form.querySelectorAll("mk-sel")).forEach((mks) => {
                 rObjeto[mks.name] = mks.value;
             });
-            Array.from(form.querySelectorAll("mk-bot")).forEach((mkb) => {
+            // Aqui apenas coleta os mkBot que foram modificados pelo usuário.
+            Array.from(form.querySelectorAll("mk-bot.changed")).forEach((mkb) => {
                 rObjeto[mkb.name] = mkb.value;
             });
         }
@@ -6654,12 +6656,12 @@ class mkSel extends HTMLElement {
                     }
                 }
                 else {
-                    mkt.w("mk-sel - atributo 'selapenas' precisa ser número: ", mkt.classof(this.config.selapenas));
+                    mkt.w("mkSelElement - atributo 'selapenas' precisa ser número: ", mkt.classof(this.config.selapenas));
                 }
             }
             else {
                 // Acredito que é possível clicar em alguns pixels fora da área do LI Element
-                //mkt.w("mk-sel", this.config.name, "Erro de seleção: K: ", novoK);
+                //mkt.w("mkSelElement", this.config.name, "Erro de seleção: K: ", novoK);
             }
             this.config.updateSelecionadosValues();
         },
@@ -6875,7 +6877,7 @@ li[m="1"] {
             this.aoBlur();
         };
         this.config.eK.oninput = (ev) => {
-            ev.stopPropagation(); // Input interno propaga pro elemento mk-sel
+            ev.stopPropagation(); // Input interno propaga pro elemento mkSelElement
             this.aoInput();
         };
         this.config.eK.onkeydown = (ev) => {
@@ -6916,51 +6918,45 @@ li[m="1"] {
         });
     } // Fim Construtor mkSel
     // Funçao que refaz a lista, Coleta, Popula, Seleciona e Exibe o selecionado.
-    forceUpdate(fromMap = false) {
-        // Ignora o New Map: Caso o opcoes já contem um map em vez de uma string JSON.
-        if (!fromMap) {
-            // Durante o update, o usuário não deveria estar com o seletor aberto.
-            this.removeAttribute("focused");
-            // Caso o opções contem uma string JSON
-            // mkt.w({
-            // 	"Nome": this.name,
-            // 	"Opções": this.config.opcoes,
-            // 	"Value": this.value,
-            // 	"isJson?": mkt.isJson(this.config.opcoes),
-            // 	"colect": mkt.parseJSON(this.config.opcoes),
-            // 	"classOfColect": mkt.classof(mkt.parseJSON(this.config.opcoes)),
-            // })
-            if (mkt.isJson(this.config.opcoes)) {
-                let colect = mkt.parseJSON(this.config.opcoes);
-                if (mkt.classof(colect) == "Array") {
-                    if (mkt.classof(colect[0]) == "Array") {
-                        //Formato Map
-                        //[["","Todos"],["False","N\u00E3o"],["True","Sim"]]
-                        colect.forEach((v, i, a) => {
-                            a[i][0] = a[i][0].toString().replaceAll(",", ""); // Proibido Virgula na Key
-                            a[i][1] = a[i][1].toString();
-                            //mkt.l("v: ", v, " i: ", i, " a: ", a)
-                        });
+    forceUpdate() {
+        // Durante o update, o usuário não deveria estar com o seletor aberto.
+        this.removeAttribute("focused");
+        // Caso o opções contem uma string JSON
+        // mkt.w({
+        // 	"Nome": this.name,
+        // 	"Opções": this.config.opcoes,
+        // 	"Value": this.value,
+        // 	"isJson?": mkt.isJson(this.config.opcoes),
+        // 	"colect": mkt.parseJSON(this.config.opcoes),
+        // 	"classOfColect": mkt.classof(mkt.parseJSON(this.config.opcoes)),
+        // })
+        if (mkt.isJson(this.config.opcoes)) {
+            let colect = mkt.parseJSON(this.config.opcoes);
+            if (mkt.classof(colect) == "Array") {
+                if (mkt.classof(colect[0]) == "Array") {
+                    //Formato Map
+                    //[["","Todos"],["False","N\u00E3o"],["True","Sim"]]
+                    colect.forEach((v, i, a) => {
+                        a[i][0] = a[i][0].toString().replaceAll(",", ""); // Proibido Virgula na Key
+                        a[i][1] = a[i][1].toString();
+                        //mkt.l("v: ", v, " i: ", i, " a: ", a)
+                    });
+                }
+                else {
+                    if (mkt.classof(colect[0]) == "Object") {
+                        // Formato KV
+                        //[{"k":"","v":"Todos"},{"k":"False","v":"N\\u00E3o"},{"k":"True","v":"Sim"}]
+                        colect = colect.map((r) => { return [r.k?.toString().replaceAll(",", ""), r.v?.toString()]; });
                     }
                     else {
-                        if (mkt.classof(colect[0]) == "Object") {
-                            // Formato KV
-                            //[{"k":"","v":"Todos"},{"k":"False","v":"N\\u00E3o"},{"k":"True","v":"Sim"}]
-                            colect = colect.map((r) => { return [r.k?.toString().replaceAll(",", ""), r.v?.toString()]; });
-                        }
-                        else {
-                            colect = null;
-                        }
+                        colect = null;
                     }
                 }
-                this.config._data = new Map(colect);
             }
-            else {
-                this.config._data = new Map(); // Inicializa sem opcoes
-            }
+            this.config._data = new Map(colect);
         }
         else {
-            this.config._data = this.config.opcoes;
+            this.config._data = new Map(); // Inicializa sem opcoes
         }
         this.config.eUL.classList.add("topoSel"); // <= Classe pra subir os selecionados
         // Aqui Seleciona inicialmente ou Seleciona novamente ao trocar o Opcoes.
@@ -7085,7 +7081,7 @@ li[m="1"] {
                     }
                 }
                 else {
-                    mkt.w("mk-sel - Não foi possível fazer o refill: Sem URL setada.");
+                    mkt.w("mkSelElement - Não foi possível fazer o refill: Sem URL setada.");
                 }
             }
         }
@@ -7253,16 +7249,16 @@ li[m="1"] {
             display = " -- Erro -- ";
             this.classList.add("mkEfeitoPulsar");
             if (this.config.fail == 2) { // Tenta trocar opções
-                mkt.w("mk-sel - Opções Inexistente Selecionada. Solicitando Refill. Tentativa: ", this.config.fail, " - ", this.config.name);
+                mkt.w("mkSelElement - Opções Inexistente Selecionada. Solicitando Refill. Tentativa: ", this.config.fail, " - ", this.config.name);
                 display = " -- Carregando -- ";
                 await this.refill();
             }
             else if (this.config.fail == 3) {
-                mkt.w("mk-sel - Opções Inexistente Selecionada. Limpeza forçada. Tentativa: ", this.config.fail, " - ", this.config.name);
+                mkt.w("mkSelElement - Opções Inexistente Selecionada. Limpeza forçada. Tentativa: ", this.config.fail, " - ", this.config.name);
                 this.removeAttribute("value");
             }
             else if (this.config.fail == 4) {
-                mkt.w("mk-sel - Opções Inexistente Selecionada. Limpeza falhou. Tentativa: ", this.config.fail, " - ", this.config.name);
+                mkt.w("mkSelElement - Opções Inexistente Selecionada. Limpeza falhou. Tentativa: ", this.config.fail, " - ", this.config.name);
             }
             if (this.config.fail < 4) { // Recarrega
                 mkt.wait(20).then(r => {
@@ -7293,7 +7289,7 @@ li[m="1"] {
             }
         }
         else {
-            mkt.w("mk-sel - Não foi possível fazer o refill: Sem URL setada: ", urlExecutar);
+            mkt.w("mkSelElement - Não foi possível fazer o refill: Sem URL setada: ", urlExecutar);
         }
     }
     // Atributos modificados no elemento
@@ -7333,7 +7329,7 @@ li[m="1"] {
                 this.atualizarDisplay();
             }
             else {
-                mkt.w("mk-sel - Seletor Pós precisam de uma URL para consulta: ", this.config.url);
+                mkt.w("mkSelElement - Seletor Pós precisam de uma URL para consulta: ", this.config.url);
                 this.removeAttribute("pos");
             }
         }
@@ -7372,17 +7368,19 @@ li[m="1"] {
         if (text) {
             //mkt.w("Opções: ", text);
             if (mkt.classof(text) == "String") {
+                // Mantém o JSON do último opções recebido
                 this.config.opcoes = text; // Guardar JSON de OPCOES
-                this.forceUpdate(false);
+                this.forceUpdate();
                 //this.config.opcoes = text;
             }
             else {
                 if (mkt.classof(text) == "Map") {
-                    this.config.opcoes = text; // JSON.stringify([...text]);
-                    this.forceUpdate(true);
+                    // Mantém o JSON do último opções recebido
+                    this.config.opcoes = mkt.stringify([...text]);
+                    this.forceUpdate();
                 }
                 else {
-                    mkt.w("mk-sel - set opcoes() - Formato inválido: ", mkt.classof(text));
+                    mkt.w("mkSelElement - set opcoes() - Formato inválido: ", mkt.classof(text));
                 }
             }
         }
@@ -7423,7 +7421,7 @@ li[m="1"] {
     set name(text) { if (text) {
         this.setAttribute("name", text);
     } }
-    get [Symbol.toStringTag]() { return "mk-sel"; }
+    get [Symbol.toStringTag]() { return "mkSelElement"; }
     // Atributos sendo observados no elemento.
     static observedAttributes = ["disabled", "size", "value", "name", "opcoes", "url", "scrollbarwidth", "scrollbarcolor", "selapenas", "refill", "pos"];
 }

@@ -1,17 +1,17 @@
 <h1 class="microPos2 h1">Regrar</h1>
 <form id="regrarTeste">
 	<div class="i exemploRegrar">
-		<div class="j">
+		<div class="col30">
 			<label>1 - Obrigatorio preenchimento:</label>
 			<input name="nomPessoa" type="text" />
 			<span class="text-danger mkRegrar" data-valmsg-for="nomPessoa"></span>
 		</div>
-		<div class="j">
+		<div class="col30">
 			<label>2 - Apenas números: (Impede)</label>
 			<input name="numIdade" type="text" />
 			<span class="text-danger mkRegrar" data-valmsg-for="numIdade"></span>
 		</div>
-		<div class="j">
+		<div class="col30">
 			<label>3 - Não tem regra</label>
 			<input name="numComplemento" type="text" />
 			<span class="text-danger mkRegrar" data-valmsg-for="numComplemento"></span>
@@ -24,13 +24,20 @@
 </form>
 <br>
 <div class="i exemploRegrar2">
-	<div class="j">
+	<div class="col50">
 		<label>4 - Obrigatório, Requer 1 espaço, Requer 1 número:</label>
 		<input name="nomCompleto" type="text" />
 		<span class="text-danger mkRegrar" data-valmsg-for="nomCompleto"></span>
 	</div>
+	<div class="col50">
+		<label>5 - File:</label>
+		<input name="file" type="file" />
+		<span class="text-danger mkRegrar" data-valmsg-for="file"></span>
+	</div>
 </div>
+
 <br /><br />
+
 <div class="fullCodigoContainer microPos5">
 	<div class="i codigoContainer">
 		<div class="titulo">Modo de uso - HTML</div>

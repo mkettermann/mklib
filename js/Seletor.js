@@ -36,3 +36,15 @@ mkt.Ao("input", "mk-sel[name='staAtivo']", (e) => {
 	mkt.l(msg);
 	alert(msg);
 })
+
+// DESABILITAR
+async function seletorOnOff(btn) {
+	let e = "mk-sel[name='staDesabilitado']";
+	if (mkt.Qison(e)) {
+		mkt.Qoff(e);
+		btn.innerHTML = "Ativar";
+	} else {
+		mkt.Qon(e);
+		btn.innerHTML = "Desativar";
+	}
+}
