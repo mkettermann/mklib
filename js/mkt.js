@@ -7348,6 +7348,12 @@ li[m="1"] {
         else if (name === "selapenas") {
             this.config.selapenas = Number(newValue);
         }
+        else if (name === "class") {
+            if (this.classList.contains("atualizar")) {
+                this.classList.remove("atualizar");
+                this.event;
+            }
+        }
     }
     // Recuperar os Selecionados
     get getFirstSelecionado() { return [...this.selecionadosMap]?.[0] || null; }
@@ -7423,7 +7429,7 @@ li[m="1"] {
     } }
     get [Symbol.toStringTag]() { return "mkSelElement"; }
     // Atributos sendo observados no elemento.
-    static observedAttributes = ["disabled", "size", "value", "name", "opcoes", "url", "scrollbarwidth", "scrollbarcolor", "selapenas", "refill", "pos"];
+    static observedAttributes = ["disabled", "size", "value", "name", "opcoes", "url", "scrollbarwidth", "scrollbarcolor", "selapenas", "refill", "pos", "class"];
 }
 customElements.define("mk-sel", mkSel);
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\

@@ -130,8 +130,22 @@
 					style="display: block; margin:auto;">Desativar</button>
 			</div>
 		</div>
-		<div class="col25">
-			=)
+		<div class="col25 areaReceber">
+			<b>Ao Receber Gatilho</b><br />
+			<div class="i">
+				<button onclick="receberDados('cpf')" type="button" class="bBotao bCinza"
+					style="display: block; margin:auto;">Receber
+					CPF</button>
+				<button onclick="receberDados('cnpj')" type="button" class="bBotao bCinza"
+					style="display: block; margin:auto;">Receber
+					CNPJ</button>
+			</div>
+			<br /><mk-sel name="tipoPessoa" vazio="Selecione"
+				opcoes='[["1","Física"],["2","Jurídica"],["43","Exterior"]]'></mk-sel>
+			<div class="i">
+				<input name="receberDadosCPF" placeholder="CPF" size="10">
+				<input name="receberDadosCNPJ" placeholder="CNPJ" size="10">
+			</div>
 		</div>
 		<div class="col25">
 			=)

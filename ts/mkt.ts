@@ -7940,6 +7940,11 @@ li[m="1"] {
 			this.config.eList.style.scrollbarColor = newValue;
 		} else if (name === "selapenas") {
 			this.config.selapenas = Number(newValue);
+		} else if (name === "class") {
+			if (this.classList.contains("atualizar")) {
+				this.classList.remove("atualizar");
+				this.event;
+			}
 		}
 	}
 
@@ -8007,7 +8012,7 @@ li[m="1"] {
 	get [Symbol.toStringTag]() { return "mkSelElement"; }
 
 	// Atributos sendo observados no elemento.
-	static observedAttributes: Array<string> = ["disabled", "size", "value", "name", "opcoes", "url", "scrollbarwidth", "scrollbarcolor", "selapenas", "refill", "pos"];
+	static observedAttributes: Array<string> = ["disabled", "size", "value", "name", "opcoes", "url", "scrollbarwidth", "scrollbarcolor", "selapenas", "refill", "pos", "class"];
 }
 customElements.define("mk-sel", mkSel);
 

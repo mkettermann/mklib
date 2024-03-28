@@ -48,3 +48,31 @@ async function seletorOnOff(btn) {
 		btn.innerHTML = "Desativar";
 	}
 }
+
+/**
+ * Gatilho: Ao Receber dados com CPF, da SET All, o Ao vai exibir ou ocultar o campo
+ */
+function receberDados(tipo) {
+	let objRecebido = {};
+	if (tipo == "cpf") {
+		objRecebido.receberDadosCPF = "111.111.111-11";
+		objRecebido.tipoPessoa = "1";
+	} else if (tipo == "cnpj") {
+		objRecebido.receberDadosCNPJ = "50.746.339/0001-00";
+		objRecebido.tipoPessoa = "2";
+	}
+	mkt.l("TipoPessoa: ", objRecebido);
+	mkt.QSetAll(".areaReceber *[name='#PROP#']", objRecebido, true);
+}
+
+mkt.Ao("input", ".areaReceber *[name='tipoPessoa']", (e) => {
+	if (e.value == "1") {
+		mkt.l("Exibir apenas CPF");
+		mkt.QverOn("*[name='receberDadosCPF']");
+		mkt.QverOff("*[name='receberDadosCNPJ']");
+	} else if (e.value == "2") {
+		mkt.l("Exibir apenas CNPJ");
+		mkt.QverOff("*[name='receberDadosCPF']");
+		mkt.QverOn("*[name='receberDadosCNPJ']");
+	}
+});
