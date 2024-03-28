@@ -7974,6 +7974,8 @@ li[m="1"] {
 		}
 	}
 
+	get event() { return this.config.geraInputEvent(); }
+
 	get url() { return this.config.url; }
 	set url(text) { if (text != null) this.config.url = text; }
 
