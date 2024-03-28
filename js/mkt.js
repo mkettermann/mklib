@@ -2465,10 +2465,10 @@ class mkt {
             if (!config.pacote.ok) {
                 config.conectou = false;
                 config.statusCode = config.pacote.status;
+                config.erros = await config.pacote.text();
                 // FALHA (NÂO 200)
                 mkt.gc("HTTP RETURNO: " + config.pacote.status + " " + config.pacote.statusText);
-                let texto = await config.pacote.text();
-                mkt.l(texto);
+                mkt.l(config.erros);
                 mkt.ge();
                 if (config.pacote.status >= 300) {
                     if (!localStorage.mktRequests) {
@@ -2478,7 +2478,7 @@ class mkt {
                     erros.push({
                         quando: mkt.dataGetFullToday(),
                         status: config.pacote.status,
-                        texto: texto,
+                        texto: config.erros,
                         url: config.url,
                     });
                     if (erros.length > 10) {
