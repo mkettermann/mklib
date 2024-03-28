@@ -2482,10 +2482,10 @@ class mkt {
 				body: config.body,
 			});
 			if (!config.pacote.ok) {
+				// FALHA (NÂO 200)
 				config.conectou = false;
 				config.statusCode = config.pacote.status;
 				config.erros = await config.pacote.text();
-				// FALHA (NÂO 200)
 				mkt.gc(
 					"HTTP RETURNO: " + config.pacote.status + " " + config.pacote.statusText
 				);
