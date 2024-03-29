@@ -2488,28 +2488,36 @@ class mkt {
                 }
             }
             else {
+                // OK == 200 até 299
                 config.conectou = true;
                 config.statusCode = config.pacote.status;
-                // 200 DONE (Retorna baseado no tipo de envio)
-                if (config.tipo == mkt.a.JSON) {
-                    config.retorno = await config.pacote.json();
-                }
-                else if (config.tipo == mkt.a.HTML) {
-                    config.retorno = await config.pacote.text();
-                }
-                else if (config.tipo == mkt.a.ALL) {
-                    config.retorno = await config.pacote.blob();
-                }
-                else if (config.tipo == mkt.a.FORMDATA) {
-                    config.retorno = await config.pacote.json();
+                // 104, 204, 304, 404, 504 não tem conteúdo.
+                if (config.statusCode != 204) {
+                    // Se OK e TEM CONTEUDO. Transforma baseado na solicitação.
+                    if (config.tipo == mkt.a.JSON) {
+                        config.retorno = await config.pacote.json();
+                    }
+                    else if (config.tipo == mkt.a.HTML) {
+                        config.retorno = await config.pacote.text();
+                    }
+                    else if (config.tipo == mkt.a.ALL) {
+                        config.retorno = await config.pacote.blob();
+                    }
+                    else if (config.tipo == mkt.a.FORMDATA) {
+                        config.retorno = await config.pacote.json();
+                    }
                 }
                 if (!config.quiet) {
                     let tam = config.retorno?.length;
+                    // Exibe o tamanho do retorno, se houver
                     if (!tam) {
                         tam = "";
                     }
+                    else {
+                        tam = "{" + tam + "} ";
+                    }
                     mkt.gc("Retorno " + config.pacote.status +
-                        " (" + config.metodo + "):{" + config.retorno?.length + "} " +
+                        " (" + config.metodo + "): " + tam +
                         config.url + " (" + config.tipo + ")");
                 }
                 mkt.cte("Request: " + nomeRequest, config.quiet);
