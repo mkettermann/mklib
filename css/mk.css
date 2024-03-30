@@ -5,20 +5,21 @@
 	--tClaroFundo: #fff;
 	--tClaroFundoForte: #f7f7f7;
 	--tClaroFundoHigh: #ddd;
-	--MkFaseCorFundo: var(--g5BrancoElevado);
-	--MkFaseCorEfeitoPassivo: var(--g5VerdeLima);
-	--MkFaseCorFundoIco: var(--g5BrancoElevado);
-	--MkFaseCorFundoIcoBack: var(--g5AzulEscuro66);
-	--MkFaseCorFundoIcoAtivo: var(--g5VerdeLimaCC);
-	--MkFaseCorTexto: var(--g5AzulEscuro);
-	--MkFaseCorTextoBack: var(--g5AzulEscuro);
-	--MkFaseCorTextoAtivo: var(--g5AzulClaro);
-	--MkFaseCorTextoDisabled: var(--g5CinzaEscuro66);
-	--MkFaseCorTextoIcoBack: var(--g5BrancoElevado);
-	--MkFaseCorTextoIcoAtivo: var(--g5AzulEscuro);
-	--MkFaseCorEfeitoTexto: var(--g5AzulClaro33);
-	--timerRestante: var(--g5VerdeLima);
-	--timerConsumido: var(--g5BrancoSujo);
+	--MkFaseCorFundo: #f7f7f7;
+	--MkFaseCorEfeitoPassivo: #c1e300;
+	--MkFaseCorFundoIco: #f7f7f7;
+	--MkFaseCorFundoIcoBack: #29256266;
+	--MkFaseCorFundoIcoAtivo: #c1e300CC;
+	--MkFaseCorTexto: #292562;
+	--MkFaseCorTextoBack: #292562;
+	--MkFaseCorTextoAtivo: #00d1c3;
+	--MkFaseCorTextoDisabled: #59595166;
+	--MkFaseCorTextoIcoBack: #f7f7f7;
+	--MkFaseCorTextoIcoAtivo: #292562;
+	--MkFaseCorEfeitoTexto: #00d1c333;
+	--timerRestante: #c1e300;
+	--timerConsumido: #e0e0e0;
+	--corSombra: #333333;
 
 	--carregadorInterno1: black;
 	--carregadorInterno2: black;
@@ -33,10 +34,10 @@
 
 	/* Seletor mkSel*/
 	--mkSelArrowSize: 0px;
-	--Main1: var(--g5AzulEscuro);
-	--Main2: var(--g5VerdeLima);
+	--Main1: #292562;
+	--Main2: #c1e300;
 	--FundoSeletor: transparent;
-	--FundoSeletorOpaco: var(--g5AzulClaro99);
+	--FundoSeletorOpaco: #00d1c399;
 	--FundoSeletorDesativado: #777;
 	--BordaItens: #000;
 	--FundoItensBgEC: #fff;
@@ -58,14 +59,14 @@
 			#0000 0),
 		#f7f7f7;
 	--FundoItensSize: 30px;
-	--FundoItensHover: linear-gradient(0.25turn, var(--g5AzulClaro), transparent);
+	--FundoItensHover: linear-gradient(0.25turn, #00d1c3, transparent);
 	--FundoItensMarK: linear-gradient(0.25turn,
-			var(--g5AzulEscuro99),
+			#29256299,
 			transparent);
-	--FundoItensSel: linear-gradient(0.25turn, transparent, var(--g5VerdeLima));
+	--FundoItensSel: linear-gradient(0.25turn, transparent, #c1e300);
 	--FundoItensSelArrow: linear-gradient(0.25turn,
 			transparent,
-			var(--g5VerdeLima));
+			#c1e300);
 	--FlexinhaCor: var(--scrollColor);
 	--CorItensHover: #000;
 	--CorSeletor: var(--CorItensHover);
@@ -842,7 +843,7 @@ button.CarregadorMkTopoDireito:hover {
 	justify-content: center;
 	align-items: center;
 	border-radius: 10px;
-	border: 1px inset var(--g5BrancoSujo99);
+	border: 1px inset #e0e0e099;
 	text-decoration: none;
 	box-shadow: 1px 1px 2px var(--sombraForte);
 	backdrop-filter: blur(1.2px);
@@ -954,7 +955,7 @@ button.CarregadorMkTopoDireito:hover {
 	align-items: center;
 	justify-content: center;
 	position: relative;
-	box-shadow: 0px 0px 1px 1px var(--g5CinzaEscuro);
+	box-shadow: 0px 0px 1px 1px var(--corSombra);
 	text-shadow: 0px 0px 1px #fff;
 	overflow: hidden;
 }
