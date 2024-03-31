@@ -570,6 +570,9 @@ div[class*="mkAba"].oculto {
 	min-width: 100%;
 	font-size: 2rem;
 	z-index: 5010;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 .CarregadorMkBlock::before {
