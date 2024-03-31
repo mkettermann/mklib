@@ -646,7 +646,7 @@ button.CarregadorMkTopoDireito:hover {
 	left: 50%;
 	top: 50%;
 	z-index: var(--zCarregador);
-	animation: CarregadorMkAni 4000ms linear infinite;
+	animation: _360Graus 4000ms linear infinite;
 	overflow: hidden;
 }
 
@@ -661,7 +661,7 @@ button.CarregadorMkTopoDireito:hover {
 	bottom: 0px;
 	border-radius: 100%;
 	position: absolute;
-	animation: CarregadorMkAni 2s linear infinite;
+	animation: _360Graus 2s linear infinite;
 }
 
 .CarregadorMk:not(.semAfter)::after {
@@ -672,10 +672,10 @@ button.CarregadorMkTopoDireito:hover {
 	left: 25px;
 	right: 25px;
 	bottom: 25px;
-	animation: CarregadorMkAni 200ms linear infinite;
+	animation: _360Graus 200ms linear infinite;
 }
 
-@keyframes CarregadorMkAni {
+@keyframes _360Graus {
 	from {
 		transform: rotate(0deg);
 	}
