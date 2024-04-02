@@ -2937,14 +2937,20 @@ class mkt {
         }
         return strTempo;
     };
-    static dataGetMs = (dataYYYYMMDD = null) => {
+    static dataGetMs = (data = null) => {
         // Retorna Milisegundos da data no formato Javascript
-        if (dataYYYYMMDD != null) {
-            let dataCortada = dataYYYYMMDD.split("-");
-            let oDia = Number(dataCortada[2]);
-            let oMes = Number(dataCortada[1]) - 1;
-            let oAno = Number(dataCortada[0]);
-            return new Date(oAno, oMes, oDia).getTime();
+        if (data != null) {
+            if (data.length > 10) {
+                // Recomendado que os dados cheguem: 'YYYY-MM-DD HH:MM:SS'
+                return new Date(data).getTime(); // Recomendado que os dados 
+            }
+            else {
+                let dataCortada = data.split("-");
+                let oDia = Number(dataCortada[2]);
+                let oMes = Number(dataCortada[1]) - 1;
+                let oAno = Number(dataCortada[0]);
+                return new Date(oAno, oMes, oDia).getTime();
+            }
         }
         else
             return new Date().getTime();

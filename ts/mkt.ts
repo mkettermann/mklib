@@ -2961,14 +2961,19 @@ class mkt {
 		return strTempo;
 	}
 
-	static dataGetMs = (dataYYYYMMDD: string | null = null): number => {
+	static dataGetMs = (data: string | null = null): number => {
 		// Retorna Milisegundos da data no formato Javascript
-		if (dataYYYYMMDD != null) {
-			let dataCortada = dataYYYYMMDD.split("-");
-			let oDia: number = Number(dataCortada[2]);
-			let oMes: number = Number(dataCortada[1]) - 1;
-			let oAno: number = Number(dataCortada[0]);
-			return new Date(oAno, oMes, oDia).getTime();
+		if (data != null) {
+			if (data.length > 10) {
+				// Recomendado que os dados cheguem: 'YYYY-MM-DD HH:MM:SS'
+				return new Date(data).getTime(); // Recomendado que os dados 
+			} else {
+				let dataCortada = data.split("-");
+				let oDia: number = Number(dataCortada[2]);
+				let oMes: number = Number(dataCortada[1]) - 1;
+				let oAno: number = Number(dataCortada[0]);
+				return new Date(oAno, oMes, oDia).getTime();
+			}
 		} else return new Date().getTime();
 	};
 
