@@ -3146,11 +3146,17 @@ class mkt {
                     if (re.on == null) {
                         re.on = true;
                     }
+                    if (re.vazio == null) {
+                        re.vazio = false;
+                    }
                     let podeValidar = re.on; // Padrão validar, mas se regra estiver com o on=false, já inicia o giro sem validar;
                     if (!mkt.isVisible(e)) { // NÃO estiver VISIVEL / fora do dom, padrão sem validar
                         podeValidar = false;
                     }
                     if (e.classList.contains("disabled")) { // Desativado, padrão sem validar
+                        podeValidar = false;
+                    }
+                    if (re.vazio == true && e[re.target] == "") { // Ignora Validação Se estiver vindo vazio e vazio pode
                         podeValidar = false;
                     }
                     // Validar apenas quando i estiver true na regra OU  Visível e Não bloqueado
