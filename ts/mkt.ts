@@ -7421,7 +7421,7 @@ li:not(:first-child){
 }
 li[selecionado]{
 	background: #0092;
-  border-left: 3px solid #0095;
+  border-left: 3px solid var(--bordaItemSelecionado);
   padding-left: 2px;
   border-radius: 2px;
 }
