@@ -7319,6 +7319,8 @@ class mkSel extends HTMLElement {
 	background: #EEE;
 	width:100%;
 	line-height: normal;
+	align-content: center;
+	align-items: center;
 }
 :host .setaCima {
 	opacity: 0;
