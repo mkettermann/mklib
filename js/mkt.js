@@ -6715,6 +6715,7 @@ class mkSel extends HTMLElement {
 	border-radius: 4px;
 	background: #EEE;
 	width:100%;
+	min-height: inherit;
 	line-height: normal;
 	align-content: center;
 	align-items: center;
