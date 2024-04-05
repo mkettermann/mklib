@@ -7420,7 +7420,7 @@ li:not(:first-child){
 	order: -1;
 }
 li[selecionado]{
-	background: #0092;
+	background: var(--fundoItemSelecionado);
   border-left: 3px solid var(--bordaItemSelecionado);
   padding-left: 2px;
   border-radius: 2px;
