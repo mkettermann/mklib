@@ -691,12 +691,8 @@ button.CarregadorMkTopoDireito:hover {
 }
 
 /* =======================
-	MK Effect: Input Pendente (Chrome 105+)
+	MK Effect: Input Pendente
 =========================*/
-.divInputInput {
-	min-height: 33px;
-}
-
 .divInputInput:has(.iConsultas) .field-validation-error {
 	display: none;
 }
