@@ -61,6 +61,7 @@ class mktm {
 	classes: string = "mkCampo" // Classes padrões / iniciais deste campo
 	target: string = "value" // Propriedade para edição (value, innerHTML).
 	f: boolean = true; // Indicador se é iteravel no filtro HeadMenu.
+	opcoes: string = "";
 	constructor(o: any) {
 		if (o.k) this.k = o.k;
 		if (o.pk) this.pk = o.pk;
@@ -69,6 +70,7 @@ class mktm {
 		if (o.v) this.v = o.v;
 		if (o.tag) this.tag = o.tag;
 		if (o.atr) this.atr = o.atr;
+		if (o.opcoes) this.opcoes = o.opcoes;
 		if (o.classes) this.classes = o.classes;
 		if (o.target) this.target = o.target;
 		if (o.f == false) this.f = false;
