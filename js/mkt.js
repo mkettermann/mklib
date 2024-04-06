@@ -1716,9 +1716,9 @@ class mkt {
             let listaNode = "";
             let moldeO_Execute = (o) => {
                 let node = eModelo.innerHTML;
+                let ret = "";
                 // Converte de "${obj.key}" em valor dentro de uma string.
                 if (node.indexOf("${") >= 0) {
-                    let ret = "";
                     let ini = node.split("${");
                     ret = ini[0];
                     for (let i in ini) {
@@ -1731,6 +1731,26 @@ class mkt {
                             let v = mkt.removerAspas(mkt.getV(key, o));
                             if (v != null) {
                                 ret += v;
+                            }
+                        }
+                        ret += ini[i].slice(end + 1);
+                    }
+                    node = ret;
+                }
+                // Converte de "#{obj.key}" em ${valor do obj.key}.
+                if (node.indexOf("#{") >= 0) {
+                    let ini = node.split("#{");
+                    ret = ini[0];
+                    for (let i in ini) {
+                        if (i == "0")
+                            continue;
+                        let end = ini[i].indexOf("}");
+                        let key = ini[i].slice(0, end).trim();
+                        if ((mkt.classof(o) == "Object" || mkt.classof(o) == "Array") && o != null) {
+                            // Quando é Objeto ou Array, entra na propriedade ou posição solicitada.
+                            let v = mkt.removerAspas(mkt.getV(key, o));
+                            if (v != null) {
+                                ret += "${" + v + "}";
                             }
                         }
                         ret += ini[i].slice(end + 1);
