@@ -3450,17 +3450,49 @@ class mkt {
                                             if (re.a) {
                                                 let arrAdd = re.a.split(",");
                                                 arrAdd.forEach((s) => {
-                                                    let eAdd = regrasDoE.c.querySelector("*[name='" + s + "']");
+                                                    let eAdd = regrasDoE.c.querySelector("*[name='" + s.trim() + "']");
                                                     if (eAdd) {
-                                                        queryString += "&" + s + "=" + eAdd[re.target];
+                                                        queryString += "&" + s.trim() + "=" + eAdd[re.target];
                                                     }
                                                     else {
-                                                        mkt.w("Regrar: Campo Adicional solicitado não encontrado: ", s);
+                                                        mkt.w("Regrar: Campo Adicional (a) solicitado não encontrado: ", s.trim());
                                                     }
                                                 });
                                             }
                                             mkt.get.json({ url: re.v + queryString, quiet: true }).then((p) => {
                                                 if (p.retorno != true) {
+                                                    if (mkt.classof(p.retorno) == "String") {
+                                                        re.m = p.retorno;
+                                                    }
+                                                    erros.push(re);
+                                                }
+                                                if (p.retorno != null) {
+                                                    e.classList.remove("pending");
+                                                }
+                                                prom(re.k);
+                                            });
+                                        }
+                                        else {
+                                            erros.push(re);
+                                            prom(re.k);
+                                        }
+                                    }
+                                    else {
+                                        // Entrou aqui por que o evento não é blur. Então finaliza a promise.
+                                        prom(re.k);
+                                    }
+                                    break;
+                                case "validate": // INFO - ASYNC EVENT
+                                    //(Verificação remota, DB / API)
+                                    if ((tipoEvento == "full") || (tipoEvento == "blur")) {
+                                        // Apenas executa server no blur
+                                        if (!re.m)
+                                            re.m = mkt.a.msg.in;
+                                        if (e[re.target] != "") {
+                                            e.classList.add("pending");
+                                            let queryString = "?field=" + regrasDoE.n + "&value=" + e[re.target];
+                                            mkt.get.json({ url: re.v + queryString, quiet: true }).then((p) => {
+                                                if (p.retorno != null) { // Null = Nao encontrado; Objeto = Encontrou;
                                                     if (mkt.classof(p.retorno) == "String") {
                                                         re.m = p.retorno;
                                                     }
