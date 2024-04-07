@@ -4491,7 +4491,7 @@ class mkt {
 		}
 		let rObjeto: any = mkt.limparOA(Object.fromEntries(new FormData(form).entries()));
 		if (bool) {
-			mkt.toBooleanOA(rObjeto);
+			rObjeto = mkt.toBooleanOA(rObjeto);
 		}
 		if (form) {
 			Array.from(form.querySelectorAll("mk-sel")).forEach((mks: any) => {
