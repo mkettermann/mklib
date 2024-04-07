@@ -96,7 +96,7 @@ class mktm {
             this.field = o.field;
         }
         else {
-            this.field = '<' + this.tag + ' name="' + this.k + '" value="' + this.v + '" class="' + this.classes + '" data-mkfformato="' + this.filtroFormato + '" ' + this.atr + '>';
+            this.field = "<" + this.tag + " name='" + this.k + "' value='" + this.v + "' class='" + this.classes + "' data-mkfformato='" + this.filtroFormato + "' " + this.atr + ">";
             if (this.tag != "input") {
                 this.field += "</" + this.tag + ">";
             }
