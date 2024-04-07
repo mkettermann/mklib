@@ -60,9 +60,10 @@ class mktm {
 	atr: string | null = "type='text'" // Todos os atributos padrões deste campo.
 	classes: string = "mkCampo" // Classes padrões / iniciais deste campo
 	target: string = "value" // Propriedade para edição (value, innerHTML).
-	f: boolean = true; // Indicador se é iteravel no filtro HeadMenu.
+	f: boolean = true; // Ativa ou desativa o filtro nesse campo (HeadMenu ok)
 	opcoes: string = "";
 	filtroFormato: string = "string";
+	filtroOperador: string = "";
 	field: string = "";
 	constructor(o: any) {
 		if (o.k) this.k = o.k;
@@ -74,6 +75,7 @@ class mktm {
 		if (o.atr) this.atr = o.atr;
 		if (o.opcoes) this.opcoes = o.opcoes;
 		if (o.filtroFormato) this.filtroFormato = o.filtroFormato;
+		if (o.filtroOperador) this.filtroOperador = o.filtroOperador;
 		if (o.classes) this.classes = o.classes;
 		if (o.target) this.target = o.target;
 		if (o.f == false) this.f = false;
@@ -82,11 +84,17 @@ class mktm {
 		if (!this.v) this.v = "";
 		if (!this.l) this.l = "";
 		if (o.field) {
+			// Quando o campo já vem com o formato no modelo
 			this.field = o.field;
 		} else {
-			this.field = `<${this.tag} name="${this.k}" value="${this.v}" class="${this.classes}" data-mkfformato="${this.filtroFormato}" ${this.atr}>`;
+			// Quando não vem, monta sozinho.
+			let filtroOperador = ""; // Operador é necessário quando o filtro é Data.
+			if (this.filtroOperador != "") filtroOperador = ` data-mkfoperador="${this.filtroOperador}"`;
+			let opcoes = ""; // Opções é utilizado em mk-sel.
+			if (this.opcoes != "") opcoes = ` opcoes="${this.opcoes}"`;
+			this.field = `<${this.tag} name="${this.k}" value="${this.v}" class="${this.classes}" data-mkfformato="${this.filtroFormato}"${filtroOperador}${opcoes} ${this.atr}>`;
 			if (this.tag != "input") {
-				this.field += "</" + this.tag + ">";
+				this.field += `</${this.tag}>`;
 			}
 		}
 
