@@ -84,7 +84,7 @@ class mktm {
 		if (o.field) {
 			this.field = o.field;
 		} else {
-			this.field = "<" + this.tag + " name='" + this.k + "' value='" + this.v + "' class='" + this.classes + "' data-mkfformato='" + this.filtroFormato + "' " + this.atr + ">";
+			this.field = `<${this.tag} name="${this.k}" value="${this.v}" class="${this.classes}" data-mkfformato="${this.filtroFormato}" ${this.atr}>`;
 			if (this.tag != "input") {
 				this.field += "</" + this.tag + ">";
 			}
@@ -1756,7 +1756,8 @@ class mkt {
 		dados: object[] | object,
 		modelo: any = "#modelo",
 		repositorio: any = ".tableListagem .listBody",
-		allowTags: boolean = false
+		allowTags: boolean = false,
+		removeAspas: boolean = true
 	) => {
 		// MoldeOA popula templates de forma escalável com uma array de objetos ou um objeto.
 		// É no molde que se converte vários objetos em várias exibições estes objetos.
@@ -1774,6 +1775,7 @@ class mkt {
 			let listaNode = "";
 			let moldeO_Execute = (o: any) => {
 				let node: any = eModelo.innerHTML;
+				mkt.l(node);
 				let ret: string = "";
 
 				// Converte de "${obj.key}" em valor dentro de uma string.
@@ -1786,7 +1788,8 @@ class mkt {
 						let key: string = ini[i].slice(0, end).trim();
 						if ((mkt.classof(o) == "Object" || mkt.classof(o) == "Array") && o != null) {
 							// Quando é Objeto ou Array, entra na propriedade ou posição solicitada.
-							let v = mkt.removerAspas(mkt.getV(key, o));
+							let v = mkt.getV(key, o);
+							if (removeAspas) v = mkt.removerAspas(v);
 							if (v != null) {
 								ret += v;
 							}
@@ -1805,7 +1808,8 @@ class mkt {
 						let key: string = ini[i].slice(0, end).trim();
 						if ((mkt.classof(o) == "Object" || mkt.classof(o) == "Array") && o != null) {
 							// Quando é Objeto ou Array, entra na propriedade ou posição solicitada.
-							let v = mkt.removerAspas(mkt.getV(key, o));
+							let v = mkt.getV(key, o);
+							if (removeAspas) v = mkt.removerAspas(v);
 							if (v != null) {
 								ret += "${" + v + "}";
 							}
