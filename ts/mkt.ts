@@ -4490,9 +4490,6 @@ class mkt {
 			form = mkt.Q(form);
 		}
 		let rObjeto: any = mkt.limparOA(Object.fromEntries(new FormData(form).entries()));
-		if (bool) {
-			rObjeto = mkt.toBooleanOA(rObjeto);
-		}
 		if (form) {
 			Array.from(form.querySelectorAll("mk-sel")).forEach((mks: any) => {
 				rObjeto[mks.name] = mks.value;
@@ -4505,6 +4502,9 @@ class mkt {
 		// mkt.gc("Objeto Gerado: ");
 		// mkt.w(rObjeto);
 		// mkt.ge();
+		if (bool) {
+			rObjeto = mkt.toBooleanOA(rObjeto);
+		}
 		return rObjeto;
 	}
 

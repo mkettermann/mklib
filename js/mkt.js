@@ -4465,9 +4465,6 @@ class mkt {
             form = mkt.Q(form);
         }
         let rObjeto = mkt.limparOA(Object.fromEntries(new FormData(form).entries()));
-        if (bool) {
-            rObjeto = mkt.toBooleanOA(rObjeto);
-        }
         if (form) {
             Array.from(form.querySelectorAll("mk-sel")).forEach((mks) => {
                 rObjeto[mks.name] = mks.value;
@@ -4480,6 +4477,9 @@ class mkt {
         // mkt.gc("Objeto Gerado: ");
         // mkt.w(rObjeto);
         // mkt.ge();
+        if (bool) {
+            rObjeto = mkt.toBooleanOA(rObjeto);
+        }
         return rObjeto;
     };
     static QScrollTo = (query = "body") => {
