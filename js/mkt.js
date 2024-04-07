@@ -58,6 +58,8 @@ class mktm {
     target = "value"; // Propriedade para edição (value, innerHTML).
     f = true; // Indicador se é iteravel no filtro HeadMenu.
     opcoes = "";
+    filtroFormato = "string";
+    field = "";
     constructor(o) {
         if (o.k)
             this.k = o.k;
@@ -75,16 +77,27 @@ class mktm {
             this.atr = o.atr;
         if (o.opcoes)
             this.opcoes = o.opcoes;
+        if (o.filtroFormato)
+            this.filtroFormato = o.filtroFormato;
         if (o.classes)
             this.classes = o.classes;
         if (o.target)
             this.target = o.target;
         if (o.f == false)
             this.f = false;
+        if (o.field) {
+            this.field = o.field;
+        }
+        else {
+            this.field = `<${this.tag} name="${this.k}" value="${this.v}" class="${this.classes}" data-mkfformato="${this.filtroFormato}" ${this.atr}>`;
+            if (this.tag != "input") {
+                this.field += "</" + this.tag + ">";
+            }
+        }
     }
     toObject = () => {
         let o = {};
-        ["pk", "k", "v", "l", "r", "tag", "atr", "classes", "target", "f", "opcoes"].forEach(k => {
+        ["pk", "k", "v", "l", "r", "tag", "atr", "classes", "target", "f", "opcoes", "field"].forEach(k => {
             o[k] = this[k];
         });
         return o;

@@ -62,6 +62,8 @@ class mktm {
 	target: string = "value" // Propriedade para edição (value, innerHTML).
 	f: boolean = true; // Indicador se é iteravel no filtro HeadMenu.
 	opcoes: string = "";
+	filtroFormato: string = "string";
+	field: string = "";
 	constructor(o: any) {
 		if (o.k) this.k = o.k;
 		if (o.pk) this.pk = o.pk;
@@ -71,13 +73,23 @@ class mktm {
 		if (o.tag) this.tag = o.tag;
 		if (o.atr) this.atr = o.atr;
 		if (o.opcoes) this.opcoes = o.opcoes;
+		if (o.filtroFormato) this.filtroFormato = o.filtroFormato;
 		if (o.classes) this.classes = o.classes;
 		if (o.target) this.target = o.target;
 		if (o.f == false) this.f = false;
+		if (o.field) {
+			this.field = o.field;
+		} else {
+			this.field = `<${this.tag} name="${this.k}" value="${this.v}" class="${this.classes}" data-mkfformato="${this.filtroFormato}" ${this.atr}>`
+			if (this.tag != "input") {
+				this.field += "</" + this.tag + ">";
+			}
+		}
+
 	}
 	toObject: Function = () => {
 		let o: any = {};
-		["pk", "k", "v", "l", "r", "tag", "atr", "classes", "target", "f", "opcoes"].forEach(k => {
+		["pk", "k", "v", "l", "r", "tag", "atr", "classes", "target", "f", "opcoes", "field"].forEach(k => {
 			o[k] = this[k as keyof mktm];
 		});
 		return o;
