@@ -82,6 +82,13 @@ class mktm {
         if (o.f == false)
             this.f = false;
     }
+    toObject = () => {
+        let o = {};
+        ["pk", "k", "v", "l", "r", "tag", "atr", "classes", "target", "f", "opcoes"].forEach(k => {
+            o[k] = this[k];
+        });
+        return o;
+    };
     get [Symbol.toStringTag]() { return "mktm"; }
 }
 //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
@@ -4550,6 +4557,13 @@ class mkt {
             }
             ;
         });
+    };
+    static fieldFromDesign = (design) => {
+        if (!design)
+            return null;
+        let array = [];
+        design.forEach(callbackfn);
+        return array;
     };
     static getModelo = (array) => {
         let chaves = new Set();
