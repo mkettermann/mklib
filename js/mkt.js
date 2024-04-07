@@ -4458,25 +4458,19 @@ class mkt {
             e.setSelectionRange(len, len);
         });
     };
-    static geraObjForm = (form) => {
+    static geraObjForm = (form, bool = false) => {
         // Gerar Objeto a partir de um Form Entries
         if (mkt.classof(form) != "Object") {
             // Se vier o Elemento Form / o Query do Form
             form = mkt.Q(form);
         }
         let rObjeto = mkt.limparOA(Object.fromEntries(new FormData(form).entries()));
+        if (bool) {
+            rObjeto = mkt.toBooleanOA(rObjeto);
+        }
         if (form) {
             Array.from(form.querySelectorAll("mk-sel")).forEach((mks) => {
-                let comparar = mks.value?.toString().toLowerCase();
-                if (comparar == "true") {
-                    rObjeto[mks.name] = true;
-                }
-                else if (comparar == "false") {
-                    rObjeto[mks.name] = false;
-                }
-                else {
-                    rObjeto[mks.name] = mks.value;
-                }
+                rObjeto[mks.name] = mks.value;
             });
             // Aqui apenas coleta os mkBot que foram modificados pelo usuário.
             Array.from(form.querySelectorAll("mk-bot.changed")).forEach((mkb) => {
