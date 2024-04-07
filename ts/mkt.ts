@@ -239,12 +239,9 @@ class mkt {
 		// Mesmo sem Design no contrutor, vai formando um mínimo necessário.
 		// Gerando Design de Modelo Aceitável
 		if (mkt.classof(this.c.model) != "Array") this.c.model = [];
-		// Impede a inserção de modelos que não são objetos da classe mktm
+		// Busca uma Primary Key
 		if (this.c.model?.length > 0) {
 			this.c.model?.forEach(o => {
-				if (mkt.classof(o) != "mktm") {
-					o = new mktm({});
-				}
 				if (o.pk) {
 					this.c.pk = o.k;
 				}
