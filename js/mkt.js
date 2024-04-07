@@ -85,6 +85,13 @@ class mktm {
             this.target = o.target;
         if (o.f == false)
             this.f = false;
+        // Limpar nulos
+        if (!this.k)
+            this.k = "";
+        if (!this.v)
+            this.v = "";
+        if (!this.l)
+            this.l = "";
         if (o.field) {
             this.field = o.field;
         }
