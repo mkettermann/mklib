@@ -3522,9 +3522,7 @@ class mkt {
 													}
 													erros.push(re);
 												}
-												if (p.retorno != null) {
-													e.classList.remove("pending");
-												}
+												e.classList.remove("pending");
 												prom(re.k);
 											});
 										} else {
