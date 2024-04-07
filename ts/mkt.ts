@@ -3917,6 +3917,23 @@ class mkt {
 		return array;
 	};
 
+	static toBooleanOA = (oa: object | object[]) => {
+		// Converte (OBJ / ARRAY) Limpar Nulos e Vazios
+		let toBoolean_Execute = (o: any) => {
+			for (let propName in o) {
+				let comparado = o[propName as keyof typeof o]?.toString()?.toLowerCase();
+				if (comparado == "true") {
+					o[propName as keyof typeof o] = true;
+				}
+				if (comparado == "false") {
+					o[propName as keyof typeof o] = false;
+				}
+			}
+			return o;
+		}
+		return mkt.aCadaSubPropriedade(oa, toBoolean_Execute);
+	};
+
 	static limparOA = (oa: object | object[]) => {
 		// Converte (OBJ / ARRAY) Limpar Nulos e Vazios
 		let limparO_Execute = (o: any) => {
@@ -4475,16 +4492,23 @@ class mkt {
 		let rObjeto: any = mkt.limparOA(Object.fromEntries(new FormData(form).entries()));
 		if (form) {
 			Array.from(form.querySelectorAll("mk-sel")).forEach((mks: any) => {
-				rObjeto[mks.name] = mks.value;
+				let comparar = mks.value?.toString().toLowerCase();
+				if (comparar == "true") {
+					rObjeto[mks.name] = true;
+				} else if (comparar == "false") {
+					rObjeto[mks.name] = false;
+				} else {
+					rObjeto[mks.name] = mks.value;
+				}
 			});
 			// Aqui apenas coleta os mkBot que foram modificados pelo usuário.
 			Array.from(form.querySelectorAll("mk-bot.changed")).forEach((mkb: any) => {
 				rObjeto[mkb.name] = mkb.value;
 			});
 		}
-		mkt.gc("Objeto Gerado: ");
-		mkt.w(rObjeto);
-		mkt.ge();
+		// mkt.gc("Objeto Gerado: ");
+		// mkt.w(rObjeto);
+		// mkt.ge();
 		return rObjeto;
 	}
 
