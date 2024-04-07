@@ -3931,7 +3931,7 @@ class mkt {
 			}
 			return o;
 		}
-		return mkt.aCadaSubPropriedade(oa, toBoolean_Execute);
+		return mkt.aCadaObjExecuta(oa, toBoolean_Execute);
 	};
 
 	static limparOA = (oa: object | object[]) => {
