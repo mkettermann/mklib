@@ -106,7 +106,7 @@ class mktm {
                 filtroOperador = ` data-mkfoperador="${this.filtroOperador}"`;
             let opcoes = ""; // Opções é utilizado em mk-sel.
             if (this.opcoes != "")
-                opcoes = ` opcoes="${this.opcoes}"`;
+                opcoes = ` opcoes='${this.opcoes}'`;
             this.field = `<${this.tag} name="${this.k}" value="${this.v}" class="${this.classes}" data-mkfformato="${this.filtroFormato}"${filtroOperador}${opcoes} ${this.atr}>`;
             if (this.tag != "input") {
                 this.field += `</${this.tag}>`;
