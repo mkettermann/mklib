@@ -1775,7 +1775,6 @@ class mkt {
 			let listaNode = "";
 			let moldeO_Execute = (o: any) => {
 				let node: any = eModelo.innerHTML;
-				mkt.l(node);
 				let ret: string = "";
 
 				// Converte de "${obj.key}" em valor dentro de uma string.
