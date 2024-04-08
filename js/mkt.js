@@ -3462,7 +3462,6 @@ class mkt {
                                                     }
                                                 });
                                             }
-                                            mkt.l("Quiet: ", re.quiet);
                                             mkt.get.json({ url: re.v + queryString, quiet: re.quiet }).then((p) => {
                                                 if (p.retorno != true) {
                                                     if (mkt.classof(p.retorno) == "String") {
@@ -3495,7 +3494,7 @@ class mkt {
                                         if (e[re.target] != "") {
                                             e.classList.add("pending");
                                             let queryString = "?field=" + regrasDoE.n + "&value=" + e[re.target];
-                                            mkt.get.json({ url: re.v + queryString, quiet: true }).then((p) => {
+                                            mkt.get.json({ url: re.v + queryString, quiet: re.quiet }).then((p) => {
                                                 if (p.retorno != null) { // Null = Nao encontrado; Objeto = Encontrou;
                                                     if (mkt.classof(p.retorno) == "String") {
                                                         re.m = p.retorno;
