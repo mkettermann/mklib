@@ -1623,8 +1623,8 @@ class mkt {
         if (mkt.classof(dados) == "Object") { // Apenas Objeto
             for (let p in dados) {
                 let eDynamicQuery = mkt.Q(query.replace("#PROP#", p));
-                if (eDynamicQuery != null) {
-                    if (dados[p]) {
+                if (eDynamicQuery) {
+                    if (dados[p] != null) {
                         eDynamicQuery.value = dados[p];
                         if (comEvento) {
                             eDynamicQuery.classList.add("atualizar");
