@@ -3236,6 +3236,9 @@ class mkt {
 					if (re.vazio == null) {
 						re.vazio = false;
 					}
+					if (re.quiet == null) {
+						re.quiet = true;
+					}
 					let podeValidar = re.on; // Padrão validar, mas se regra estiver com o on=false, já inicia o giro sem validar;
 					if (!mkt.isVisible(e)) { // NÃO estiver VISIVEL / fora do dom, padrão sem validar
 						podeValidar = false;
@@ -3470,7 +3473,6 @@ class mkt {
 									if ((tipoEvento == "full") || (tipoEvento == "blur")) {
 										// Apenas executa server no blur
 										if (!re.m) re.m = mkt.a.msg.in;
-										if (!re.quiet) re.quiet = true;
 										if (e[re.target] != "") {
 											e.classList.add("pending");
 											let queryString = "?" + regrasDoE.n + "=" + e[re.target];
@@ -3486,6 +3488,7 @@ class mkt {
 													}
 												});
 											}
+											mkt.l("Quiet: ", re.quiet);
 											mkt.get.json({ url: re.v + queryString, quiet: re.quiet }).then((p: any) => {
 												if (p.retorno != true) {
 													if (mkt.classof(p.retorno) == "String") {
