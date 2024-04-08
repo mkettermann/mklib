@@ -3470,6 +3470,7 @@ class mkt {
 									if ((tipoEvento == "full") || (tipoEvento == "blur")) {
 										// Apenas executa server no blur
 										if (!re.m) re.m = mkt.a.msg.in;
+										if (!re.quiet) re.quiet = true;
 										if (e[re.target] != "") {
 											e.classList.add("pending");
 											let queryString = "?" + regrasDoE.n + "=" + e[re.target];
@@ -3485,7 +3486,7 @@ class mkt {
 													}
 												});
 											}
-											mkt.get.json({ url: re.v + queryString, quiet: true }).then((p: any) => {
+											mkt.get.json({ url: re.v + queryString, quiet: re.quiet }).then((p: any) => {
 												if (p.retorno != true) {
 													if (mkt.classof(p.retorno) == "String") {
 														re.m = p.retorno;
