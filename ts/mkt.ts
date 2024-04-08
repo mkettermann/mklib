@@ -1631,7 +1631,7 @@ class mkt {
 				let eDynamicQuery = mkt.Q(
 					query.replace("#PROP#", p)
 				) as HTMLInputElement;
-				if (eDynamicQuery) {
+				if (eDynamicQuery != null) {
 					if (dados[p as keyof typeof dados]) {
 						eDynamicQuery.value = dados[p as keyof typeof dados];
 						if (comEvento) {
