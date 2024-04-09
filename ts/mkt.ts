@@ -103,7 +103,7 @@ class mktm {
 	}
 	toObject: Function = () => {
 		let o: any = {};
-		["pk", "k", "v", "l", "r", "tag", "atr", "classes", "target", "f", "opcoes", "field"].forEach(k => {
+		["pk", "k", "v", "l", "r", "tag", "atr", "classes", "target", "f", "opcoes", "field", "requer"].forEach(k => {
 			o[k] = this[k as keyof mktm];
 		});
 		return o;
