@@ -58,7 +58,7 @@ class mktm {
 	r: RegExp | null = null; // Regex para validar o campo
 	tag: string | null = "input"; // Qual é a tag do campo caso ele precise preencher?
 	atr: string | null = "type='text'" // Todos os atributos padrões deste campo.
-	classes: string = "mkCampo" // Classes padrões / iniciais deste campo
+	classes: string = "iConsultas" // Classes padrões / iniciais deste campo
 	target: string = "value" // Propriedade para edição (value, innerHTML).
 	f: boolean = true; // Ativa ou desativa o filtro nesse campo (HeadMenu ok)
 	opcoes: string = "";
