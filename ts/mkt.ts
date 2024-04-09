@@ -65,6 +65,7 @@ class mktm {
 	filtroFormato: string = "string";
 	filtroOperador: string = "";
 	field: string = "";
+	requer: boolean = false;
 	constructor(o: any) {
 		if (o.k) this.k = o.k;
 		if (o.pk) this.pk = o.pk;
@@ -79,6 +80,7 @@ class mktm {
 		if (o.classes) this.classes = o.classes;
 		if (o.target) this.target = o.target;
 		if (o.f == false) this.f = false;
+		if (o.requer == true) this.requer = true;
 		// Limpar nulos
 		if (!this.k) this.k = "";
 		if (!this.v) this.v = "";

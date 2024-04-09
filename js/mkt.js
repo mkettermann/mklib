@@ -61,6 +61,7 @@ class mktm {
     filtroFormato = "string";
     filtroOperador = "";
     field = "";
+    requer = false;
     constructor(o) {
         if (o.k)
             this.k = o.k;
@@ -88,6 +89,8 @@ class mktm {
             this.target = o.target;
         if (o.f == false)
             this.f = false;
+        if (o.requer == true)
+            this.requer = true;
         // Limpar nulos
         if (!this.k)
             this.k = "";
