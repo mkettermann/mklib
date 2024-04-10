@@ -7430,6 +7430,18 @@ class mkSel extends HTMLElement {
 				this.maisLinhas(this.config.populado, 10);
 			}
 		},
+		set: (key: string) => {
+			// Remove uma opção da lista de opções
+			let map = this.opcoes;
+			map.set(key);
+			this.opcoes = map;
+		},
+		del: (key: string) => {
+			// Remove uma opção da lista de opções
+			let map = this.opcoes;
+			map.delete(key);
+			this.opcoes = map;
+		},
 	};
 	constructor() {
 		super();
