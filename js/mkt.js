@@ -6827,6 +6827,14 @@ class mkSel extends HTMLElement {
                 this.config.selecionados.set(k, this.opcoes.get(k));
             });
         },
+        checkMaisLinhas: () => {
+            // Verifica se o tamanho e altura estao corretos, pra puxar mais linhas e já solicita.
+            let altura = this.config.eList.scrollHeight - this.config.eList.offsetHeight - 10; // Reduz a altura total para começar a baixar um pouco antes.
+            mkt.l("Atual", this.config.eList.scrollTop, " Altura:", altura);
+            if (this.config.eList.scrollTop >= altura) {
+                this.maisLinhas(this.config.populado, 10);
+            }
+        },
     };
     constructor() {
         super();
@@ -7057,11 +7065,7 @@ li[m="1"] {
             mkt.Reposicionar(this.config.eList, true);
         });
         this.config.eList.addEventListener("scroll", () => {
-            let altura = this.config.eList.scrollHeight - this.config.eList.offsetHeight - 10; // Reduz a altura total para começar a baixar um pouco antes.
-            mkt.l("Atual", this.config.eList.scrollTop, " Altura:", altura);
-            if (this.config.eList.scrollTop >= altura) {
-                this.maisLinhas(this.config.populado, 10);
-            }
+            this.config.checkMaisLinhas();
         });
     } // Fim Construtor mkSel
     // Funçao que refaz a lista, Coleta, Popula, Seleciona e Exibe o selecionado.
@@ -7191,6 +7195,8 @@ li[m="1"] {
         //mkt.l("Resposicionou:", this.name);
         mkt.Reposicionar(this.config.eList, true);
         mkt.a.poppers.get(this.config.eList).update();
+        // Além do Ao do scroll, verifica mais linhas quando carregar.
+        this.config.checkMaisLinhas();
     }
     // Quando sai do botão de pesquisar principal
     aoBlur() {
