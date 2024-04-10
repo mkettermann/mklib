@@ -7058,7 +7058,7 @@ li[m="1"] {
         });
         this.config.eList.addEventListener("scroll", () => {
             let altura = this.config.eList.scrollHeight - this.config.eList.offsetHeight - 10; // Reduz a altura total para começar a baixar um pouco antes.
-            //mkt.l("Atual", (this.config.eList.scrollTop), " Altura:", (altura));
+            mkt.l("Atual", this.config.eList.scrollTop, " Altura:", altura);
             if (this.config.eList.scrollTop >= altura) {
                 this.maisLinhas(this.config.populado, 10);
             }
@@ -7104,7 +7104,7 @@ li[m="1"] {
                 this.config._data = new Map(colect);
             }
             catch (e) {
-                mkt.erro("mk-sel > Falha ao mapear opções. Recebido:", mkt.classof(colect), colect);
+                mkt.erro("mk-sel > Opções precisa ser Array. Recebido:", mkt.classof(colect), colect);
             }
         }
         else {
