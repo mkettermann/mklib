@@ -7104,7 +7104,7 @@ li[m="1"] {
                 this.config._data = new Map(colect);
             }
             catch (e) {
-                mkt.erro("mk-sel > Falha ao mapear as opções no seletor. Recebido:", mkt.classof(colect));
+                mkt.erro("mk-sel > Falha ao mapear opções. Recebido:", mkt.classof(colect), colect);
             }
         }
         else {
