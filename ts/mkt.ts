@@ -7421,7 +7421,7 @@ class mkSel extends HTMLElement {
 		checkMaisLinhas: () => {
 			// Verifica se o tamanho e altura estao corretos, pra puxar mais linhas e já solicita.
 			let altura = this.config.eList.scrollHeight - this.config.eList.offsetHeight - 10; // Reduz a altura total para começar a baixar um pouco antes.
-			mkt.l("Atual", this.config.eList.scrollTop, " Altura:", altura);
+			//mkt.l("Atual", this.config.eList.scrollTop, " Altura:", altura);
 			if (this.config.eList.scrollTop >= altura) {
 				this.maisLinhas(this.config.populado, 10);
 			}
