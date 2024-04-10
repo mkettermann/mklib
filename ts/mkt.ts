@@ -7691,7 +7691,11 @@ li[m="1"] {
 					}
 				}
 			}
-			this.config._data = new Map(colect);
+			try {
+				this.config._data = new Map(colect);
+			} catch (e) {
+				mkt.erro("mk-sel > Falha ao mapear as opções no seletor. Recebido:", mkt.classof(colect));
+			}
 		} else {
 			this.config._data = new Map(); // Inicializa sem opcoes
 		}
@@ -7718,7 +7722,7 @@ li[m="1"] {
 					let colect: any = mkt.parseJSON(this.value);
 					if (mkt.classof(colect) == "Array") {
 						let map = new Map(mkt.parseJSON(this.value).map((a: any) => { return [a?.toString()] }));
-						mkt.l("Map: ", map);
+						//mkt.l("Map: ", map);
 						this.config.selecionados = map;
 						this.config.updateSelecionadosValues();
 					} else {
