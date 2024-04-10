@@ -57,11 +57,12 @@ class mktm {
     classes = "iConsultas"; // Classes padrões / iniciais deste campo
     target = "value"; // Propriedade para edição (value, innerHTML).
     f = true; // Ativa ou desativa o filtro nesse campo (HeadMenu ok)
-    opcoes = "";
-    filtroFormato = "string";
-    filtroOperador = "";
-    field = "";
-    requer = false;
+    opcoes = ""; // Aloja as opcoes em JSON de um seletor.
+    filtroFormato = "string"; // Usado para preencher o valor de data-mkfformato
+    filtroOperador = ""; // Usado para preencher o valor de data-mkfoperador
+    field = ""; // Representa o elemento HTML inteiro.
+    requer = false; // Permite saber qualquer vai ativar o Regrar
+    url = ""; // Aloja a URL. Usada pra download de um refill.
     constructor(o) {
         if (o.k)
             this.k = o.k;
@@ -87,6 +88,8 @@ class mktm {
             this.classes = o.classes;
         if (o.target)
             this.target = o.target;
+        if (o.url)
+            this.url = o.url;
         if (o.f == false)
             this.f = false;
         if (o.requer == true)
@@ -107,10 +110,12 @@ class mktm {
             let filtroOperador = ""; // Operador é necessário quando o filtro é Data.
             if (this.filtroOperador != "")
                 filtroOperador = ` data-mkfoperador="${this.filtroOperador}"`;
+            if (this.url != "")
+                url = ` data-url="${this.url}"`;
             let opcoes = ""; // Opções é utilizado em mk-sel.
             if (this.opcoes != "")
                 opcoes = ` opcoes='${this.opcoes}'`;
-            this.field = `<${this.tag} name="${this.k}" value="${this.v}" class="${this.classes}" data-mkfformato="${this.filtroFormato}"${filtroOperador}${opcoes} ${this.atr}>`;
+            this.field = `<${this.tag} name="${this.k}" value="${this.v}" class="${this.classes}" data-mkfformato="${this.filtroFormato}"${this.filtroOperador}${this.url}${opcoes} ${this.atr}>`;
             if (this.tag != "input") {
                 this.field += `</${this.tag}>`;
             }
@@ -118,7 +123,7 @@ class mktm {
     }
     toObject = () => {
         let o = {};
-        ["pk", "k", "v", "l", "r", "tag", "atr", "classes", "target", "f", "opcoes", "field", "requer"].forEach(k => {
+        ["pk", "k", "v", "l", "r", "tag", "atr", "classes", "target", "f", "opcoes", "field", "requer", "url"].forEach(k => {
             o[k] = this[k];
         });
         return o;

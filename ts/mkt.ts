@@ -61,11 +61,12 @@ class mktm {
 	classes: string = "iConsultas" // Classes padrões / iniciais deste campo
 	target: string = "value" // Propriedade para edição (value, innerHTML).
 	f: boolean = true; // Ativa ou desativa o filtro nesse campo (HeadMenu ok)
-	opcoes: string = "";
-	filtroFormato: string = "string";
-	filtroOperador: string = "";
-	field: string = "";
-	requer: boolean = false;
+	opcoes: string = ""; // Aloja as opcoes em JSON de um seletor.
+	filtroFormato: string = "string"; // Usado para preencher o valor de data-mkfformato
+	filtroOperador: string = ""; // Usado para preencher o valor de data-mkfoperador
+	field: string = ""; // Representa o elemento HTML inteiro.
+	requer: boolean = false; // Permite saber qualquer vai ativar o Regrar
+	url: string = ""; // Aloja a URL. Usada pra download de um refill.
 	constructor(o: any) {
 		if (o.k) this.k = o.k;
 		if (o.pk) this.pk = o.pk;
@@ -79,6 +80,7 @@ class mktm {
 		if (o.filtroOperador) this.filtroOperador = o.filtroOperador;
 		if (o.classes) this.classes = o.classes;
 		if (o.target) this.target = o.target;
+		if (o.url) this.url = o.url;
 		if (o.f == false) this.f = false;
 		if (o.requer == true) this.requer = true;
 		// Limpar nulos
@@ -92,9 +94,10 @@ class mktm {
 			// Quando não vem, monta sozinho.
 			let filtroOperador = ""; // Operador é necessário quando o filtro é Data.
 			if (this.filtroOperador != "") filtroOperador = ` data-mkfoperador="${this.filtroOperador}"`;
+			if (this.url != "") url = ` data-url="${this.url}"`;
 			let opcoes = ""; // Opções é utilizado em mk-sel.
 			if (this.opcoes != "") opcoes = ` opcoes='${this.opcoes}'`;
-			this.field = `<${this.tag} name="${this.k}" value="${this.v}" class="${this.classes}" data-mkfformato="${this.filtroFormato}"${filtroOperador}${opcoes} ${this.atr}>`;
+			this.field = `<${this.tag} name="${this.k}" value="${this.v}" class="${this.classes}" data-mkfformato="${this.filtroFormato}"${this.filtroOperador}${this.url}${opcoes} ${this.atr}>`;
 			if (this.tag != "input") {
 				this.field += `</${this.tag}>`;
 			}
@@ -103,7 +106,7 @@ class mktm {
 	}
 	toObject: Function = () => {
 		let o: any = {};
-		["pk", "k", "v", "l", "r", "tag", "atr", "classes", "target", "f", "opcoes", "field", "requer"].forEach(k => {
+		["pk", "k", "v", "l", "r", "tag", "atr", "classes", "target", "f", "opcoes", "field", "requer", "url"].forEach(k => {
 			o[k] = this[k as keyof mktm];
 		});
 		return o;
