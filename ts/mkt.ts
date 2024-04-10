@@ -92,12 +92,13 @@ class mktm {
 			this.field = o.field;
 		} else {
 			// Quando não vem, monta sozinho.
-			let filtroOperador = ""; // Operador é necessário quando o filtro é Data.
-			if (this.filtroOperador != "") filtroOperador = ` data-mkfoperador="${this.filtroOperador}"`;
-			if (this.url != "") url = ` data-url="${this.url}"`;
+			let varfOperador = ""; // Operador é necessário quando o filtro é Data.
+			if (this.filtroOperador != "") varfOperador = ` data-mkfoperador="${this.filtroOperador}"`;
+			let varUrl = ""; // Operador é necessário quando o filtro é Data.
+			if (this.url != "") varUrl = ` data-url="${this.url}"`;
 			let opcoes = ""; // Opções é utilizado em mk-sel.
 			if (this.opcoes != "") opcoes = ` opcoes='${this.opcoes}'`;
-			this.field = `<${this.tag} name="${this.k}" value="${this.v}" class="${this.classes}" data-mkfformato="${this.filtroFormato}"${this.filtroOperador}${this.url}${opcoes} ${this.atr}>`;
+			this.field = `<${this.tag} name="${this.k}" value="${this.v}" class="${this.classes}" data-mkfformato="${this.filtroFormato}"${varfOperador}${varUrl}${opcoes} ${this.atr}>`;
 			if (this.tag != "input") {
 				this.field += `</${this.tag}>`;
 			}
