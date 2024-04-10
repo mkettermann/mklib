@@ -7999,14 +7999,14 @@ li[m="1"] {
 			display = " -- Erro -- ";
 			this.classList.add("mkEfeitoPulsar");
 			if (this.config.fail == 2) { // Tenta trocar opções
-				mkt.w("mkSelElement - Opções Inexistente Selecionada. Solicitando Refill. Tentativa: ", this.config.fail, " - ", this.config.name);
+				mkt.w("mkSel - Opção Inexistente Selecionada:", this.value, ". Iniciar Refill. Tentativa: ", this.config.fail, " - ", this.config.name);
 				display = " -- Carregando -- ";
 				await this.refill();
 			} else if (this.config.fail == 3) {
-				mkt.w("mkSelElement - Opções Inexistente Selecionada. Limpeza forçada. Tentativa: ", this.config.fail, " - ", this.config.name);
+				mkt.w("mkSel - Opção Inexistente Selecionada:", this.value, ". Limpeza forçada. Tentativa: ", this.config.fail, " - ", this.config.name);
 				this.removeAttribute("value");
 			} else if (this.config.fail == 4) {
-				mkt.w("mkSelElement - Opções Inexistente Selecionada. Limpeza falhou. Tentativa: ", this.config.fail, " - ", this.config.name);
+				mkt.w("mkSel - Opção Inexistente Selecionada:", this.value, ". Limpeza falhou. Tentativa: ", this.config.fail, " - ", this.config.name);
 			}
 			if (this.config.fail < 4) { // Recarrega
 				mkt.wait(20).then(r => {
@@ -8035,6 +8035,7 @@ li[m="1"] {
 			if (r.retorno != null) {
 				//mkt.l("Retorno Refill: ", r.retorno);
 				this.setAttribute("opcoes", mkt.stringify(r.retorno));
+				this.dispatchEvent(new CustomEvent("refill"));
 			}
 		} else {
 			mkt.w("mkSelElement - Não foi possível fazer o refill: Sem URL setada: ", urlExecutar);
