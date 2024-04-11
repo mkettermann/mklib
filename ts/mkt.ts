@@ -1657,12 +1657,15 @@ class mkt {
 		return eAfetados;
 	}
 
-	static QSubSet = (queryContainer: string, dados: any) => {
+	static QSubSet = (queryContainer: string, dados: any, eventInput = true) => {
 		let eAfetados: any = [];
 		if (mkt.classof(dados) == "Object") { // Apenas Objeto
 			mkt.QAll(queryContainer).forEach(e => {
 				e.value = mkt.getV(e.name, dados);
 				eAfetados.push(e);
+				if (eventInput) {
+					e.dispatchEvent(new Event("input"));
+				}
 			});
 		} else {
 			mkt.w("QSetAll - Tipo de dado não implementado: " + mkt.classof(dados))

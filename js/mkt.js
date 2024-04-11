@@ -1391,12 +1391,15 @@ class mkt {
         }
         return eAfetados;
     };
-    static QSubSet = (queryContainer, dados) => {
+    static QSubSet = (queryContainer, dados, eventInput = true) => {
         let eAfetados = [];
         if (mkt.classof(dados) == "Object") {
             mkt.QAll(queryContainer).forEach(e => {
                 e.value = mkt.getV(e.name, dados);
                 eAfetados.push(e);
+                if (eventInput) {
+                    e.dispatchEvent(new Event("input"));
+                }
             });
         }
         else {
