@@ -3002,7 +3002,7 @@ class mkt {
                                             re.m = mkt.a.msg.in;
                                         if (e[re.target] != "") {
                                             e.classList.add("pending");
-                                            let queryString = "?" + regrasDoE.n + "=" + e[re.target];
+                                            let queryString = "?" + regrasDoE.n + "=" + encodeURIComponent(e[re.target]);
                                             if (re.a) {
                                                 let arrAdd = re.a.split(",");
                                                 arrAdd.forEach((s) => {
@@ -3025,33 +3025,6 @@ class mkt {
                                                 if (p.retorno != null) {
                                                     e.classList.remove("pending");
                                                 }
-                                                prom(re.k);
-                                            });
-                                        }
-                                        else {
-                                            erros.push(re);
-                                            prom(re.k);
-                                        }
-                                    }
-                                    else {
-                                        prom(re.k);
-                                    }
-                                    break;
-                                case "validate":
-                                    if ((tipoEvento == "full") || (tipoEvento == "blur")) {
-                                        if (!re.m)
-                                            re.m = mkt.a.msg.in;
-                                        if (e[re.target] != "") {
-                                            e.classList.add("pending");
-                                            let queryString = "?field=" + regrasDoE.n + "&value=" + e[re.target];
-                                            mkt.get.json({ url: re.v + queryString, quiet: re.quiet }).then((p) => {
-                                                if (p.retorno != null) {
-                                                    if (mkt.classof(p.retorno) == "String") {
-                                                        re.m = p.retorno;
-                                                    }
-                                                    erros.push(re);
-                                                }
-                                                e.classList.remove("pending");
                                                 prom(re.k);
                                             });
                                         }
