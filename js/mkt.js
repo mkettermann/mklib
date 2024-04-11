@@ -1578,12 +1578,6 @@ class mkt {
         }
         return null;
     };
-    static setVAll = (obj) => {
-        for (let x in obj) {
-            mkt.setV(x, obj[x], obj);
-        }
-        return obj;
-    };
     static setV = (keys, value, objeto) => {
         if (typeof objeto == "object") {
             if (mkt.classof(keys) == "String") {
@@ -1595,7 +1589,9 @@ class mkt {
                             lastObj[k] = value;
                         }
                         else {
-                            lastObj[k] = {};
+                            if (mkt.classof(lastObj[k]) != "Object") {
+                                lastObj[k] = {};
+                            }
                         }
                         lastObj = lastObj[k];
                     });
@@ -3867,14 +3863,13 @@ class mkt {
         }
         let rObjeto = mkt.limparOA(Object.fromEntries(new FormData(form).entries()));
         if (form) {
-            Array.from(form.querySelectorAll("mk-sel")).forEach((mks) => {
-                rObjeto[mks.name] = mks.value;
+            Array.from(form.querySelectorAll("mk-sel")).forEach((mk) => {
+                mkt.setV(mk.name, mk.value, rObjeto);
             });
-            Array.from(form.querySelectorAll("mk-bot.changed")).forEach((mkb) => {
-                rObjeto[mkb.name] = mkb.value;
+            Array.from(form.querySelectorAll("mk-bot.changed")).forEach((mk) => {
+                mkt.setV(mk.name, mk.value, rObjeto);
             });
         }
-        rObjeto = mkt.setVAll(rObjeto);
         if (bool) {
             rObjeto = mkt.toBooleanOA(rObjeto);
         }

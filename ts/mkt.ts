@@ -1890,13 +1890,6 @@ class mkt {
 		return null;
 	};
 
-	static setVAll = (obj: any) => {
-		for (let x in obj) {
-			mkt.setV(x, obj[x], obj);
-		}
-		return obj;
-	}
-
 	static setV = (keys: string, value: any, objeto: any) => {
 		// Retorna o valor do chave informada, podendo ser obj.obj.chave
 		// mkt.setV("a.b.c","mudei",{a:{b:{c:"d"}}})
@@ -1912,7 +1905,9 @@ class mkt {
 							// Último
 							lastObj[k] = value;
 						} else {
-							lastObj[k] = {};
+							if (mkt.classof(lastObj[k]) != "Object") {
+								lastObj[k] = {};
+							}
 						}
 						lastObj = lastObj[k];
 					});
@@ -4521,16 +4516,18 @@ class mkt {
 		}
 		let rObjeto: any = mkt.limparOA(Object.fromEntries(new FormData(form).entries()));
 		if (form) {
-			Array.from(form.querySelectorAll("mk-sel")).forEach((mks: any) => {
-				rObjeto[mks.name] = mks.value;
+			Array.from(form.querySelectorAll("mk-sel")).forEach((mk: any) => {
+				// rObjeto[mk.name] = mk.value;
+				mkt.setV(mk.name, mk.value, rObjeto);
 			});
 			// Aqui apenas coleta os mkBot que foram modificados pelo usuário.
-			Array.from(form.querySelectorAll("mk-bot.changed")).forEach((mkb: any) => {
-				rObjeto[mkb.name] = mkb.value;
+			Array.from(form.querySelectorAll("mk-bot.changed")).forEach((mk: any) => {
+				// rObjeto[mk.name] = mk.value;
+				mkt.setV(mk.name, mk.value, rObjeto);
 			});
 		}
 
-		rObjeto = mkt.setVAll(rObjeto);
+		// rObjeto = mkt.setVAll(rObjeto);
 		// mkt.gc("Objeto Gerado: ");
 		// mkt.w(rObjeto);
 		// mkt.ge();
