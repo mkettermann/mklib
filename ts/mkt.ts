@@ -1639,7 +1639,7 @@ class mkt {
 				) as HTMLInputElement;
 				if (eDynamicQuery) {
 					if (dados[p as keyof typeof dados] != null) {
-						eDynamicQuery.value = dados[p as keyof typeof dados];
+						eDynamicQuery.value = mkt.getV(p, dados);
 						if (comEvento) {
 							eDynamicQuery.classList.add("atualizar");
 						} else {

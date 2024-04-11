@@ -1369,7 +1369,7 @@ class mkt {
                 let eDynamicQuery = mkt.Q(query.replace("#PROP#", p));
                 if (eDynamicQuery) {
                     if (dados[p] != null) {
-                        eDynamicQuery.value = dados[p];
+                        eDynamicQuery.value = mkt.getV(p, dados);
                         if (comEvento) {
                             eDynamicQuery.classList.add("atualizar");
                         }
