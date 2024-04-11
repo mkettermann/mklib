@@ -2411,7 +2411,6 @@ class mkt {
 
 	static get = {
 		// Este objeto contém funções para solicitar dados de um formato e espera-se que voltem neste formato.
-		// Exemplo: mkt.get.json({ url:"/GetList", done: (c)=>{console.log("done:",c)}})
 		json: async (config: any) => {
 			if (typeof config != "object") config = { url: config };
 			config.metodo = mkt.a.GET;
@@ -7341,6 +7340,7 @@ class mkSel extends HTMLElement {
 			this.config.selecionados.clear();
 			if (this.config.selapenas == 1) {
 				this.config.selecionados.set(this.value, this.config._data.get(this.value));
+				this.config.updateSelecionadosValues();
 			} else {
 				if (this.value) {
 					let obj = this.value.split(",");
@@ -7430,17 +7430,13 @@ class mkSel extends HTMLElement {
 				this.maisLinhas(this.config.populado, 10);
 			}
 		},
-		set: (key: string) => {
-			// Remove uma opção da lista de opções
-			let map = this.opcoes;
-			map.set(key);
-			this.opcoes = map;
+		set: (key: string, value: any) => {
+			this.config._dat.set(key, value);
+			this.setAttribute("opcoes", mkt.stringify([...this.config._dat]));
 		},
 		del: (key: string) => {
-			// Remove uma opção da lista de opções
-			let map = this.opcoes;
-			map.delete(key);
-			this.opcoes = map;
+			this.config._data.delete(key);
+			this.setAttribute("opcoes", mkt.stringify([...this.config._data]));
 		},
 	};
 	constructor() {
@@ -7722,6 +7718,7 @@ li[m="1"] {
 		// Aqui Seleciona inicialmente ou Seleciona novamente ao trocar o Opcoes.
 		if (mkt.classof(this.config.selapenas) == "Number") {
 			if (this.config.selapenas == 1) {
+				this.config.selecionados = new Map();
 				this.config._data.forEach((v: string, k: string) => {
 					if (k == this.value) {
 						this.config.mecanicaSelecionar(k);
@@ -7741,13 +7738,11 @@ li[m="1"] {
 					let colect: any = mkt.parseJSON(this.value);
 					if (mkt.classof(colect) == "Array") {
 						let map = new Map(mkt.parseJSON(this.value).map((a: any) => { return [a?.toString()] }));
-						//mkt.l("Map: ", map);
 						this.config.selecionados = map;
 						this.config.updateSelecionadosValues();
 					} else {
 						if (colect != null) {
 							let array: any = this.value?.split(",").map((a: any) => { return [a?.toString()] });
-							//mkt.l("Array: ", array, " Map:", new Map(array));
 							this.config.selecionados = new Map(array);
 							this.config.updateSelecionadosValues();
 						} else {
@@ -7757,11 +7752,9 @@ li[m="1"] {
 				} else {
 					this.config.selecionados = new Map(); // Inicializa sem selecionados
 				}
-				//mkt.l("Map Selecionados:", this.config.selecionados);
 			}
 		}
 
-		//mkt.l("Seletor: " + this.config.name + ", Opcoes: ", this.config._data);
 		// Popular Lista com opcoes atuais
 		this.aoPopularLista();
 		// Atualiza a lista baseado no Map da Lista e no Map de Selecionados
@@ -7797,7 +7790,6 @@ li[m="1"] {
 		//}
 
 		// Atualizar posição da Lista.
-		//mkt.l("Resposicionou:", this.name);
 		mkt.Reposicionar(this.config.eList, true);
 		mkt.a.poppers.get(this.config.eList).update();
 
@@ -7830,17 +7822,14 @@ li[m="1"] {
 		if (this.config.eUL.children.length < this.config._data.size) {
 			await this.maisLinhas(this.config.populado, this.config._data.size);
 		}
-		//mkt.l(strInputado);
 		if (this.pos) {
 			let strTratada = encodeURI(mkt.removeAcentos(strInputado));
-			//mkt.l("Consultando: ", strTratada);
 			if (strTratada.length > 3) {
 				if (this.config.url != "") {
 					let novaUrl = this.config.url + "?s=" + strTratada;
 					let r = await mkt.get.json({ url: novaUrl });
 					if (r.retorno != null) {
 						let map = new Map(r.retorno)
-						//mkt.l("Retorno Pesquisar: ", map);
 						this.config._data = map;
 						this.opcoes = map;
 						this.config.eK.value = strInputado;
@@ -7884,10 +7873,8 @@ li[m="1"] {
 		if (this.config.name == "multiSelecionado" || this.config.name == "staPersonalizado") {
 			this.config.selecionados.keys().forEach((k: string) => {
 				// Se encontrar essa chave na array de dados
-				//mkt.l("K: ", k, " Has? ", dados.findIndex(o => { return o[0] == k }));
 				let indexof = dados.findIndex(o => { return o[0] == k });
 				if (indexof >= 0) {
-					//mkt.l("Get: ", dados[indexof]);;
 					dados.unshift(dados.splice(indexof, 1)[0]);
 				}
 			})
@@ -7896,12 +7883,10 @@ li[m="1"] {
 		let dadosFiltrado = dados.slice(inicio, ate);
 		this.config.populado = Math.max(this.config.populado, ate);
 		await mkt.moldeOA(dadosFiltrado, linha, hold);
-		//mkt.l("Populou do: ", inicio, " Até: ", this.config.populado);
 		this.config.eUL.append(hold.content.cloneNode(true));
 		this.config.rolaCima.style.display = "none";
 		this.config.rolaBaixo.style.display = "none";
 		if (this.config.eUL.children.length >= 10) {
-			//mkt.l(this.name, this.config.eUL.children.length);
 			this.config.rolaCima.style.display = "";
 			this.config.rolaBaixo.style.display = "";
 		}
@@ -7959,7 +7944,6 @@ li[m="1"] {
 		if (this.config.selapenas == 1) {
 			// Value é Unico
 			Array.from(this.config.eUL.children).forEach((li: any) => {
-				//mkt.l("Name: ", this.config.name, " K_LI: ", li.getAttribute("k"), " selHas: ", this.config.selecionados.has(li.getAttribute("k")));
 				if (this.config.selecionados.has(li.getAttribute("k"))) {
 					li.setAttribute("selecionado", "");
 				} else {

@@ -1,17 +1,6 @@
 "use strict";
-//
-//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-//  MK - MASTER KEY LIBRARY         \\
-//      By Marcos Kettermann         \\
-//___________Desde 2023_______________\\
-//
-// Variável de teste:
 var mkz = null;
-//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-//  FUNCOES EXTERNAS                \\
-//___________________________________\\
 String.prototype.removeRaw = function (fix = false) {
-    // Função que tira os elementos de quebra de linha e tabela da string.
     let r = this.replaceAll("\n", "")
         .replaceAll("\r", "")
         .replaceAll("\t", "")
@@ -23,46 +12,35 @@ String.prototype.removeRaw = function (fix = false) {
             .replaceAll("&amp;", "&");
         r = r.replaceAll("\\", "/");
     }
-    //
-    // \u00E3 == ã, viraria /u00E3
     return r;
 };
 String.prototype.toEntities = function () {
-    // Transforma todas os caracteres especiais em entidades HTML.
-    // "'".toEntities() == '&#39;'
     return this.replace(/./gm, function (s) {
         return (s.match(/[a-z0-9\s]+/i)) ? s : "&#" + s.charCodeAt(0) + ";";
     });
 };
 String.prototype.fromEntities = function () {
-    // Transforma todas entidades HTML numeradas em caracteres especiáis.
-    // '&#39;'.fromEntities() == "'"
     return (this + "").replace(/&#\d+;/gm, function (s) {
         return String.fromCharCode(s.match(/\d+/gm)[0]);
     });
 };
-//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-//  MODELO DOS DADOS DA LISTA       \\
-//___________________________________\\
-// CLASSE Do Design das colunas para formar a listagem da classe mktm.
 class mktm {
-    // Classe Modelo: Serve para assossiar uma regra / tipo / padronização a um campo
-    pk = false; // Este campo é Primary Key?
-    k = null; // Key / Chave (Propriedade do objeto)
-    v = null; // Valor (Inicialmente nulo, mas ao recuperar o objeto da lista ele vem preenchido)
-    l = null; // Label (Texto que descreve o campo)
-    r = null; // Regex para validar o campo
-    tag = "input"; // Qual é a tag do campo caso ele precise preencher?
-    atr = "type='text'"; // Todos os atributos padrões deste campo.
-    classes = "iConsultas"; // Classes padrões / iniciais deste campo
-    target = "value"; // Propriedade para edição (value, innerHTML).
-    f = true; // Ativa ou desativa o filtro nesse campo (HeadMenu ok)
-    opcoes = ""; // Aloja as opcoes em JSON de um seletor.
-    filtroFormato = "string"; // Usado para preencher o valor de data-mkfformato
-    filtroOperador = ""; // Usado para preencher o valor de data-mkfoperador
-    field = ""; // Representa o elemento HTML inteiro.
-    requer = false; // Permite saber qualquer vai ativar o Regrar
-    url = ""; // Aloja a URL. Usada pra download de um refill.
+    pk = false;
+    k = null;
+    v = null;
+    l = null;
+    r = null;
+    tag = "input";
+    atr = "type='text'";
+    classes = "iConsultas";
+    target = "value";
+    f = true;
+    opcoes = "";
+    filtroFormato = "string";
+    filtroOperador = "";
+    field = "";
+    requer = false;
+    url = "";
     constructor(o) {
         if (o.k)
             this.k = o.k;
@@ -94,7 +72,6 @@ class mktm {
             this.f = false;
         if (o.requer == true)
             this.requer = true;
-        // Limpar nulos
         if (!this.k)
             this.k = "";
         if (!this.v)
@@ -102,18 +79,16 @@ class mktm {
         if (!this.l)
             this.l = "";
         if (o.field) {
-            // Quando o campo já vem com o formato no modelo
             this.field = o.field;
         }
         else {
-            // Quando não vem, monta sozinho.
-            let varfOperador = ""; // Operador é necessário quando o filtro é Data.
+            let varfOperador = "";
             if (this.filtroOperador != "")
                 varfOperador = ` data-mkfoperador="${this.filtroOperador}"`;
-            let varUrl = ""; // Operador é necessário quando o filtro é Data.
+            let varUrl = "";
             if (this.url != "")
                 varUrl = ` data-url="${this.url}"`;
-            let opcoes = ""; // Opções é utilizado em mk-sel.
+            let opcoes = "";
             if (this.opcoes != "")
                 opcoes = ` opcoes='${this.opcoes}'`;
             this.field = `<${this.tag} name="${this.k}" value="${this.v}" class="${this.classes}" data-mkfformato="${this.filtroFormato}"${varfOperador}${varUrl}${opcoes} ${this.atr}>`;
@@ -131,65 +106,59 @@ class mktm {
     };
     get [Symbol.toStringTag]() { return "mktm"; }
 }
-//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-//  PRÉ CONFIGURAÇÃO DA LISTAGEM    \\
-//___________________________________\\
 class mktc {
-    // CLASSE que de configuração para que a listagem seja iniciada de forma personalizada.
-    url = window.location.href.split("?")[0] + "/GetList"; // Requer a URL para o fetch dos dados. Se não tiver, passar os dados no parametros dados e tornar esse null.
-    dados = null; // Caso a tela já tenha os dados, podem ser passador por aqui, se não deixar 
-    nomeTabela = null; // Nome da tabela (Usado pra contruir o banco de dados)
-    container = ".divListagemContainer"; // Classe / Id de onde será buscada uma tabela para ser populada.
-    idmodelo = "#modelo"; // Classe / Id do template/script contendo o formato de exibição de cada registro da lista.
-    model = []; // Lista de Configuração de coluna, como Label, Formato do conteudo, Classes padrões...
-    qntInicial = 1000; // Quantidade de coleta inicial de dados.
-    qntSolicitada = 5000; // Quantidade de coleta de dados ao solicitar mais.
-    container_importar = false; // No container, executa importar dados baseados no atributo.
-    filtroExtra = null; // modificaFiltro Retorna um booleano que permite um filtro configurado externamente do processo Filtragem.
-    filtro = ".iConsultas"; // Busca por esta classe para filtrar campos por nome do input.
-    filtroDinamico = null; // Nessa listagem o filtro por tecla não é dinâmico por padrão.
-    headSort = true; // Indicador se ativará o ordenamento ao clicar no cabeçalho
-    headMenu = true; // Indicador se ativará o botãozinho que abre o filtro completo do campo.
-    exibeBotaoMais = true; // Indicador se ativará o botãozinho que abre o filtro completo do campo.
-    // Os demais podem se alterar durante as operações da listagem.
-    sortBy = null; // Campo a ser ordenado inicialmente;
-    sortDir = 1; // 0,1,2 = Crescente, Decrescente, Toogle;
-    objFiltro = {}; // Itens Filtrados
-    urlOrigem = ""; // URL de origem dos dados a serem populados
-    pagAtual = 1; // Representa a pagina
-    pk = null; // Primary Key: Possivel setar o nome do campo que é único já na construcao
+    url = window.location.href.split("?")[0] + "/GetList";
+    dados = null;
+    nomeTabela = null;
+    container = ".divListagemContainer";
+    idmodelo = "#modelo";
+    model = [];
+    qntInicial = 1000;
+    qntSolicitada = 5000;
+    container_importar = false;
+    filtroExtra = null;
+    filtro = ".iConsultas";
+    filtroDinamico = null;
+    headSort = true;
+    headMenu = true;
+    exibeBotaoMais = true;
+    sortBy = null;
+    sortDir = 1;
+    objFiltro = {};
+    urlOrigem = "";
+    pagAtual = 1;
+    pk = null;
     totalFull = 0;
     totalFiltrado = 0;
     totalExibidos = 0;
-    pagPorPagina = 5; // VAR = Total de linhas exibidas por página.
+    pagPorPagina = 5;
     pagItensIni = 0;
     pagItensFim = 0;
     totPags = 0;
-    ativarDbCliente = false; // Quando ativo, salva o dado consultado por um worker em um indexedDb formando um cache rápido de dados no cliente.
+    ativarDbCliente = false;
     versaoDb = 1;
     tbody = "tbody";
     ths = "th";
     pagBotoes = ".pagBotoes";
     tableResultado = ".tableResultado";
-    tablePorPagina = "*[name='tablePorPagina']"; // TAG = Total de linhas exibidas por página.
+    tablePorPagina = "*[name='tablePorPagina']";
     tableExibePorPagina = ".tableExibePorPagina";
-    tableTotal = ".tableTotal"; // TAG = Total de registros.
+    tableTotal = ".tableTotal";
     tableFiltrado = ".tableFiltrado";
     tableIni = ".tableIni";
     tableFim = ".tableFim";
     tableInicioFim = ".tableInicioFim";
-    pag = ".pag"; // Indica o paginador atual de 0 a 8: ex: .pag7
+    pag = ".pag";
     pagBotao = ".pagBotao";
     botaoAdicionarMaisClasse = "divListagemMaisItens";
-    botaoNovaConsulta = "#btnConsultar"; // Informando o botao. Ao modificar a variavel de fim de lista, trava o botao / destrava.
-    dbInit = (store) => { }; // Funcao de contrução do design do banco de dados
-    // Alterar essas funções para modificar dados durante etapas.
-    aoIniciarListagem = async (este) => { }; // Recebe a própria instancia no parametro.
-    aoPossuirDados = async (dadosFull, este) => { }; // Recebe os dados de dadosFull
-    aoConcluirFiltragem = async (dadosFiltrado, este) => { }; // Recebe os dados filtrados
-    aoAntesDePopularTabela = async (dadosExibidos, este) => { }; // Recebe os dados a serem exibidos desta página
+    botaoNovaConsulta = "#btnConsultar";
+    dbInit = (store) => { };
+    aoIniciarListagem = async (este) => { };
+    aoPossuirDados = async (dadosFull, este) => { };
+    aoConcluirFiltragem = async (dadosFiltrado, este) => { };
+    aoAntesDePopularTabela = async (dadosExibidos, este) => { };
     aoConcluirExibicao = async (este) => { };
-    aoReceberDados = (o, este) => { return o; }; // Função que se executa nos Cruds de objetos e quando se constroi a listagem.
+    aoReceberDados = (o, este) => { return o; };
     constructor(array) {
         if (mkt.classof(array) == "Array") {
             this.model = array;
@@ -197,21 +166,17 @@ class mktc {
         if (this.url) {
             this.url = this.url?.replace("//GetList", "/GetList");
         }
-        // Verifica existencia do valor padrão do botaoNovaConsulta.
         if (!mkt.Q(this.botaoNovaConsulta)) {
             this.botaoNovaConsulta = null;
         }
-        // Se tem botão para consultar, então o padrão é filtroDinamico iniciar true.
         if (this.botaoNovaConsulta == null) {
-            this.filtroDinamico = true; // Quando não tem botão, o filtro fica a cada tecla.
+            this.filtroDinamico = true;
         }
         else {
             this.filtroDinamico = false;
         }
     }
     ;
-    // SET Exemplo: new mktc().set("dados",[]).set("url",null)
-    // new mkt(new mktc().set("dados", []).set("url", null).set("idmodelo", "#modeloRefPes").set("container", "#tabRefPessoais"));
     set = (propriedade, valor) => {
         if (propriedade in this) {
             this[propriedade] = valor;
@@ -223,31 +188,24 @@ class mktc {
     };
     get [Symbol.toStringTag]() { return "mktc"; }
 }
-//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-//  CLASSE MKT ESTÁTICA e LISTAGEM  \\
-//___________________________________\\
 class mkt {
-    // Classe contendo uma grande ferramenta de gerenciamento de dados em massa é construida e diveras funções estáticas facilitadoras.
     c;
     started = false;
     db = null;
-    dadosFull = []; // Todos os dados sem filtro, mas ordenaveis.
-    dadosFiltrado = []; // Mesmos dadosFull, mas após filtro.
-    dadosExibidos = []; // Clonado de dadosFiltrado, mas apenas os desta pagina.
-    alvo = {}; // Guarda o objeto selecionado permitindo manupular outro dado com este de referencia.
+    dadosFull = [];
+    dadosFiltrado = [];
+    dadosExibidos = [];
+    alvo = {};
     thisListNum = 0;
     idContainer = 0;
     exclusivos = [];
     hmunsel = [];
     ultimoGet = -1;
-    ultimoParametro = ""; // Aqui precisa ser vazio, pois esse dado indica a primeira consulta.
+    ultimoParametro = "";
     cTotUltimoParametro = 0;
     solicitadoUltimoParametro = 0;
     aindaTemMais = true;
     totalappends = 0;
-    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-    //  CONSTRUTOR DA GRANDE LISTAGEM   \\
-    //___________________________________\\
     constructor(_mktc) {
         if (_mktc == null) {
             this.c = new mktc([]);
@@ -256,7 +214,6 @@ class mkt {
             this.c = _mktc;
         }
         let cs = this.c.container + " ";
-        // Incrementa o container para garantir a seleção do elemento
         this.c.tbody = cs + this.c.tbody;
         this.c.ths = cs + this.c.ths;
         this.c.pagBotoes = cs + this.c.pagBotoes;
@@ -270,11 +227,8 @@ class mkt {
         this.c.tableInicioFim = cs + this.c.tableInicioFim;
         this.c.pag = cs + " " + this.c.pag;
         this.c.pagBotao = cs + " " + this.c.pagBotao;
-        // Mesmo sem Design no contrutor, vai formando um mínimo necessário.
-        // Gerando Design de Modelo Aceitável
         if (mkt.classof(this.c.model) != "Array")
             this.c.model = [];
-        // Busca uma Primary Key
         if (this.c.model?.length > 0) {
             this.c.model?.forEach(o => {
                 if (o.pk) {
@@ -282,9 +236,7 @@ class mkt {
                 }
             });
         }
-        // PRIMARY KEY ALERTA (Necessária para CRUDs)
         if (this.c.pk == null) {
-            // No modelo não estava setado uma pk, tentar buscar no template.
             let modelo = mkt.Q(this.c.idmodelo)?.getAttribute("pk");
             if (modelo) {
                 this.c.pk = modelo;
@@ -296,27 +248,18 @@ class mkt {
         if (mkt.Q(this.c.container)) {
             this.autoStartConfig();
         }
-        // Guarda a instância para facilitar o acesso aos métodos.
         mkt.a.build.push(this);
     }
-    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-    //  INICIO DOS MÉTODOS MKT          \\
-    //___________________________________\\
     autoStartConfig = async (arg = {}) => {
-        // Apos instanciar a classe mkt, essa função tenta iniciar a listagem baseado nas regras.
-        if (!this.started) { // <= Previne que Reset duplique os Listners
-            // SE for importar: Espera o container para então continuar.
+        if (!this.started) {
             if (this.c.container_importar) {
                 await mkt.importar(this.c.container);
             }
-            // SE GATILHO EXTERNO inicialmente bloqueado
             if (mkt.Q(this.c.botaoNovaConsulta)) {
-                if (this.c.qntInicial > 0) { // Se há consulta inicial, então o consultar já vem travado até modificar.
+                if (this.c.qntInicial > 0) {
                     mkt.Qoff(this.c.botaoNovaConsulta);
                 }
             }
-            // GATILHOS do Container da tabela (Paginação e Limite por Página)
-            // Seta Gatilho dos botoes de paginacao.
             if (mkt.Q(this.c.pagBotao)) {
                 mkt.QAll(this.c.pagBotao).forEach((li) => {
                     li.addEventListener("click", (ev) => {
@@ -324,27 +267,19 @@ class mkt {
                     });
                 });
             }
-            // Seta Gatilho do indicador de quantidade por pagina.
             if (mkt.Q(this.c.tablePorPagina)) {
                 mkt.Ao("input", this.c.tablePorPagina, async (e) => {
-                    //mkt.l("TablePorPagina: ", this.c.tablePorPagina);
                     this.atualizaNaPaginaUm();
                 });
             }
-            // Ativar THEAD funcionalidades
             this.headAtivar();
-            //Adiciona eventos aos botões do filtro
             if (this.c.filtro)
                 this.setFiltroListener();
         }
-        // A partir daqui o New e o Reset seguem iguais
-        // Inicial SortBy
         if (!this.c.sortBy)
-            this.c.sortBy = this.c.pk; // Padrão PK
-        // Inicial SortDir
+            this.c.sortBy = this.c.pk;
         if (!this.c.sortDir)
-            this.c.sortDir = 1; // Padrão 0 Decrescente por ID Deixando a Ultima ID no topo
-        // Inicial Sort
+            this.c.sortDir = 1;
         this.setDirSort(this.c.sortBy, Number(this.c.sortDir));
         if (this.c.dados != null) {
             if (mkt.classof(this.c.dados) == "Array") {
@@ -358,7 +293,6 @@ class mkt {
             }
         }
         if (this.c.url != null) {
-            // URL de coleta informada.
             if (mkt.classof(this.c.url) == "String") {
                 this.c.urlOrigem = this.c.url;
                 if (await this.appendList(this.c.url) != null) {
@@ -373,10 +307,8 @@ class mkt {
             }
         }
         else {
-            // Quando não tiver url, ocultar botão de puxar mais
             this.aindaTemMais = false;
         }
-        // Check e config da quantidade de download
         if (mkt.classof(this.c.qntSolicitada) != "Number") {
             this.c.qntSolicitada = 10000;
         }
@@ -393,13 +325,11 @@ class mkt {
             mkt.w("Nenhuma fonte de dados encontrada. Não será possível popular a listagem sem dados.");
         }
         if (!this.started) {
-            // Se chegar aqui sem iniciar, avança zerado.
             mkt.erro("A lista foi iniciada sem confirmação dos dados. Provavelmente ocorreu erro na coleta de dados.");
             this.startListagem();
         }
     };
     reset = async () => {
-        // Limpa as variaveis da instancia e solicita novamente o recomeço da listagem
         this.dadosFull = [];
         this.dadosFiltrado = [];
         this.dadosExibidos = [];
@@ -418,7 +348,6 @@ class mkt {
         this.startListagem();
     };
     mais = async (parametros = null, novaurl = null) => {
-        // Aqui representa a solicitação do novo
         return new Promise((r) => {
             if (novaurl == null) {
                 this.c.url = this.c.urlOrigem;
@@ -427,7 +356,6 @@ class mkt {
                 this.c.url = novaurl;
             }
             if (parametros == null) {
-                // Se não informar parametro ou informar o mesmo parametro da ultima consulta, indica que está carregando a continuação: lista.mais();
                 parametros = this.ultimoParametro;
             }
             if (mkt.classof(this.c.url) == "String") {
@@ -443,11 +371,10 @@ class mkt {
         });
     };
     appendList = async (data_url, parametros = "", fromMais = false) => {
-        // Manipula URL e dados. Executa um acrescimo nos dados se o parametro for o mesmo
         return new Promise((r) => {
             if (mkt.classof(data_url) == "Array") {
                 for (let i = 0; i < data_url.length; i++) {
-                    if (i < this.c.qntInicial) { // APENAS LISTA SOLICITA INICIAL
+                    if (i < this.c.qntInicial) {
                         this.dadosFull.push(this.c.aoReceberDados(data_url[i], this));
                     }
                 }
@@ -455,16 +382,13 @@ class mkt {
                 r(true);
             }
             else if (mkt.classof(data_url) == "String") {
-                // Aqui é a primeira coleta.
-                // qntSolicitada
-                // qntInicial representa o valor inicial a ser solicitado
                 this.totalappends++;
                 let carregador = false;
                 let solicitar = this.c.qntInicial;
                 if (parametros != this.ultimoParametro) {
                     this.ultimoParametro = parametros;
                     this.cTotUltimoParametro = 0;
-                    this.dadosFull = []; // Se muda dadosFull pra valor inferior ao que tinha, pagAtual precisa voltar a 1;
+                    this.dadosFull = [];
                     this.c.pagAtual = 1;
                     this.totalappends = 1;
                     carregador = true;
@@ -474,32 +398,27 @@ class mkt {
                     }
                 }
                 if (fromMais) {
-                    // Quando a função Mais() que chamar esta, a quantidade solicitada tem prioridade sobre a inicial;
                     solicitar = this.c.qntSolicitada;
                 }
                 this.solicitadoUltimoParametro = solicitar;
-                // Passa LIST REQUEST e LIST HAVE.
-                // Incrementa o lh e lr após o "?", se tiver
                 let urlTemp = "";
-                if (data_url.includes("?")) { // Caso a url já contenha Query, não sobreescrever
+                if (data_url.includes("?")) {
                     urlTemp = data_url + "&lr=" + solicitar + "&lh=" + this.cTotUltimoParametro;
                 }
-                else { // Caso não tenha, acrescenta o Query
+                else {
                     urlTemp = data_url?.split("?")[0] + "?lr=" + solicitar + "&lh=" + this.cTotUltimoParametro;
                 }
                 if (!urlTemp.includes("://"))
                     urlTemp = window.location.origin + urlTemp;
                 urlTemp += parametros;
-                //this.ultimaUrlComParametro = urlTemp; // Se for impedir chamadas iguais.
                 mkt.get.json({ url: urlTemp, carregador: carregador }).then((p) => {
                     if (p.retorno != null) {
                         this.ultimoGet = p.retorno.length;
-                        this.cTotUltimoParametro += this.ultimoGet; // Soma do Ultimo mais o atual
+                        this.cTotUltimoParametro += this.ultimoGet;
                         for (let i = 0; i < p.retorno.length; i++) {
                             this.dadosFull.push(this.c.aoReceberDados(p.retorno[i], this));
                         }
                         if (this.ultimoGet < this.solicitadoUltimoParametro) {
-                            // Quando o Recebido for inferior ao solicitado:
                             this.aindaTemMais = false;
                             mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoBaixarTodosDados"));
                             let eAddMais = mkt.Q(this.c.container)?.querySelector("." + this.c.botaoAdicionarMaisClasse);
@@ -508,13 +427,9 @@ class mkt {
                             }
                         }
                         else if (this.ultimoGet > this.solicitadoUltimoParametro) {
-                            // Caso o BackEnd enviar a mais do que o solicitado,
-                            //  então é possível que esteja configurado pra trazer tudo
-                            // e nesse caso o botão não deve surgir
                             this.aindaTemMais = false;
                         }
                         else {
-                            // Quando o recebido é igual ou veio até mais do que o solicitado:
                             this.aindaTemMais = true;
                         }
                         this.dadosCheck();
@@ -529,58 +444,32 @@ class mkt {
             else {
                 r(null);
             }
-            // MECANICA CACHE CLIENT SIDE.
-            // A cada APPENDLIST um PUT no indexed;
             if (this.c.ativarDbCliente) {
-                // DB CON
-                // if (this.c.nomeTabela != null) {
-                // 	this.db = await this.dbCon();
-                // }
-                // if (this.c.nomeTabela) {
-                // 	// DB FILL
-                // 	let tx = this.db?.transaction(this.c.nomeTabela, "readwrite");
-                // 	let store = tx?.objectStore(this.c.nomeTabela);
-                // 	this.dadosFull.forEach((o: any) => {
-                // 		store?.put(o);
-                // 	});
-                // 	if (tx) tx.oncomplete = () => {
-                // 		// All requests have succeeded and the transaction has committed.
-                // 	};
-                // }
             }
         });
     };
     startListagem = async (arg = {}) => {
-        // Inicia a listagem com os dados atuais.
-        //EVENT: aoIniciarListagem
         mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoIniciarListagem"));
         this.c.aoIniciarListagem(this);
-        // Limpar Dados nulos
         mkt.limparOA(this.dadosFull);
-        //EVENT: aoPossuirDados
         mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoPossuirDados"));
         await this.c.aoPossuirDados(this.dadosFull, this);
-        // Ordena a lista geral com base na primeira propriedade.
         mkt.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
-        // Executa um filtro inicial e na sequencia processa a exibição.
         if (this.c.filtro) {
             this._updateObjFiltro();
         }
         this.efeitoSort();
-        // Remove oculto, caso encontre a tag
         if (mkt.Q(this.c.tableResultado)) {
             mkt.Q(this.c.tableResultado).classList.remove("oculto");
         }
         this.atualizaNaPaginaUm();
     };
     dadosCheck = () => {
-        // Verificação de ChavesRepetidas
         mkt.addTask({ k: "ChavesRepetidas", v: this.dadosFull, target: this.c.pk }).then((r) => {
             if (r.v.length > 0) {
                 mkt.l("ALERTA!", this.c.nomeTabela, "possui CHAVES PRIMARIAS DUPLICADAS:", r.v);
             }
         });
-        // Verificação de Duplices
         mkt.addTask({ k: "Duplices", v: this.dadosFull, target: this.c.pk }).then((r) => {
             if (r.v.length > 0) {
                 mkt.l("ALERTA!", this.c.nomeTabela, "possui CONTEÚDO REPETIDO:", r.v);
@@ -588,7 +477,6 @@ class mkt {
         });
     };
     dbCon = async () => {
-        // Gera uma instancia de conexão ao banco de dados Client-Side indexavel
         return new Promise((r) => {
             if (mkt.classof(this.c.nomeTabela) == "String") {
                 let dbConOpen = indexedDB.open(this.c.nomeTabela, this.c.versaoDb);
@@ -597,25 +485,14 @@ class mkt {
                     r(dbConOpen.result);
                 };
                 dbConOpen.onupgradeneeded = () => {
-                    // Aqui da pra melhorar com o getModel() 
-                    // Pré criar a tabela com os K do getModel();
                     let conParametros = {};
                     if (this.c.pk != null && this.c.pk != "" && this.c.pk != "pk") {
                         conParametros.keyPath = this.c.pk;
                     }
-                    // CREATE TABLE
                     let store = dbConOpen.result.createObjectStore(this.c.nomeTabela, conParametros);
                     if (mkt.classof(this.c.dbInit) == "Function") {
                         this.c.dbInit(store);
                     }
-                    // INDEX
-                    // store.createIndex("porNome", "mNome", { unique: true });
-                    // DADOS INICIAIS
-                    // store.put({
-                    //  	"mId": 2,
-                    //		"mNome": "Fulano Sem Dados",
-                    //		"mStatus": null
-                    // });
                     r(dbConOpen.result);
                 };
             }
@@ -625,25 +502,15 @@ class mkt {
             }
         });
     };
-    /**
-     * ATUALIZA a listagem com os dados ja ordenados.
-     * Executa a filtragem dos dados;
-     */
     atualizarListagem = async () => {
-        // Atualiza Status, Filtra, Botão Mais...
-        // A cada atualizar listagem, atualiza o filtro por garantia.
-        if (this.c.filtroDinamico) { // Não refiltrar caso for por consulta
+        if (this.c.filtroDinamico) {
             this._updateObjFiltro();
         }
         let pagBotoes = mkt.Q(this.c.pagBotoes);
-        // Processo de filtro que usa o objFiltro nos dadosFull e retorna dadosFiltrado já filtrado.
         this.dadosFiltrado = mkt.processoFiltragem(this.dadosFull, this.c.objFiltro, this);
-        // Processar calculos de paginacao
         this.atualizarStatusListagem();
-        //EVENT: aoConcluirFiltragem
         mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoConcluirFiltragem"));
         await this.c.aoConcluirFiltragem(this.dadosFiltrado, this);
-        // Apenas executa a atualização do resumo, se a pagBotoes estiver presente na página.
         if (this.c.totalFiltrado > this.c.pagPorPagina)
             pagBotoes?.removeAttribute("hidden");
         else
@@ -661,18 +528,13 @@ class mkt {
                 this.processoPaginar();
             }
             else {
-                // Caso não tenha onde paginar, exibe geral sem clonar.
                 this.dadosExibidos = this.dadosFiltrado;
             }
             mkt.Q(this.c.tbody)?.removeAttribute("hidden");
-            //EVENT: aoAntesDePopularTabela
             mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoAntesDePopularTabela"));
             await this.c.aoAntesDePopularTabela(this.dadosExibidos, this);
-            // Apenas se estiver configurado para exibir o botão de continuidade.
             if (this.c.exibeBotaoMais) {
-                // Apenas quando há mais dados a serem puxados:
                 if (this.aindaTemMais) {
-                    // Apenas se estiver na última págiana:
                     if (this.c.totPags == this.c.pagAtual) {
                         let container = mkt.Q(this.c.container);
                         if (!container.querySelector("." + this.c.botaoAdicionarMaisClasse)) {
@@ -692,46 +554,37 @@ class mkt {
                 }
             }
             await mkt.moldeOA(this.dadosExibidos, this.c.idmodelo, this.c.tbody);
-            //EVENT: aoConcluirExibicao
             mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoConcluirExibicao"));
             await this.c.aoConcluirExibicao(this);
         }
     };
     atualizarStatusListagem = () => {
-        // Atualiza o objeto que contem os dados desta instancia.
         if (mkt.Q(this.c.tablePorPagina) != null) {
             this.c.pagPorPagina = Number(mkt.Q(this.c.tablePorPagina).value);
         }
         this.c.totalFull = this.dadosFull.length;
         this.c.totalFiltrado = this.dadosFiltrado.length;
         this.c.totalExibidos = this.dadosExibidos.length;
-        this.c.pagItensIni = (this.c.pagAtual - 1) * this.c.pagPorPagina + 1; // Calculo Pagination
-        this.c.pagItensFim = this.c.pagItensIni + (this.c.pagPorPagina - 1); // Calculo genérico do último
+        this.c.pagItensIni = (this.c.pagAtual - 1) * this.c.pagPorPagina + 1;
+        this.c.pagItensFim = this.c.pagItensIni + (this.c.pagPorPagina - 1);
         if (this.c.pagItensFim > this.c.totalFiltrado)
-            this.c.pagItensFim = this.c.totalFiltrado; // Na última página não pode exibir o valor genérico.
-        // Arredondar pra cima, pois a última página pode exibir conteúdo sem preencher o PorPagina
+            this.c.pagItensFim = this.c.totalFiltrado;
         this.c.totPags = Math.ceil(this.dadosFiltrado.length / this.c.pagPorPagina);
-        // Atualizar o Status processado no resumo da tabela
         mkt.html(this.c.tableTotal, this.c.totalFull.toString());
         mkt.html(this.c.tableFiltrado, this.c.totalFiltrado.toString());
         mkt.html(this.c.tableIni, this.c.pagItensIni.toString());
         mkt.html(this.c.tableFim, this.c.pagItensFim.toString());
     };
     atualizaNaPaginaUm = async () => {
-        // Retorna a pagina 1 e atualiza
-        // Procedimento padrão ao modificar um filtro / modificar o conteúdo.
         this.c.pagAtual = 1;
         this.atualizarListagem();
     };
     mudaPag = (e) => {
-        // Gatilhos para trocar a pagina (Parte de baixo da lista 1,2,3,4,5,6)
         if (e.classList.contains("pag0")) {
-            // Anterior
             if (this.c.pagAtual >= 2)
                 this.c.pagAtual -= 1;
         }
         else if (e.classList.contains("pag8")) {
-            // Proximo
             this.c.pagAtual += 1;
         }
         else {
@@ -740,7 +593,6 @@ class mkt {
         this.atualizarListagem();
     };
     processoPaginar = () => {
-        // Exibe Diferenciado dependendo em que página está (Antrerior,1,2,3,Proximo)
         mkt.html(this.c.pag + "7", this.c.totPags.toString());
         this.c.pagAtual == 1 ? mkt.Qoff(this.c.pag + "0") : mkt.Qon(this.c.pag + "0");
         if (this.c.totPags > 1) {
@@ -773,7 +625,6 @@ class mkt {
             ? mkt.QverOn(this.c.pag + "6")
             : mkt.QverOff(this.c.pag + "6");
         if (this.c.pagAtual < 5 || this.c.totPags == 5 || this.c.totPags == 6) {
-            // INI
             mkt.Qon(this.c.pag + "2");
             mkt.html(this.c.pag + "2", "2");
             mkt.html(this.c.pag + "3", "3");
@@ -783,7 +634,6 @@ class mkt {
             mkt.Qoff(this.c.pag + "6");
         }
         else {
-            // END
             if (this.c.totPags - this.c.pagAtual < 4) {
                 mkt.Qoff(this.c.pag + "2");
                 mkt.html(this.c.pag + "2", "...");
@@ -794,7 +644,6 @@ class mkt {
                 mkt.Qon(this.c.pag + "6");
             }
             else {
-                // MID
                 mkt.Qoff(this.c.pag + "2");
                 mkt.html(this.c.pag + "2", "...");
                 mkt.html(this.c.pag + "3", (this.c.pagAtual - 1).toString());
@@ -804,16 +653,13 @@ class mkt {
                 mkt.Qoff(this.c.pag + "6");
             }
         }
-        // Ativar Pagina
         mkt.QAll(this.c.pagBotao).forEach((li) => {
             li.classList.remove("ativo");
             if (this.c.pagAtual == Number(li.innerHTML)) {
                 li.classList.add("ativo");
             }
         });
-        // Limpar Exibidos
         this.dadosExibidos = [];
-        // Clonar Exibidos de Filtrados
         this.dadosFiltrado.forEach((o, i) => {
             if (i + 1 >= this.c.pagItensIni && i + 1 <= this.c.pagItensFim) {
                 this.dadosExibidos.push(mkt.clonar(o));
@@ -821,22 +667,16 @@ class mkt {
         });
     };
     _updateObjFiltro = () => {
-        // Limpa e Recoleta o filtro baseado no filtro contruído.
-        // Limpa filtro atual
         this.c.objFiltro = {};
-        // Gera filtro os nos campos
         mkt.QAll(this.c.filtro).forEach((e) => {
             this.gerarFiltro(e);
         });
     };
     updateFiltro = () => {
-        // Limpa, Gera Filtro e Atualiza. Padrao class ".iConsultas".
         this._updateObjFiltro();
         this.atualizaNaPaginaUm();
     };
     gerarFiltro = (e) => {
-        // Gerar Filtro baseado nos atributos do MKF gerados no campo.
-        // Para ignorar filtro: data-mkfignore="true" (Ou nao colocar o atributo mkfformato no elemento)
         if (e.value != null && e.getAttribute("data-mkfignore") != "true") {
             this.c.objFiltro[e.name] = {
                 formato: e.getAttribute("data-mkfformato"),
@@ -844,7 +684,6 @@ class mkt {
                 conteudo: e.value,
             };
         }
-        // Limpar filtro caso o usuario limpe o campo
         if (this.c.objFiltro[e.name]["conteudo"] == "" ||
             this.c.objFiltro[e.name]["conteudo"] == "0" ||
             this.c.objFiltro[e.name]["conteudo"] == 0 ||
@@ -853,34 +692,26 @@ class mkt {
         }
     };
     gerarParametros = () => {
-        // A cada filtro disponível, gera um valor parametro na consulta Query
         return mkt.QAll(this.c.filtro)
             .map((i) => { return "&" + i.name + "=" + encodeURIComponent(i.value); })
             .join("");
     };
     setFiltroListener = () => {
-        // Gerar Gatilhos de FILTRO
-        // Onclick do botao
         if (this.c.botaoNovaConsulta != null) {
             mkt.Ao("click", this.c.botaoNovaConsulta, (e) => {
                 this.mais(this.gerarParametros());
             });
         }
-        // Key dos campos
         mkt.Ao("input", this.c.filtro, (e) => {
-            // Reativa o botao
             if (this.c.botaoNovaConsulta != null) {
-                // Ao mecher no filtro E botão vinculado E Mudou parametro = liberar botao
                 let parametroAtual = this.gerarParametros();
                 if (parametroAtual != this.ultimoParametro) {
                     mkt.Qon(this.c.botaoNovaConsulta);
                 }
                 else {
-                    // Mas se mecher no filtro, botão vinculado e nâo houve mudança. Retorna botão pro off, pois pode ocorrer do usuário trocar o filtro e voltar no mesmo em seguida.
                     mkt.Qoff(this.c.botaoNovaConsulta);
                 }
             }
-            // Reativa o botao
             if (this.c.filtroDinamico) {
                 this.gerarFiltro(e);
                 this.atualizaNaPaginaUm();
@@ -888,7 +719,6 @@ class mkt {
         });
     };
     headSeeMenuAbrir = (colName, e) => {
-        // Cria o botão que abre o menuzinho do Filtro
         e.classList.add("relative");
         if (!e.querySelector(".mkhmHeadIco")) {
             let mkhmIco = document.createElement("div");
@@ -901,11 +731,8 @@ class mkt {
         }
     };
     headMenuAbrir = async (colName) => {
-        // HEAD MENU (O mesmo por documento)
-        // Função que cria, exibe e seta as funções para filtrar baseado na coluna.
         let eHead = mkt.Q(this.c.container + " .sort-" + colName);
         let eHm = mkt.Q("body .mkHeadMenu");
-        // CRIA A ESTRUTURA
         if (eHm == null) {
             let ehm = document.createElement("div");
             ehm.className = "mkHeadMenu oculto";
@@ -932,7 +759,6 @@ class mkt {
 				</ul>
 			</div>`;
             document.body.appendChild(ehm);
-            // GATILHOS Só no ato a construção do elemento
             mkt.Ao("click", ".mkHeadMenu .hmPrevious", (e) => {
                 let eHmenu = mkt.Q("body .mkHeadMenu");
                 mkt.hm.Previous(eHmenu?.getAttribute("data-colname"), eHmenu?.getAttribute("data-mkt"));
@@ -968,20 +794,16 @@ class mkt {
                 mkt.hm.ContemInput(e.value, eHmenu?.getAttribute("data-colname"), e.closest(".mkHeadMenu")?.getAttribute("data-mkt"));
             });
         }
-        // Reexecuta o query pois agora já criou.
         eHm = mkt.Q("body .mkHeadMenu");
-        // Conecta Elemento a Lista
         let thisList = this.getIndexOf().toString();
         eHm.setAttribute("data-colname", colName);
         eHm.setAttribute("data-mkt", thisList);
-        // Zera ou popula Filtro atual do Contem
         if (this.c.objFiltro[colName]?.formato == "string") {
             mkt.Q(".mkHeadMenu input[name='filtrarCampo']").value = this.c.objFiltro[colName]?.conteudo;
         }
         else {
             mkt.Q(".mkHeadMenu input[name='filtrarCampo']").value = "";
         }
-        // Limpar pesquisa do Exclusivo
         mkt.Q(".mkHeadMenu input[name='filtrarPossibilidades']").value = "";
         if (this.c.objFiltro[colName]?.formato == "mkHeadMenuSel") {
             this.hmunsel = this.c.objFiltro[colName].conteudo;
@@ -989,7 +811,6 @@ class mkt {
         else {
             this.hmunsel = [];
         }
-        // Atualiza Lista de exclusivos
         this.exclusivos = await mkt.addTask({ k: "Exclusivos", v: this.dadosFull });
         this.exclusivos = this.exclusivos.v[colName.split(".")[0]];
         let exclusivosProcessado = [];
@@ -1004,7 +825,6 @@ class mkt {
             this.exclusivos = [];
         }
         ;
-        // Popula .possibilidades usando a Lista de exclusivos
         mkt.hm.FiltraExclusivo("", thisList);
         mkt.atribuir(mkt.Q("body"), () => { mkt.hm.Hide(event); }, "onclick");
         let colNameLabel = colName;
@@ -1014,25 +834,20 @@ class mkt {
         }
         if (colNameLabel == colName) {
             if (eHead) {
-                // Tenta utilizar o campo do Head.
                 colNameLabel = eHead?.innerHTML;
             }
             else {
-                // Mas se não encontrar, deixa o próprio.
                 colNameLabel = colName;
             }
         }
         mkt.QAll("body .mkHeadMenu .hmTitulo").forEach((e) => {
             e.innerHTML = colNameLabel;
         });
-        // Finalmente inicializa, Exibe e seta o foco.
         eHm.classList.remove("oculto");
         mkt.Q(".mkHeadMenu input[name='filtrarCampo']").focus();
     };
     headAtivar = () => {
-        // Gera Listeners na THEAD da tabela (Requer classe: "sort-campo")
         let eTrHeadPai = mkt.Q(this.c.container + " thead tr");
-        // Coleta as labels
         let opcoes = this.getModel().map(o => { if (o.f == false) {
             return o.k;
         } }).filter(r => { return r != null; });
@@ -1040,22 +855,19 @@ class mkt {
             Array.from(eTrHeadPai.children).forEach((th) => {
                 let possui = false;
                 [...th.classList].forEach((classe) => {
-                    // Verifica se contém sort- no inicio da class
                     if (classe.indexOf("sort-") == 0) {
                         possui = classe;
                     }
                 });
                 if (possui != false) {
                     let colName = possui.replace("sort-", "");
-                    //mkt.l("HM?", this.c.headMenu, "Col:", colName, "Model:", opcoes);
                     if (colName != "") {
                         if (this.c.headSort == true) {
                             mkt.Ao("click", th, (e) => {
                                 this.orderBy(colName);
                             });
                         }
-                        if (this.c.headMenu == true) { // Se Ativo
-                            // Ignora caso a coluna estiver impedida de filtrar. mktm({f:false})
+                        if (this.c.headMenu == true) {
                             if (!opcoes?.includes(colName)) {
                                 mkt.Ao("mousemove", th, (e) => {
                                     this.headSeeMenuAbrir(colName, e);
@@ -1068,10 +880,6 @@ class mkt {
         }
     };
     setDirSort = (propriedade, direcao = 2) => {
-        // Ordena os dados baseados na direção
-        // Direção 0: Crescente
-        // Direção 1: Decrescente
-        // Direção 2: Toogle
         if (propriedade != null) {
             if (direcao == 2) {
                 if (propriedade != this.c.sortBy) {
@@ -1089,20 +897,14 @@ class mkt {
             }
             this.c.sortBy = propriedade;
         }
-        //mkt.l("By: ", this.c.sortBy, " | Dir: ", this.c.sortDir);
     };
     orderBy = (propriedade, direcao = 2) => {
-        // Seta, Ordena e Atualiza uma nova Ordem (Direcao: 0(Cre),1(Dec),2(toogle))
-        // Atualiza atual Sort
         this.setDirSort(propriedade, Number(direcao));
-        // Executa Ordenador da lista principal
         this.dadosFull = mkt.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
-        // Atualiza classes indicadoras de ordem
         this.efeitoSort();
         this.atualizarListagem();
     };
     efeitoSort = () => {
-        // Gera o Efeito de flexinha no cabeçalho da tabela.
         let thsAll = mkt.QAll(this.c.ths);
         if (thsAll.length != 0) {
             thsAll.forEach((th) => {
@@ -1110,7 +912,6 @@ class mkt {
                 th.classList.remove("mkEfeitoSobe");
             });
         }
-        // Busca elemento que está sendo ordenado
         let thsSort = mkt.QAll(this.c.ths + ".sort-" + this.c.sortBy);
         if (thsSort.length != 0) {
             thsSort.forEach((thSort) => {
@@ -1124,9 +925,7 @@ class mkt {
         }
     };
     clearFiltro = (campoEspecifico = null) => {
-        // Limpa o Filtro específico ou tudo.
         if (campoEspecifico) {
-            // LIMPAR APENAS ESTE
             if (this.c.objFiltro[campoEspecifico]) {
                 delete this.c.objFiltro[campoEspecifico];
             }
@@ -1135,21 +934,17 @@ class mkt {
             });
         }
         else {
-            // LIMPAR TUDO
             this.c.objFiltro = {};
-            // RESET Form (Limpar seria "0" / "") (Set e.defaultValue)
             mkt.QAll(this.c.filtro).forEach((e) => {
                 e.value = "";
             });
         }
     };
     clearFiltroUpdate = () => {
-        // LIMPAR FILTRO E ATUALIZA
         this.clearFiltro();
         this.atualizarListagem();
     };
     getObj = (valorKey) => {
-        // Retorna o último objeto da lista onde a chave primaria bateu.
         let temp = null;
         if (Array.isArray(this.dadosFull) && mkt.classof(this.c.pk) == "String") {
             this.dadosFull.forEach((o) => {
@@ -1161,7 +956,6 @@ class mkt {
         return temp;
     };
     getObjs = (k, v) => {
-        // Retorna uma lista de todos objetos encontrados onde o KV bateu.
         let array = [];
         let errNotPresent = false;
         let errKeyInvalid = false;
@@ -1189,7 +983,6 @@ class mkt {
         return array;
     };
     setObj = (v, objeto) => {
-        // Troca o conteúdo do objeto todo
         let temp = null;
         if (Array.isArray(this.dadosFull) && (mkt.classof(this.c.pk) == "String")) {
             let o = this.find(this.c.pk, v);
@@ -1209,12 +1002,9 @@ class mkt {
         return temp;
     };
     getModel = () => {
-        // Retorna os modelos setados
-        return this.c.model; // <= Classe mktm
+        return this.c.model;
     };
     getUsedKeys = (formatoKV = false) => {
-        // Retorna todas as chaves utilizadas em todos os registros.
-        // Cria um Set retorna um array de Keys Usadas
         let kv = [];
         let chaves = new Set();
         this.dadosFull.forEach((o) => {
@@ -1235,7 +1025,6 @@ class mkt {
         }
     };
     getNewPK = () => {
-        // Através da chave primaria setada, retorna 1 acima do maior.
         let maior = 0;
         if (mkt.classof(this.c.pk) == "String") {
             this.dadosFull.forEach((o) => {
@@ -1247,97 +1036,65 @@ class mkt {
         return Number(maior) + 1;
     };
     getAllTr = () => {
-        // Retorna todas as TR atuais sendo visualizadas.
         return Array.from(mkt.QAll(this.c.container + " tbody tr"));
     };
-    // USER INTERFACE - UI FOR CRUD
     add = (objDados) => {
-        // Adicionar na listagem
         objDados = this.c.aoReceberDados(objDados, this);
         this.dadosFull.push(objDados);
         mkt.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
         this.atualizarListagem();
     };
     edit = (objDados, k, v) => {
-        // Editar na listagem
         objDados = this.c.aoReceberDados(objDados, this);
         this.dadosFull = mkt.setObjetoFromId(k, v, objDados, this.dadosFull);
         mkt.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
         this.atualizarListagem();
     };
     del = (k, v) => {
-        // Remover da listagem
         this.dadosFull = mkt.delObjetoFromId(k, v, this.dadosFull);
         mkt.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
         this.atualizarListagem();
     };
-    // mkt.aoReceberDados e mkt.ordenar Não se executam pra acelerar a inserção assincrona da listagem
     addMany = (arrayDados) => {
-        // Acrescenta uma lista no fim da lista previamente acrescentada
         this.dadosFull.push(...arrayDados);
         this.atualizarListagem();
     };
     find = (k, v) => {
-        // Procura um objeto inserido na listagem
         return this.dadosFull.find((o) => o[k] == v);
     };
-    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-    //  DEFINIÇÕES DA CLASSE MKT        \\
-    //___________________________________\\
     getIndexOf = () => {
-        // Retorna a Posição deste Build (new mkt) no container local
         return mkt.a.build.indexOf(this);
     };
     static getThis = (build) => {
-        // Retorna a instância da posicao
         return mkt.a.build[build];
     };
     toJSON = () => {
-        // Return Json
         return this.dadosFull;
     };
     toString = () => {
-        // Return String Instancia
         return mkt.stringify(this.dadosFull);
     };
     static toString = () => {
-        // Return String Classe
         return 'class mkt { /* classe gerenciadora de listagens */ }';
     };
     valueOf = () => {
-        // Return Number
         return this.dadosFull;
     };
     get [Symbol.toStringTag]() {
-        // Get Name
         return "mkt";
     }
     [Symbol.iterator]() {
-        // Iterator
         let iteratorArray = this.dadosFull[Symbol.iterator]();
-        // Iteration result
         return {
             next() {
                 return iteratorArray.next();
             },
-            // Iterable
             [Symbol.iterator]() {
                 return this;
             },
         };
     }
-    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-    //  FIM DOS MÉTODOS MKT             \\
-    //___________________________________\\
-    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-    //  INÍCIO FUNCÕES ESTÁTICAS        \\
-    //___________________________________\\
-    //°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-    //                     ARMAZENADORES ESTÁTICOS                             \\
-    //==========================================================================\\
-    // mkt.a. - XXX UTIL
     static a = {
-        // Configurações, Armazenadores, Constantes, Funcões uteis...
         ALL: "*/*",
         FORMDATA: "multipart/form-data",
         GET: "GET",
@@ -1510,28 +1267,21 @@ class mkt {
             letras: ["A", /^[A-Za-z]*$/],
             telefone_ddd: ["(00) 00000-00000", /^[0-9]{11}$/],
         },
-        wpool: null, // WorkerPool quando iniciado
+        wpool: null,
     };
-    // ============================ ATALHOS PERSONALIZADOS ============================ \\
-    // ================================================================================= \\
     static Q = (query) => {
-        // Permite buscar por um elemento em string ou ele mesmo. Formando uma bufurcação ao elemento quando buscar por ele mais de uma vez.
         if (mkt.classof(query) == "String")
             return document.querySelector(query);
         return query;
     };
     static QAll = (query = "body") => {
-        // Sempre retorna uma array de encontrados. Inclusive uma array com um mkt.Q
         if (mkt.classof(query) == "String") {
-            // Se buscando uma string, retorna a array do select encontrado
             return Array.from(document.querySelectorAll(query));
         }
         else if (mkt.classof(query).endsWith("Element")) {
-            // Quando buscar um elemento, retorna a array do elemento
             return [query];
         }
         else if (mkt.classof(query) == "Array") {
-            // Quando buscar uma array, retorna a propria array.
             return query;
         }
         else {
@@ -1540,22 +1290,16 @@ class mkt {
         }
     };
     static QverOff = (query = "body") => {
-        // Adiciona Classe Oculto em todos os elementos do Query
-        // Retorna uma array de elementos por causa do QAll
         return mkt.aCadaElemento(query, (e) => {
             e?.classList.add("oculto");
         });
     };
     static QverOn = (query = "body") => {
-        // Remove classe Oculto em todos os elementos do Query
-        // Retorna uma array de elementos por causa do QAll
         return mkt.aCadaElemento(query, (e) => {
             e?.classList.remove("oculto");
         });
     };
     static Qoff = (query = "body") => {
-        // Desabilita o campo e Remove acesso ao Tab nesses campos do Query
-        // Retorna uma array de elementos por causa do QAll
         return mkt.aCadaElemento(query, (e) => {
             e.setAttribute("disabled", "");
             e.classList.add("disabled");
@@ -1563,8 +1307,6 @@ class mkt {
         });
     };
     static Qon = (query = "body") => {
-        // Habilita o campo e Libera acesso ao Tab nesses campos do Query
-        // Retorna uma array de elementos por causa do QAll
         return mkt.aCadaElemento(query, (e) => {
             e.removeAttribute("disabled");
             e.classList.remove("disabled");
@@ -1572,18 +1314,15 @@ class mkt {
         });
     };
     static Ao = (tipoEvento = "click", query, executar, config = mkt.a.AoConfig) => {
-        // Adiciona LISTNER em todos elementos do query usando uma config preventiva.
-        // Em QAll, pois o Filtro pega todos os .iConsultas
         mkt.QAll(query).forEach((e) => {
             e.addEventListener(tipoEvento, (ev) => {
                 if (ev)
-                    ev.stopPropagation(); // Não se reexecuta quando o botão está dentro do outro. (HM inside Sort por exemplo)
+                    ev.stopPropagation();
                 executar(e, ev);
             }, config);
         });
     };
     static atribuir = (e, gatilho, atributo = "oninput") => {
-        // Incrementa no ATRIBUTO do elemento E o texto do GATILHO.
         if (e) {
             if (atributo) {
                 let tipo = mkt.classof(gatilho);
@@ -1614,7 +1353,6 @@ class mkt {
         }
     };
     static html = (query, conteudo) => {
-        // Atalho para innerHTML que retorna apenas o primeiro elemento da query.
         let e = mkt.Q(query);
         if (e) {
             e.innerHTML = conteudo;
@@ -1622,14 +1360,11 @@ class mkt {
         return e;
     };
     static wait = (ms) => {
-        // Essa mecânica usa um setTimeout. A mecânica do Queue não foi implementada
         return new Promise(r => setTimeout(r, ms));
     };
     static QSetAll = (query = "input[name='#PROP#']", dados = null, comEvento = true) => {
-        // Seta todos os query com os valores das propriedades informadas nos campos.
-        // O nome da propriedade precisa ser compatível com o PROPNAME do query.
         let eAfetados = [];
-        if (mkt.classof(dados) == "Object") { // Apenas Objeto
+        if (mkt.classof(dados) == "Object") {
             for (let p in dados) {
                 let eDynamicQuery = mkt.Q(query.replace("#PROP#", p));
                 if (eDynamicQuery) {
@@ -1657,51 +1392,41 @@ class mkt {
         return eAfetados;
     };
     static Qison = (query = "body") => {
-        // Responde se Todos elementos deste query estão ON
         return (mkt.QAll(query).some((e) => { return e.classList.contains("disabled"); }))
             ? false
             : true;
     };
     static QverToggle = (query = "body") => {
-        // Inverte oculto dos campos da query
         return mkt.aCadaElemento(query, (e) => {
             e?.classList.toggle("oculto");
         });
     };
-    // =========================== ERROS, LOGS E INFORMACOES ========================== \\
-    // ================================================================================= \\
     static l = (...s) => {
-        // Atalho e Redirect Log. Utilizar mkt.w para realizar trace route.
         if (mkt.a.log) {
             console.log(...s);
         }
     };
     static w = (...s) => {
-        // Atalho e Redirect Warning com trace da origem.
         if (mkt.a.log) {
             console.warn(...s);
         }
     };
     static gc = (...s) => {
-        // Group Collapsed INICIO. Termine com mkt.ge();
         if (mkt.a.log) {
             console.groupCollapsed(...s);
         }
     };
     static ge = () => {
-        // Group End FIM. Inicie com mkt.gc("");
         if (mkt.a.log) {
             console.groupEnd();
         }
     };
     static erro = (...s) => {
-        // Atalho e Redirect Error com trace da origem. 
         if (mkt.a.log) {
             console.error(...s);
         }
     };
     static ct = (s) => {
-        // INICIO do CONTA TEMPO utillizado pra saber o tempo dos GET e POST.
         let t = mkt.a.timers.find((t) => t.name == s);
         if (!t) {
             mkt.a.timers.push({
@@ -1713,7 +1438,6 @@ class mkt {
         }
     };
     static cte = (s, quietMode = false) => {
-        // FIM do CONTA TEMPO utillizado pra saber o tempo dos GET e POST.
         let t = mkt.a.timers.find((t) => t.name == s);
         if (t.fim == 0) {
             t.fim = mkt.dataGetMs();
@@ -1724,31 +1448,22 @@ class mkt {
         }
     };
     static errosLog = () => {
-        // Utiliza o armazenamento local pra guardar erros, normalmente erros do Request Http.
         let mktArmazenado = localStorage.mktRequests;
         if (localStorage.mktRequests)
             mktArmazenado = JSON.parse(localStorage.mktRequests);
         return console.table(mktArmazenado);
     };
-    // ============================ MKT Support / Component =========================== \\	
-    // ================================================================================= \\
     static exeTimer = () => {
-        // A um determinado tempo, reexecuta essas funções.
-        // Quando trocar essas funções para Web Component, será possivel manter observado por dentro da classe.
         mkt.mkRecRenderizar();
-        // Recursiva
         mkt.wait(mkt.a.exeTimer).then(r => {
             mkt.exeTimer();
         });
     };
     static Inicializar = () => {
-        // Ao iniciar a biblioteca já executa essas funções
-        mkt.clicarNaAba(mkt.Q(".mkAbas a.active")); // Inicia no ativo
+        mkt.clicarNaAba(mkt.Q(".mkAbas a.active"));
         mkt.exeTimer();
     };
     static moldeOA = async (dados, modelo = "#modelo", repositorio = ".tableListagem .listBody", allowTags = false, removeAspas = true) => {
-        // MoldeOA popula templates de forma escalável com uma array de objetos ou um objeto.
-        // É no molde que se converte vários objetos em várias exibições estes objetos.
         return new Promise((r) => {
             let eModelo = mkt.Q(modelo);
             if (!eModelo) {
@@ -1764,7 +1479,6 @@ class mkt {
             let moldeO_Execute = (o) => {
                 let node = eModelo.innerHTML;
                 let ret = "";
-                // Converte de "${obj.key}" em valor dentro de uma string.
                 if (node.indexOf("${") >= 0) {
                     let ini = node.split("${");
                     ret = ini[0];
@@ -1774,7 +1488,6 @@ class mkt {
                         let end = ini[i].indexOf("}");
                         let key = ini[i].slice(0, end).trim();
                         if ((mkt.classof(o) == "Object" || mkt.classof(o) == "Array") && o != null) {
-                            // Quando é Objeto ou Array, entra na propriedade ou posição solicitada.
                             let v = mkt.getV(key, o);
                             if (removeAspas)
                                 v = mkt.removerAspas(v);
@@ -1786,7 +1499,6 @@ class mkt {
                     }
                     node = ret;
                 }
-                // Converte de "#{obj.key}" em ${valor do obj.key}.
                 if (node.indexOf("#{") >= 0) {
                     let ini = node.split("#{");
                     ret = ini[0];
@@ -1796,7 +1508,6 @@ class mkt {
                         let end = ini[i].indexOf("}");
                         let key = ini[i].slice(0, end).trim();
                         if ((mkt.classof(o) == "Object" || mkt.classof(o) == "Array") && o != null) {
-                            // Quando é Objeto ou Array, entra na propriedade ou posição solicitada.
                             let v = mkt.getV(key, o);
                             if (removeAspas)
                                 v = mkt.removerAspas(v);
@@ -1811,13 +1522,11 @@ class mkt {
                 listaNode += node;
             };
             mkt.aCadaObjExecuta(dados, moldeO_Execute);
-            //Allow Tags
             if (allowTags) {
                 listaNode = listaNode.replaceAll("&lt;", "<");
                 listaNode = listaNode.replaceAll("&gt;", ">");
             }
             eRepositorio.innerHTML = listaNode;
-            // Após todos elementos inseridos, remove os r_e_m
             [...eRepositorio.querySelectorAll("*")].forEach(e => {
                 if (e.classList.contains("r_e_m"))
                     e.remove();
@@ -1826,16 +1535,12 @@ class mkt {
         });
     };
     static getV = (keys, objeto) => {
-        // Retorna o valor do chave informada, podendo ser obj.obj.chave
-        // mkt.getV("a.b.c",{a:{b:{c:"d"}}})
         if (typeof objeto == "object") {
             if (typeof keys == "string") {
                 if (keys.includes(".")) {
-                    // Multi
                     let ks = keys.split(".");
                     let lastObj = objeto;
                     let lastV = {};
-                    // Iterar o Keys, Ver Obj atual e Setar Conteudo;
                     ks.forEach((k) => {
                         lastV = lastObj[k];
                         if (typeof lastV == "object") {
@@ -1845,7 +1550,6 @@ class mkt {
                     return lastV;
                 }
                 else {
-                    // Simples
                     return objeto[keys];
                 }
             }
@@ -1861,41 +1565,27 @@ class mkt {
         return null;
     };
     static processoFiltragem = (aTotal, objFiltro, inst) => {
-        // Atravéz de uma array completa e vários filtros, retorna uma array filtrada sobre as regras de cada objeto.
-        /**
-         * FullFiltroFull - processoFiltragem
-         * Executa a redução da listagem basedo no objFiltro.
-         * Usando filtroExtra(), pode-se filtrar o objeto da lista também.
-         * Atributos:
-         * 		data-mkfformato = "date"
-         * 		data-mkfoperador = "<="
-         */
         let aFiltrada = [];
         if (Array.isArray(aTotal)) {
             let temp = [];
             aTotal.forEach((o) => {
                 let podeExibir = true;
                 if (inst.c.filtroExtra != null)
-                    podeExibir = inst.c.filtroExtra(o); // true
+                    podeExibir = inst.c.filtroExtra(o);
                 if (mkt.classof(podeExibir) != "Boolean") {
                     podeExibir = true;
                     mkt.w("filtroExtra() precisa retornar boolean");
                 }
                 for (let propFiltro in objFiltro) {
-                    // Faz-se o cruzamento dos dados, quando encontrar a prorpiedade no outro objeto, seta pra executar o filtro.
                     let m = null;
                     if (o[propFiltro] != null) {
-                        m = o[propFiltro]; // m representa o dado do item
+                        m = o[propFiltro];
                     }
                     if (propFiltro.includes(".")) {
-                        m = mkt.getV(propFiltro, o); // m representa o dado do item
-                        //this.l("NoFIltro: ", objFiltro[propFiltro].conteudo.toString().toLowerCase(), " DadoItem: ", m)
+                        m = mkt.getV(propFiltro, o);
                     }
-                    //this.l("objFiltro[propFiltro]: ", objFiltro[propFiltro])
-                    // Cada Propriedade de Cada Item da Array
                     if (m != null) {
-                        // Cruzar referencia com objFiltro e se so avancar se realmente for um objeto
-                        let k = objFiltro[propFiltro]; // k representa a config do filtro para essa propriedade
+                        let k = objFiltro[propFiltro];
                         if (k.formato === "string") {
                             k.conteudo = k.conteudo.toString().toLowerCase();
                             if (!mkt.contem(m, k.conteudo)) {
@@ -1909,14 +1599,12 @@ class mkt {
                             }
                         }
                         else if (k.formato === "stringNumerosVirgula") {
-                            // Filtro por numero exado. Provavelmente sejam duas arrays (MultiSelect), O filtro precisa encontrar tudo no objeto.
                             let filtroInvertido = false;
                             if (mkt.isJson(k.conteudo)) {
-                                let arrayM = m.toString().split(","); // String de Numeros em Array de Strings
-                                let mayBeArrayK = mkt.parseJSON(k.conteudo); // << No objFiltro
+                                let arrayM = m.toString().split(",");
+                                let mayBeArrayK = mkt.parseJSON(k.conteudo);
                                 if (Array.isArray(mayBeArrayK)) {
                                     mayBeArrayK.forEach((numeroK) => {
-                                        // A cada numero encontrado pos split na string do item verificado
                                         filtroInvertido = arrayM.some((numeroM) => {
                                             return Number(numeroM) == Number(numeroK);
                                         });
@@ -1935,43 +1623,35 @@ class mkt {
                                 mkt.w("Não é um JSON");
                         }
                         else if (k.formato === "number") {
-                            // Filtro por numero exado. Apenas exibe este exato numero.
-                            // Ignorar filtro com 0
                             if (Number(m) !== Number(k.conteudo) &&
                                 Number(k.conteudo) !== 0) {
                                 podeExibir = false;
                             }
                         }
                         else if (k.formato === "date") {
-                            // Filtro por Data (Gera milissegundos e faz comparacao)
                             let dateM = new Date(m).getTime();
                             let dateK = new Date(k.conteudo).getTime();
                             if (k.operador === ">=") {
-                                // MAIOR OU IGUAL
                                 if (!(dateM >= dateK)) {
                                     podeExibir = false;
                                 }
                             }
                             else if (k.operador === "<=") {
-                                // MENOR OU IGUAL
                                 if (!(dateM <= dateK)) {
                                     podeExibir = false;
                                 }
                             }
                             else if (k.operador === ">") {
-                                // MAIOR
                                 if (!(dateM > dateK)) {
                                     podeExibir = false;
                                 }
                             }
                             else if (k.operador === "<") {
-                                // MENOR
                                 if (!(dateM < dateK)) {
                                     podeExibir = false;
                                 }
                             }
                             else {
-                                // IGUAL ou nao informado
                                 if (!(dateM == dateK)) {
                                     podeExibir = false;
                                 }
@@ -1985,16 +1665,13 @@ class mkt {
                     }
                 }
                 if (podeExibir) {
-                    // Verificara todas prop, logica da adicao por caracteristica buscada
                     if (objFiltro["mkFullFiltro"]) {
-                        // Se houver pesquisa generica no filtro
                         let k = objFiltro["mkFullFiltro"]["conteudo"]
                             .toString()
-                            .toLowerCase(); // k = Dado que estamos procurando
-                        podeExibir = false; // Inverter para verificar se alguma prop do item possui a caracteristica
+                            .toLowerCase();
+                        podeExibir = false;
                         mkt.aCadaSubPropriedade(o, (v) => {
                             if (v != null) {
-                                // <= Nao pode tentar filtrar em itens nulos
                                 v = v.toString().toLowerCase();
                                 if (v.match(k)) {
                                     podeExibir = true;
@@ -2015,7 +1692,6 @@ class mkt {
         return aFiltrada;
     };
     static delObjetoFromId = (nomeKey, valorKey, listaDados) => {
-        // Remove um objeto quando uma chave e valor bater com o objeto.
         let temp = [];
         if (Array.isArray(listaDados)) {
             listaDados.forEach((o) => {
@@ -2030,7 +1706,6 @@ class mkt {
         return temp;
     };
     static setObjetoFromId = (nomeKey, valorKey, itemModificado, listaDados) => {
-        // Troca o objeto encontrado pelo ItemModificado e retorna a lista modificada;
         if (Array.isArray(listaDados)) {
             for (let i = 0; i < listaDados.length; i++) {
                 if (listaDados[i][nomeKey] == valorKey) {
@@ -2042,7 +1717,6 @@ class mkt {
     };
     static hm = {
         Hide: (ev) => {
-            // Ocultar ao clicar fora.
             let ehm = mkt.Q("body .mkHeadMenu");
             let ethm = ev.target.closest('.mkHeadMenu');
             if (!ethm) {
@@ -2050,18 +1724,16 @@ class mkt {
             }
         },
         Previous: (colName, iof) => {
-            // iof == indexOf mkt.a.build
             if ((mkt.classof(iof) == "String") && (mkt.classof(colName) == "String")) {
-                // Sempre que abre o menu, da o replace do this na estática.
                 let opcoes = mkt.getThis(Number(iof)).getModel().map((o) => { if (o.f)
                     return o.k; }).filter((r) => { return r != null; });
                 let posAtual = opcoes.indexOf(colName);
                 let posAnterior = 0;
-                if (posAtual >= 0) { // Se o atual existe
+                if (posAtual >= 0) {
                     posAnterior = posAtual - 1;
                 }
-                if (posAnterior < 0) { // Era o primeiro
-                    posAnterior = opcoes.length - 1; //Vira Última Posição
+                if (posAnterior < 0) {
+                    posAnterior = opcoes.length - 1;
                 }
                 if (opcoes[posAnterior])
                     mkt.getThis(Number(iof)).headMenuAbrir(opcoes[posAnterior]);
@@ -2076,11 +1748,11 @@ class mkt {
                     return o.k; }).filter((r) => { return r != null; });
                 let posAtual = opcoes.indexOf(colName);
                 let posSeguinte = 0;
-                if (posAtual >= 0) { // Se o atual existe
+                if (posAtual >= 0) {
                     posSeguinte = posAtual + 1;
                 }
-                if (posSeguinte >= opcoes.length) { // Era o último
-                    posSeguinte = 0; //Vira Primeira Posição
+                if (posSeguinte >= opcoes.length) {
+                    posSeguinte = 0;
                 }
                 if (opcoes[posSeguinte])
                     mkt.getThis(Number(iof)).headMenuAbrir(opcoes[posSeguinte]);
@@ -2126,7 +1798,6 @@ class mkt {
                 conteudo: v,
             };
             mkt.getThis(Number(iof)).atualizaNaPaginaUm();
-            // Limpar outros filtros
             mkt.getThis(Number(iof)).hmunsel = [];
             mkt.hm.FiltraExclusivo("", iof);
         },
@@ -2168,7 +1839,6 @@ class mkt {
                                 sel = "";
                             }
                         });
-                        // Tratamento das possíveis saída de dados diferentes.
                         let vOut = v;
                         if (mkt.a.util.data[1].test(vOut)) {
                             vOut = mkt.dataToLocale(vOut);
@@ -2185,7 +1855,6 @@ class mkt {
                 }
                 htmlPossiveis += "</ul>";
                 mkt.Q("body .mkHeadMenu .possibilidades").innerHTML = htmlPossiveis;
-                // Gatilhos para as Possibilidades assim que inseridas;
                 mkt.Ao("click", ".mkHeadMenu .hmMarcarExclusivos", (e) => {
                     let eHmenu = mkt.Q("body .mkHeadMenu");
                     if (e?.id == "headMenuTodos") {
@@ -2199,7 +1868,6 @@ class mkt {
             }
         },
         MarcarExclusivos: (e, colName, iof) => {
-            // Marca de Desmarca
             if (mkt.classof(iof) == "String") {
                 let este = mkt.getThis(Number(iof));
                 if (e) {
@@ -2259,7 +1927,6 @@ class mkt {
                     conteudo: este.hmunsel,
                 };
                 este.atualizaNaPaginaUm();
-                // Limpar outros filtros
                 mkt.Q(".mkHeadMenu input[name='filtrarCampo']").value = "";
             }
             else {
@@ -2268,10 +1935,7 @@ class mkt {
         },
         HideX: Function,
     };
-    // ============================= Web Generic Component ============================ \\	
-    // ================================================================================= \\
     static CarregarON = (nomeDoRequest = "") => {
-        // Gera e exibe um sobreposto elemento que representa o carregamento com opção de ocultar.
         if (!mkt.Q("body .CarregadorMkBlock")) {
             let divCarregadorMkBlock = document.createElement("div");
             divCarregadorMkBlock.className = "CarregadorMkBlock";
@@ -2291,7 +1955,6 @@ class mkt {
         mkt.Q("body").classList.add("CarregadorMkSemScrollY");
     };
     static CarregarOFF = (nomeDoRequest = "") => {
-        // Oculta o elemento do carregador criado pelo CarregarON.
         if (mkt.Q("body .CarregadorMkBlock") != null) {
             mkt.Q("body .CarregadorMkBlock").classList.add("oculto");
         }
@@ -2301,7 +1964,6 @@ class mkt {
         return `<div class="CarregadorMk ${classe}" style="${estilo}"></div>`;
     };
     static detectedServerOff = (mensagem = "Servidor OFF-LINE") => {
-        // Gera e exibe um elemento que representa o servidor offline com opção de ocultar.
         if (mkt.Q("body .offlineBlock") == null) {
             let divOfflineBlock = document.createElement("div");
             divOfflineBlock.className = "offlineBlock";
@@ -2321,12 +1983,10 @@ class mkt {
         mkt.Q("body").classList.add("CarregadorMkSemScrollY");
     };
     static detectedServerOn = () => {
-        // Oculta o elemento de exibição de servidor offline
         mkt.Q("body .offlineBlock")?.classList?.add("oculto");
         mkt.Q("body").classList.remove("CarregadorMkSemScrollY");
     };
     static importar = async (tagBuscar = ".divListagemContainer", tipo = "race", quiet = true) => {
-        // IMPORTAR - Coleta o html externo através da classe mkImportar contendo a url.
         return new Promise((r, x) => {
             let num = mkt.a.contaImportados++;
             if (!quiet) {
@@ -2368,7 +2028,6 @@ class mkt {
         });
     };
     static post = {
-        // Este objeto contém funções para enviar dados em um formato e espera-se que voltem no mesmo.
         json: async (config, json) => {
             if (typeof config != "object")
                 config = { url: config };
@@ -2398,8 +2057,6 @@ class mkt {
         }
     };
     static get = {
-        // Este objeto contém funções para solicitar dados de um formato e espera-se que voltem neste formato.
-        // Exemplo: mkt.get.json({ url:"/GetList", done: (c)=>{console.log("done:",c)}})
         json: async (config) => {
             if (typeof config != "object")
                 config = { url: config };
@@ -2425,69 +2082,40 @@ class mkt {
         }
     };
     static request = async (config) => {
-        // Função para transferencia HTTP que utiliza o FETCH e agrega um config do início da solicitação até o fim.
-        /** REQUEST
-         * Se Utilizar o await, o config enviado retorna com o resultado e o pacote
-         * Se definir o done e/ou o error no config, será executado como callback também.
-         * @param config  Estes são as propriedades em uso do config:
-         * {
-         * 	url: "www.google.com",
-         * 	metoto: "GET",
-         * 	tipo: "application/json",
-         * 	dados: ["a",1],
-         * 	headers: new Headers(),
-         * 	quiet: false,
-         * 	dev: false,
-         * 	carregador: false,
-         * 	done: (c)=>{mkt.l("Deu Boa? ",c.pacote.ok)},
-         * 	error: (c)=>{mkt.l("Deu Boa? ",c.pacote.ok)},
-         *  //pacote: É populado com os dados do pacote.
-         *  //retorno: É populado com os dados retornados.
-         * }
-         * @returns Sempre retorna o config preenchido (utilizar await para capturar o resultado)
-         */
-        // CONFIG ! Necessário
         if (typeof config != "object") {
             mkt.w("É necessário informar o objeto de configuração com a URL.");
-            return { url: null, retorno: null }; // Não há config, Mas pra retornar sempre o config
+            return { url: null, retorno: null };
         }
-        // URL ! Necessário
         if (!config?.url) {
             mkt.w("Necessário informar uma URL nos requests.");
             return { url: config?.url, retorno: null };
         }
-        // GET ? POST, PUT, DELETE
         if (!config?.metodo) {
             mkt.w("Nenhum método informado. Avançando com GET");
             config.metodo = "GET";
         }
         else {
-            if (config.metodo == "POST" && config.dados == null) { // Todo POST requer dados a serem enviados.
+            if (config.metodo == "POST" && config.dados == null) {
                 mkt.w("Método POST, mas SEM DADOS informados. Enviando string vazia ''.");
                 config.dados = "";
             }
         }
-        // Name e Timer Start
         let nomeRequest = config.metodo + ": " + config.url;
         mkt.ct("Request: " + nomeRequest);
-        // JSON / FORM / *
         if (!config?.tipo) {
             mkt.w("Nenhum tipo de dado informado. Avançando com " + mkt.a.JSON);
             config.tipo = mkt.a.JSON;
         }
         if (!config?.headers) {
             config.headers = new Headers();
-            // CONTENT TYPE
             if (config.tipo == mkt.a.JSON) {
                 config.headers.append("Content-Type", config.tipo);
             }
-            // TOKEN Baseado neste primeiro input
             let aft = mkt.Q("input[name='__RequestVerificationToken']")?.value;
             config.headers.append("MKANTI-FORGERY-TOKEN", aft || "");
         }
         if (!config.quiet)
             config.quiet = false;
-        // TIPO DE ENVIO
         config.json = mkt.stringify(config.dados);
         if (config.metodo != mkt.a.GET) {
             if (config.tipo == mkt.a.JSON) {
@@ -2497,8 +2125,6 @@ class mkt {
                 config.body = config.dados;
             }
         }
-        // config.dev = true;
-        // INFO
         if (!config.quiet) {
             mkt.gc(nomeRequest);
             if (config.dev) {
@@ -2518,13 +2144,11 @@ class mkt {
                     }
                 }
             }
-            mkt.ge(); // Fim do metodo
+            mkt.ge();
         }
-        // Inicia o carregador 
         if (config.carregador) {
             mkt.CarregarON(nomeRequest);
         }
-        // O EXECUTOR		
         config.retorno = null;
         config.statusCode = "SEM CONEXÃO";
         try {
@@ -2534,7 +2158,6 @@ class mkt {
                 body: config.body,
             });
             if (!config.pacote.ok) {
-                // FALHA (NÂO 200)
                 config.conectou = false;
                 config.statusCode = config.pacote.status;
                 config.erros = await config.pacote.text();
@@ -2559,12 +2182,9 @@ class mkt {
                 }
             }
             else {
-                // OK == 200 até 299
                 config.conectou = true;
                 config.statusCode = config.pacote.status;
-                // 104, 204, 304, 404, 504 não tem conteúdo.
                 if (config.statusCode != 204) {
-                    // Se OK e TEM CONTEUDO. Transforma baseado na solicitação.
                     if (config.tipo == mkt.a.JSON) {
                         config.retorno = await config.pacote.json();
                     }
@@ -2580,7 +2200,6 @@ class mkt {
                 }
                 if (!config.quiet) {
                     let tam = config.retorno?.length;
-                    // Exibe o tamanho do retorno, se houver
                     if (!tam) {
                         tam = "";
                     }
@@ -2602,33 +2221,26 @@ class mkt {
             }
         }
         catch (error) {
-            // Caso Conection_Refused, Não tem código de erro. Então cai aqui.
             config.conectou = false;
             config.catch = error;
         }
-        // Aqui tem Status code se o erro foi no servidor, Mas não tem se o servidor não estiver online.
         if (!config.conectou) {
             mkt.gc("(" + config.statusCode + ") HTTP ERRO:");
-            // Se bateu no catch, expoem trace error do JS
             if (config.catch && !config.quiet) {
                 mkt.l("Config: ", config);
                 mkt.erro("Erro: ", config.catch);
             }
-            // Executa funcao de erro externa.
             if (config.error) {
                 config.error(config);
             }
             mkt.ge();
         }
-        // Finaliza o carregador 
         if (config.carregador) {
             mkt.CarregarOFF(nomeRequest);
         }
-        // Sempre retorna o config
         return config;
     };
     static mkConfirma = async (texto = "Você tem certeza?", p = null) => {
-        // p { corSim: "bVerde", corNao: "bCinza"}
         let possiveisBotoes = ["bCinza", "bVermelho", "bVerde"];
         let corSim = "bVerde";
         if (p?.corSim != undefined)
@@ -2646,7 +2258,6 @@ class mkt {
                     resposta = true;
                 if (mkt.Q(".mkConfirmadorBloco .mkConfirmadorArea .bBotao.icoNao.true"))
                     resposta = false;
-                //mkt.l("Resposta: " + resposta);
                 if (resposta !== null) {
                     mkt.Q(".mkConfirmadorBloco .icoSim").classList.remove("true");
                     mkt.Q(".mkConfirmadorBloco .icoNao").classList.remove("true");
@@ -2690,41 +2301,35 @@ class mkt {
                 divMkConfirmarBotoes.appendChild(divMkConfirmarNao);
             }
             else {
-                // Limpeza de cores anteriores
                 possiveisBotoes.forEach((s) => {
                     mkt.QAll(".mkConfirmadorBloco .bBotao").forEach((botao) => {
                         botao.classList.remove(s);
                     });
                 });
-                // Set das cores novas
                 mkt.Q(".mkConfirmadorBloco .bBotao.icoSim").classList.add(corSim);
                 mkt.Q(".mkConfirmadorBloco .bBotao.icoNao").classList.add(corNao);
                 mkt.Q(".mkConfirmadorBloco").classList.remove("oculto");
                 mkt.Q(".mkConfirmadorTexto").innerHTML = texto;
             }
             const checkResposta = setInterval(verficiarResposta, 100);
-            // Função de conclusão.
             function retornar(resultado = false) {
                 clearInterval(checkResposta);
                 return r(resultado);
             }
         });
     };
-    // ================ Gerenciamento Monetário / Numérico / Locale =================== \\
-    // ================================================================================= \\
     static getCountry = () => {
         return Intl.DateTimeFormat().resolvedOptions().locale.toUpperCase().slice(3);
     };
     static numToDisplay = (num, c = {}) => {
-        // Formata o número para uma string com casas fixas atrás da vírgula.
         if (c.casas == null)
-            c.casas = 2; // Valor Padrão de casas atrás da vírgula.
+            c.casas = 2;
         if (c.mincasas == null)
-            c.mincasas = c.casas; // Mínimo de casas atrás da vírgula
+            c.mincasas = c.casas;
         if (c.maxcasas == null)
-            c.maxcasas = c.casas; // Máximo de casas atrás da vírgula
+            c.maxcasas = c.casas;
         if (c.milhar == null)
-            c.milhar = false; // Exibe ou remove o separador de milhar
+            c.milhar = false;
         if (c.locale == null)
             c.locale = "pt-BR";
         let opcoes = {
@@ -2738,7 +2343,6 @@ class mkt {
         return num.toLocaleString(c.locale, opcoes);
     };
     static toMoeda = (valor) => {
-        // Texto / Número convertido em Reais
         if (valor != null) {
             if (mkt.classof(valor) == "Number") {
                 valor = valor.toFixed(2);
@@ -2749,7 +2353,6 @@ class mkt {
         return "";
     };
     static fromMoeda = (texto) => {
-        // Retorna um float de duas casas / 0 a partir de um valor monetario 
         if (texto) {
             let d = [...texto.toString()].filter(a => { return mkt.a.util.numeros[1].test(a); }).join("").padStart(3, "0");
             return Number(d.slice(0, -2) + "." + d.slice(-2));
@@ -2757,13 +2360,10 @@ class mkt {
         return 0;
     };
     static toNumber = (valor, c = {}) => {
-        // Informando String/Number, converte para o número de casas c.casas (padrão 2).
-        // mkt.toNumber("R$ 1.222,333") => 1222.33
         if (c.casas == null)
-            c.casas = 2; // Limite de casas apenas para o valor retornado.
+            c.casas = 2;
         if (valor != null) {
             if (mkt.classof(valor) == "String") {
-                // Possiveis separadores
                 let us = [".", ","].reduce((x, y) => (valor.lastIndexOf(x) > valor.lastIndexOf(y)) ? x : y);
                 let posPonto = valor.lastIndexOf(us);
                 if (posPonto >= 0) {
@@ -2779,43 +2379,37 @@ class mkt {
                 }
             }
             else if (mkt.classof(valor) == "Number") {
-                valor = valor.toFixed(c.casas); // <= Vira String, mas essa função apenas devolve Number
+                valor = valor.toFixed(c.casas);
             }
             else {
                 mkt.w("toNumber() - Formato de entrada não implementado: ", mkt.classof(valor));
             }
-            return Number(valor); // <= OutPut Number
+            return Number(valor);
         }
-        return 0; // <= OutPut Number
+        return 0;
     };
     static numMedia = (menor, maior) => {
         return mkt.numToDisplay((mkt.toNumber(menor) + mkt.toNumber(maior)) / 2);
     };
-    // =========================== Gerenciamento de Data ============================== \\
-    // ================================================================================= \\
     static dataGetDia = (ms = null) => {
-        // GET UTC Dia - '18'
         if (ms != null)
             return Number(mkt.dataGetData(ms).split("-")[2]);
         else
             return Number(mkt.dataGetData().split("-")[2]);
     };
     static dataGetMes = (ms = null) => {
-        // GET UTC Ano - '02'
         if (ms != null)
             return Number(mkt.dataGetData(ms).split("-")[1]);
         else
             return Number(mkt.dataGetData().split("-")[1]);
     };
     static dataGetAno = (ms = null) => {
-        // GET UTC Ano - '2024'
         if (ms != null)
             return Number(mkt.dataGetData(ms).split("-")[0]);
         else
             return Number(mkt.dataGetData().split("-")[0]);
     };
     static dataGetData = (ms = null) => {
-        // GET UTC Data - '2024-02-18'
         let ano = new Date().getUTCFullYear();
         let mes = new Date().getUTCMonth() + 1;
         let dia = new Date().getUTCDate();
@@ -2827,23 +2421,18 @@ class mkt {
         return ano.toString().padStart(4, "0") + "-" + mes.toString().padStart(2, "0") + "-" + dia.toString().padStart(2, "0");
     };
     static dataGetDataToday = () => {
-        // Data Local: '18/02/2024'
         return new Date(mkt.dataGetMs()).toLocaleDateString();
     };
     static dataGetHoraToday = () => {
-        // Hora Local: '19:06:07'
         return new Date(Number(mkt.dataGetMs())).toLocaleTimeString();
     };
     static dataGetFullToday = () => {
-        // Data e Hora Local: '18/02/2024 19:06:47'
         return mkt.dataGetDataToday() + " " + mkt.dataGetHoraToday();
     };
     static dataToBRData = (data) => {
-        // Converter de YYYY-MM-DD para DD/MM/YYYY
         let arrayData = data.split("-");
         let stringRetorno = "";
         if (arrayData.length >= 3) {
-            // Tenta evitar bug de conversao
             stringRetorno = arrayData[2] + "/" + arrayData[1] + "/" + arrayData[0];
         }
         else {
@@ -2851,9 +2440,7 @@ class mkt {
         }
         return stringRetorno;
     };
-    // ISO 8601
     static dataToIsoData = (data) => {
-        // Converter de DD/MM/YYYY para YYYY-MM-DD
         let dataDDMMYYYY = new RegExp("^[0-3][0-9][/][0-1][0-9][/][0-2][0-9]{3}$");
         let stringRetorno = data;
         if (dataDDMMYYYY.test(data)) {
@@ -2868,27 +2455,16 @@ class mkt {
         return stringRetorno;
     };
     static isData = (i) => {
-        // Verifica se é data Se não for, retorna 0 (false).
-        // Se for, retorna o tipo de data baseado no regex usado.
         return mkt.a.util.data[1].test(i);
     };
     static dataFormatarSOA = (soa, reverse = false) => {
-        // Converter todas Datas (OBJ / ARRAY / STRING) - Não converte MS (Number)
-        // Como deveria ser:
-        // - A cada Sub Propriedade String
-        // - -> Verificar se é: Só data, Data e Hora
-        // - -> Verfificar se está padrao BR ou ISO
-        // - -> Converter para o padrao BR se reverse estiver false.
-        // - -> Converter para o padrao ISO se reverse estiver true.
-        // MAS Está primitivo, apenas string que foi implementado formato via regex
         function dataFormatarS_Execute(s, rev = false) {
-            // A cada vez que entrar aqui, precisa verificar se a string é um regex da data.
             if (rev) {
                 s = mkt.dataToIsoData(s);
             }
             else {
-                let busca = new RegExp("^[0-2][0-9]{3}[-][0-1][0-9][-][0-3][0-9]$"); // Entre 0000-00-00 a 2999-19-39
-                let busca2 = new RegExp("^[0-2][0-9]{3}[-][0-1][0-9][-][0-3][0-9][T| ][0-2][0-9]:[0-5][0-9]"); // Entre 0000-00-00T00:00 a 2999-19-39T29:59 (Se iniciar nesse formato de ISO )
+                let busca = new RegExp("^[0-2][0-9]{3}[-][0-1][0-9][-][0-3][0-9]$");
+                let busca2 = new RegExp("^[0-2][0-9]{3}[-][0-1][0-9][-][0-3][0-9][T| ][0-2][0-9]:[0-5][0-9]");
                 if (busca2.test(s)) {
                     s = mkt.dataToLocale(s).replaceAll(",", "");
                 }
@@ -2913,15 +2489,12 @@ class mkt {
         else if (tipo == "String") {
             return dataFormatarS_Execute(soa, reverse);
         }
-        return soa; // Outra tipagem, não formata
+        return soa;
     };
     static masterFormatarSOA = (soa) => {
-        // Converter (OBJ / ARRAY) Formatar para normalizar com a exibicao ao usuario.
         return mkt.dataFormatarSOA(mkt.limparOA(soa));
     };
     static dataToLocale = (data) => {
-        // com Objeto DATA, STRING ou MS, retorna data BR.
-        // '2023-12-27T12:01:16.158' => '22/12/2023, 11:18:33'
         let dataNum = Number(data);
         if (mkt.classof(dataNum) != "Number") {
             dataNum = data;
@@ -2932,13 +2505,11 @@ class mkt {
         return new Date(dataNum).toLocaleString();
     };
     static dataGetSegundosDiferenca = (msOld, msNew = null) => {
-        // Retorna a diferença de segundos entre dois MS
         if (msNew == null)
             msNew = mkt.dataGetMs();
         return mkt.dataMsToSegundos(msNew - msOld);
     };
     static dataGetDiasDiferenca = (msOld, msNew = null) => {
-        // Retorna a diferença de dias entre dois MS
         if (msNew == null)
             msNew = mkt.dataGetMs();
         return mkt.dataMsToDias(msNew - msOld);
@@ -2949,12 +2520,12 @@ class mkt {
             dias = dias * -1;
         }
         let strTempo = "";
-        if (dias > 29) { // Em Meses
+        if (dias > 29) {
             if (dias < 60) {
                 strTempo = "1 mês";
             }
             else {
-                if (dias > 365) { // Em Anos (+ Meses restantes)
+                if (dias > 365) {
                     let anos = Math.floor(dias / 365);
                     let diasRestoAno = dias % 365;
                     if (anos < 2) {
@@ -2980,7 +2551,7 @@ class mkt {
         else {
             if (dias < 1) {
                 let segundos = mkt.dataGetSegundosDiferenca(msOld, msNew);
-                if (segundos > 7199) { // Em Horas
+                if (segundos > 7199) {
                     strTempo = Math.floor(segundos / 3600) + " horas";
                 }
                 else {
@@ -2988,7 +2559,7 @@ class mkt {
                         strTempo = "1 hora";
                     }
                     else {
-                        if (segundos > 119) { // Em Minutos
+                        if (segundos > 119) {
                             strTempo = Math.floor(segundos / 60) + " minutos";
                         }
                         else {
@@ -3002,18 +2573,16 @@ class mkt {
                     }
                 }
             }
-            else { // Em Dias
+            else {
                 strTempo = dias + " dias";
             }
         }
         return strTempo;
     };
     static dataGetMs = (data = null) => {
-        // Retorna Milisegundos da data no formato Javascript
         if (data != null) {
             if (data.length > 10) {
-                // Recomendado que os dados cheguem: 'YYYY-MM-DD HH:MM:SS'
-                return new Date(data).getTime(); // Recomendado que os dados 
+                return new Date(data).getTime();
             }
             else {
                 let dataCortada = data.split("-");
@@ -3030,32 +2599,26 @@ class mkt {
         if (reverse) {
             return num * 1000;
         }
-        return Math.trunc(num / 1000); // 1000 ms == 1s
+        return Math.trunc(num / 1000);
     };
     static dataMsToMinutos = (num, reverse = false) => {
         if (reverse) {
             return num * 60000;
         }
-        return Math.trunc(num / 60000); // 1000 * 60
+        return Math.trunc(num / 60000);
     };
     static dataMsToHoras = (num, reverse = false) => {
         if (reverse) {
             return num * 3600000;
         }
-        return Math.trunc(num / 3600000); // 1000 * 3600
+        return Math.trunc(num / 3600000);
     };
     static dataMsToDias = (num, reverse = false) => {
-        // 1000 * 3600 * 24 Considerando todo dia tiver 24 horas (~23h 56m 4.1s)
-        // (360º translacao / 86400000) = ~4.1
-        // Então o erro de 1 dia ocorre 1x ao ano (Dia represeta 1436min).
-        // Por isso, é melhor trabalhar com Dias em vez de outro formato maior.
         if (reverse) {
             return Math.trunc(num * 86400000);
         }
         return Math.trunc(num / 86400000);
     };
-    // =============================== Web Components ================================= \\
-    // ================================================================================= \\
     static mkRecChange = (recItem, texto) => {
         let e = recItem?.parentElement?.previousElementSibling;
         if (e) {
@@ -3082,12 +2645,10 @@ class mkt {
         else {
             mkt.w("Não foi possível alterar o elemento: ", eList);
         }
-        // Atualizar posição da Lista.
         mkt.Reposicionar(eList, false);
     };
     static mkRecRenderizar = async () => {
         mkt.QAll("input.mkRec").forEach(async (e) => {
-            // Gerar Elemento de recomendações
             if (!e.nextElementSibling?.classList.contains("mkRecList")) {
                 let ePai = e.parentElement;
                 let ePos = Array.from(ePai?.children).indexOf(e);
@@ -3095,7 +2656,6 @@ class mkt {
                 divMkRecList.className = "mkRecList emFoco";
                 divMkRecList.setAttribute("tabindex", "-1");
                 ePai?.insertBefore(divMkRecList, ePai?.children[ePos + 1]);
-                // Incrementar Evento
                 let oninput = e.getAttribute("oninput");
                 if (!oninput || !oninput.includes(";mkt.mkRecUpdate(this)")) {
                     e.setAttribute("oninput", oninput + ";mkt.mkRecUpdate(this)");
@@ -3109,7 +2669,6 @@ class mkt {
                     e.setAttribute("onblur", onblur + ";mkt.mkRecFoco(this,false)");
                 }
                 e.setAttribute("autocomplete", "off");
-                // Seguir o Elemento durante o scroll e resize
                 document.addEventListener("scroll", (event) => {
                     mkt.Reposicionar(divMkRecList, false);
                 });
@@ -3120,13 +2679,10 @@ class mkt {
             }
             else {
                 if (!e.getAttribute("data-selarray") && e.getAttribute("data-refill")) {
-                    // REC não foi implementado refill
-                    //await mkt.mkRecDelRefillProcesso(e as HTMLElement);
                 }
                 let geraEvento = false;
                 if (e.classList.contains("atualizar"))
                     geraEvento = true;
-                // Atualiza a lista com base na classe "atualizar" (Gera Evento input e change)
                 if (e.classList.contains("atualizar") || e.classList.contains("atualizarSemEvento")) {
                     e.classList.remove("atualizar");
                     e.classList.remove("atualizarSemEvento");
@@ -3135,8 +2691,6 @@ class mkt {
                     e.classList.remove("atualizando");
                 }
                 if (geraEvento) {
-                    // Executa evento, em todos atualizar.
-                    // O evento serve para que ao trocar o 1, o 2 execute input para então o 3 tb ter como saber que é pra atualizar
                     e.dispatchEvent(new Event("input"));
                     e.dispatchEvent(new Event("change"));
                 }
@@ -3144,8 +2698,6 @@ class mkt {
         });
     };
     static mkRecUpdate = (e) => {
-        // Recebe o elemento input principal.
-        // GERA CADA ITEM DA LISTA COM BASE NO JSON
         if (e?.getAttribute("data-selarray") != "") {
             let eList = e.nextElementSibling;
             let array = e.dataset.selarray;
@@ -3153,7 +2705,6 @@ class mkt {
             if (mkt.isJson(array)) {
                 let kvList = mkt.parseJSON(array);
                 let c = 0;
-                /* ITENS */
                 kvList.forEach((o) => {
                     if (o.v != null && o.v != "") {
                         if (mkt.like(e.value, o.v) && e.value.trim() != o.v.trim()) {
@@ -3181,29 +2732,19 @@ class mkt {
             mkt.w("mkRecUpdate(e): Elemento não encontrado ou selarray dele está vazia.", e);
         }
     };
-    // ======================== REGRAR | VALIDAR | MASCARAR =========================== \\
-    // ================================================================================= \\
     static regras = [];
     static regraExe = async (e, tipoEvento = "blur", ev = null) => {
-        // Função que executa as regras deste campo com base nos objetos salvos
-        // O EVENTO pode estar nulo no FULL, pois a função que chamou regrasValidas() não passou o evento.
-        // Quando concluir (onChange), executar novamentepra remover erros já corrigidos (justamente no último caracter).
-        //mkt.l("Regrar " + tipoEvento + ":", ev);
         return new Promise((resolver) => {
-            // Antes de buscar a regra para esse elemento, limpa os que estão fora do dom
             let tempRegras = [];
             mkt.regras.forEach((r) => {
                 if (mkt.isInsideDom(r.e)) {
                     tempRegras.push(r);
                 }
                 else {
-                    // Não está mais no DOM e será removida.
-                    // Mas emite aviso, pois não foi removida naturalmente.
-                    //mkt.l("Regrar > AutoRemoção de Validação do campo: ", r.n);
                 }
                 ;
             });
-            mkt.regras = tempRegras; // Requer Propriedade destravada
+            mkt.regras = tempRegras;
             let erros = [];
             let regrasDoE = mkt.regras.find((o) => o.e == e);
             let eDisplay = regrasDoE?.c.querySelector(".mkRegrar[data-valmsg-for='" + regrasDoE.n + "']");
@@ -3223,23 +2764,22 @@ class mkt {
                     if (re.quiet == null) {
                         re.quiet = true;
                     }
-                    let podeValidar = re.on; // Padrão validar, mas se regra estiver com o on=false, já inicia o giro sem validar;
-                    if (!mkt.isVisible(e)) { // NÃO estiver VISIVEL / fora do dom, padrão sem validar
+                    let podeValidar = re.on;
+                    if (!mkt.isVisible(e)) {
                         podeValidar = false;
                     }
-                    if (e.classList.contains("disabled")) { // Desativado, padrão sem validar
+                    if (e.classList.contains("disabled")) {
                         podeValidar = false;
                     }
-                    if (re.vazio == true && e[re.target] == "") { // Ignora Validação Se estiver vindo vazio e vazio pode
+                    if (re.vazio == true && e[re.target] == "") {
                         podeValidar = false;
                     }
-                    // Validar apenas quando i estiver true na regra OU  Visível e Não bloqueado
-                    if (podeValidar || re.f) { // re.f == FORCE, pode ser passado no objeto do regrar.
+                    if (podeValidar || re.f) {
                         promises.push(new Promise((prom) => {
                             re.e = e;
                             let regraK = re.k?.toLowerCase();
                             switch (regraK) {
-                                case "mascarar": // EXE
+                                case "mascarar":
                                     if (e[re.target]) {
                                         let mascarado = mkt.mascarar(e[re.target], re.v);
                                         if (mascarado != null)
@@ -3247,19 +2787,19 @@ class mkt {
                                     }
                                     prom(re.k);
                                     break;
-                                case "moeda": // EXE
+                                case "moeda":
                                     if (e[re.target]) {
                                         e[re.target] = mkt.toMoeda(e[re.target]);
                                     }
                                     prom(re.k);
                                     break;
-                                case "numero": // EXE
+                                case "numero":
                                     if (e[re.target]) {
                                         e[re.target] = mkt.numToDisplay(e[re.target]);
                                     }
                                     prom(re.k);
                                     break;
-                                case "charproibido": // EXE
+                                case "charproibido":
                                     for (let c of re.v) {
                                         if (e[re.target].includes(c)) {
                                             if (!re.m)
@@ -3270,7 +2810,7 @@ class mkt {
                                     }
                                     prom(re.k);
                                     break;
-                                case "apenasnumeros": // EXE
+                                case "apenasnumeros":
                                     if (!(mkt.a.util.numeros[1].test(e[re.target]))) {
                                         if (!re.m)
                                             re.m = mkt.a.msg.apenasnumeros;
@@ -3279,7 +2819,7 @@ class mkt {
                                     }
                                     prom(re.k);
                                     break;
-                                case "apenasletras": // EXE
+                                case "apenasletras":
                                     if (!(mkt.a.util.letras[1].test(e[re.target]))) {
                                         if (!re.m)
                                             re.m = mkt.a.msg.apenasletras;
@@ -3288,7 +2828,7 @@ class mkt {
                                     }
                                     prom(re.k);
                                     break;
-                                case "maxchars": // EXE
+                                case "maxchars":
                                     e.setAttribute("maxlength", re.v);
                                     if (e[re.target].length > Number(re.v)) {
                                         if (!re.m)
@@ -3298,7 +2838,7 @@ class mkt {
                                     }
                                     prom(re.k);
                                     break;
-                                case "minchars": // EXE
+                                case "minchars":
                                     e.setAttribute("minlength", re.v);
                                     if (e[re.target].length < Number(re.v)) {
                                         if (!re.m)
@@ -3314,7 +2854,7 @@ class mkt {
                                     }
                                     prom(re.k);
                                     break;
-                                case "datamax": // EXE
+                                case "datamax":
                                     if (mkt.dataGetMs(e[re.target]) > mkt.dataGetMs(re.v)) {
                                         if (!re.m)
                                             re.m = mkt.a.msg.datamax;
@@ -3323,7 +2863,7 @@ class mkt {
                                     }
                                     prom(re.k);
                                     break;
-                                case "nummin": // EXE
+                                case "nummin":
                                     e.setAttribute("min", re.v);
                                     if (mkt.toNumber(Number(e[re.target])) < Number(re.v)) {
                                         if (!re.m)
@@ -3333,7 +2873,7 @@ class mkt {
                                     }
                                     prom(re.k);
                                     break;
-                                case "nummax": // EXE
+                                case "nummax":
                                     e.setAttribute("max", re.v);
                                     if (mkt.toNumber(Number(e[re.target])) > Number(re.v)) {
                                         if (!re.m)
@@ -3343,11 +2883,7 @@ class mkt {
                                     }
                                     prom(re.k);
                                     break;
-                                case "obrigatorio": // INFO
-                                    //mkt.l("Regrar OBRIGATORIO " + tipoEvento + ":", ev);
-                                    // A regra obrigatório se executa em todas: full, blur, input, inicial(se houver);
-                                    //	if (e.getAttribute("type")?.toLowerCase() != "file") { // Se Não for um input FILE, que gera blur
-                                    // Aqui tem que arrumar, para poder permitir a regra em input file de alguma forma.
+                                case "obrigatorio":
                                     if (re.v == null)
                                         re.v = "true";
                                     if (re.v == "true") {
@@ -3363,10 +2899,9 @@ class mkt {
                                             erros.push(re);
                                         }
                                     }
-                                    //}
                                     prom(re.k);
                                     break;
-                                case "regex": // INFO
+                                case "regex":
                                     if ((tipoEvento == "full") || (tipoEvento == "blur")) {
                                         if (!(new RegExp(re.v).test(e[re.target]))) {
                                             if (!re.m)
@@ -3376,9 +2911,8 @@ class mkt {
                                     }
                                     prom(re.k);
                                     break;
-                                case "some": // INFO 
+                                case "some":
                                     if ((tipoEvento == "full") || (tipoEvento == "blur")) {
-                                        // (Ao menos 1 ocorrencia do regex informado) (Pode gerar varios erros)
                                         let _vs;
                                         re.vmfail = [];
                                         let b = false;
@@ -3398,7 +2932,7 @@ class mkt {
                                     }
                                     prom(re.k);
                                     break;
-                                case "mincharsinfo": // INFO
+                                case "mincharsinfo":
                                     if ((tipoEvento == "full") || (tipoEvento == "blur")) {
                                         e.setAttribute("minlength", re.v);
                                         if (e[re.target].length < Number(re.v)) {
@@ -3409,7 +2943,7 @@ class mkt {
                                     }
                                     prom(re.k);
                                     break;
-                                case "maxcharsinfo": // INFO
+                                case "maxcharsinfo":
                                     if ((tipoEvento == "full") || (tipoEvento == "blur")) {
                                         if (e[re.target].length > Number(re.v)) {
                                             if (!re.m)
@@ -3419,7 +2953,7 @@ class mkt {
                                     }
                                     prom(re.k);
                                     break;
-                                case "fn": // INFO
+                                case "fn":
                                     if ((tipoEvento == "full") || (tipoEvento == "blur")) {
                                         if (!(re.v(e[re.target]))) {
                                             if (!re.m)
@@ -3429,7 +2963,7 @@ class mkt {
                                     }
                                     prom(re.k);
                                     break;
-                                case "datamaiorque": // INFO
+                                case "datamaiorque":
                                     if ((tipoEvento == "full") || (tipoEvento == "blur")) {
                                         if (mkt.dataGetMs(e[re.target]) < mkt.dataGetMs(re.v)) {
                                             if (!re.m)
@@ -3439,7 +2973,7 @@ class mkt {
                                     }
                                     prom(re.k);
                                     break;
-                                case "datamenorque": // INFO
+                                case "datamenorque":
                                     if ((tipoEvento == "full") || (tipoEvento == "blur")) {
                                         if (mkt.dataGetMs(e[re.target]) > mkt.dataGetMs(re.v)) {
                                             if (!re.m)
@@ -3449,16 +2983,13 @@ class mkt {
                                     }
                                     prom(re.k);
                                     break;
-                                case "server": // INFO - ASYNC EVENT
-                                    //(Verificação remota, DB / API)
+                                case "server":
                                     if ((tipoEvento == "full") || (tipoEvento == "blur")) {
-                                        // Apenas executa server no blur
                                         if (!re.m)
                                             re.m = mkt.a.msg.in;
                                         if (e[re.target] != "") {
                                             e.classList.add("pending");
                                             let queryString = "?" + regrasDoE.n + "=" + e[re.target];
-                                            // Anexar campos adicionais:
                                             if (re.a) {
                                                 let arrAdd = re.a.split(",");
                                                 arrAdd.forEach((s) => {
@@ -3490,21 +3021,18 @@ class mkt {
                                         }
                                     }
                                     else {
-                                        // Entrou aqui por que o evento não é blur. Então finaliza a promise.
                                         prom(re.k);
                                     }
                                     break;
-                                case "validate": // INFO - ASYNC EVENT
-                                    //(Verificação remota, DB / API)
+                                case "validate":
                                     if ((tipoEvento == "full") || (tipoEvento == "blur")) {
-                                        // Apenas executa server no blur
                                         if (!re.m)
                                             re.m = mkt.a.msg.in;
                                         if (e[re.target] != "") {
                                             e.classList.add("pending");
                                             let queryString = "?field=" + regrasDoE.n + "&value=" + e[re.target];
                                             mkt.get.json({ url: re.v + queryString, quiet: re.quiet }).then((p) => {
-                                                if (p.retorno != null) { // Null = Nao encontrado; Objeto = Encontrou;
+                                                if (p.retorno != null) {
                                                     if (mkt.classof(p.retorno) == "String") {
                                                         re.m = p.retorno;
                                                     }
@@ -3520,23 +3048,21 @@ class mkt {
                                         }
                                     }
                                     else {
-                                        // Entrou aqui por que o evento não é blur. Então finaliza a promise.
                                         prom(re.k);
                                     }
                                     break;
                                 default:
                                     mkt.w("Regrar() - Regra não encontrada: ", regraK);
                                     prom(null);
-                            } // fim switch regras possíveis
-                        })); // <= Promessas push
-                    } // <= Fim do PodeValidar
-                }); // <= A cada regra
-            } // Possui regra
+                            }
+                        }));
+                    }
+                });
+            }
             Promise.all(promises).then(ok => {
                 if (erros.length > 0) {
                     let mensagens = erros.map((a) => {
                         if (Array.isArray(a.vmfail)) {
-                            // Se 1 regra gerar varios erros, junta por virgula.
                             a.m = mkt.a.msg.some + a.vmfail.join(", ");
                         }
                         return a.m;
@@ -3549,14 +3075,12 @@ class mkt {
                     mkt.regraDisplay(e, false, eDisplay, "");
                 }
                 resolver(erros);
-            }); // Promise All
-        }); // Return Promise regraExe
+            });
+        });
     };
     static regrasValidas = async (container, ev = null) => {
-        // Retorna um booleano indicando se este container está ok ou não.
         container = mkt.Q(container);
         let validou = false;
-        // Informando um container qualquer, executa apenas as regras dentro deles.
         let promises = [];
         mkt.regras.forEach((regra) => {
             if (mkt.isInside(regra.e, container)) {
@@ -3582,17 +3106,14 @@ class mkt {
         return validou;
     };
     static regraDisplay = (e, erro, eDisplay, mensagem = "") => {
-        // Reagindo similar ao Unobtrusive, mas usando oculto no span.
         if (erro) {
-            // EXIBE ERRO
             e.classList.remove("valid");
             e.classList.add("input-validation-error");
             eDisplay?.classList.remove("oculto");
             eDisplay?.classList.add("field-validation-error");
         }
         else {
-            // OCULTA ERRO
-            if (e.offsetParent && !e.classList.contains("disabled")) { // Não setar valido nos desativados/invisiveis
+            if (e.offsetParent && !e.classList.contains("disabled")) {
                 e.classList.add("valid");
             }
             e.classList.remove("input-validation-error");
@@ -3602,9 +3123,7 @@ class mkt {
             eDisplay.innerHTML = mensagem;
     };
     static regraOcultar = (container) => {
-        // Atualiza Displays .mkRegrar baseado no Container
         container = mkt.Q(container);
-        // A cada regra envia um OCULTAR ERROS
         mkt.regras.forEach((r) => {
             let e = r.e;
             let eDisplay = r.c.querySelector(".mkRegrar[data-valmsg-for='" + r.n + "']");
@@ -3619,8 +3138,6 @@ class mkt {
         });
     };
     static regraRemover = async (container) => {
-        // Remove (Elimina) as regras de um determinado container
-        // Para refazer a regra, precisa utilizar mkt.regrar novamente.
         container = mkt.Q(container);
         let tempRegras = [];
         mkt.regras.forEach((r) => {
@@ -3629,26 +3146,15 @@ class mkt {
             }
             ;
         });
-        mkt.regras = tempRegras; // Requer Propriedade destravada
+        mkt.regras = tempRegras;
     };
     static regrar = (container, nome, ...obj) => {
-        /** Informar o Container, Nome do input e OBJ (Regra)
-         * Atributos do Objeto
-         * k:		nome da regra a ser utilizada
-         * v: 	atributo da regra escolhida
-         * m: 	mensagem de exibição caso esteja em estado falso.
-         * a: 	auto executar essa regra assim que regrar (true/false)
-         * f:		força validar mesmo se estiver invisivel / desativado (true/false)
-         * on: 	padrão true. define se vai executar a regra ou não.
-         */
         if (typeof nome != "string") {
             return mkt.w("Regrar() precisa receber o nome do input como string");
         }
         container = mkt.Q(container);
         let e = container?.querySelector("*[name='" + nome + "']");
-        // Se elemento for encontrado dentro do container
         if (e) {
-            // Quando o elemento é um Input File, atribui o OnChange, em vez do blur e input.
             if (e.getAttribute("type") == "file") {
                 mkt.Ao("change", e, () => { mkt.regraExe(e, "change"); });
             }
@@ -3656,12 +3162,10 @@ class mkt {
                 mkt.atribuir(e, () => { mkt.regraExe(e, "input"); }, "oninput");
                 mkt.atribuir(e, (ev) => { mkt.regraExe(e, "blur", ev); }, "onblur");
             }
-            // Buscar Elemento e regra
             let auto = false;
             let novaregra = { c: container, n: nome, e: e, r: [...obj] };
             let posE = mkt.regras.findIndex((o) => o.e == e);
             if (posE >= 0) {
-                // Elemento já encontrado, substituir a regra específica
                 novaregra.r.forEach((i) => {
                     let posRe = mkt.regras[posE].r.findIndex((o) => o.k == i.k);
                     if (posRe >= 0) {
@@ -3677,7 +3181,6 @@ class mkt {
             else {
                 mkt.regras.push(novaregra);
             }
-            // Auto Executa
             if (auto) {
                 mkt.regraExe(e, "inicial");
             }
@@ -3687,12 +3190,9 @@ class mkt {
         }
     };
     static mascarar = (texto, mascara) => {
-        // Informando uma máscara e um texto, retorna dado mascarado.
-        // Mascaras: 0=Numero, A=Letra, Outros repete.
         if (mkt.classof(mascara) != "String") {
-            // Se passar uma funcao para a mascara, Executa a função enviando o texto e deve retornar uma string da mascara para esse texto.
             if (mkt.classof(mascara) == "Function") {
-                mascara = mascara(texto); // Sobreextreve a mascara a ser executada pelo retorno da função.
+                mascara = mascara(texto);
             }
         }
         if (mascara) {
@@ -3700,10 +3200,9 @@ class mkt {
                 if (mkt.classof(texto) != "String")
                     texto = texto?.toString();
                 if (mkt.classof(mascara) != "String")
-                    mascara = mascara?.toString(); // Se a chegar até aqui e ainda não for string
+                    mascara = mascara?.toString();
                 let ms = [...mkt.clonar(mascara)];
                 let ss = [...mkt.clonar(texto)];
-                // this.l("ss: ", ss);
                 let ts = [];
                 let pm = 0;
                 ss.forEach(s => {
@@ -3720,23 +3219,17 @@ class mkt {
                     ts.push(t);
                     pm++;
                 });
-                // this.l("ts: ", ts);
-                // this.l("ms: ", ms);
                 let r = [];
                 for (let tp = 0, mp = 0; (tp < ts.length) && (mp < ms.length); tp++, mp++) {
                     if (((ms[mp] === "0" || ms[mp] === "A") && (ms[mp] == ts[tp]))
                         || (ms[mp] === "S" && (ts[tp] === "A" || ts[tp] === "0"))) {
-                        // FORMATO IGUAL.
                         r.push(ss[tp]);
                     }
                     else {
-                        // MESMO CARACTER
                         if (ss[tp] === ms[mp]) {
                             r.push(ss[tp]);
                         }
                         else {
-                            // this.l("> ", ss[tp], " vs ", ms[mp])
-                            // Mágica: Coloca o especial que o usuário não colocou.
                             if (ms[mp] != "0" && ms[mp] != "A" && ms[mp] != "S") {
                                 r.push(ms[mp]);
                                 tp--;
@@ -3756,64 +3249,52 @@ class mkt {
         return null;
     };
     static mascaraTelefoneDDI = (texto) => {
-        // Essa máscara tenta encontrar um espaço entre DDI e DDD e Telefone para formatar.
-        // Formata DDI apenas se estiver presente o +
         let str = texto;
         let resultado = "";
-        if (mkt.classof(str) == "String") { // Ex: "+55 (48) 99968-0348"
+        if (mkt.classof(str) == "String") {
             let parteDDI = "";
             let parteDDDTelefone = "";
-            if (str.indexOf("+") >= 0) { // true (2)
-                str = str.replaceAll("+", ""); // "55 (48) 99968-0348"
-                // ETAPA 1: Difivir o DDI do DDD+TELEFONE
-                if (str.indexOf(" ") >= 0) { // true (2)
-                    // Encontrou Espaço. (Supor que seja a divisória do DDI com o DDD)
-                    parteDDI = mkt.apenasNumeros(str.split(" ")[0]); // "55"
-                    parteDDDTelefone = str.slice(str.split(" ")[0].length); // " (48) 99968-0348"
+            if (str.indexOf("+") >= 0) {
+                str = str.replaceAll("+", "");
+                if (str.indexOf(" ") >= 0) {
+                    parteDDI = mkt.apenasNumeros(str.split(" ")[0]);
+                    parteDDDTelefone = str.slice(str.split(" ")[0].length);
                 }
                 else {
-                    // Nenhum espaço encontrado (Supor que DDI tem 2 caracteres) "+5548999680348"
-                    parteDDI = mkt.apenasNumeros(str).slice(0, 2); // "55"
-                    parteDDDTelefone = str.slice(str.indexOf(parteDDI) + parteDDI.length); // " (48) 99968-0348"
+                    parteDDI = mkt.apenasNumeros(str).slice(0, 2);
+                    parteDDDTelefone = str.slice(str.indexOf(parteDDI) + parteDDI.length);
                 }
                 resultado = "+" + parteDDI;
                 if (texto.length >= 5) {
                     resultado += " ";
                 }
-                parteDDDTelefone = parteDDDTelefone.trim(); // Apenas por garantia "(48) 99968-0348"
-                // ETAPA 2 QUANDO for DDI 55, Formata o DDD
-                if (parteDDDTelefone.indexOf(" ") >= 0) { // true (4)
-                    // DDD+Telefone contém espaço. (Supor que é a divisão entre DDD e Telefone)
-                    let parteDDD = mkt.apenasNumeros(parteDDDTelefone.split(" ")[0]); // "48"
-                    let parteTelefone = mkt.apenasNumeros(parteDDDTelefone.slice(parteDDDTelefone.split(" ")[0].length).trim()); // "999680348"
-                    let p1 = parteTelefone.length - 5; // 4
-                    if (p1 > 0) { // true (tamanho suficiente pra por o tracinho)
-                        parteTelefone = parteTelefone.slice(0, p1 + 1) + "-" + parteTelefone.slice(p1 + 1); // "9996-0348"
+                parteDDDTelefone = parteDDDTelefone.trim();
+                if (parteDDDTelefone.indexOf(" ") >= 0) {
+                    let parteDDD = mkt.apenasNumeros(parteDDDTelefone.split(" ")[0]);
+                    let parteTelefone = mkt.apenasNumeros(parteDDDTelefone.slice(parteDDDTelefone.split(" ")[0].length).trim());
+                    let p1 = parteTelefone.length - 5;
+                    if (p1 > 0) {
+                        parteTelefone = parteTelefone.slice(0, p1 + 1) + "-" + parteTelefone.slice(p1 + 1);
                     }
                     resultado += "(" + parteDDD + ") " + parteTelefone;
                 }
                 else {
                     if (parteDDI == "55") {
-                        // Pais Brasil, mas sem espaco:
-                        let parteDDD = mkt.apenasNumeros(parteDDDTelefone).slice(0, 2); // "48"
-                        let parteTelefone = mkt.apenasNumeros(parteDDDTelefone).slice(2); // "999680348"
-                        let p1 = parteTelefone.length - 5; // 4
-                        if (p1 > 0) { // true (tamanho suficiente pra por o tracinho)
-                            parteTelefone = parteTelefone.slice(0, p1 + 1) + "-" + parteTelefone.slice(p1 + 1); // "9996-0348"
+                        let parteDDD = mkt.apenasNumeros(parteDDDTelefone).slice(0, 2);
+                        let parteTelefone = mkt.apenasNumeros(parteDDDTelefone).slice(2);
+                        let p1 = parteTelefone.length - 5;
+                        if (p1 > 0) {
+                            parteTelefone = parteTelefone.slice(0, p1 + 1) + "-" + parteTelefone.slice(p1 + 1);
                         }
                         resultado += "(" + parteDDD + ") " + parteTelefone;
                     }
                     else {
-                        // Sem espaco e não é 55 
-                        resultado += mkt.apenasNumeros(parteDDDTelefone); // "+54 48999680348" 
+                        resultado += mkt.apenasNumeros(parteDDDTelefone);
                     }
                 }
             }
             else {
-                // Sem +, padrão nacional BR
-                if ((mkt.apenasNumeros(str).startsWith("55")) && (mkt.apenasNumeros(str).length >= 12)) { // "55 48 99968-0348"
-                    // Se iniciar com 55, esse 55 pode ser Brasil / Rio Grande do Sul.
-                    // Remove 55 do Brasil se for tamanho >= 12. (12/13)
+                if ((mkt.apenasNumeros(str).startsWith("55")) && (mkt.apenasNumeros(str).length >= 12)) {
                     let temp = str.trim();
                     let pos = temp.indexOf("55");
                     resultado = "+55 " + mkt.mascarar(temp.slice(pos + 2), mkt.a.util.telefone_ddd[0]);
@@ -3833,41 +3314,22 @@ class mkt {
         mkt.l("Tel DDI: ", texto, " -> ", resultado);
         return resultado;
     };
-    // ============================ TOOLS e JS HELPERS ================================ \\
-    // ================================================================================= \\
     static contem = (strMaior, strMenor) => {
-        // Comparardor de string CONTEM
         strMaior = mkt.removeEspecias(strMaior).toLowerCase();
         strMenor = mkt.removeEspecias(strMenor).toLowerCase();
         return (strMaior.includes(strMenor));
     };
     static like = (strMenor, strMaior) => {
-        // Comparardor de string LIKE
         let result = false;
-        // Apenas Numeros e Letras está presente,
-        // pois se utilizar str.match(),
-        // não pode conter os caracteres reservados do regex.
-        // RemoveEspeciais já inclui apenasNumerosELetras.
         let rmMaior = mkt.removeEspecias(strMaior.toLowerCase().trim());
         let rmMenor = mkt.removeEspecias(strMenor.toLowerCase().trim());
         if (rmMaior.match(rmMenor)) {
             result = true;
         }
-        // Desabilitei pois já estou removendo os especiais em cima. e a função precisa ser rápida.
-        // Internacionalizador de comparação... (Galês CH e DD e Latin ä))
-        // let likeMatcher = new Intl.Collator(undefined, {
-        // 	sensitivity: "base",
-        // 	ignorePunctuation: true,
-        // }).compare;
-        // if (likeMatcher(strMaior, strMenor) === 0) {
-        // 	result = true;
-        // }
         return result;
     };
     static classof = (o) => {
-        // Identifica a classe do argumento informado.
         let nomeClasse = Object.prototype.toString.call(o).slice(8, -1);
-        // Exceção, apenas quando "Number" converter os NaN pra "NaN".
         if (nomeClasse == "Number") {
             if (o.toString() == "NaN") {
                 nomeClasse = "NaN";
@@ -3877,17 +3339,13 @@ class mkt {
         return nomeClasse;
     };
     static clonar = (i) => {
-        // Clona com a técnica de montar e desmontar string.
         return mkt.parseJSON(mkt.stringify(i));
     };
     static ordenar = (array, nomeProp, sortDir) => {
-        // Efetua o ordenamento do array informando a propriedade e a direção (0,1,2)
         if (nomeProp) {
-            // 0 - Crescente:
             array.sort((oA, oB) => {
                 let a = nomeProp ? mkt.getV(nomeProp, oA) : null;
                 let b = nomeProp ? mkt.getV(nomeProp, oB) : null;
-                //let b = oB[nomeProp];
                 if (typeof a == "string")
                     a = a.toLowerCase().trim();
                 if (typeof b == "string")
@@ -3898,7 +3356,7 @@ class mkt {
                     if (a < b)
                         return -1;
                 }
-                if (!a || !b) { // Nulo
+                if (!a || !b) {
                     return 0;
                 }
                 return -1;
@@ -3907,12 +3365,10 @@ class mkt {
                 mkt.a.contaOrdena = 0;
             }
             mkt.a.contaOrdena++;
-            // 1 - Decrescente
             if (sortDir === 1) {
                 array = array.reverse();
             }
             else if (sortDir === 2) {
-                // 2 - Toogle 
                 if (mkt.a.contaOrdena % 2 == 0) {
                     array = array.reverse();
                 }
@@ -3921,7 +3377,6 @@ class mkt {
         return array;
     };
     static toBooleanOA = (oa) => {
-        // Converte (OBJ / ARRAY) Limpar Nulos e Vazios
         let toBoolean_Execute = (o) => {
             for (let propName in o) {
                 let comparado = o[propName]?.toString()?.toLowerCase();
@@ -3937,7 +3392,6 @@ class mkt {
         return mkt.aCadaObjExecuta(oa, toBoolean_Execute);
     };
     static limparOA = (oa) => {
-        // Converte (OBJ / ARRAY) Limpar Nulos e Vazios
         let limparO_Execute = (o) => {
             for (let propName in o) {
                 if (o[propName] === null ||
@@ -3950,7 +3404,6 @@ class mkt {
         return mkt.aCadaObjExecuta(oa, limparO_Execute);
     };
     static aCadaSubPropriedade = (OA, funcao = null, exceto = "Object") => {
-        // Executa a FUNCAO em todas as propriedades deste OA. Inclusive Obj.Obj... (Matriz de Dados)
         let c = 0;
         for (let a in OA) {
             if (mkt.classof(OA[a]) != exceto) {
@@ -3959,7 +3412,6 @@ class mkt {
                 }
             }
             c++;
-            // Se o atual é objeto, itera internamente
             if (mkt.classof(OA[a]) == "Object") {
                 c += mkt.aCadaSubPropriedade(OA[a], funcao, exceto);
             }
@@ -3967,7 +3419,6 @@ class mkt {
         return c;
     };
     static aCadaObjExecuta = (oa, func) => {
-        // Verifica se ARRAY ou OBJETO e executa a função FUNC a cada objeto dentro de OA.
         if (Array.isArray(oa)) {
             for (let i = 0; i < oa.length; i++) {
                 func(oa[i]);
@@ -3979,23 +3430,20 @@ class mkt {
         return oa;
     };
     static aCadaElemento = (query, fn) => {
-        // A cada elemento encontrado pelo QAll executa a funcao
         let elementos = mkt.QAll(query);
         elementos.forEach((e) => {
             fn(e);
         });
-        // Sempre retorna uma array por caus do QAll
         return elementos;
     };
     static parseJSON = (t, removeRaw = false) => {
-        // Se for um JSON válido. Retorna o objeto, se não null.
         if (removeRaw) {
             if (mkt.classof(t) == "String") {
                 t = t.removeRaw(removeRaw);
             }
         }
         if (t === "")
-            return ""; // Vazio
+            return "";
         if (mkt.isJson(t)) {
             return JSON.parse(t);
         }
@@ -4005,21 +3453,16 @@ class mkt {
         }
     };
     static stringify = (o) => {
-        // Converte o Objeto em String JSON, e aproveita e já remove alguns caracteres de controle.
         return JSON.stringify(o)
             ?.replaceAll("\n", "")
             ?.replaceAll("\r", "")
             ?.replaceAll("\t", "")
             ?.replaceAll("\b", "")
             ?.replaceAll("\f", "");
-        //?.replaceAll('&', "&amp;") // Post C# não identifica os campos do JSON
-        //?.replaceAll('"', "&quot;")
-        //.replaceAll("'", "&#39;");
     };
     static clicarNaAba = (e) => {
-        // Funcionalidade de clicar na aba e trocar a classe ativo
         let pag = Number(e?.getAttribute("data-pag"));
-        if (mkt.classof(pag) == "Number") { // Caso não for NaN
+        if (mkt.classof(pag) == "Number") {
             let mkAbasTotal = 0;
             let mkAbas = e.closest(".mkAbas");
             mkAbas?.querySelectorAll("a").forEach((a) => {
@@ -4028,7 +3471,6 @@ class mkt {
             });
             e.classList.add("active");
             for (let i = 1; i <= mkAbasTotal; i++) {
-                // Busca, Oculta todas, mas exibe a clicada.
                 mkt.QAll(".mkAba" + i).forEach((e) => {
                     if (i == pag) {
                         e.classList.remove("oculto");
@@ -4041,13 +3483,11 @@ class mkt {
         }
     };
     static Workers = (numWorkers = navigator.hardwareConcurrency || 5) => {
-        // POOL de Workers e funções de comunicação.
         if (numWorkers > 3)
-            numWorkers = 3; // Máximo
+            numWorkers = 3;
         if (numWorkers < 1)
-            numWorkers = 1; // Mínimo
+            numWorkers = 1;
         return new Promise((r) => {
-            // Constroi elemento se ele não existir:
             if (!document.querySelector("#mktWorker")) {
                 let we = document.createElement("script");
                 we.setAttribute("type", "javascript/worker");
@@ -4132,13 +3572,11 @@ class mkt {
 				}`;
                 document.body.append(we);
             }
-            // Transformar o elemento em link para dar inicio a classe.
             let workerBlob = window.URL.createObjectURL(new Blob([mkt.Q("#mktWorker")?.textContent], { type: "text/javascript" }));
             class WorkerPool {
                 idleWorkers;
                 workQueue;
                 workerMap;
-                // New
                 constructor(numWorkers, workerSource) {
                     this.idleWorkers = [];
                     this.workQueue = [];
@@ -4154,7 +3592,6 @@ class mkt {
                         this.idleWorkers[i] = worker;
                     }
                 }
-                // Response
                 _workerDone(worker, error, msg) {
                     let [res, rej] = this.workerMap.get(worker);
                     this.workerMap.delete(worker);
@@ -4168,7 +3605,6 @@ class mkt {
                     }
                     error === null ? res(msg) : rej(error);
                 }
-                // Send Task
                 addTask(task) {
                     return new Promise((res, rej) => {
                         if (this.idleWorkers.length > 0) {
@@ -4187,14 +3623,12 @@ class mkt {
                         }
                     });
                 }
-            } // FIM WorkerPool class
+            }
             mkt.a.wpool = new WorkerPool(numWorkers, workerBlob);
             r(mkt.a.wpool);
         });
     };
     static addTask = (msg, numWorkers = undefined) => {
-        // WORKERS: Atalho de tarefa. Já constroi se necessário
-        // mkt.addTask({ k: "MKT_INCLUDE", v: ["a","b"], target: "a" }).then(r=>{mkt.l("Main Recebeu: ",r)})
         return new Promise((r) => {
             if (!mkt.a.wpool) {
                 mkt.Workers(numWorkers).then(() => {
@@ -4209,15 +3643,14 @@ class mkt {
     static removeAcentos = (s) => {
         if (s == null)
             return "";
-        // Remove acentos e depois chama Apenas Números e Letras.
         s = s.toString();
         let r = "";
         let sS = "áàãâäéèêëíìîïóòõôöúùûüçÁÀÃÂÄÉÈÊËÍÌÎÏÓÒÕÖÔÚÙÛÜÇ";
         let sN = "aaaaaeeeeiiiiooooouuuucAAAAAEEEEIIIIOOOOOUUUUC";
         for (let p = 0; p < s.length; p++) {
-            let pSS = sS.indexOf(s.charAt(p)); // <= Procura
+            let pSS = sS.indexOf(s.charAt(p));
             if (pSS != -1) {
-                r += sN.charAt(pSS); // Substitui mesma posicao
+                r += sN.charAt(pSS);
             }
             else {
                 r += s.charAt(p);
@@ -4228,12 +3661,10 @@ class mkt {
     static removeEspecias = (s) => {
         if (s == null)
             return "";
-        // Remove acentos e depois chama Apenas Números e Letras.
         s = s.toString();
         return mkt.apenasNumerosLetras(mkt.removeAcentos(s));
     };
     static removerAspas = (s) => {
-        // Converte as aspas simples e duplas.
         if (mkt.classof(s) == "String") {
             s = s.replaceAll('"', "&quot;");
             s = s.replaceAll("\'", "&#39;");
@@ -4243,23 +3674,19 @@ class mkt {
     static apenasNumeros = (s = "") => {
         if (s == null)
             return "";
-        // Ignora qualquer outro caracter além de Numeros
         return s.toString().replace(/(?![0-9])./g, "");
     };
     static apenasLetras = (s = "") => {
         if (s == null)
             return "";
-        // Ignora qualquer outro caracter além de Letras formato ocidental
         return s.replace(/(?![a-zA-Z])./g, "");
     };
     static apenasNumerosLetras = (s = "") => {
         if (s == null)
             return "";
-        // Ignora qualquer outro caracter além de Numeros e Letras formato ocidental
         return s.replace(/(?![a-zA-Z0-9])./g, "");
     };
     static nodeToScript = (node) => {
-        // Recria o node SCRIPT dentro de uma tag SCRIPT para o eval()
         if (node.tagName === "SCRIPT") {
             let eScript = document.createElement("script");
             eScript.text = node.innerHTML;
@@ -4270,7 +3697,6 @@ class mkt {
             node.parentNode.replaceChild(eScript, node);
         }
         else {
-            // Recursividade sobre filhos
             var i = -1, children = node.childNodes;
             while (++i < children.length) {
                 mkt.nodeToScript(children[i]);
@@ -4279,8 +3705,6 @@ class mkt {
         return node;
     };
     static isInside = (e, container) => {
-        // Retorna o elemento está dentro do container.
-        // Similar ao closest, mas itera sobre os objetos em vez do query.
         let resultado = false;
         if (e) {
             let ePai = e;
@@ -4305,10 +3729,6 @@ class mkt {
         return resultado;
     };
     static isJson = (s) => {
-        // Se conseguir efetuar o parse sem erros, então é um JSON
-        // if (mkt.classof(s) == "String") {
-        // 	s = s.removeRaw();
-        // }
         try {
             JSON.parse(s);
         }
@@ -4338,55 +3758,11 @@ class mkt {
         }
     };
     static Reposicionar = (e, largura = null) => {
-        // REPOSICIONA o elemento E abaixo do elemento anterior.
-        // Precisa de position: fixed;
-        // Atenção: Essa função precisa ser rápida.
-        // Redimenciona e Reposiciona a lista durante focus ou scroll.
         let eAnterior = e.previousElementSibling;
-        // let oDinBloco = eAnterior.getBoundingClientRect();
-        // let oDinList = e.getBoundingClientRect();
-        //mkz = e;
-        // let apoff = mkt.allParentOffset(eAnterior);
-        // TAMANHO (min e max with baseado no pai)
         if (largura) {
             e.style.minWidth = (eAnterior.offsetWidth - 3) + "px";
             e.style.maxWidth = (eAnterior.offsetWidth - 3) + "px";
         }
-        // mkt.l("apoff", apoff);
-        // if (apoff <= 0) {
-        // POSICAO e FUGA em Y (em baixo)
-        // Lista = Bloco Fixed Top + Altura do Pai;
-        // let novaPos = oDinBloco.top + oDinBloco.height;
-        // SE PosicaoAtual + AlturaAtual estiver na tela
-        // if ((novaPos + oDinList.height) <= window.innerHeight) {
-        // mkt.l({
-        // 	"E": oDinBloco,
-        // 	"L": oDinList,
-        // 	"E AllOff": mkt.allParentOffset(eAnterior),
-        // 	"L AllOff": mkt.allParentOffset(e),
-        // 	"ATop": oDinBloco.top,
-        // 	"AAlt": oDinBloco.height,
-        // 	"WHeight": window.innerHeight,
-        // 	"NovaPos": novaPos + "px",
-        // 	"offsetHeight": eAnterior.offsetHeight,
-        // })
-        // 		e.style.left = (oDinBloco.x) + "px";
-        // 		e.style.top = novaPos + "px";
-        // 		e.style.bottom = null;
-        // 	} else {
-        // 		e.style.top = null;
-        // 		e.style.bottom = "0px";
-        // 	}
-        // } else {
-        // 	e.style.bottom = null;
-        // }
-        // FUGA em Y (em cima)
-        // if (oDinBloco.top <= 0) {
-        // 	e.classList.add("oculto");
-        // } else {
-        // 	e.classList.remove("oculto");
-        // }
-        // Popper
         if (mkt.a.poppers.get(e) == null) {
             mkt.a.poppers.set(e, Popper.createPopper(eAnterior, e, {
                 placement: "bottom-start",
@@ -4396,7 +3772,6 @@ class mkt {
         }
     };
     static BoolToSimNaoSOA = (soa) => {
-        // Converter (OBJ / ARRAY) Formato Booleano em Sim/Não
         function BoolToSimNaoOA_Execute(o) {
             for (var propName in o) {
                 if (o[propName].toString().toLowerCase() === "true" ||
@@ -4422,17 +3797,11 @@ class mkt {
         return mkt.aCadaObjExecuta(soa, BoolToSimNaoOA_Execute);
     };
     static formatadorDeTexto = (texto) => {
-        // Converte Tags como [b] e [/b] em <b> e </b>
-        // Impede que o usuário faça uso do html de forma descontrolada.
         return texto
             .replaceAll("[b]", "<b>")
             .replaceAll("[/b]", "</b>");
     };
     static eToText = (query) => {
-        // - Pega o Valor ou Inner do elemento e as classes,
-        // - Remove o Elemento
-        // - Coloca o conteudo dentro duma Div
-        // - Mantem as classes
         let e = mkt.Q(query);
         let v = "";
         let classes = "";
@@ -4458,22 +3827,18 @@ class mkt {
         return null;
     };
     static uuid = () => {
-        // Padrão UUIDV4 - Gerador de identificador unico
         return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, (c) => {
             return (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16);
         });
     };
     static cursorFim = (e) => {
-        // Move o cursor para o fim do VALUE do elemento.
         let len = e.value.length;
         mkt.wait(1).then(r => {
             e.setSelectionRange(len, len);
         });
     };
     static geraObjForm = (form, bool = false) => {
-        // Gerar Objeto a partir de um Form Entries
         if (mkt.classof(form) != "Object") {
-            // Se vier o Elemento Form / o Query do Form
             form = mkt.Q(form);
         }
         let rObjeto = mkt.limparOA(Object.fromEntries(new FormData(form).entries()));
@@ -4481,21 +3846,16 @@ class mkt {
             Array.from(form.querySelectorAll("mk-sel")).forEach((mks) => {
                 rObjeto[mks.name] = mks.value;
             });
-            // Aqui apenas coleta os mkBot que foram modificados pelo usuário.
             Array.from(form.querySelectorAll("mk-bot.changed")).forEach((mkb) => {
                 rObjeto[mkb.name] = mkb.value;
             });
         }
-        // mkt.gc("Objeto Gerado: ");
-        // mkt.w(rObjeto);
-        // mkt.ge();
         if (bool) {
             rObjeto = mkt.toBooleanOA(rObjeto);
         }
         return rObjeto;
     };
     static QScrollTo = (query = "body") => {
-        // Move o Scroll da janela até o elemento
         let temp = mkt.Q(query);
         let distTopo = temp.offsetTop;
         window.scrollTo({
@@ -4505,7 +3865,6 @@ class mkt {
         return temp;
     };
     static GetParam = (name = null, url = null) => {
-        // Coleta o valor do parametro da url.
         if (!url)
             url = document.location.toString();
         if (name != null) {
@@ -4516,11 +3875,8 @@ class mkt {
         }
     };
     static isVisible = (e) => {
-        // Verifica se o elemento está no dom e se está com tamanho e display visivel.
         if (mkt.isInsideDom(e)) {
-            // Está no DOM, mas se estiver
             if (!mkt.isOculto(e)) {
-                // Aqui não verifica se está dentro da viewport.
                 return true;
             }
             ;
@@ -4528,31 +3884,13 @@ class mkt {
         return false;
     };
     static isOculto = (e) => {
-        // Verifica se está com display none (oculto) ou com tamanho zerado (mkSecreto)
         e = mkt.Q(e);
-        // Se estiver com display none, vai zerar o Width.
         return !(e.offsetWidth > 0 || e.offsetHeight > 0);
     };
     static isInsideDom = (e) => {
-        // Retorna true se estiver dentro de HTML
         return mkt.Q(e).closest("html") ? true : false;
     };
-    // (gerarDownload) - Entrou em desuso
-    // static gerarDownload = (
-    // 	blob: any,
-    // 	nomeArquivo: string = "Arquivo.zip"
-    // ) => {
-    // 	// Funcção que recebe os dados de um arquivo e executa um Download deste dados.
-    // 	const fileUrl = URL.createObjectURL(blob);
-    // 	const link = document.createElement("a");
-    // 	link.href = fileUrl;
-    // 	link.download = nomeArquivo;
-    // 	link.click();
-    // 	URL.revokeObjectURL(fileUrl);
-    // 	return nomeArquivo;
-    // }
     static downloadData = (base64, nomeArquivo = "Arquivo") => {
-        // Função que recebe um Base64 e solicita pra download.
         const link = document.createElement("a");
         link.href = base64;
         link.download = nomeArquivo;
@@ -4560,41 +3898,27 @@ class mkt {
         return nomeArquivo;
     };
     static onlyFloatKeys = (ev) => {
-        // Eventos HTML5
-        // Bloqueio de teclas especificas onKeyDown
-        // Input: UMA tecla QUALQUER
-        //=> Metodo filtrar: Bloquear apenas estes
-        //let proibido = "0123456789";
-        //let isNegado = false;
-        //for (var item in proibido) {
-        //    (item == ev.key) ? isNegado = true : null;
-        //}
-        //=> Metodo filtrar: Liberar apenas estes
         let permitido = "0123456789,-";
         let isNegado = true;
         for (var i = 0; i < permitido.length; i++) {
             if (permitido[i] == ev.key?.toString()) {
-                //mkt.l(permitido[i] + " == " + ev.key.toString());
                 isNegado = false;
             }
         }
-        //=> Teclas especiais
-        ev.key == "ArrowLeft" ? (isNegado = false) : null; // Liberar Setinha pra Esquerda
-        ev.key == "ArrowRight" ? (isNegado = false) : null; // Liberar Setinha pra Direita
-        ev.key == "Backspace" ? (isNegado = false) : null; // Liberar Backspace
-        ev.key == "Delete" ? (isNegado = false) : null; // Liberar Deletar
-        ev.key == "Tab" ? (isNegado = false) : null; // Liberar Deletar
+        ev.key == "ArrowLeft" ? (isNegado = false) : null;
+        ev.key == "ArrowRight" ? (isNegado = false) : null;
+        ev.key == "Backspace" ? (isNegado = false) : null;
+        ev.key == "Delete" ? (isNegado = false) : null;
+        ev.key == "Tab" ? (isNegado = false) : null;
         if (isNegado) {
             ev.preventDefault();
         }
     };
     static eventBlock = (ev) => {
-        // Bloqueios de eventos especificos (varios, exemplo: onContextMenu)
         mkt.w("Negado");
         ev.preventDefault();
     };
     static selecionarInner = (e) => {
-        // Seleciona texto do elemento
         if (window.getSelection) {
             const selection = window.getSelection();
             const range = document.createRange();
@@ -4604,17 +3928,12 @@ class mkt {
         }
     };
     static formatarNumValue = (e) => {
-        // 123,45 (2 casas pos conversao float)
         e.value = mkt.numToDisplay(e.value);
     };
     static fileReader = async (arquivo, eventos) => {
-        // File API
-        // Recebe e Retorna o file, mas seta propriedade b64.
-        // Durante o processo retorna os eventos no "eventos"
         return new Promise((r) => {
             let leitor = new FileReader();
             let gatilhos = (event) => {
-                // Tratamento dos Eventos durante Leitura
                 if (event.type == "error") {
                     mkt.erro("fileReader() - Erro: ", event);
                     r(null);
@@ -4623,14 +3942,11 @@ class mkt {
                     arquivo.b64 = leitor.result;
                     r(arquivo);
                 }
-                // Evento no PRIMEIRO parametro.
-                // 0-100% carregamento no SEGUNDO parametro.
                 if (eventos)
                     eventos(event, Math.trunc((event.loaded / event.total) * 100));
             };
             if (arquivo) {
                 if (arquivo.name != "") {
-                    // Possibilidades de eventos e Início da leitura
                     leitor.addEventListener("loadstart", gatilhos);
                     leitor.addEventListener("progress", gatilhos);
                     leitor.addEventListener("error", gatilhos);
@@ -4681,7 +3997,6 @@ class mkt {
         return res.v;
     };
     static encheArray = (arrTemplate, inicio = 1, total) => {
-        // Retorna uma array utilizando um template do que deve ser preenchido.
         let novaArray = [];
         if (Array.isArray(arrTemplate)) {
             if (arrTemplate.length > 0) {
@@ -4716,7 +4031,6 @@ class mkt {
         return novaArray;
     };
     static encheArrayUltimos = (arrTemplate, fim = 1, total) => {
-        // Retorna uma array dos últimos
         let novaArray = [];
         if (Array.isArray(arrTemplate)) {
             if (arrTemplate.length > 0) {
@@ -4751,11 +4065,6 @@ class mkt {
         return novaArray;
     };
     static fase = (possiveis, config) => {
-        // Botões: .btnVoltar, .btnAvancar, .btnConclusivo.
-        // Telas: .modalFaseX (X é o numero da fase)
-        // Utiliza a array mkt.fase.possiveis para possibilitar a rota
-        // config.classe (Classe do container que cerca todas as fases, botoes e navegadores)
-        // Faltando os Validadores no avancar e colocar o avancar específico no menu html.
         class FasearMK {
             possiveis;
             atual;
@@ -4837,13 +4146,11 @@ class mkt {
             }
             update() {
                 mkt.QAll(this.config.classe + " ul.mkUlFase li a").forEach((e) => {
-                    // Limpar os Status
                     e.parentElement?.classList.remove("mkFaseBack");
                     e.parentElement?.classList.remove("mkFaseAtivo");
                     e.parentElement?.classList.remove("disabled");
                     let eNumPag = Number(e.getAttribute("data-pag"));
                     let bLibera = e.getAttribute("data-libera");
-                    // Tem-se a o elemento e o numero
                     if (this.possiveis.indexOf(this.atual) > this.possiveis.indexOf(eNumPag)) {
                         e.parentElement?.classList.add("mkFaseBack");
                     }
@@ -4869,16 +4176,13 @@ class mkt {
                 if (Array.isArray(this.possiveis)) {
                     if (this.possiveis.length >= 0) {
                         if (this.possiveis.indexOf(this.atual) >= this.possiveis.length - 1) {
-                            // Fase Atual é a última possível, Então não há como avançar
                             mkt.QverOn(this.config.classe + " .btnConclusivo");
                         }
                         else {
-                            // Não está na última posição
                             mkt.QverOn(this.config.classe + " .btnAvancar");
                         }
                         ;
                         if (this.possiveis.indexOf(this.atual) >= 1) {
-                            // Não está na primeira posição possível
                             mkt.QverOn(this.config.classe + " .btnVoltar");
                         }
                         ;
@@ -4898,13 +4202,11 @@ class mkt {
             toString() {
                 return `[${this.possiveis.join()}]`;
             }
-            // Iterator
             [Symbol.iterator]() {
                 let next = 0;
                 let last = this.possiveis;
                 return {
                     next() {
-                        // Só avança se não estiver no fim.
                         return next < last.length ? { value: last[next++] } : { done: true };
                     },
                     [Symbol.iterator]() {
@@ -4920,11 +4222,9 @@ class mkt {
             mkt.QAll("body *").forEach(async (e) => {
                 let destino = e.getAttribute("mkInclude");
                 if (destino != null) {
-                    //mkt.l("Incluindo: " + destino);
                     let p = await mkt.get.html({ url: destino, quiet: true });
                     if (p.retorno != null) {
                         e.innerHTML = p.retorno;
-                        //mkt.nodeToScript(mkt.Q(".conteudo"));
                     }
                     else {
                         mkt.l("Falhou ao coletar dados");
@@ -4938,20 +4238,18 @@ class mkt {
         return string.charAt(0).toUpperCase() + string.slice(1);
     };
     static vibrar = async (tipo) => {
-        // Funcionalidade de vibrar celular baseado no tipo informado.
         if (tipo === false) {
-            navigator.vibrate([100, 30, 100, 30, 100]); // 3 tempos curtos com intervalo representando: "Não, Não, Não"
+            navigator.vibrate([100, 30, 100, 30, 100]);
         }
         else if (tipo === true) {
-            navigator.vibrate([300]); // 3 tempos sem intervalo representando: "Efetivado"
+            navigator.vibrate([300]);
         }
         else {
-            navigator.vibrate([200, 50, 200]); // 2 Tempos seguidos representando: "Talvez"
+            navigator.vibrate([200, 50, 200]);
         }
     };
     static Terremoto = (e = null) => {
         e = mkt.Q(e);
-        // Efeito de terremoto no elemento
         if (e) {
             e.classList.add("mkTerremoto");
             mkt.wait(500).then(r => {
@@ -4959,9 +4257,7 @@ class mkt {
             });
         }
     };
-    // DEPRECATED - Utiliza em Fichas (Substituir por Faseador)
     static fUIFaseUpdateLinkFase = () => {
-        // FUNCAO PARA ATUALIZAR OS LINKS DE FASES
         mkt.QAll("ul.mkUlFase li a").forEach((e) => {
             e.parentElement?.classList.remove("mkFaseBack");
             e.parentElement?.classList.remove("mkFaseAtivo");
@@ -4979,20 +4275,12 @@ class mkt {
             }
         });
     };
-} // <= FIM CLASSE MKT
-//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-//  DEFINE PROPERTY                 \\
-//___________________________________\\
+}
 Object.keys(mkt).forEach((n) => {
-    // Excessões
     if (!mkt.a.definePropertyExceptions.includes(n)) {
         Object.defineProperty(mkt, n, { enumerable: false, writable: false, configurable: false });
     }
 });
-//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-//  PopperJS - Posicionamento       \\
-//___________________________________\\
-// @popperjs/core v2.11.8 - MIT License
 (function (global, factory) {
     typeof exports === "object" && typeof module !== "undefined"
         ? factory(exports)
@@ -5022,7 +4310,6 @@ Object.keys(mkt).forEach((n) => {
         return node instanceof OwnElement || node instanceof HTMLElement;
     }
     function isShadowRoot(node) {
-        // IE 11 has no ShadowRoot
         if (typeof ShadowRoot === "undefined") {
             return false;
         }
@@ -5114,19 +4401,11 @@ Object.keys(mkt).forEach((n) => {
         return element ? (element.nodeName || "").toLowerCase() : null;
     }
     function getDocumentElement(element) {
-        // $FlowFixMe[incompatible-return]: assume body is always available
         return ((isElement(element)
-            ? element.ownerDocument // $FlowFixMe[prop-missing]
+            ? element.ownerDocument
             : element.document) || window.document).documentElement;
     }
     function getWindowScrollBarX(element) {
-        // If <html> has a CSS width greater than the viewport, then this will be
-        // incorrect for RTL.
-        // Popper 1 is broken in this case and never had a bug report so let's assume
-        // it's not an issue. I don't think anyone ever specifies width on <html>
-        // anyway.
-        // Browsers where the left scrollbar doesn't cause an issue report `0` for
-        // this (e.g. Edge 2019, IE11, Safari)
         return (getBoundingClientRect(getDocumentElement(element)).left +
             getWindowScroll(element).scrollLeft);
     }
@@ -5134,7 +4413,6 @@ Object.keys(mkt).forEach((n) => {
         return getWindow(element).getComputedStyle(element);
     }
     function isScrollParent(element) {
-        // Firefox wants us to check `-x` and `-y` variations as well
         var _getComputedStyle = getComputedStyle(element), overflow = _getComputedStyle.overflow, overflowX = _getComputedStyle.overflowX, overflowY = _getComputedStyle.overflowY;
         return /auto|scroll|overlay|hidden/.test(overflow + overflowY + overflowX);
     }
@@ -5143,8 +4421,7 @@ Object.keys(mkt).forEach((n) => {
         var scaleX = round(rect.width) / element.offsetWidth || 1;
         var scaleY = round(rect.height) / element.offsetHeight || 1;
         return scaleX !== 1 || scaleY !== 1;
-    } // Returns the composite rect of an element relative to its offsetParent.
-    // Composite means it takes into account transforms as well as layout.
+    }
     function getCompositeRect(elementOrVirtualElement, offsetParent, isFixed) {
         if (isFixed === void 0) {
             isFixed = false;
@@ -5162,7 +4439,7 @@ Object.keys(mkt).forEach((n) => {
             y: 0,
         };
         if (isOffsetParentAnElement || (!isOffsetParentAnElement && !isFixed)) {
-            if (getNodeName(offsetParent) !== "body" || // https://github.com/popperjs/popper-core/issues/1078
+            if (getNodeName(offsetParent) !== "body" ||
                 isScrollParent(documentElement)) {
                 scroll = getNodeScroll(offsetParent);
             }
@@ -5182,10 +4459,8 @@ Object.keys(mkt).forEach((n) => {
             height: rect.height,
         };
     }
-    // means it doesn't take into account transforms.
     function getLayoutRect(element) {
-        var clientRect = getBoundingClientRect(element); // Use the clientRect sizes if it's not been transformed.
-        // Fixes https://github.com/popperjs/popper-core/issues/1223
+        var clientRect = getBoundingClientRect(element);
         var width = element.offsetWidth;
         var height = element.offsetHeight;
         if (Math.abs(clientRect.width - width) <= 1) {
@@ -5205,20 +4480,13 @@ Object.keys(mkt).forEach((n) => {
         if (getNodeName(element) === "html") {
             return element;
         }
-        return (
-        // this is a quicker (but less type safe) way to save quite some bytes from the bundle
-        // $FlowFixMe[incompatible-return]
-        // $FlowFixMe[prop-missing]
-        element.assignedSlot || // step into the shadow DOM of the parent of a slotted node
-            element.parentNode || // DOM Element detected
-            (isShadowRoot(element) ? element.host : null) || // ShadowRoot detected
-            // $FlowFixMe[incompatible-call]: HTMLElement is a Node
-            getDocumentElement(element) // fallback
-        );
+        return (element.assignedSlot ||
+            element.parentNode ||
+            (isShadowRoot(element) ? element.host : null) ||
+            getDocumentElement(element));
     }
     function getScrollParent(node) {
         if (["html", "body", "#document"].indexOf(getNodeName(node)) >= 0) {
-            // $FlowFixMe[incompatible-return]: assume body is always available
             return node.ownerDocument.body;
         }
         if (isHTMLElement(node) && isScrollParent(node)) {
@@ -5226,12 +4494,6 @@ Object.keys(mkt).forEach((n) => {
         }
         return getScrollParent(getParentNode(node));
     }
-    /*
-    given a DOM element, return the list of all scroll parents, up the list of ancesors
-    until we get to the top window object. This list is what we attach scroll listeners
-    to, because if any of these parent elements scroll, we'll need to re-calculate the
-    reference element's position.
-    */
     function listScrollParents(element, list) {
         var _element$ownerDocumen;
         if (list === void 0) {
@@ -5248,25 +4510,23 @@ Object.keys(mkt).forEach((n) => {
             : scrollParent;
         var updatedList = list.concat(target);
         return isBody
-            ? updatedList // $FlowFixMe[incompatible-call]: isBody tells us target will be an HTMLElement here
+            ? updatedList
             : updatedList.concat(listScrollParents(getParentNode(target)));
     }
     function isTableElement(element) {
         return ["table", "td", "th"].indexOf(getNodeName(element)) >= 0;
     }
     function getTrueOffsetParent(element) {
-        if (!isHTMLElement(element) || // https://github.com/popperjs/popper-core/issues/837
+        if (!isHTMLElement(element) ||
             getComputedStyle(element).position === "fixed") {
             return null;
         }
         return element.offsetParent;
-    } // `.offsetParent` reports `null` for fixed elements, while absolute elements
-    // return the containing block
+    }
     function getContainingBlock(element) {
         var isFirefox = /firefox/i.test(getUAString());
         var isIE = /Trident/i.test(getUAString());
         if (isIE && isHTMLElement(element)) {
-            // In IE 9, 10 and 11 fixed elements containing block is always established by the viewport
             var elementCss = getComputedStyle(element);
             if (elementCss.position === "fixed") {
                 return null;
@@ -5278,9 +4538,7 @@ Object.keys(mkt).forEach((n) => {
         }
         while (isHTMLElement(currentNode) &&
             ["html", "body"].indexOf(getNodeName(currentNode)) < 0) {
-            var css = getComputedStyle(currentNode); // This is non-exhaustive but covers the most common CSS properties that
-            // create a containing block.
-            // https://developer.mozilla.org/en-US/docs/Web/CSS/Containing_block#identifying_the_containing_block
+            var css = getComputedStyle(currentNode);
             if (css.transform !== "none" ||
                 css.perspective !== "none" ||
                 css.contain === "paint" ||
@@ -5294,8 +4552,7 @@ Object.keys(mkt).forEach((n) => {
             }
         }
         return null;
-    } // Gets the closest ancestor positioned element. Handles some edge cases,
-    // such as table ancestors and cross browser bugs.
+    }
     function getOffsetParent(element) {
         var window = getWindow(element);
         var offsetParent = getTrueOffsetParent(element);
@@ -5324,10 +4581,10 @@ Object.keys(mkt).forEach((n) => {
     var viewport = "viewport";
     var popper = "popper";
     var reference = "reference";
-    var variationPlacements = /*#__PURE__*/ basePlacements.reduce(function (acc, placement) {
+    var variationPlacements = basePlacements.reduce(function (acc, placement) {
         return acc.concat([placement + "-" + start, placement + "-" + end]);
     }, []);
-    var placements = /*#__PURE__*/ []
+    var placements = []
         .concat(basePlacements, [auto])
         .reduce(function (acc, placement) {
         return acc.concat([
@@ -5335,13 +4592,13 @@ Object.keys(mkt).forEach((n) => {
             placement + "-" + start,
             placement + "-" + end,
         ]);
-    }, []); // modifiers that need to read the DOM
+    }, []);
     var beforeRead = "beforeRead";
     var read = "read";
-    var afterRead = "afterRead"; // pure-logic modifiers
+    var afterRead = "afterRead";
     var beforeMain = "beforeMain";
     var main = "main";
-    var afterMain = "afterMain"; // modifier with the purpose to write to the DOM (or write into a framework state)
+    var afterMain = "afterMain";
     var beforeWrite = "beforeWrite";
     var write = "write";
     var afterWrite = "afterWrite";
@@ -5362,7 +4619,7 @@ Object.keys(mkt).forEach((n) => {
         var result = [];
         modifiers.forEach(function (modifier) {
             map.set(modifier.name, modifier);
-        }); // On visiting object, check for its dependencies and visit them recursively
+        });
         function sort(modifier) {
             visited.add(modifier.name);
             var requires = [].concat(modifier.requires || [], modifier.requiresIfExists || []);
@@ -5378,15 +4635,13 @@ Object.keys(mkt).forEach((n) => {
         }
         modifiers.forEach(function (modifier) {
             if (!visited.has(modifier.name)) {
-                // check for visited object
                 sort(modifier);
             }
         });
         return result;
     }
     function orderModifiers(modifiers) {
-        // order based on dependencies
-        var orderedModifiers = order(modifiers); // order based on phase
+        var orderedModifiers = order(modifiers);
         return modifierPhases.reduce(function (acc, phase) {
             return acc.concat(orderedModifiers.filter(function (modifier) {
                 return modifier.phase === phase;
@@ -5417,7 +4672,7 @@ Object.keys(mkt).forEach((n) => {
                 })
                 : current;
             return merged;
-        }, {}); // IE11 does not support Object.values
+        }, {});
         return Object.keys(merged).map(function (key) {
             return merged[key];
         });
@@ -5446,7 +4701,6 @@ Object.keys(mkt).forEach((n) => {
             y: y,
         };
     }
-    // of the `<html>` and `<body>` rect bounds if horizontally scrollable
     function getDocumentRect(element) {
         var _element$ownerDocumen;
         var html = getDocumentElement(element);
@@ -5469,19 +4723,19 @@ Object.keys(mkt).forEach((n) => {
         };
     }
     function contains(parent, child) {
-        var rootNode = child.getRootNode && child.getRootNode(); // First, attempt with faster native method
+        var rootNode = child.getRootNode && child.getRootNode();
         if (parent.contains(child)) {
             return true;
-        } // then fallback to custom implementation with Shadow DOM support
+        }
         else if (rootNode && isShadowRoot(rootNode)) {
             var next = child;
             do {
                 if (next && parent.isSameNode(next)) {
                     return true;
-                } // $FlowFixMe[prop-missing]: need a better way to handle this...
+                }
                 next = next.parentNode || next.host;
             } while (next);
-        } // Give up, the result is false
+        }
         return false;
     }
     function rectToClientRect(rect) {
@@ -5510,9 +4764,7 @@ Object.keys(mkt).forEach((n) => {
             : isElement(clippingParent)
                 ? getInnerBoundingClientRect(clippingParent, strategy)
                 : rectToClientRect(getDocumentRect(getDocumentElement(element)));
-    } // A "clipping parent" is an overflowable container with the characteristic of
-    // clipping (or hiding) overflowing elements with a position different from
-    // `initial`
+    }
     function getClippingParents(element) {
         var clippingParents = listScrollParents(getParentNode(element));
         var canEscapeClipping = ["absolute", "fixed"].indexOf(getComputedStyle(element).position) >= 0;
@@ -5521,14 +4773,13 @@ Object.keys(mkt).forEach((n) => {
             : element;
         if (!isElement(clipperElement)) {
             return [];
-        } // $FlowFixMe[incompatible-return]: https://github.com/facebook/flow/issues/1414
+        }
         return clippingParents.filter(function (clippingParent) {
             return (isElement(clippingParent) &&
                 contains(clippingParent, clipperElement) &&
                 getNodeName(clippingParent) !== "body");
         });
-    } // Gets the maximum area that the element is visible in due to any number of
-    // clipping parents
+    }
     function getClippingRect(element, boundary, rootBoundary, strategy) {
         var mainClippingParents = boundary === "clippingParents"
             ? getClippingParents(element)
@@ -5653,8 +4904,7 @@ Object.keys(mkt).forEach((n) => {
             placement: placement,
         });
         var popperClientRect = rectToClientRect(Object.assign({}, popperRect, popperOffsets));
-        var elementClientRect = elementContext === popper ? popperClientRect : referenceClientRect; // positive = overflowing the clipping rect
-        // 0 or negative = within the clipping rect
+        var elementClientRect = elementContext === popper ? popperClientRect : referenceClientRect;
         var overflowOffsets = {
             top: clippingClientRect.top - elementClientRect.top + paddingObject.top,
             bottom: elementClientRect.bottom -
@@ -5665,7 +4915,7 @@ Object.keys(mkt).forEach((n) => {
                 clippingClientRect.right +
                 paddingObject.right,
         };
-        var offsetData = state.modifiersData.offset; // Offsets can be applied only to the popper element
+        var offsetData = state.modifiersData.offset;
         if (elementContext === popper && offsetData) {
             var offset = offsetData[placement];
             Object.keys(overflowOffsets).forEach(function (key) {
@@ -5729,42 +4979,28 @@ Object.keys(mkt).forEach((n) => {
                                 ? listScrollParents(reference.contextElement)
                                 : [],
                         popper: listScrollParents(popper),
-                    }; // Orders the modifiers based on their dependencies and `phase`
-                    // properties
-                    var orderedModifiers = orderModifiers(mergeByName([].concat(defaultModifiers, state.options.modifiers))); // Strip out disabled modifiers
+                    };
+                    var orderedModifiers = orderModifiers(mergeByName([].concat(defaultModifiers, state.options.modifiers)));
                     state.orderedModifiers = orderedModifiers.filter(function (m) {
                         return m.enabled;
                     });
                     runModifierEffects();
                     return instance.update();
                 },
-                // Sync update – it will always be executed, even if not necessary. This
-                // is useful for low frequency updates where sync behavior simplifies the
-                // logic.
-                // For high frequency updates (e.g. `resize` and `scroll` events), always
-                // prefer the async Popper#update method
                 forceUpdate: function forceUpdate() {
                     if (isDestroyed) {
                         return;
                     }
-                    var _state$elements = state.elements, reference = _state$elements.reference, popper = _state$elements.popper; // Don't proceed if `reference` or `popper` are not valid elements
-                    // anymore
+                    var _state$elements = state.elements, reference = _state$elements.reference, popper = _state$elements.popper;
                     if (!areValidElements(reference, popper)) {
                         return;
-                    } // Store the reference and popper rects to be read by modifiers
+                    }
                     state.rects = {
                         reference: getCompositeRect(reference, getOffsetParent(popper), state.options.strategy === "fixed"),
                         popper: getLayoutRect(popper),
-                    }; // Modifiers have the ability to reset the current update cycle. The
-                    // most common use case for this is the `flip` modifier changing the
-                    // placement, which then needs to re-run all the modifiers, because the
-                    // logic was previously ran for the previous placement and is therefore
-                    // stale/incorrect
+                    };
                     state.reset = false;
-                    state.placement = state.options.placement; // On each update cycle, the `modifiersData` property for each modifier
-                    // is filled with the initial data specified by the modifier. This means
-                    // it doesn't persist and is fresh on each update.
-                    // To ensure persistent data, use `${name}#persistent`
+                    state.placement = state.options.placement;
                     state.orderedModifiers.forEach(function (modifier) {
                         return (state.modifiersData[modifier.name] = Object.assign({}, modifier.data));
                     });
@@ -5786,8 +5022,6 @@ Object.keys(mkt).forEach((n) => {
                         }
                     }
                 },
-                // Async and optimistically optimized update – it will not be executed if
-                // not necessary (debounced to run at most once-per-tick)
                 update: debounce(function () {
                     return new Promise(function (resolve) {
                         instance.forceUpdate();
@@ -5806,11 +5040,7 @@ Object.keys(mkt).forEach((n) => {
                 if (!isDestroyed && options.onFirstUpdate) {
                     options.onFirstUpdate(state);
                 }
-            }); // Modifiers have the ability to execute arbitrary code before the first
-            // update cycle runs. They will be executed in the same order as the update
-            // cycle. This is useful when a modifier adds some persistent data that
-            // other modifiers need to use, but the modifier is run after the dependent
-            // one.
+            });
             function runModifierEffects() {
                 state.orderedModifiers.forEach(function (_ref) {
                     var name = _ref.name, _ref$options = _ref.options, options = _ref$options === void 0 ? {} : _ref$options, effect = _ref.effect;
@@ -5861,7 +5091,7 @@ Object.keys(mkt).forEach((n) => {
                 window.removeEventListener("resize", instance.update, passive);
             }
         };
-    } // eslint-disable-next-line import/no-unused-modules
+    }
     var eventListeners = {
         name: "eventListeners",
         enabled: true,
@@ -5872,17 +5102,13 @@ Object.keys(mkt).forEach((n) => {
     };
     function popperOffsets(_ref) {
         var state = _ref.state, name = _ref.name;
-        // Offsets are the actual position the popper needs to have to be
-        // properly positioned near its reference element
-        // This is the most basic placement, and will be adjusted by
-        // the modifiers in the next step
         state.modifiersData[name] = computeOffsets({
             reference: state.rects.reference,
             element: state.rects.popper,
             strategy: "absolute",
             placement: state.placement,
         });
-    } // eslint-disable-next-line import/no-unused-modules
+    }
     var popperOffsets$1 = {
         name: "popperOffsets",
         enabled: true,
@@ -5895,9 +5121,7 @@ Object.keys(mkt).forEach((n) => {
         right: "auto",
         bottom: "auto",
         left: "auto",
-    }; // Round the offsets to the nearest suitable subpixel based on the DPR.
-    // Zooming can change the DPR, but it seems to report a value that will
-    // cleanly divide the values into the appropriate subpixels.
+    };
     function roundOffsetsByDPR(_ref, win) {
         var x = _ref.x, y = _ref.y;
         var dpr = win.devicePixelRatio || 1;
@@ -5937,13 +5161,13 @@ Object.keys(mkt).forEach((n) => {
                     heightProp = "scrollHeight";
                     widthProp = "scrollWidth";
                 }
-            } // $FlowFixMe[incompatible-cast]: force type refinement, we compare offsetParent with window above, but Flow doesn't detect it
+            }
             offsetParent = offsetParent;
             if (placement === top ||
                 ((placement === left || placement === right) && variation === end)) {
                 sideY = bottom;
                 var offsetY = isFixed && offsetParent === win && win.visualViewport
-                    ? win.visualViewport.height // $FlowFixMe[prop-missing]
+                    ? win.visualViewport.height
                     : offsetParent[heightProp];
                 y -= offsetY - popperRect.height;
                 y *= gpuAcceleration ? 1 : -1;
@@ -5952,7 +5176,7 @@ Object.keys(mkt).forEach((n) => {
                 ((placement === top || placement === bottom) && variation === end)) {
                 sideX = right;
                 var offsetX = isFixed && offsetParent === win && win.visualViewport
-                    ? win.visualViewport.width // $FlowFixMe[prop-missing]
+                    ? win.visualViewport.width
                     : offsetParent[widthProp];
                 x -= offsetX - popperRect.width;
                 x *= gpuAcceleration ? 1 : -1;
@@ -6019,7 +5243,7 @@ Object.keys(mkt).forEach((n) => {
         state.attributes.popper = Object.assign({}, state.attributes.popper, {
             "data-popper-placement": state.placement,
         });
-    } // eslint-disable-next-line import/no-unused-modules
+    }
     var computeStyles$1 = {
         name: "computeStyles",
         enabled: true,
@@ -6027,18 +5251,15 @@ Object.keys(mkt).forEach((n) => {
         fn: computeStyles,
         data: {},
     };
-    // and applies them to the HTMLElements such as popper and arrow
     function applyStyles(_ref) {
         var state = _ref.state;
         Object.keys(state.elements).forEach(function (name) {
             var style = state.styles[name] || {};
             var attributes = state.attributes[name] || {};
-            var element = state.elements[name]; // arrow is optional + virtual elements
+            var element = state.elements[name];
             if (!isHTMLElement(element) || !getNodeName(element)) {
                 return;
-            } // Flow doesn't support to extend this property, but it's the most
-            // effective way to apply styles to an HTMLElement
-            // $FlowFixMe[cannot-write]
+            }
             Object.assign(element.style, style);
             Object.keys(attributes).forEach(function (name) {
                 var value = attributes[name];
@@ -6076,11 +5297,11 @@ Object.keys(mkt).forEach((n) => {
                 var attributes = state.attributes[name] || {};
                 var styleProperties = Object.keys(state.styles.hasOwnProperty(name)
                     ? state.styles[name]
-                    : initialStyles[name]); // Set all values to an empty string to unset them
+                    : initialStyles[name]);
                 var style = styleProperties.reduce(function (style, property) {
                     style[property] = "";
                     return style;
-                }, {}); // arrow is optional + virtual elements
+                }, {});
                 if (!isHTMLElement(element) || !getNodeName(element)) {
                     return;
                 }
@@ -6090,7 +5311,7 @@ Object.keys(mkt).forEach((n) => {
                 });
             });
         };
-    } // eslint-disable-next-line import/no-unused-modules
+    }
     var applyStyles$1 = {
         name: "applyStyles",
         enabled: true,
@@ -6132,7 +5353,7 @@ Object.keys(mkt).forEach((n) => {
             state.modifiersData.popperOffsets.y += y;
         }
         state.modifiersData[name] = data;
-    } // eslint-disable-next-line import/no-unused-modules
+    }
     var offset$1 = {
         name: "offset",
         enabled: true,
@@ -6178,7 +5399,7 @@ Object.keys(mkt).forEach((n) => {
         });
         if (allowedPlacements.length === 0) {
             allowedPlacements = placements$1;
-        } // $FlowFixMe[incompatible-type]: Flow seems to have problems with two array unions...
+        }
         var overflows = allowedPlacements.reduce(function (acc, placement) {
             acc[placement] = detectOverflow(state, {
                 placement: placement,
@@ -6276,7 +5497,6 @@ Object.keys(mkt).forEach((n) => {
             checksMap.set(placement, checks);
         }
         if (makeFallbackChecks) {
-            // `2` may be desired in some cases – research later
             var numberOfChecks = flipVariations ? 3 : 1;
             var _loop = function _loop(_i) {
                 var fittingPlacement = placements.find(function (placement) {
@@ -6303,7 +5523,7 @@ Object.keys(mkt).forEach((n) => {
             state.placement = firstFittingPlacement;
             state.reset = true;
         }
-    } // eslint-disable-next-line import/no-unused-modules
+    }
     var flip$1 = {
         name: "flip",
         enabled: true,
@@ -6375,8 +5595,7 @@ Object.keys(mkt).forEach((n) => {
             var max$1 = offset - overflow[altSide];
             var additive = tether ? -popperRect[len] / 2 : 0;
             var minLen = variation === start ? referenceRect[len] : popperRect[len];
-            var maxLen = variation === start ? -popperRect[len] : -referenceRect[len]; // We need to include the arrow in the calculation so the arrow doesn't go
-            // outside the reference bounds
+            var maxLen = variation === start ? -popperRect[len] : -referenceRect[len];
             var arrowElement = state.elements.arrow;
             var arrowRect = tether && arrowElement
                 ? getLayoutRect(arrowElement)
@@ -6388,11 +5607,7 @@ Object.keys(mkt).forEach((n) => {
                 ? state.modifiersData["arrow#persistent"].padding
                 : getFreshSideObject();
             var arrowPaddingMin = arrowPaddingObject[mainSide];
-            var arrowPaddingMax = arrowPaddingObject[altSide]; // If the reference length is smaller than the arrow length, we don't want
-            // to include its full size in the calculation. If the reference is small
-            // and near the edge of a boundary, the popper can overflow even if the
-            // reference is not overflowing as well (e.g. virtual elements with no
-            // width or height)
+            var arrowPaddingMax = arrowPaddingObject[altSide];
             var arrowLen = within(0, referenceRect[len], arrowRect[len]);
             var minOffset = isBasePlacement
                 ? referenceRect[len] / 2 -
@@ -6468,7 +5683,7 @@ Object.keys(mkt).forEach((n) => {
             data[altAxis] = _preventedOffset - _offset;
         }
         state.modifiersData[name] = data;
-    } // eslint-disable-next-line import/no-unused-modules
+    }
     var preventOverflow$1 = {
         name: "preventOverflow",
         enabled: true,
@@ -6514,12 +5729,11 @@ Object.keys(mkt).forEach((n) => {
                 ? arrowOffsetParent.clientHeight || 0
                 : arrowOffsetParent.clientWidth || 0
             : 0;
-        var centerToReference = endDiff / 2 - startDiff / 2; // Make sure the arrow doesn't overflow the popper if the center point is
-        // outside of the popper bounds
+        var centerToReference = endDiff / 2 - startDiff / 2;
         var min = paddingObject[minProp];
         var max = clientSize - arrowRect[len] - paddingObject[maxProp];
         var center = clientSize / 2 - arrowRect[len] / 2 + centerToReference;
-        var offset = within(min, center, max); // Prevents breaking syntax highlighting...
+        var offset = within(min, center, max);
         var axisProp = axis;
         state.modifiersData[name] =
             ((_state$modifiersData$ = {}),
@@ -6532,7 +5746,7 @@ Object.keys(mkt).forEach((n) => {
         var _options$element = options.element, arrowElement = _options$element === void 0 ? "[data-popper-arrow]" : _options$element;
         if (arrowElement == null) {
             return;
-        } // CSS selector
+        }
         if (typeof arrowElement === "string") {
             arrowElement = state.elements.popper.querySelector(arrowElement);
             if (!arrowElement) {
@@ -6543,7 +5757,7 @@ Object.keys(mkt).forEach((n) => {
             return;
         }
         state.elements.arrow = arrowElement;
-    } // eslint-disable-next-line import/no-unused-modules
+    }
     var arrow$1 = {
         name: "arrow",
         enabled: true,
@@ -6597,7 +5811,7 @@ Object.keys(mkt).forEach((n) => {
             "data-popper-reference-hidden": isReferenceHidden,
             "data-popper-escaped": hasPopperEscaped,
         });
-    } // eslint-disable-next-line import/no-unused-modules
+    }
     var hide$1 = {
         name: "hide",
         enabled: true,
@@ -6611,9 +5825,9 @@ Object.keys(mkt).forEach((n) => {
         computeStyles$1,
         applyStyles$1,
     ];
-    var createPopper$1 = /*#__PURE__*/ popperGenerator({
+    var createPopper$1 = popperGenerator({
         defaultModifiers: defaultModifiers$1,
-    }); // eslint-disable-next-line import/no-unused-modules
+    });
     var defaultModifiers = [
         eventListeners,
         popperOffsets$1,
@@ -6625,9 +5839,9 @@ Object.keys(mkt).forEach((n) => {
         arrow$1,
         hide$1,
     ];
-    var createPopper = /*#__PURE__*/ popperGenerator({
+    var createPopper = popperGenerator({
         defaultModifiers: defaultModifiers,
-    }); // eslint-disable-next-line import/no-unused-modules
+    });
     exports.applyStyles = applyStyles$1;
     exports.arrow = arrow$1;
     exports.computeStyles = computeStyles$1;
@@ -6644,9 +5858,6 @@ Object.keys(mkt).forEach((n) => {
     exports.preventOverflow = preventOverflow$1;
     Object.defineProperty(exports, "__esModule", { value: true });
 });
-//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-//  Web Component MkSel - Seletor   \\
-//___________________________________\\
 class mkSel extends HTMLElement {
     config = {
         name: "",
@@ -6670,13 +5881,11 @@ class mkSel extends HTMLElement {
         changed: false,
         fail: 0,
         geraInputEvent: () => {
-            // Gera o Evento			
             this.dispatchEvent(new Event("input"));
             this.config.changed = true;
         },
         pesquisaKeyDown: (ev) => {
             let isNegado = false;
-            //mkt.l(ev);
             if (ev.key == "Escape") {
                 this.config.eK.blur();
             }
@@ -6686,10 +5895,8 @@ class mkSel extends HTMLElement {
                 let array = Array.from(this.config.eUL.children).filter((e) => {
                     return e.style.display != "none";
                 });
-                // Procura o atual alvo move
                 let eAlvo = array.find((e) => e.getAttribute("m") == "1");
                 Array.from(this.config.eUL.children).forEach((e) => e.removeAttribute("m"));
-                // Se é enter, tenta selecionar o alvo.
                 if (ev.key == "Enter") {
                     if (eAlvo) {
                         this.config.mecanicaSelecionar(eAlvo.getAttribute("k"));
@@ -6747,11 +5954,11 @@ class mkSel extends HTMLElement {
             this.config.selecionados.clear();
             if (this.config.selapenas == 1) {
                 this.config.selecionados.set(this.value, this.config._data.get(this.value));
+                this.config.updateSelecionadosValues();
             }
             else {
                 if (this.value) {
                     let obj = this.value.split(",");
-                    //mkt.l("Obj Value: ", obj);
                     if (obj) {
                         let map = obj.map(s => { return [s.toString(), ""]; });
                         this.config.selecionados = new Map(map);
@@ -6763,11 +5970,8 @@ class mkSel extends HTMLElement {
         mecanicaSelecionar: (novoK) => {
             if (novoK != null) {
                 let novoV = this.config._data.get(novoK);
-                //mkt.l(this.config.name, " - novoK: ", novoK, " novoV: ", novoV, ", Data: ", this.config._data);
                 if (mkt.classof(this.config.selapenas) == "Number") {
-                    //mkt.l("Setado K: ", novoK, " V:", novoV, " Selecoes: ", this.config);
                     if (this.config.selapenas == 1) {
-                        // UNICA SELEÇÃO
                         this.config.selecionados = new Map();
                         this.config.selecionados.set(novoK?.toString(), novoV?.toString());
                         this.value = novoK;
@@ -6775,26 +5979,19 @@ class mkSel extends HTMLElement {
                         this.config.geraInputEvent();
                     }
                     else if ((this.config.selapenas > 1) || (this.config.selapenas < 0)) {
-                        // MULTI SELEÇÃO
                         let jaSelecionado = false;
-                        // Verifica já possui um selecionado. (Para saber se vai adicionar ou remover)
                         if (this.config.selecionados.has(novoK)) {
                             jaSelecionado = true;
                         }
                         ;
                         if (jaSelecionado) {
-                            // Remove valor da lista selecionada
                             this.config.selecionados.delete(novoK);
                         }
                         else {
-                            // Verifica se é possivel selecionar mais (Se estiver negativo, pode selecionar infinito)
                             if (this.config.selecionados.size < this.config.selapenas || this.config.selapenas < 0) {
-                                // Acrescenta valor
                                 this.config.selecionados.set(novoK?.toString(), novoV?.toString());
                             }
                         }
-                        // Quando estiver vazio, reseta o campo.
-                        // Seta o valor no campo de input
                         if (this.config.selecionados.size == 0) {
                             this.value = "";
                         }
@@ -6810,8 +6007,6 @@ class mkSel extends HTMLElement {
                 }
             }
             else {
-                // Acredito que é possível clicar em alguns pixels fora da área do LI Element
-                //mkt.w("mkSelElement", this.config.name, "Erro de seleção: K: ", novoK);
             }
             this.config.updateSelecionadosValues();
         },
@@ -6828,30 +6023,23 @@ class mkSel extends HTMLElement {
             }
         },
         updateSelecionadosValues: () => {
-            // A cada chave no selecionado, seta o valor correspondente no opções
             [...this.config.selecionados.keys()].forEach(k => {
                 this.config.selecionados.set(k, this.opcoes.get(k));
             });
         },
         checkMaisLinhas: () => {
-            // Verifica se o tamanho e altura estao corretos, pra puxar mais linhas e já solicita.
-            let altura = this.config.eList.scrollHeight - this.config.eList.offsetHeight - 10; // Reduz a altura total para começar a baixar um pouco antes.
-            //mkt.l("Atual", this.config.eList.scrollTop, " Altura:", altura);
+            let altura = this.config.eList.scrollHeight - this.config.eList.offsetHeight - 10;
             if (this.config.eList.scrollTop >= altura) {
                 this.maisLinhas(this.config.populado, 10);
             }
         },
-        set: (key) => {
-            // Remove uma opção da lista de opções
-            let map = this.opcoes;
-            map.set(key);
-            this.opcoes = map;
+        set: (key, value) => {
+            this.config._dat.set(key, value);
+            this.setAttribute("opcoes", mkt.stringify([...this.config._dat]));
         },
         del: (key) => {
-            // Remove uma opção da lista de opções
-            let map = this.opcoes;
-            map.delete(key);
-            this.opcoes = map;
+            this.config._data.delete(key);
+            this.setAttribute("opcoes", mkt.stringify([...this.config._data]));
         },
     };
     constructor() {
@@ -7023,7 +6211,6 @@ li[m="1"] {
 <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' style='-webkit-box-reflect: right;' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1'/></svg>
 </div>
 </div>`;
-        // GET / SETS Iniciais
         this.shadowRoot?.append(template.content);
         this.config.eK = this.shadowRoot?.querySelector(".k");
         this.config.eList = this.shadowRoot?.querySelector(".lista");
@@ -7039,9 +6226,7 @@ li[m="1"] {
             this.config.selapenas = Number(this.getAttribute("selapenas"));
         if (this.getAttribute("name"))
             this.config.name = this.getAttribute("name");
-        // Não precisa inicializar tudo por aqui pois quando tem opcoes, já gera get no opcoes.
         this.atualizarDisplay();
-        // Eventos
         this.config.eK.onfocus = () => {
             this.setAttribute("focused", "");
             this.aoFocus();
@@ -7050,14 +6235,14 @@ li[m="1"] {
             this.aoBlur();
         };
         this.config.eK.oninput = (ev) => {
-            ev.stopPropagation(); // Input interno propaga pro elemento mkSelElement
+            ev.stopPropagation();
             this.aoInput();
         };
         this.config.eK.onkeydown = (ev) => {
             this.config.pesquisaKeyDown(ev);
         };
         mkt.Ao("mousedown", this.config.eUL, (e, ev) => {
-            this.selecionar(ev); // Não vai direto pra mecanicaSelecionar
+            this.selecionar(ev);
         });
         this.config.svg.onclick = (ev) => {
             ev.stopPropagation();
@@ -7075,7 +6260,6 @@ li[m="1"] {
         this.config.rolaCima.onmouseout = (ev) => {
             this.config.moveScrollList(this.config.rolaCima, -1, false);
         };
-        // Seguir o Elemento durante o scroll e resize
         document.addEventListener("scroll", (event) => {
             mkt.Reposicionar(this.config.eList, false);
         });
@@ -7085,36 +6269,20 @@ li[m="1"] {
         this.config.eList.addEventListener("scroll", () => {
             this.config.checkMaisLinhas();
         });
-    } // Fim Construtor mkSel
-    // Funçao que refaz a lista, Coleta, Popula, Seleciona e Exibe o selecionado.
+    }
     forceUpdate() {
-        // Durante o update, o usuário não deveria estar com o seletor aberto.
         this.removeAttribute("focused");
-        // Caso o opções contem uma string JSON
-        // mkt.w({
-        // 	"Nome": this.name,
-        // 	"Opções": this.config.opcoes,
-        // 	"Value": this.value,
-        // 	"isJson?": mkt.isJson(this.config.opcoes),
-        // 	"colect": mkt.parseJSON(this.config.opcoes),
-        // 	"classOfColect": mkt.classof(mkt.parseJSON(this.config.opcoes)),
-        // })
         if (mkt.isJson(this.config.opcoes)) {
             let colect = mkt.parseJSON(this.config.opcoes);
             if (mkt.classof(colect) == "Array") {
                 if (mkt.classof(colect[0]) == "Array") {
-                    //Formato Map
-                    //[["","Todos"],["False","N\u00E3o"],["True","Sim"]]
                     colect.forEach((v, i, a) => {
-                        a[i][0] = a[i][0].toString().replaceAll(",", ""); // Proibido Virgula na Key
+                        a[i][0] = a[i][0].toString().replaceAll(",", "");
                         a[i][1] = a[i][1].toString();
-                        //mkt.l("v: ", v, " i: ", i, " a: ", a)
                     });
                 }
                 else {
                     if (mkt.classof(colect[0]) == "Object") {
-                        // Formato KV
-                        //[{"k":"","v":"Todos"},{"k":"False","v":"N\\u00E3o"},{"k":"True","v":"Sim"}]
                         colect = colect.map((r) => { return [r.k?.toString().replaceAll(",", ""), r.v?.toString()]; });
                     }
                     else {
@@ -7130,12 +6298,12 @@ li[m="1"] {
             }
         }
         else {
-            this.config._data = new Map(); // Inicializa sem opcoes
+            this.config._data = new Map();
         }
-        this.config.eUL.classList.add("topoSel"); // <= Classe pra subir os selecionados
-        // Aqui Seleciona inicialmente ou Seleciona novamente ao trocar o Opcoes.
+        this.config.eUL.classList.add("topoSel");
         if (mkt.classof(this.config.selapenas) == "Number") {
             if (this.config.selapenas == 1) {
+                this.config.selecionados = new Map();
                 this.config._data.forEach((v, k) => {
                     if (k == this.value) {
                         this.config.mecanicaSelecionar(k);
@@ -7143,88 +6311,55 @@ li[m="1"] {
                 });
             }
             else {
-                // mkt.w({
-                // 	"Nome": this.name,
-                // 	"Data": this.config._data,
-                // 	"Value": this.value,
-                // 	"isJson?": mkt.isJson(this.value),
-                // 	"Colect": mkt.parseJSON(this.value),
-                // 	"ClassOf Colect": mkt.classof(mkt.parseJSON(this.value)),
-                // })
-                // Multi seletor guarda um json no value.
                 if (mkt.isJson(this.value)) {
                     let colect = mkt.parseJSON(this.value);
                     if (mkt.classof(colect) == "Array") {
                         let map = new Map(mkt.parseJSON(this.value).map((a) => { return [a?.toString()]; }));
-                        //mkt.l("Map: ", map);
                         this.config.selecionados = map;
                         this.config.updateSelecionadosValues();
                     }
                     else {
                         if (colect != null) {
                             let array = this.value?.split(",").map((a) => { return [a?.toString()]; });
-                            //mkt.l("Array: ", array, " Map:", new Map(array));
                             this.config.selecionados = new Map(array);
                             this.config.updateSelecionadosValues();
                         }
                         else {
-                            this.config.selecionados = new Map(); // Inicializa sem selecionados
+                            this.config.selecionados = new Map();
                         }
                     }
                 }
                 else {
-                    this.config.selecionados = new Map(); // Inicializa sem selecionados
+                    this.config.selecionados = new Map();
                 }
-                //mkt.l("Map Selecionados:", this.config.selecionados);
             }
         }
-        //mkt.l("Seletor: " + this.config.name + ", Opcoes: ", this.config._data);
-        // Popular Lista com opcoes atuais
         this.aoPopularLista();
-        // Atualiza a lista baseado no Map da Lista e no Map de Selecionados
         this.aoAtualizaSelecionadosNaLista();
-        // Atualiza o Display
         this.atualizarDisplay();
     }
-    // Quando o input principal de Pesquisar recebe foco.
     aoFocus() {
-        // Ao receber Foco
-        // Limpa Filtro atual
         this.config.filtrado = "";
-        // Limpa o Display após atualizar status.
         this.config.eK.value = "";
-        // Atualiza Itens Selecionados, caso houve mudança sem atualizar.
         this.aoAtualizaSelecionadosNaLista();
-        // Encontra o primeira opção selecionado
         let ePrimeiroSel = null;
         Array.from(this.config.eUL.children).forEach((li) => {
-            li.style.display = ""; // Pesquisa antiga
-            li.removeAttribute("cursor"); // Seta Sobe e Desce teclado
+            li.style.display = "";
+            li.removeAttribute("cursor");
             if (li.hasAttribute("selecionado") && ePrimeiroSel == null)
                 ePrimeiroSel = li;
         });
-        // Faz movimento no scroll até a primeira opção selecionada
-        //if (this.config.scrollcharge) {
         let primeiroOffSet = ePrimeiroSel?.offsetTop || 0;
         this.config.eList.scrollTop =
             primeiroOffSet - 120 - (this.config.eList.offsetHeight - this.config.eList.clientHeight) / 2;
-        //}
-        // Atualizar posição da Lista.
-        //mkt.l("Resposicionou:", this.name);
         mkt.Reposicionar(this.config.eList, true);
         mkt.a.poppers.get(this.config.eList).update();
-        // Além do Ao do scroll, verifica mais linhas quando carregar.
         this.config.checkMaisLinhas();
     }
-    // Quando sai do botão de pesquisar principal
     aoBlur() {
-        // Ao perder foco
         mkt.wait(150).then(r => {
             if (document.activeElement !== this) {
-                // SE REALMENTE Saiu do elemento:
-                // Seta Valor do display
                 this.atualizarDisplay();
-                // Remove Status de focus pra sumir
                 this.removeAttribute("focused");
                 if (this.config.changed) {
                     this.config.changed = false;
@@ -7233,24 +6368,19 @@ li[m="1"] {
             }
         });
     }
-    // Exibe a lista baseado no filtro de pesquisa
     async aoInput() {
         let strInputado = this.config.eK.value;
-        // Quando está pesquisando, precisa estar com todas as linhas já populadas pra filtrar sobre elas
         if (this.config.eUL.children.length < this.config._data.size) {
             await this.maisLinhas(this.config.populado, this.config._data.size);
         }
-        //mkt.l(strInputado);
         if (this.pos) {
             let strTratada = encodeURI(mkt.removeAcentos(strInputado));
-            //mkt.l("Consultando: ", strTratada);
             if (strTratada.length > 3) {
                 if (this.config.url != "") {
                     let novaUrl = this.config.url + "?s=" + strTratada;
                     let r = await mkt.get.json({ url: novaUrl });
                     if (r.retorno != null) {
                         let map = new Map(r.retorno);
-                        //mkt.l("Retorno Pesquisar: ", map);
                         this.config._data = map;
                         this.opcoes = map;
                         this.config.eK.value = strInputado;
@@ -7289,56 +6419,40 @@ li[m="1"] {
         let hold = document.createElement("template");
         let ate = inicio + total;
         let dados = [...this.config._data];
-        // A ideia era trazer pro início os já selecionados.
-        // A CADA JÁ SELECIONADO
         if (this.config.name == "multiSelecionado" || this.config.name == "staPersonalizado") {
             this.config.selecionados.keys().forEach((k) => {
-                // Se encontrar essa chave na array de dados
-                //mkt.l("K: ", k, " Has? ", dados.findIndex(o => { return o[0] == k }));
                 let indexof = dados.findIndex(o => { return o[0] == k; });
                 if (indexof >= 0) {
-                    //mkt.l("Get: ", dados[indexof]);;
                     dados.unshift(dados.splice(indexof, 1)[0]);
                 }
             });
         }
-        //
         let dadosFiltrado = dados.slice(inicio, ate);
         this.config.populado = Math.max(this.config.populado, ate);
         await mkt.moldeOA(dadosFiltrado, linha, hold);
-        //mkt.l("Populou do: ", inicio, " Até: ", this.config.populado);
         this.config.eUL.append(hold.content.cloneNode(true));
         this.config.rolaCima.style.display = "none";
         this.config.rolaBaixo.style.display = "none";
         if (this.config.eUL.children.length >= 10) {
-            //mkt.l(this.name, this.config.eUL.children.length);
             this.config.rolaCima.style.display = "";
             this.config.rolaBaixo.style.display = "";
         }
         this.aoAtualizaSelecionadosNaLista();
         return this.config.populado;
     }
-    // Atualiza SelecionadosMap e Popula Lista do Zero (Total/Parcial)
     async aoPopularLista() {
-        //if (this.config.name == "staSelecionado") mkt.w("Popular: ", this.config.name);
-        // Atualizar o Map de Selecionados (Para exibir os selecionados no início)
         this.config.convertValueToMap();
-        // Reseta populados atuais
         this.config.eUL.innerHTML = "";
         this.config.populado = 0;
         if (mkt.classof(this.config._data) == "Map") {
-            // SE é pra popular parcialmente pelo scroll ou total.
             if (this.config.scrollcharge) {
                 await this.maisLinhas(this.config.populado, 10);
             }
             else {
-                // Carga Completa
                 await this.maisLinhas(this.config.populado, this.config._data.size);
             }
         }
     }
-    // Atravéz do evento KeyDown do Enter do teclado é selecionado.
-    // Atravéz do evento de MouseDown, o evento é passado o selecionar.
     selecionar(ev) {
         let li = ev.target;
         if (li) {
@@ -7346,24 +6460,18 @@ li[m="1"] {
             this.config.mecanicaSelecionar(novoK);
             if (mkt.classof(this.config.selapenas) == "Number") {
                 if (this.config.selapenas != 1) {
-                    // Mantem foco no Display, pois pode selecionar mais de um
                     this.config.eK.focus();
                 }
             }
-            // Atualizar selecionado
             this.aoAtualizaSelecionadosNaLista();
         }
         else {
             mkt.w("Evento sem Target: ", ev);
         }
     }
-    // Itera Lista e marca ou desmarca o/os elementos do value.
     aoAtualizaSelecionadosNaLista() {
-        // Atualiza as marcações dos selecionados atuais.
         if (this.config.selapenas == 1) {
-            // Value é Unico
             Array.from(this.config.eUL.children).forEach((li) => {
-                //mkt.l("Name: ", this.config.name, " K_LI: ", li.getAttribute("k"), " selHas: ", this.config.selecionados.has(li.getAttribute("k")));
                 if (this.config.selecionados.has(li.getAttribute("k"))) {
                     li.setAttribute("selecionado", "");
                 }
@@ -7373,7 +6481,6 @@ li[m="1"] {
             });
         }
         else {
-            // Value é Multi
             Array.from(this.config.eUL.children).forEach((li) => {
                 if (this.config.selecionados.has(li.getAttribute("k"))) {
                     li.setAttribute("selecionado", "");
@@ -7384,27 +6491,20 @@ li[m="1"] {
             });
         }
     }
-    // Atualiza o selecionado Atual procurando no Map
     atualizarDisplay = async () => {
         this.classList.remove("mkEfeitoPulsar");
         let display = " -- Selecione -- ";
         if (this.config.vazio) {
-            display = this.config.vazio; // Display diferenciado quando vazio == ""
+            display = this.config.vazio;
         }
         if (this.config.selecionados.size != 0) {
             if (this.config.selapenas == 1) {
-                // Seletor Unico que VALUE vem antes do OPCOES, fica NULL no [1]
                 if (this.getFirstSelecionado?.[1]) {
                     display = this.getFirstSelecionado?.[1];
                 }
                 else {
-                    // O que exibir?
-                    // - É um seletor único, mas o item selecionado está nulo.
-                    // - E o item selecinoado não é vazio.
                     if (this.getFirstSelecionado?.[0] !== "") {
-                        display = null; // <= Elementos Relacionados
-                        // Se colocar grupo, os Elementos relacionados podem ser testados aqui
-                        //mkt.w(this.config.name, "Estava: ", this.getFirstSelecionado?.[0], ",", this.getFirstSelecionado?.[1])
+                        display = null;
                     }
                 }
             }
@@ -7414,17 +6514,15 @@ li[m="1"] {
         }
         else {
             if (this.config.selapenas != 1) {
-                // Nenhum selecionado em um Multi Seletor.
                 display = `0 selecionados`;
             }
         }
         ;
         if (!display) {
             ++this.config.fail;
-            // Provaveis causas externas fizeram o seletor entrar aqui.
             display = " -- Erro -- ";
             this.classList.add("mkEfeitoPulsar");
-            if (this.config.fail == 2) { // Tenta trocar opções
+            if (this.config.fail == 2) {
                 mkt.w("mkSel - Opção Inexistente Selecionada:", this.value, ". Iniciar Refill. Tentativa: ", this.config.fail, " - ", this.config.name);
                 display = " -- Carregando -- ";
                 await this.refill();
@@ -7436,7 +6534,7 @@ li[m="1"] {
             else if (this.config.fail == 4) {
                 mkt.w("mkSel - Opção Inexistente Selecionada:", this.value, ". Limpeza falhou. Tentativa: ", this.config.fail, " - ", this.config.name);
             }
-            if (this.config.fail < 4) { // Recarrega
+            if (this.config.fail < 4) {
                 mkt.wait(20).then(r => {
                     this.forceUpdate();
                 });
@@ -7448,19 +6546,16 @@ li[m="1"] {
         ;
         this.config.eK.value = display;
         if (this.config._data.size <= 0) {
-            //mkt.l("Seletor " + this.config.name + ": Nenhuma opção disponível: ", this.config._data.size);
-            //this.config.eUL.innerHTML = ' &#45;&#45; Sem Op&#231;&#245;es &#45;&#45; ';
         }
     };
     async refill(url = null) {
-        let urlExecutar = this.config.url; // Padrão a do atributo
-        if (url != null) { // Se informar url
-            urlExecutar = urlExecutar + url; // Url entra atrás do URL informado manualmente no atributo
+        let urlExecutar = this.config.url;
+        if (url != null) {
+            urlExecutar = urlExecutar + url;
         }
-        if (urlExecutar) { // Apenas URL não vazia
+        if (urlExecutar) {
             let r = await mkt.get.json({ url: urlExecutar });
             if (r.retorno != null) {
-                //mkt.l("Retorno Refill: ", r.retorno);
                 this.setAttribute("opcoes", mkt.stringify(r.retorno));
                 this.dispatchEvent(new CustomEvent("refill"));
             }
@@ -7469,7 +6564,6 @@ li[m="1"] {
             mkt.w("mkSelElement - Não foi possível fazer o refill: Sem URL setada: ", urlExecutar);
         }
     }
-    // Atributos modificados no elemento
     attributeChangedCallback(name, oldValue, newValue) {
         if (name === "disabled") {
             this.config.eK.disabled = newValue !== null;
@@ -7482,10 +6576,8 @@ li[m="1"] {
             this.config.name = newValue;
         }
         else if (name === "value") {
-            //mkt.l(this.config.name, " Set Value: ", newValue)
             if (this.config.value != newValue) {
                 this.config.value = newValue;
-                // Atualizar o Map de Selecionados
                 this.config.convertValueToMap();
                 this.atualizarDisplay();
             }
@@ -7494,7 +6586,7 @@ li[m="1"] {
             if (this.getAttribute("opcoes")) {
                 this.opcoes = this.getAttribute("opcoes");
             }
-            this.removeAttribute("opcoes"); // Mantem os dados em memória
+            this.removeAttribute("opcoes");
         }
         else if (name === "url") {
             this.url = newValue;
@@ -7512,7 +6604,7 @@ li[m="1"] {
         }
         else if (name === "refill") {
             this.removeAttribute("refill");
-            if (newValue == null) { // Se removeu executa
+            if (newValue == null) {
                 this.refill();
             }
         }
@@ -7532,7 +6624,6 @@ li[m="1"] {
             }
         }
     }
-    // Recuperar os Selecionados
     get getFirstSelecionado() { return [...this.selecionadosMap]?.[0] || null; }
     get selecionadosMap() { return this.config.selecionados; }
     get values() { return [...this.selecionadosMap.values()]; }
@@ -7543,22 +6634,15 @@ li[m="1"] {
         return "";
     } }); }
     get keys() { return [...this.selecionadosMap.keys()]; }
-    // Recuperar as opções
     get opcoes() { return this.config._data; }
-    // Alterar as opções
     set opcoes(text) {
-        //mkt.l("SET Opcões: ", text, " Old: ", this.config.opcoes);
         if (text) {
-            //mkt.w("Opções: ", text);
             if (mkt.classof(text) == "String") {
-                // Mantém o JSON do último opções recebido
-                this.config.opcoes = text; // Guardar JSON de OPCOES
+                this.config.opcoes = text;
                 this.forceUpdate();
-                //this.config.opcoes = text;
             }
             else {
                 if (mkt.classof(text) == "Map") {
-                    // Mantém o JSON do último opções recebido
                     this.config.opcoes = mkt.stringify([...text]);
                     this.forceUpdate();
                 }
@@ -7605,13 +6689,9 @@ li[m="1"] {
         this.setAttribute("name", text);
     } }
     get [Symbol.toStringTag]() { return "mkSelElement"; }
-    // Atributos sendo observados no elemento.
     static observedAttributes = ["disabled", "size", "value", "name", "opcoes", "url", "scrollbarwidth", "scrollbarcolor", "selapenas", "refill", "pos", "class"];
 }
 customElements.define("mk-sel", mkSel);
-//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-//  Web Component MkBot - Botao PDF \\
-//___________________________________\\
 class mkBot extends HTMLElement {
     config = {
         dados: null,
@@ -7676,11 +6756,9 @@ class mkBot extends HTMLElement {
 <div class="area" part="area"></div>
 <div class='sobreposto' style="display: none;"></div>
 `;
-        // GET / SETS Iniciais
         this.shadowRoot?.append(template.content);
         this.config.area = this.shadowRoot?.querySelector(".area");
         this.config.sobreposto = this.shadowRoot?.querySelector(".sobreposto");
-        // GET Atributos
         this.config.name = this.getAttribute("name");
         this.config.inicial = this.getAttribute("inicial");
         this.removeAttribute("inicial");
@@ -7695,17 +6773,13 @@ class mkBot extends HTMLElement {
         if (this.config.dados == null)
             this.config.dados = "";
         this.editou("#BUILD");
-    } // Fim Construtor mkBotaoValue
+    }
     editou(from) {
-        //mkt.l("Editou " + this.name + " From: ", from)
         if (this.config.dados == "") {
-            // Se editar para vazio, volta a exibir inicial
             if (this.config.inicial == "") {
-                // Quando ambos estão vazio, exibe um svg
                 this.config.area.innerHTML = "<svg xmlns='http://www.w3.org/2000/svg' class='imagem' part='imagem' viewBox='0 0 24 24' fill='none'><path stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M21 12v7a2 2 0 0 1-2 2h-3m5-9c-6.442 0-10.105 1.985-12.055 4.243M21 12v-1.5M3 16v3a2 2 0 0 0 2 2v0h11M3 16V5a2 2 0 0 1 2-2h8M3 16c1.403-.234 3.637-.293 5.945.243M16 21c-1.704-2.768-4.427-4.148-7.055-4.757M8.5 7C8 7 7 7.3 7 8.5S8 10 8.5 10 10 9.7 10 8.5 9 7 8.5 7zM19 2v3m0 3V5m0 0h3m-3 0h-3'/></svg>";
             }
             else {
-                // Se não exibe o inicial num src
                 this.config.area.innerHTML = "<img class='imagem' part='imagem' src='" + this.config.inicial + "'>";
             }
         }
@@ -7713,13 +6787,9 @@ class mkBot extends HTMLElement {
             let tipo = null;
             let retornar = "<";
             let terminacao = this.config.dados.slice(this.config.dados.length - 3, this.config.dados.length).toString().toLowerCase();
-            //mkt.l("mkBot - Terminação Arquivo: ", terminacao);
-            // Verificar aqui se trata-se de um link ou de uma base64 direto no elemento.					
-            // - Verifica se terminacao do arquivo é PDF ou OUTRO,
             if ((this.config.dados.includes("application/pdf")) || (terminacao == "pdf")) {
                 tipo = "pdf";
             }
-            // FORMATOS DE ARQUIVO
             if (tipo == "pdf") {
                 retornar += "embed type='application/pdf' class='imagem' part='imagem' src='" + this.config.dados;
                 if (!this.config.exibirbarra) {
@@ -7731,14 +6801,11 @@ class mkBot extends HTMLElement {
             }
             retornar += "'>";
             if (!this.config.clicavel) {
-                // Se entrar aquim é pra clica no botão em vez do elemento
                 this.config.sobreposto.style.display = "";
             }
-            // Display
             this.config.area.innerHTML = retornar;
         }
     }
-    // JS Get Set
     get [Symbol.toStringTag]() { return "mk-bot"; }
     get value() {
         if (this.config.dados == null)
@@ -7749,7 +6816,6 @@ class mkBot extends HTMLElement {
         if (text != null) {
             this.config.dados = text;
             this.editou("#VALUE");
-            //mkt.l(this.name + " SET VALUE TO: " + text);
             this.dispatchEvent(new Event("input"));
             this.dispatchEvent(new Event("change"));
             this.classList.add("changed");
@@ -7767,7 +6833,6 @@ class mkBot extends HTMLElement {
         else
             this.removeAttribute("disabled");
     }
-    // Atualizar config do Inicial
     get inicial() {
         if (this.config.inicial == null)
             return "";
@@ -7778,12 +6843,10 @@ class mkBot extends HTMLElement {
             this.config.inicial = text;
         }
     }
-    // HTML Set
     attributeChangedCallback(name, oldValue, newValue) {
         if (name === "value") {
             if (newValue != "" && newValue != null) {
                 if (this.config.dados != newValue) {
-                    //mkt.l(this.config.name, " Set Value: ", newValue)
                     this.value = newValue;
                 }
                 this.removeAttribute("value");
@@ -7798,11 +6861,7 @@ class mkBot extends HTMLElement {
             }
         }
     }
-    // Atributos sendo observados no elemento.
     static observedAttributes = ["disabled", "value", "name", "inicial"];
 }
 customElements.define("mk-bot", mkBot);
-//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-//   Auto Inicializar               \\
-//___________________________________\\
 mkt.Inicializar();
