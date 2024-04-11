@@ -1863,7 +1863,7 @@ class mkt {
 		// Retorna o valor do chave informada, podendo ser obj.obj.chave
 		// mkt.getV("a.b.c",{a:{b:{c:"d"}}})
 		if (typeof objeto == "object") {
-			if (typeof keys == "string") {
+			if (mkt.classof(keys) == "String") {
 				if (keys.includes(".")) {
 					// Multi
 					let ks: string[] = keys.split(".");
@@ -1882,16 +1882,45 @@ class mkt {
 					return objeto[keys];
 				}
 			} else {
-				mkt.w(
-					"getV() - Nome da propriedade precisa ser em string. (" + typeof keys + "):", keys
-				);
+				mkt.w("getV() - Nome da propriedade precisa ser em String. (" + mkt.classof(keys) + "):", keys);
 			}
 		} else {
-			mkt.w(
-				"Para ver a chave, o parametro objeto precisa receber um objeto. (" +
-				typeof objeto +
-				")"
-			);
+			mkt.w("Para ver a chave, o parametro objeto precisa receber um objeto. (" + typeof objeto + ")");
+		}
+		return null;
+	};
+
+	static setV = (keys: string, value: any, objeto: any) => {
+		// Retorna o valor do chave informada, podendo ser obj.obj.chave
+		// mkt.setV("a.b.c","mudei",{a:{b:{c:"d"}}})
+		if (typeof objeto == "object") {
+			if (mkt.classof(keys) == "String") {
+				if (keys.includes(".")) {
+					// Multi
+					let ks: string[] = keys.split(".");
+					let lastObj = objeto;
+					// Iterar o Keys, Ver Obj atual e Setar Conteudo;
+					ks.forEach((k) => {
+						if (ks.indexOf(k) == (ks.length - 1)) {
+							// Último
+							lastObj[k] = value;
+						} else {
+							lastObj[k] = {};
+						}
+						lastObj = lastObj[k];
+					});
+					delete objeto[keys];
+					return objeto;
+				} else {
+					// Set direto, não tem ponto e é string
+					objeto[keys] = value;
+					return objeto;
+				}
+			} else {
+				mkt.w("setV() - Nome da propriedade precisa ser em string. (" + mkt.classof(keys) + "):", keys);
+			}
+		} else {
+			mkt.w("setV() - Objeto precisa receber um objeto. (" + typeof objeto + ")");
 		}
 		return null;
 	};
