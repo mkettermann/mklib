@@ -7523,7 +7523,9 @@ class mkSel extends HTMLElement {
 	overflow-y: auto;
 	scrollbar-color: #777 transparent;
 	scrollbar-width: none;
-	background: #EEE;
+	background: #FFF;
+	background: var(--mkSelListBackground);
+	color: var(--mkSelListColor);
 	box-shadow: 1px 2px 2px 0px var(--mkSelListBorder);
 }
 input {

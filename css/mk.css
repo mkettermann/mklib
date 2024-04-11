@@ -31,6 +31,8 @@
 	/* WC Seletor*/
 	--mkSelCorSetaSelecionado: black;
 	--mkSelListBorder: #0009;
+	--mkSelListBackground: #FFF;
+	--mkSelListColor: #000;
 	--bordaItemSelecionado: #0095;
 	--fundoItemSelecionado: #0092;
 
