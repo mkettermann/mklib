@@ -1578,6 +1578,12 @@ class mkt {
         }
         return null;
     };
+    static setVAll = (obj) => {
+        for (let x in obj) {
+            mkt.setV(x, obj[x], obj);
+        }
+        return obj;
+    };
     static setV = (keys, value, objeto) => {
         if (typeof objeto == "object") {
             if (mkt.classof(keys) == "String") {
@@ -3863,13 +3869,12 @@ class mkt {
         if (form) {
             Array.from(form.querySelectorAll("mk-sel")).forEach((mks) => {
                 rObjeto[mks.name] = mks.value;
-                mkt.setV(mks.name, mks.value, rObjeto);
             });
             Array.from(form.querySelectorAll("mk-bot.changed")).forEach((mkb) => {
                 rObjeto[mkb.name] = mkb.value;
-                mkt.setV(mkb.name, mkb.value, rObjeto);
             });
         }
+        rObjeto = mkt.setVAll(rObjeto);
         if (bool) {
             rObjeto = mkt.toBooleanOA(rObjeto);
         }

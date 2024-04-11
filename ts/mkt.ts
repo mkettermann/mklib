@@ -1890,6 +1890,13 @@ class mkt {
 		return null;
 	};
 
+	static setVAll = (obj: any) => {
+		for (let x in obj) {
+			mkt.setV(x, obj[x], obj);
+		}
+		return obj;
+	}
+
 	static setV = (keys: string, value: any, objeto: any) => {
 		// Retorna o valor do chave informada, podendo ser obj.obj.chave
 		// mkt.setV("a.b.c","mudei",{a:{b:{c:"d"}}})
@@ -4516,14 +4523,14 @@ class mkt {
 		if (form) {
 			Array.from(form.querySelectorAll("mk-sel")).forEach((mks: any) => {
 				rObjeto[mks.name] = mks.value;
-				mkt.setV(mks.name, mks.value, rObjeto);
 			});
 			// Aqui apenas coleta os mkBot que foram modificados pelo usuário.
 			Array.from(form.querySelectorAll("mk-bot.changed")).forEach((mkb: any) => {
 				rObjeto[mkb.name] = mkb.value;
-				mkt.setV(mkb.name, mkb.value, rObjeto);
 			});
 		}
+
+		rObjeto = mkt.setVAll(rObjeto);
 		// mkt.gc("Objeto Gerado: ");
 		// mkt.w(rObjeto);
 		// mkt.ge();
