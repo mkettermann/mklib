@@ -4515,11 +4515,11 @@ class mkt {
 		let rObjeto: any = mkt.limparOA(Object.fromEntries(new FormData(form).entries()));
 		if (form) {
 			Array.from(form.querySelectorAll("mk-sel")).forEach((mks: any) => {
-				rObjeto[mks.name] = mks.value;
+				mkt.setV(mks.name, mks.value, rObjeto);
 			});
 			// Aqui apenas coleta os mkBot que foram modificados pelo usuário.
 			Array.from(form.querySelectorAll("mk-bot.changed")).forEach((mkb: any) => {
-				rObjeto[mkb.name] = mkb.value;
+				mkt.setV(mkb.name, mkb.value, rObjeto);
 			});
 		}
 		// mkt.gc("Objeto Gerado: ");
