@@ -1909,7 +1909,7 @@ class mkt {
 						}
 						lastObj = lastObj[k];
 					});
-					delete objeto[keys];
+					//delete objeto[keys];
 					return objeto;
 				} else {
 					// Set direto, não tem ponto e é string

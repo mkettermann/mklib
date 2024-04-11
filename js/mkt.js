@@ -1593,7 +1593,6 @@ class mkt {
                         }
                         lastObj = lastObj[k];
                     });
-                    delete objeto[keys];
                     return objeto;
                 }
                 else {
