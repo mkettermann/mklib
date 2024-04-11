@@ -8001,14 +8001,14 @@ li[m="1"] {
 			display = " -- Erro -- ";
 			this.classList.add("mkEfeitoPulsar");
 			if (this.config.fail == 2) { // Tenta trocar opções
-				mkt.w("mkSel - Opção Inexistente Selecionada:", this.value, ". Iniciar Refill. Tentativa: ", this.config.fail, " - ", this.config.name);
-				display = " -- Carregando -- ";
-				await this.refill();
-			} else if (this.config.fail == 3) {
-				mkt.w("mkSel - Opção Inexistente Selecionada:", this.value, ". Limpeza forçada. Tentativa: ", this.config.fail, " - ", this.config.name);
+				// mkt.w(this.config.name, "mkSel - Opção Inexistente:", this.value, ". Iniciar Refill. Tentativa: ", this.config.fail);
+				// display = " -- Carregando -- ";
+				// await this.refill();
+				// } else if (this.config.fail == 3) {
+				mkt.w(this.config.name, "mkSel - Opção Inexistente:", this.value, ". Limpeza forçada. Tentativa: ", this.config.fail);
 				this.removeAttribute("value");
-			} else if (this.config.fail == 4) {
-				mkt.w("mkSel - Opção Inexistente Selecionada:", this.value, ". Limpeza falhou. Tentativa: ", this.config.fail, " - ", this.config.name);
+				// } else if (this.config.fail == 4) {
+				// 	mkt.w(this.config.name, "mkSel - Opção Inexistente:", this.value, ". Limpeza falhou. Tentativa: ", this.config.fail);
 			}
 			if (this.config.fail < 4) { // Recarrega
 				mkt.wait(20).then(r => {
