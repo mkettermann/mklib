@@ -1631,7 +1631,7 @@ class mkt {
 	) => {
 		// Seta todos os query com os valores das propriedades informadas nos campos.
 		// O nome da propriedade precisa ser compatível com o PROPNAME do query.
-		let eAfetados = [];
+		let eAfetados: any = [];
 		if (mkt.classof(dados) == "Object") { // Apenas Objeto
 			for (let p in dados) {
 				let eDynamicQuery = mkt.Q(query.replaceAll("#PROP#", p));
@@ -1651,6 +1651,19 @@ class mkt {
 			mkt.QAll(query).forEach((e: any) => {
 				e.value = dados;
 			})
+		} else {
+			mkt.w("QSetAll - Tipo de dado não implementado: " + mkt.classof(dados))
+		}
+		return eAfetados;
+	}
+
+	static QSubSet = (queryContainer: string, dados: any) => {
+		let eAfetados: any = [];
+		if (mkt.classof(dados) == "Object") { // Apenas Objeto
+			mkt.QAll(queryContainer).forEach(e => {
+				e.value = mkt.getV(e.name, dados);
+				eAfetados.push(e);
+			});
 		} else {
 			mkt.w("QSetAll - Tipo de dado não implementado: " + mkt.classof(dados))
 		}

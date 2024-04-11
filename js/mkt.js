@@ -1391,6 +1391,19 @@ class mkt {
         }
         return eAfetados;
     };
+    static QSubSet = (queryContainer, dados) => {
+        let eAfetados = [];
+        if (mkt.classof(dados) == "Object") {
+            mkt.QAll(queryContainer).forEach(e => {
+                e.value = mkt.getV(e.name, dados);
+                eAfetados.push(e);
+            });
+        }
+        else {
+            mkt.w("QSetAll - Tipo de dado não implementado: " + mkt.classof(dados));
+        }
+        return eAfetados;
+    };
     static Qison = (query = "body") => {
         return (mkt.QAll(query).some((e) => { return e.classList.contains("disabled"); }))
             ? false
