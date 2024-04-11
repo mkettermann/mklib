@@ -1391,7 +1391,7 @@ class mkt {
         }
         return eAfetados;
     };
-    static QSubSet = (queryContainer, dados, eventInput = true) => {
+    static QSubSet = (queryContainer, dados, eventInput = false) => {
         let eAfetados = [];
         if (mkt.classof(dados) == "Object") {
             mkt.QAll(queryContainer).forEach(e => {
