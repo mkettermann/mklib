@@ -3862,9 +3862,11 @@ class mkt {
         let rObjeto = mkt.limparOA(Object.fromEntries(new FormData(form).entries()));
         if (form) {
             Array.from(form.querySelectorAll("mk-sel")).forEach((mks) => {
+                rObjeto[mks.name] = mks.value;
                 mkt.setV(mks.name, mks.value, rObjeto);
             });
             Array.from(form.querySelectorAll("mk-bot.changed")).forEach((mkb) => {
+                rObjeto[mkb.name] = mkb.value;
                 mkt.setV(mkb.name, mkb.value, rObjeto);
             });
         }
