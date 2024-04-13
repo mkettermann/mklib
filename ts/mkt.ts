@@ -1871,9 +1871,11 @@ class mkt {
 					let lastV = {};
 					// Iterar o Keys, Ver Obj atual e Setar Conteudo;
 					ks.forEach((k) => {
-						lastV = lastObj[k];
-						if (typeof lastV == "object") {
-							lastObj = lastV;
+						if (lastObj) { // Pode ficar nulo durante
+							lastV = lastObj[k];
+							if (typeof lastV == "object") {
+								lastObj = lastV;
+							}
 						}
 					});
 					return lastV;

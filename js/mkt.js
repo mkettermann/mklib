@@ -1558,9 +1558,11 @@ class mkt {
                     let lastObj = objeto;
                     let lastV = {};
                     ks.forEach((k) => {
-                        lastV = lastObj[k];
-                        if (typeof lastV == "object") {
-                            lastObj = lastV;
+                        if (lastObj) {
+                            lastV = lastObj[k];
+                            if (typeof lastV == "object") {
+                                lastObj = lastV;
+                            }
                         }
                     });
                     return lastV;
