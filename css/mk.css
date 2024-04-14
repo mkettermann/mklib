@@ -2173,6 +2173,7 @@ thead td:hover .mkhmHeadIco {
 	display: flex !important;
 	flex-wrap: wrap !important;
 	justify-content: space-between !important;
+	align-content: space-between !important;
 }
 
 *.tb,
