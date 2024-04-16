@@ -1661,7 +1661,16 @@ class mkt {
 		let eAfetados: any = [];
 		if (mkt.classof(dados) == "Object") { // Apenas Objeto
 			mkt.QAll(queryContainer).forEach(e => {
-				e.value = mkt.getV(e.name, dados);
+				if (e.tagName == "IMG") {
+					let src = mkt.getV(e.name, dados)
+					if (src) {
+						e.src = src;
+					} else {
+						mkt.w(e.name + " SRC: ", src);
+					}
+				} else {
+					e.value = mkt.getV(e.name, dados);
+				}
 				eAfetados.push(e);
 				if (eventInput) {
 					e.dispatchEvent(new Event("input"));
