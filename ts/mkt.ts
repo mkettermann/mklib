@@ -169,6 +169,7 @@ class mktc {
 	dbInit = (store: IDBObjectStore) => { } // Funcao de contrução do design do banco de dados
 	// Alterar essas funções para modificar dados durante etapas.
 	aoIniciarListagem = async (este: mkt) => { }; // Recebe a própria instancia no parametro.
+	aoReceberNovaConsulta = async (dadosFull: any, este: mkt) => { }; // Recebe os dados de dadosFull (Quando #btnConsultar mudou parametro)
 	aoPossuirDados = async (dadosFull: any, este: mkt) => { }; // Recebe os dados de dadosFull
 	aoConcluirFiltragem = async (dadosFiltrado: any, este: mkt) => { }; // Recebe os dados filtrados
 	aoAntesDePopularTabela = async (dadosExibidos: any, este: mkt) => { }; // Recebe os dados a serem exibidos desta página
@@ -485,6 +486,12 @@ class mkt {
 						this.cTotUltimoParametro += this.ultimoGet; // Soma do Ultimo mais o atual
 						for (let i = 0; i < p.retorno.length; i++) {
 							this.dadosFull.push(this.c.aoReceberDados(p.retorno[i], this));
+						}
+						// Similar ao aoPossuirDados. Evento aoReceberNovaConsulta
+						if (this.totalappends == 1) {
+							//EVENT: aoReceberNovaConsulta
+							mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoReceberNovaConsulta"));
+							this.c.aoReceberNovaConsulta(this.dadosFull, this);
 						}
 						if (this.ultimoGet < this.solicitadoUltimoParametro) {
 							// Quando o Recebido for inferior ao solicitado:

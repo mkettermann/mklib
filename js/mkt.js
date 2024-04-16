@@ -154,6 +154,7 @@ class mktc {
     botaoNovaConsulta = "#btnConsultar";
     dbInit = (store) => { };
     aoIniciarListagem = async (este) => { };
+    aoReceberNovaConsulta = async (dadosFull, este) => { };
     aoPossuirDados = async (dadosFull, este) => { };
     aoConcluirFiltragem = async (dadosFiltrado, este) => { };
     aoAntesDePopularTabela = async (dadosExibidos, este) => { };
@@ -429,6 +430,10 @@ class mkt {
                         this.cTotUltimoParametro += this.ultimoGet;
                         for (let i = 0; i < p.retorno.length; i++) {
                             this.dadosFull.push(this.c.aoReceberDados(p.retorno[i], this));
+                        }
+                        if (this.totalappends == 1) {
+                            mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoReceberNovaConsulta"));
+                            this.c.aoReceberNovaConsulta(this.dadosFull, this);
                         }
                         if (this.ultimoGet < this.solicitadoUltimoParametro) {
                             this.aindaTemMais = false;
