@@ -276,39 +276,6 @@ class mkt {
             if (this.c.filtro)
                 this.setFiltroListener();
         }
-        if (!this.c.sortBy)
-            this.c.sortBy = this.c.pk;
-        if (!this.c.sortDir)
-            this.c.sortDir = 1;
-        this.setDirSort(this.c.sortBy, Number(this.c.sortDir));
-        if (this.c.dados != null) {
-            if (mkt.classof(this.c.dados) == "Array") {
-                if (await this.appendList(this.c.dados) != null) {
-                    this.started = true;
-                    this.startListagem();
-                }
-            }
-            else {
-                mkt.w("Os dados informados precisa ser uma Lista. (Array). Recebido:", mkt.classof(this.c.dados));
-            }
-        }
-        if (this.c.url != null) {
-            if (mkt.classof(this.c.url) == "String") {
-                this.c.urlOrigem = this.c.url;
-                if (await this.appendList(this.c.url) != null) {
-                    if (!this.started) {
-                        this.started = true;
-                        this.startListagem();
-                    }
-                    else {
-                        this.atualizarListagem();
-                    }
-                }
-            }
-        }
-        else {
-            this.aindaTemMais = false;
-        }
         if (mkt.classof(this.c.qntSolicitada) != "Number") {
             this.c.qntSolicitada = 10000;
         }
@@ -320,6 +287,51 @@ class mkt {
         }
         else if (this.c.qntInicial <= 0) {
             this.c.qntInicial = 0;
+        }
+        if (!this.c.sortBy)
+            this.c.sortBy = this.c.pk;
+        if (!this.c.sortDir)
+            this.c.sortDir = 1;
+        this.setDirSort(this.c.sortBy, Number(this.c.sortDir));
+        if (this.c.dados != null) {
+            if (mkt.classof(this.c.dados) == "Array") {
+                if (this.c.qntInicial > 0) {
+                    if (await this.appendList(this.c.dados) != null) {
+                        this.started = true;
+                        this.startListagem();
+                    }
+                }
+                else {
+                    this.started = true;
+                    this.startListagem();
+                }
+            }
+            else {
+                mkt.w("Os dados informados precisa ser uma Lista. (Array). Recebido:", mkt.classof(this.c.dados));
+            }
+        }
+        if (this.c.url != null) {
+            if (mkt.classof(this.c.url) == "String") {
+                this.c.urlOrigem = this.c.url;
+                if (this.c.qntInicial > 0) {
+                    if (await this.appendList(this.c.url) != null) {
+                        if (!this.started) {
+                            this.started = true;
+                            this.startListagem();
+                        }
+                        else {
+                            this.atualizarListagem();
+                        }
+                    }
+                }
+                else {
+                    this.started = true;
+                    this.startListagem();
+                }
+            }
+        }
+        else {
+            this.aindaTemMais = false;
         }
         if (this.c.dados == null && this.c.url == null) {
             mkt.w("Nenhuma fonte de dados encontrada. Não será possível popular a listagem sem dados.");

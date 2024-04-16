@@ -318,6 +318,18 @@ class mkt {
 
 		// A partir daqui o New e o Reset seguem iguais
 
+		// Check e config da quantidade de download
+		if (mkt.classof(this.c.qntSolicitada) != "Number") {
+			this.c.qntSolicitada = 10000;
+		} else if (this.c.qntSolicitada < 0) {
+			this.c.qntSolicitada = 10000;
+		}
+		if (mkt.classof(this.c.qntInicial) != "Number") {
+			this.c.qntInicial = this.c.qntSolicitada;
+		} else if (this.c.qntInicial <= 0) {
+			this.c.qntInicial = 0;
+		}
+
 		// Inicial SortBy
 		if (!this.c.sortBy)
 			this.c.sortBy = this.c.pk; // Padrão PK
@@ -330,7 +342,12 @@ class mkt {
 
 		if (this.c.dados != null) {
 			if (mkt.classof(this.c.dados) == "Array") {
-				if (await this.appendList(this.c.dados) != null) {
+				if (this.c.qntInicial > 0) { // Se solicitar 0 ou menos, não realiza append no autoConfig
+					if (await this.appendList(this.c.dados) != null) {
+						this.started = true;
+						this.startListagem();
+					}
+				} else {
 					this.started = true;
 					this.startListagem();
 				}
@@ -342,30 +359,23 @@ class mkt {
 			// URL de coleta informada.
 			if (mkt.classof(this.c.url) == "String") {
 				this.c.urlOrigem = this.c.url;
-				if (await this.appendList(this.c.url) != null) {
-					if (!this.started) {
-						this.started = true;
-						this.startListagem();
-					} else {
-						this.atualizarListagem();
+				if (this.c.qntInicial > 0) { // Se solicitar 0 ou menos, não realiza append no autoConfig
+					if (await this.appendList(this.c.url) != null) {
+						if (!this.started) {
+							this.started = true;
+							this.startListagem();
+						} else {
+							this.atualizarListagem();
+						}
 					}
+				} else {
+					this.started = true;
+					this.startListagem();
 				}
 			}
 		} else {
 			// Quando não tiver url, ocultar botão de puxar mais
 			this.aindaTemMais = false;
-		}
-
-		// Check e config da quantidade de download
-		if (mkt.classof(this.c.qntSolicitada) != "Number") {
-			this.c.qntSolicitada = 10000;
-		} else if (this.c.qntSolicitada < 0) {
-			this.c.qntSolicitada = 10000;
-		}
-		if (mkt.classof(this.c.qntInicial) != "Number") {
-			this.c.qntInicial = this.c.qntSolicitada;
-		} else if (this.c.qntInicial <= 0) {
-			this.c.qntInicial = 0;
 		}
 
 		if (this.c.dados == null && this.c.url == null) {
@@ -438,7 +448,6 @@ class mkt {
 				// Aqui é a primeira coleta.
 				// qntSolicitada
 				// qntInicial representa o valor inicial a ser solicitado
-
 				this.totalappends++;
 				let carregador = false;
 				let solicitar = this.c.qntInicial;
