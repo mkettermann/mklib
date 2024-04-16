@@ -871,7 +871,10 @@ class mkt {
 	gerarParametros = () => {
 		// A cada filtro disponível, gera um valor parametro na consulta Query
 		return mkt.QAll(this.c.filtro)
-			.map((i: HTMLInputElement) => { return "&" + i.name + "=" + encodeURIComponent(i.value); })
+			.map((i: HTMLInputElement) => {
+				// Apenas parametros com conteúdo
+				if (i.value != "") return "&" + i.name + "=" + encodeURIComponent(i.value);
+			})
 			.join("");
 	}
 

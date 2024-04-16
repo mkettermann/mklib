@@ -705,7 +705,10 @@ class mkt {
     };
     gerarParametros = () => {
         return mkt.QAll(this.c.filtro)
-            .map((i) => { return "&" + i.name + "=" + encodeURIComponent(i.value); })
+            .map((i) => {
+            if (i.value != "")
+                return "&" + i.name + "=" + encodeURIComponent(i.value);
+        })
             .join("");
     };
     setFiltroListener = () => {
