@@ -319,7 +319,7 @@ class mkt {
             this.c.qntInicial = this.c.qntSolicitada;
         }
         else if (this.c.qntInicial <= 0) {
-            this.c.qntInicial = this.c.qntSolicitada;
+            this.c.qntInicial = 0;
         }
         if (this.c.dados == null && this.c.url == null) {
             mkt.w("Nenhuma fonte de dados encontrada. Não será possível popular a listagem sem dados.");
