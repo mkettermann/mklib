@@ -3879,6 +3879,19 @@ class mkt {
         }
         return null;
     };
+    static getEFromNames = (arrayNames = [], classe = "*") => {
+        if (mkt.classof(arrayNames) == "Array") {
+            let queries = [];
+            arrayNames.forEach((e) => {
+                queries.push(mkt.Q(classe + "[name='" + e + "']"));
+            });
+            return queries;
+        }
+        else {
+            mkt.w("getEFromNames() - Requer uma array de nomes: ", mkt.classof(arrayNames));
+            return [];
+        }
+    };
     static uuid = () => {
         return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, (c) => {
             return (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16);

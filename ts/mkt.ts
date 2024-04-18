@@ -4523,6 +4523,19 @@ class mkt {
 		return null;
 	}
 
+	static getEFromNames = (arrayNames = [], classe = "*") => {
+		if (mkt.classof(arrayNames) == "Array") {
+			let queries: any = [];
+			arrayNames.forEach((e) => {
+				queries.push(mkt.Q(classe + "[name='" + e + "']"));
+			})
+			return queries;
+		} else {
+			mkt.w("getEFromNames() - Requer uma array de nomes: ", mkt.classof(arrayNames));
+			return [];
+		}
+	}
+
 	static uuid = () => {
 		// Padrão UUIDV4 - Gerador de identificador unico
 		return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, (c: any) => { // c = String
