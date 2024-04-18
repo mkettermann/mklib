@@ -4559,6 +4559,9 @@ class mkt {
 		}
 		let rObjeto: any = mkt.limparOA(Object.fromEntries(new FormData(form).entries()));
 		if (form) {
+			if (bool) {
+				rObjeto = mkt.toBooleanOA(rObjeto);
+			}
 			for (let [k, v] of Object.entries(rObjeto)) {
 				mkt.setV(k, v, rObjeto);
 				if (k.includes(".")) {
