@@ -4559,6 +4559,9 @@ class mkt {
 		}
 		let rObjeto: any = mkt.limparOA(Object.fromEntries(new FormData(form).entries()));
 		if (form) {
+			for (let [k, v] of Object.entries(rObjeto)) {
+				mkt.setV(k, v, rObjeto);
+			}
 			Array.from(form.querySelectorAll("mk-sel")).forEach((mk: any) => {
 				// rObjeto[mk.name] = mk.value;
 				mkt.setV(mk.name, mk.value, rObjeto);
