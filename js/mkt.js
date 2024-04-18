@@ -3911,6 +3911,9 @@ class mkt {
         if (form) {
             for (let [k, v] of Object.entries(rObjeto)) {
                 mkt.setV(k, v, rObjeto);
+                if (k.includes(".")) {
+                    delete rObjeto[k];
+                }
             }
             Array.from(form.querySelectorAll("mk-sel")).forEach((mk) => {
                 mkt.setV(mk.name, mk.value, rObjeto);
