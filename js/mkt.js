@@ -6854,21 +6854,24 @@ class mkBot extends HTMLElement {
         }
         else {
             let tipo = null;
-            let retornar = "<";
+            let retornar = "";
             let terminacao = this.config.dados.slice(this.config.dados.length - 3, this.config.dados.length).toString().toLowerCase();
             if ((this.config.dados.includes("application/pdf")) || (terminacao == "pdf")) {
                 tipo = "pdf";
             }
             if (tipo == "pdf") {
-                retornar += "embed type='application/pdf' class='imagem' part='imagem' src='" + this.config.dados;
+                retornar += `<embed type="application/pdf" class="imagem" part="imagem" src="${this.config.dados}`;
                 if (!this.config.exibirbarra) {
-                    retornar += "#toolbar=0";
+                    retornar += `#toolbar=0`;
                 }
+                retornar += `">`;
             }
             else {
-                retornar += "img class='imagem' part='imagem' src='" + this.config.dados;
+                retornar = `<picture>
+					<source media="(min-width:300px)" srcset="${this.config.dados}" class="imgEmpresa">
+					<img src="${this.config.inicial}" class="imagem">
+				</picture>`;
             }
-            retornar += "'>";
             if (!this.config.clicavel) {
                 this.config.sobreposto.style.display = "";
             }

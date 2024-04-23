@@ -8338,7 +8338,7 @@ class mkBot extends HTMLElement {
 			}
 		} else {
 			let tipo = null;
-			let retornar = "<";
+			let retornar = "";
 			let terminacao = this.config.dados.slice(this.config.dados.length - 3, this.config.dados.length).toString().toLowerCase();
 			//mkt.l("mkBot - Terminação Arquivo: ", terminacao);
 			// Verificar aqui se trata-se de um link ou de uma base64 direto no elemento.					
@@ -8349,14 +8349,18 @@ class mkBot extends HTMLElement {
 
 			// FORMATOS DE ARQUIVO
 			if (tipo == "pdf") {
-				retornar += "embed type='application/pdf' class='imagem' part='imagem' src='" + this.config.dados;
+				retornar += `<embed type="application/pdf" class="imagem" part="imagem" src="${this.config.dados}`;
 				if (!this.config.exibirbarra) {
-					retornar += "#toolbar=0"
+					retornar += `#toolbar=0`;
 				}
+				retornar += `">`;
 			} else {
-				retornar += "img class='imagem' part='imagem' src='" + this.config.dados;
+				// Exibe um picture evitando o erro de carregamento
+				retornar = `<picture>
+					<source media="(min-width:300px)" srcset="${this.config.dados}" class="imgEmpresa">
+					<img src="${this.config.inicial}" class="imagem">
+				</picture>`
 			}
-			retornar += "'>";
 			if (!this.config.clicavel) {
 				// Se entrar aquim é pra clica no botão em vez do elemento
 				this.config.sobreposto.style.display = "";
