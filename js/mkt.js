@@ -3448,7 +3448,9 @@ class mkt {
         let limparO_Execute = (o) => {
             for (let propName in o) {
                 if (o[propName] === null ||
-                    o[propName] === "") {
+                    o[propName] === undefined ||
+                    o[propName] === "" ||
+                    o[propName] === "undefined") {
                     delete o[propName];
                 }
             }

@@ -3995,7 +3995,9 @@ class mkt {
 			for (let propName in o) {
 				if (
 					o[propName as keyof typeof o] === null ||
-					o[propName as keyof typeof o] === ""
+					o[propName as keyof typeof o] === undefined ||
+					o[propName as keyof typeof o] === "" ||
+					o[propName as keyof typeof o] === "undefined"
 				) {
 					delete o[propName as keyof typeof o];
 				}
@@ -7338,7 +7340,7 @@ class mkSel extends HTMLElement {
 		changed: false,
 		fail: 0,
 		geraInputEvent: () => {
-			// Gera o Evento			
+			// Gera o Evento
 			this.dispatchEvent(new Event("input"));
 			this.config.changed = true;
 		},
