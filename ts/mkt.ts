@@ -8356,7 +8356,7 @@ class mkBot extends HTMLElement {
 				retornar += `">`;
 			} else {
 				// Exibe um picture evitando o erro de carregamento
-				retornar = `<img src="${this.config.dados}" class="imagem" alt="Imagem" onerror="this.onerror=null;this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIGNsYXNzPSdpbWFnZW0nIHBhcnQ9J2ltYWdlbScgdmlld0JveD0nMCAwIDI0IDI0JyBmaWxsPSdub25lJz48cGF0aCBzdHJva2U9J2N1cnJlbnRDb2xvcicgc3Ryb2tlLWxpbmVjYXA9J3JvdW5kJyBzdHJva2UtbGluZWpvaW49J3JvdW5kJyBzdHJva2Utd2lkdGg9JzInIGQ9J00yMSAxMnY3YTIgMiAwIDAgMS0yIDJoLTNtNS05Yy02LjQ0MiAwLTEwLjEwNSAxLjk4NS0xMi4wNTUgNC4yNDNNMjEgMTJ2LTEuNU0zIDE2djNhMiAyIDAgMCAwIDIgMnYwaDExTTMgMTZWNWEyIDIgMCAwIDEgMi0yaDhNMyAxNmMxLjQwMy0uMjM0IDMuNjM3LS4yOTMgNS45NDUuMjQzTTE2IDIxYy0xLjcwNC0yLjc2OC00LjQyNy00LjE0OC03LjA1NS00Ljc1N004LjUgN0M4IDcgNyA3LjMgNyA4LjVTOCAxMCA4LjUgMTAgMTAgOS43IDEwIDguNSA5IDcgOC41IDd6TTE5IDJ2M20wIDNWNW0wIDBoM20tMyAwaC0zJy8+PC9zdmc+';" />`
+				retornar = `<img src="${this.config.dados}" class="imagem" alt="Imagem" onerror="this.onerror=null;this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgZmlsbD0iY3VycmVudENvbG9yIiBjbGFzcz0iYmkgYmktaW1hZ2UtYWx0IiB2aWV3Qm94PSIwIDAgMTYgMTYiPg0KICA8cGF0aCBkPSJNNyAyLjVhMi41IDIuNSAwIDEgMS01IDAgMi41IDIuNSAwIDAgMSA1IDBtNC4yMjUgNC4wNTNhLjUuNSAwIDAgMC0uNTc3LjA5M2wtMy43MSA0LjcxLTIuNjYtMi43NzJhLjUuNSAwIDAgMC0uNjMuMDYyTC4wMDIgMTN2MmExIDEgMCAwIDAgMSAxaDE0YTEgMSAwIDAgMCAxLTF2LTQuNXoiLz4NCjwvc3ZnPg==';" />`
 			}
 			if (!this.config.clicavel) {
 				// Se entrar aquim é pra clica no botão em vez do elemento
