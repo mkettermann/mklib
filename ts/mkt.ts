@@ -1425,6 +1425,7 @@ class mkt {
 			datamax: "Data maior que o esperado",
 			charproibido: "Não utilize: ",
 			apenasnumeros: "Apenas Números",
+			apenasnumerosvirgula: "Apenas Números e Virgula",
 			apenasletras: "Apenas Letras",
 			datamaiorque: "Deve ser maior que hoje",
 			datamenorque: "Deve ser menor que hoje",
@@ -1527,6 +1528,7 @@ class mkt {
 				/^([0-9]{4}(-[0-9]{2}){2}T[0-9]{2}(:[0-9]{2})\.[0-9]{3}Z)$/,
 			],
 			numeros: ["0", /^[0-9]*$/],
+			numerosvirgula: ["0", /^[0-9,]*$/],
 			letras: ["A", /^[A-Za-z]*$/],
 			telefone_ddd: ["(00) 00000-00000", /^[0-9]{11}$/],
 		} as any, // Util: Mascarar, Regex, Funcao Validadora
@@ -3353,8 +3355,19 @@ class mkt {
 									break;
 
 								case "numero":  // EXE
-									if (e[re.target]) {
-										e[re.target] = mkt.numToDisplay(e[re.target]);
+									if (!(mkt.a.util.numerosvirgula[1].test(e[re.target]))) {
+										if (!re.m) re.m = mkt.a.msg.apenasnumerosvirgula;
+										erros.push(re);
+										e[re.target] = e[re.target].replaceAll(/((?![0-9,]).)/g, "")
+									}
+									if (tipoEvento == "blur") {
+										// Apenas ultima virgula
+										let valor = e[re.target];
+										let posPonto = valor.lastIndexOf([".", ","].reduce((x, y) => (valor.lastIndexOf(x) > valor.lastIndexOf(y)) ? x : y));
+										if (posPonto >= 0) {
+											// Se houver ponto
+											e[re.target] = Number(mkt.apenasNumeros(valor.slice(0, posPonto)) + "." + mkt.apenasNumeros(valor.slice(posPonto + 1))).toString().replaceAll(".", ",");
+										}
 									}
 									prom(re.k);
 									break;
