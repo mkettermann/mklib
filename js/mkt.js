@@ -3937,7 +3937,7 @@ class mkt {
         if (bool) {
             rObjeto = mkt.toBooleanOA(rObjeto);
         }
-        rObjeto = mkt.limparFull(rObjeto);
+        mkt.limparFull(rObjeto);
         return rObjeto;
     };
     static QScrollTo = (query = "body") => {
