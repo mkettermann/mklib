@@ -3458,6 +3458,13 @@ class mkt {
         };
         return mkt.aCadaObjExecuta(oa, limparO_Execute);
     };
+    static limparFull = (sub) => {
+        return mkt.aCadaSubPropriedade(sub, (v, i, a) => {
+            if (v === null || v === undefined || v === "" || v === "undefined") {
+                delete a[i];
+            }
+        });
+    };
     static aCadaSubPropriedade = (OA, funcao = null, exceto = "Object") => {
         let c = 0;
         for (let a in OA) {
@@ -3930,6 +3937,7 @@ class mkt {
         if (bool) {
             rObjeto = mkt.toBooleanOA(rObjeto);
         }
+        rObjeto = mkt.limparFull(rObjeto);
         return rObjeto;
     };
     static QScrollTo = (query = "body") => {

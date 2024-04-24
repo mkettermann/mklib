@@ -4007,6 +4007,15 @@ class mkt {
 		return mkt.aCadaObjExecuta(oa, limparO_Execute);
 	};
 
+	static limparFull = (sub: object | object[]) => {
+		// Converte (OBJ / ARRAY) Limpar Nulos e Vazios
+		return mkt.aCadaSubPropriedade(sub, (v: any, i: any, a: any) => {
+			if (v === null || v === undefined || v === "" || v === "undefined") {
+				delete a[i];
+			}
+		});
+	};
+
 	static aCadaSubPropriedade = (OA: any, funcao: Function | null = null, exceto: string = "Object") => {
 		// Executa a FUNCAO em todas as propriedades deste OA. Inclusive Obj.Obj... (Matriz de Dados)
 		let c = 0;
@@ -4588,6 +4597,7 @@ class mkt {
 		if (bool) {
 			rObjeto = mkt.toBooleanOA(rObjeto);
 		}
+		rObjeto = mkt.limparFull(rObjeto);
 		return rObjeto;
 	}
 
