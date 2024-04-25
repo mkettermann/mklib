@@ -1690,7 +1690,12 @@ class mkt {
 						mkt.w(e.name + " SRC: ", src);
 					}
 				} else {
-					e.value = mkt.getV(e.name, dados);
+					let v = mkt.getV(e.name, dados)
+					if (v) {
+						e.value = v;
+					} else {
+						e.value = "";
+					}
 				}
 				eAfetados.push(e);
 				if (eventInput) {
@@ -1698,7 +1703,7 @@ class mkt {
 				}
 			});
 		} else {
-			mkt.w("QSetAll - Tipo de dado não implementado: " + mkt.classof(dados))
+			mkt.w("QSubSet - Tipo de dado não implementado: " + mkt.classof(dados))
 		}
 		return eAfetados;
 	}
