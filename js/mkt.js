@@ -1428,7 +1428,7 @@ class mkt {
                 }
                 else {
                     let v = mkt.getV(e.name, dados);
-                    if (v) {
+                    if (v != null) {
                         e.value = v;
                     }
                     else {
