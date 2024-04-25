@@ -697,11 +697,7 @@ button.CarregadorMkTopoDireito:hover {
 /* =======================
 	MK Effect: Input Pendente
 =========================*/
-.divInputInput:has(.iConsultas) .field-validation-error {
-	display: none;
-}
-
-.divInputInput:has(.pending:not(.iConsultas)) {
+.divInputInput:has(.pending) {
 	position: relative;
 	box-sizing: border-box;
 	background-clip: padding-box;
@@ -711,7 +707,7 @@ button.CarregadorMkTopoDireito:hover {
 	margin: -5px 0px;
 }
 
-.divInputInput:has(.pending:not(.iConsultas))::before {
+.divInputInput:has(.pending)::before {
 	content: "";
 	position: absolute;
 	top: 0;
