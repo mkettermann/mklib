@@ -1702,8 +1702,6 @@ class mkt {
 					e.dispatchEvent(new Event("input"));
 				}
 			});
-		} else {
-			mkt.w("QSubSet - Tipo de dado não implementado: " + mkt.classof(dados))
 		}
 		return eAfetados;
 	}

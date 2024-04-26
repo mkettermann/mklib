@@ -1441,9 +1441,6 @@ class mkt {
                 }
             });
         }
-        else {
-            mkt.w("QSubSet - Tipo de dado não implementado: " + mkt.classof(dados));
-        }
         return eAfetados;
     };
     static Qison = (query = "body") => {
