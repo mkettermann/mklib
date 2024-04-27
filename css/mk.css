@@ -1676,78 +1676,6 @@ ul.mkUlFase li.disabled a {
 	justify-content: space-between;
 }
 
-.col7 {
-	flex: 1 0 7% !important;
-}
-
-.col10 {
-	flex: 1 0 10% !important;
-}
-
-.col15 {
-	flex: 1 0 15% !important;
-}
-
-.col20 {
-	flex: 1 0 20% !important;
-}
-
-.col25 {
-	flex: 1 1 25% !important;
-}
-
-.col30 {
-	flex: 1 0 30% !important;
-}
-
-.col33 {
-	flex: 1 0 33.33% !important;
-}
-
-.col37 {
-	flex: 1 0 37.5% !important;
-}
-
-.col40 {
-	flex: 1 0 40% !important;
-}
-
-.col49 {
-	flex: 1 0 49% !important;
-}
-
-.col50 {
-	flex: 1 0 50% !important;
-}
-
-.col60 {
-	flex: 1 0 60% !important;
-}
-
-.col66 {
-	flex: 1 0 66.66% !important;
-}
-
-.col70 {
-	flex: 1 0 70% !important;
-}
-
-.col75 {
-	flex: 1 0 75% !important;
-}
-
-.col80 {
-	flex: 1 0 80% !important;
-}
-
-.col90 {
-	flex: 1 0 90% !important;
-}
-
-.col100 {
-	flex: 1 0 100% !important;
-}
-
 .comGap {
 	display: flex;
 	grid-column-gap: 10px;
@@ -2163,6 +2091,81 @@ thead td:hover .mkhmHeadIco {
 	.iComGap {
 		flex-direction: column;
 	}
+}
+
+@media (min-width: 768px) {
+	.col7 {
+		flex: 1 0 7% !important;
+	}
+
+	.col10 {
+		flex: 1 0 10% !important;
+	}
+
+	.col15 {
+		flex: 1 0 15% !important;
+	}
+
+	.col20 {
+		flex: 1 0 20% !important;
+	}
+
+	.col25 {
+		flex: 1 1 25% !important;
+	}
+
+	.col30 {
+		flex: 1 0 30% !important;
+	}
+
+	.col33 {
+		flex: 1 0 33.33% !important;
+	}
+
+	.col37 {
+		flex: 1 0 37.5% !important;
+	}
+
+	.col40 {
+		flex: 1 0 40% !important;
+	}
+
+	.col49 {
+		flex: 1 0 49% !important;
+	}
+
+	.col50 {
+		flex: 1 0 50% !important;
+	}
+
+	.col60 {
+		flex: 1 0 60% !important;
+	}
+
+	.col66 {
+		flex: 1 0 66.66% !important;
+	}
+
+	.col70 {
+		flex: 1 0 70% !important;
+	}
+
+	.col75 {
+		flex: 1 0 75% !important;
+	}
+
+	.col80 {
+		flex: 1 0 80% !important;
+	}
+
+	.col90 {
+		flex: 1 0 90% !important;
+	}
+
+	.col100 {
+		flex: 1 0 100% !important;
+	}
+
 }
 
 *.fsb {
