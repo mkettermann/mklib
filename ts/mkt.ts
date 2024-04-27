@@ -405,8 +405,9 @@ class mkt {
 		this.solicitadoUltimoParametro = 0;
 		this.aindaTemMais = true;
 		this.totalappends = 0;
+		this.c.objFiltro = {}; // Limpa Filtro sem limpar os campos
 		await this.autoStartConfig();
-		this.startListagem()
+		//this.startListagem()
 	}
 
 	mais = async (parametros: string | null = null, novaurl: string | null = null) => {
@@ -906,7 +907,7 @@ class mkt {
 					mkt.Qoff(this.c.botaoNovaConsulta);
 				}
 			}
-			// Reativa o botao
+			// Conecta Filtro se o filtro for dinamico
 			if (this.c.filtroDinamico) {
 				this.gerarFiltro(e);
 				this.atualizaNaPaginaUm();
@@ -1815,7 +1816,7 @@ class mkt {
 		modelo: any = "#modelo",
 		repositorio: any = ".tableListagem .listBody",
 		allowTags: boolean = false,
-		removeAspas: boolean = true
+		removeAspas: boolean = false
 	) => {
 		// MoldeOA popula templates de forma escalável com uma array de objetos ou um objeto.
 		// É no molde que se converte vários objetos em várias exibições estes objetos.

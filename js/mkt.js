@@ -1515,7 +1515,7 @@ class mkt {
         mkt.clicarNaAba(mkt.Q(".mkAbas a.active"));
         mkt.exeTimer();
     };
-    static moldeOA = async (dados, modelo = "#modelo", repositorio = ".tableListagem .listBody", allowTags = false, removeAspas = true) => {
+    static moldeOA = async (dados, modelo = "#modelo", repositorio = ".tableListagem .listBody", allowTags = false, removeAspas = false) => {
         return new Promise((r) => {
             let eModelo = mkt.Q(modelo);
             if (!eModelo) {
