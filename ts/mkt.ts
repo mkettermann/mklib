@@ -8149,6 +8149,20 @@ li[m="1"] {
 		}
 	}
 
+	geraListaAntesDoElemento() {
+		let divLabelsSelecionadas = document.createElement("ul");
+		divLabelsSelecionadas.setAttribute("class", "mkSelOutDisplay");
+		divLabelsSelecionadas.innerHTML = [...this.selecionadosMap.values()].map((i) => "<li>" + i + "</li>").join("");
+		this.before(divLabelsSelecionadas);
+		mkt.Ao("input", this, (e: mkSel) => {
+			e.updateListaAntesDoElemento(divLabelsSelecionadas);
+		});
+	}
+
+	updateListaAntesDoElemento(e: HTMLUListElement) {
+		e.innerHTML = [...this.selecionadosMap.values()].map((i) => "<li>" + i + "</li>").join("");
+	}
+
 	// Atributos modificados no elemento
 	attributeChangedCallback(name: string, oldValue: string, newValue: string) {
 		if (name === "disabled") {

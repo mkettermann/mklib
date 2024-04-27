@@ -6661,6 +6661,18 @@ li[m="1"] {
             mkt.w("mkSelElement - Não foi possível fazer o refill: Sem URL setada: ", urlExecutar);
         }
     }
+    geraListaAntesDoElemento() {
+        let divLabelsSelecionadas = document.createElement("ul");
+        divLabelsSelecionadas.setAttribute("class", "mkSelOutDisplay");
+        divLabelsSelecionadas.innerHTML = [...this.selecionadosMap.values()].map((i) => "<li>" + i + "</li>").join("");
+        this.before(divLabelsSelecionadas);
+        mkt.Ao("input", this, (e) => {
+            e.updateListaAntesDoElemento(divLabelsSelecionadas);
+        });
+    }
+    updateListaAntesDoElemento(e) {
+        e.innerHTML = [...this.selecionadosMap.values()].map((i) => "<li>" + i + "</li>").join("");
+    }
     attributeChangedCallback(name, oldValue, newValue) {
         if (name === "disabled") {
             this.config.eK.disabled = newValue !== null;

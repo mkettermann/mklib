@@ -2356,6 +2356,24 @@ mk-sel.valid::part(arrowAbreFecha) {
 	fill: #090;
 }
 
+ul.mkSelOutDisplay {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 3px;
+	margin: 2px 0px;
+	padding: 0px;
+	font-size: 0.8rem;
+}
+
+ul.mkSelOutDisplay li {
+	border: 1px solid #0005;
+	border: 1px solid var(--bordaMaster);
+	border-radius: 3px;
+	padding: 0px 2px;
+	margin: 0px;
+	line-height: normal;
+}
+
 /* BOTAOVALUE */
 mk-bot:not(:defined) {
 	opacity: 0;
