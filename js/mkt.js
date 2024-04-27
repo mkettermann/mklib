@@ -357,8 +357,8 @@ class mkt {
         this.solicitadoUltimoParametro = 0;
         this.aindaTemMais = true;
         this.totalappends = 0;
+        this.c.objFiltro = {};
         await this.autoStartConfig();
-        this.startListagem();
     };
     mais = async (parametros = null, novaurl = null) => {
         return new Promise((r) => {
