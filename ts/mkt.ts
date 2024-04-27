@@ -561,8 +561,10 @@ class mkt {
 		mkt.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
 
 		// Executa um filtro inicial e na sequencia processa a exibição.
-		if (this.c.filtro) {
-			this._updateObjFiltro();
+		if (this.c.filtro) { // Coleta se houver uma tag de filtro
+			if (this.c.filtroDinamico) { // Não refiltrar caso for por consulta
+				this._RecoletarFiltros();
+			}
 		}
 		this.efeitoSort();
 		// Remove oculto, caso encontre a tag
@@ -636,7 +638,7 @@ class mkt {
 		// Atualiza Status, Filtra, Botão Mais...
 		// A cada atualizar listagem, atualiza o filtro por garantia.
 		if (this.c.filtroDinamico) { // Não refiltrar caso for por consulta
-			this._updateObjFiltro();
+			this._RecoletarFiltros();
 		}
 		let pagBotoes = mkt.Q(this.c.pagBotoes);
 		// Processo de filtro que usa o objFiltro nos dadosFull e retorna dadosFiltrado já filtrado.
@@ -839,23 +841,23 @@ class mkt {
 		});
 	};
 
-	_updateObjFiltro = () => {
+	_RecoletarFiltros = () => {
 		// Limpa e Recoleta o filtro baseado no filtro contruído.
 		// Limpa filtro atual
 		this.c.objFiltro = {};
 		// Gera filtro os nos campos
 		mkt.QAll(this.c.filtro).forEach((e: HTMLElement) => {
-			this.gerarFiltro(e);
+			this.updateFiltroElemento(e);
 		});
 	}
 
 	updateFiltro = () => {
 		// Limpa, Gera Filtro e Atualiza. Padrao class ".iConsultas".
-		this._updateObjFiltro();
+		this._RecoletarFiltros();
 		this.atualizaNaPaginaUm();
 	};
 
-	gerarFiltro = (e: any) => {
+	updateFiltroElemento = (e: any) => {
 		// Gerar Filtro baseado nos atributos do MKF gerados no campo.
 		// Para ignorar filtro: data-mkfignore="true" (Ou nao colocar o atributo mkfformato no elemento)
 		if (e.value != null && e.getAttribute("data-mkfignore") != "true") {
@@ -891,6 +893,7 @@ class mkt {
 		// Onclick do botao
 		if (this.c.botaoNovaConsulta != null) {
 			mkt.Ao("click", this.c.botaoNovaConsulta, (e: HTMLElement) => {
+				mkt.l("NOVA consulta ()");
 				this.mais(this.gerarParametros());
 			});
 		}
@@ -909,7 +912,7 @@ class mkt {
 			}
 			// Conecta Filtro se o filtro for dinamico
 			if (this.c.filtroDinamico) {
-				this.gerarFiltro(e);
+				this.updateFiltroElemento(e);
 				this.atualizaNaPaginaUm();
 			}
 		});

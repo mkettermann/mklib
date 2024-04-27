@@ -473,7 +473,9 @@ class mkt {
         await this.c.aoPossuirDados(this.dadosFull, this);
         mkt.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
         if (this.c.filtro) {
-            this._updateObjFiltro();
+            if (this.c.filtroDinamico) {
+                this._RecoletarFiltros();
+            }
         }
         this.efeitoSort();
         if (mkt.Q(this.c.tableResultado)) {
@@ -521,7 +523,7 @@ class mkt {
     };
     atualizarListagem = async () => {
         if (this.c.filtroDinamico) {
-            this._updateObjFiltro();
+            this._RecoletarFiltros();
         }
         let pagBotoes = mkt.Q(this.c.pagBotoes);
         this.dadosFiltrado = mkt.processoFiltragem(this.dadosFull, this.c.objFiltro, this);
@@ -683,17 +685,17 @@ class mkt {
             }
         });
     };
-    _updateObjFiltro = () => {
+    _RecoletarFiltros = () => {
         this.c.objFiltro = {};
         mkt.QAll(this.c.filtro).forEach((e) => {
-            this.gerarFiltro(e);
+            this.updateFiltroElemento(e);
         });
     };
     updateFiltro = () => {
-        this._updateObjFiltro();
+        this._RecoletarFiltros();
         this.atualizaNaPaginaUm();
     };
-    gerarFiltro = (e) => {
+    updateFiltroElemento = (e) => {
         if (e.value != null && e.getAttribute("data-mkfignore") != "true") {
             this.c.objFiltro[e.name] = {
                 formato: e.getAttribute("data-mkfformato"),
@@ -719,6 +721,7 @@ class mkt {
     setFiltroListener = () => {
         if (this.c.botaoNovaConsulta != null) {
             mkt.Ao("click", this.c.botaoNovaConsulta, (e) => {
+                mkt.l("NOVA consulta ()");
                 this.mais(this.gerarParametros());
             });
         }
@@ -733,7 +736,7 @@ class mkt {
                 }
             }
             if (this.c.filtroDinamico) {
-                this.gerarFiltro(e);
+                this.updateFiltroElemento(e);
                 this.atualizaNaPaginaUm();
             }
         });
