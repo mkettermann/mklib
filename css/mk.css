@@ -2332,12 +2332,13 @@ fieldset {
 
 /* DIALOG */
 dialog {
-	padding: 5px;
-	border: 3px double navy;
+	padding: 0px;
+	border: 3px double transparent;
+	border-radius: 5px;
 }
 
 dialog::backdrop {
-	background-color: #0004;
+	background-color: #0005;
 }
 
 /* SELETOR */
