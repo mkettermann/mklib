@@ -2332,13 +2332,16 @@ fieldset {
 
 /* DIALOG */
 dialog {
+	/* Inicial Size Mobile S8+ */
+	min-width: 100px;
+	width: 360px;
 	padding: 0px;
 	border: 3px double transparent;
 	border-radius: 5px;
 }
 
 dialog::backdrop {
-	background-color: #0005;
+	background-color: #0008;
 }
 
 /* SELETOR */
