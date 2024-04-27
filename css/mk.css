@@ -2318,6 +2318,18 @@ svg {
 	margin-bottom: 1px;
 }
 
+.overFlowHidden {
+	overflow: hidden;
+}
+
+.overFlowXHidden {
+	overflow-x: hidden;
+}
+
+.overFlowYHidden {
+	overflow-y: hidden;
+}
+
 .flex {
 	display: flex;
 }
@@ -2336,8 +2348,10 @@ dialog {
 	min-width: 100px;
 	width: 360px;
 	padding: 0px;
-	border: 3px double transparent;
-	border-radius: 5px;
+	border: 2px double transparent;
+	border-radius: 6px;
+	overflow-y: auto;
+	overflow-x: hidden;
 }
 
 dialog::backdrop {
