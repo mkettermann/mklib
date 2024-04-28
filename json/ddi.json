@@ -497,56 +497,78 @@
 		"África"
 	],
 	[
+		"MDG",
+		"MG",
 		"+262",
 		"Madagascar",
 		"África"
 	],
 	[
+		"MYT",
+		"YT",
 		"+262",
 		"Maiote",
 		"África"
 	],
 	[
+		"REU",
+		"RE",
 		"+262",
 		"Reunião",
 		"África"
 	],
 	[
+		"ZWE",
+		"ZW",
 		"+263",
 		"Zimbábue",
 		"África"
 	],
 	[
+		"NAM",
+		"NA",
 		"+264",
 		"Namíbia",
 		"África"
 	],
 	[
+		"MWI",
+		"MW",
 		"+265",
 		"Maláui",
 		"África"
 	],
 	[
+		"LSO",
+		"LS",
 		"+266",
 		"Lesoto",
 		"África"
 	],
 	[
+		"BWA",
+		"BW",
 		"+267",
 		"Botsuana",
 		"África"
 	],
 	[
+		"SWZ",
+		"SZ",
 		"+268",
 		"Essuatíni",
 		"África"
 	],
 	[
+		"COM",
+		"KM",
 		"+269",
 		"Comores",
 		"África"
 	],
 	[
+		"ZAF",
+		"ZA",
 		"+27",
 		"África do Sul",
 		"África"
@@ -559,26 +581,36 @@
 		"África"
 	],
 	[
+		"TAA",
+		"TA",
 		"+290",
 		"Tristão da Cunha",
 		"África"
 	],
 	[
+		"ERI",
+		"ER",
 		"+291",
 		"Eritreia",
 		"África"
 	],
 	[
+		"ABW",
+		"AW",
 		"+297",
 		"Aruba",
 		"América"
 	],
 	[
+		"FRO",
+		"FO",
 		"+298",
 		"Ilhas Féroe",
 		"Europa"
 	],
 	[
+		"GRL",
+		"GL",
 		"+299",
 		"Groenlândia",
 		"América"
