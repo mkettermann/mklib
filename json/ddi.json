@@ -21,101 +21,148 @@
 		"América"
 	],
 	[
+		"BRB",
+		"BB",
 		"+1",
 		"Barbados",
 		"América"
 	],
 	[
+		"BMU",
+		"BM",
 		"+1",
 		"Bermudas",
 		"América"
 	],
 	[
+		"CAN",
+		"CA",
 		"+1",
 		"Canadá",
 		"América"
 	],
 	[
+		"DMA",
+		"DM",
 		"+1",
 		"Dominica",
 		"América"
 	],
 	[
+		"USA",
+		"US",
 		"+1",
 		"Estados Unidos",
 		"América"
 	],
 	[
+		"GRD",
+		"GD",
+		"+1",
+		"Granada",
+		"Oceania"
+	],
+	[
+		"GUM",
+		"GU",
 		"+1",
 		"Guam",
 		"Oceania"
 	],
 	[
+		"CYM",
+		"KY",
 		"+1",
 		"Ilhas Caimã",
 		"América"
 	],
 	[
+		"MNP",
+		"MP",
 		"+1",
-		"Ilhas Marianas do Norte",
+		"Ilhas Marianas Setentrionais",
 		"Oceania"
 	],
 	[
-		"+1",
-		"Ilhas Virgens Americanas",
-		"América"
-	],
-	[
+		"VGB",
+		"VG",
 		"+1",
 		"Ilhas Virgens Britânicas",
 		"América"
 	],
 	[
+		"JAM",
+		"JM",
+		"+1",
+		"Jamaica",
+		"América"
+	],
+	[
+		"MSR",
+		"MS",
 		"+1",
 		"Monserrate",
 		"América"
 	],
 	[
+		"PRI",
+		"PR",
 		"+1",
 		"Porto Rico",
 		"América"
 	],
 	[
+		"DOM",
+		"DO",
 		"+1",
 		"República Dominicana",
 		"América"
 	],
 	[
+		"ASM",
+		"AS",
 		"+1",
 		"Samoa Americana",
 		"Oceania"
 	],
 	[
+		"LCA",
+		"LC",
 		"+1",
 		"Santa Lúcia",
 		"América"
 	],
 	[
+		"KNA",
+		"KN",
 		"+1",
 		"São Cristóvão e Neves",
 		"América"
 	],
 	[
+		"SXM",
+		"SX",
 		"+1",
-		"São Martinho",
+		"São Martinho (Países Baixos)",
 		"América"
 	],
 	[
+		"VCT",
+		"VC",
 		"+1",
 		"São Vicente e Granadinas",
 		"América"
 	],
 	[
+		"TTO",
+		"TT",
 		"+1",
 		"Trindade e Tobago",
 		"América"
 	],
 	[
+		"TCA",
+		"TC",
 		"+1",
 		"Turcas e Caicos",
 		"América"
@@ -791,6 +838,8 @@
 		"América"
 	],
 	[
+		"MAF",
+		"MF",
 		"+590",
 		"São Martinho",
 		"América"
