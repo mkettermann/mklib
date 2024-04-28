@@ -616,176 +616,246 @@
 		"América"
 	],
 	[
+		"GRC",
+		"GR",
 		"+30",
 		"Grécia",
 		"Europa"
 	],
 	[
+		"NLD",
+		"NL",
 		"+31",
 		"Países Baixos",
 		"Europa"
 	],
 	[
+		"BEL",
+		"BE",
 		"+32",
 		"Bélgica",
 		"Europa"
 	],
 	[
+		"FRA",
+		"FR",
 		"+33",
 		"França",
 		"Europa"
 	],
 	[
+		"ESP",
+		"ES",
 		"+34",
 		"Espanha",
 		"Europa"
 	],
 	[
+		"GIB",
+		"GI",
 		"+350",
 		"Gibraltar",
 		"Europa"
 	],
 	[
+		"PRT",
+		"PT",
 		"+351",
 		"Portugal",
 		"Europa"
 	],
 	[
+		"LUX",
+		"LU",
 		"+352",
 		"Luxemburgo",
 		"Europa"
 	],
 	[
+		"IRL",
+		"IE",
 		"+353",
 		"Irlanda",
 		"Europa"
 	],
 	[
+		"ISL",
+		"IS",
 		"+354",
 		"Islândia",
 		"Europa"
 	],
 	[
+		"ALB",
+		"AL",
 		"+355",
 		"Albânia",
 		"Europa"
 	],
 	[
+		"MLT",
+		"MT",
 		"+356",
 		"Malta",
 		"Europa"
 	],
 	[
+		"CYP",
+		"CY",
 		"+357",
 		"Chipre",
 		"Europa"
 	],
 	[
+		"FIN",
+		"FI",
 		"+358",
 		"Finlândia",
 		"Europa"
 	],
 	[
+		"BGR",
+		"BG",
 		"+359",
 		"Bulgária",
 		"Europa"
 	],
 	[
+		"HUN",
+		"HU",
 		"+36",
 		"Hungria",
 		"Europa"
 	],
 	[
+		"LTU",
+		"LT",
 		"+370",
 		"Lituânia",
 		"Europa"
 	],
 	[
+		"LVA",
+		"LV",
 		"+371",
 		"Letônia",
 		"Europa"
 	],
 	[
+		"EST",
+		"EE",
 		"+372",
 		"Estónia",
 		"Europa"
 	],
 	[
+		"MDA",
+		"MD",
 		"+373",
 		"Moldávia",
 		"Europa"
 	],
 	[
+		"ARM",
+		"AM",
 		"+374",
 		"Armênia",
 		"Ásia"
 	],
 	[
+		"BLR",
+		"BY",
 		"+375",
 		"Bielorrússia",
 		"Europa"
 	],
 	[
+		"AND",
+		"AD",
 		"+376",
 		"Andorra",
 		"Europa"
 	],
 	[
+		"MCO",
+		"MC",
 		"+377",
 		"Mônaco",
 		"Europa"
 	],
 	[
+		"SMR",
+		"SM",
 		"+378",
 		"São Marinho",
 		"Europa"
 	],
 	[
+		"VAT",
+		"VA",
 		"+379",
 		"Vaticano",
 		"Europa"
 	],
 	[
+		"UKR",
+		"UA",
 		"+380",
 		"Ucrânia",
 		"Europa"
 	],
 	[
+		"SRB",
+		"RS",
 		"+381",
 		"Sérvia",
 		"Europa"
 	],
 	[
+		"MNE",
+		"ME",
 		"+382",
 		"Montenegro",
 		"Europa"
 	],
 	[
+		"UNK",
+		"UN",
 		"+383",
 		"Kosovo",
 		"Europa"
 	],
 	[
+		"HRV",
+		"HR",
 		"+385",
 		"Croácia",
 		"Europa"
 	],
 	[
+		"SVN",
+		"SI",
 		"+386",
 		"Eslovénia",
 		"Europa"
 	],
 	[
+		"BIH",
+		"BA",
 		"+387",
 		"Bósnia e Herzegovina",
 		"Europa"
 	],
 	[
+		"MKD",
+		"MK",
 		"+389",
 		"Macedônia do Norte",
 		"Europa"
 	],
 	[
+		"ITA",
+		"IT",
 		"+39",
 		"Itália",
 		"Europa"
