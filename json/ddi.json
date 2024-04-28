@@ -945,111 +945,148 @@
 		"Europa"
 	],
 	[
+		"FLK",
+		"FK",
 		"+500",
 		"Ilhas Malvinas",
 		"América"
 	],
 	[
+		"SGS",
+		"GS",
 		"+500",
-		"Ilhas Geórgia do Sul",
+		"Ilhas Geórgia / Sandwich",
 		"América"
 	],
 	[
-		"+500",
-		"Sandwich do Sul",
-		"América"
-	],
-	[
+		"BLZ",
+		"BZ",
 		"+501",
 		"Belize",
 		"América"
 	],
 	[
+		"GTM",
+		"GT",
 		"+502",
 		"Guatemala",
 		"América"
 	],
 	[
+		"SLV",
+		"SV",
 		"+503",
 		"El Salvador",
 		"América"
 	],
 	[
+		"HND",
+		"HN",
 		"+504",
 		"Honduras",
 		"América"
 	],
 	[
+		"NIC",
+		"NI",
 		"+505",
 		"Nicarágua",
 		"América"
 	],
 	[
+		"CRI",
+		"CR",
 		"+506",
 		"Costa Rica",
 		"América"
 	],
 	[
+		"PAN",
+		"PA",
 		"+507",
 		"Panamá",
 		"América"
 	],
 	[
+		"SPM",
+		"PM",
 		"+508",
 		"São Pedro e Miquelão",
 		"América"
 	],
 	[
+		"HTI",
+		"HT",
 		"+509",
 		"Haiti",
 		"América"
 	],
 	[
+		"PER",
+		"PE",
 		"+51",
 		"Peru",
 		"América"
 	],
 	[
+		"MEX",
+		"MX",
 		"+52",
 		"México",
 		"América"
 	],
 	[
+		"CUB",
+		"CU",
 		"+53",
 		"Cuba",
 		"América"
 	],
 	[
+		"ARG",
+		"AR",
 		"+54",
 		"Argentina",
 		"América"
 	],
 	[
+		"BRA",
+		"BR",
 		"+55",
 		"Brasil",
 		"América"
 	],
 	[
+		"CHL",
+		"CL",
 		"+56",
 		"Chile",
 		"América"
 	],
 	[
+		"COL",
+		"CO",
 		"+57",
 		"Colômbia",
 		"América"
 	],
 	[
+		"VEN",
+		"VE",
 		"+58",
 		"Venezuela",
 		"América"
 	],
 	[
+		"GLP",
+		"GP",
 		"+590",
 		"Guadalupe",
 		"América"
 	],
 	[
+		"BLM",
+		"BL",
 		"+590",
 		"São Bartolomeu",
 		"América"
@@ -1062,66 +1099,78 @@
 		"América"
 	],
 	[
+		"BOL",
+		"BO",
 		"+591",
 		"Bolívia",
 		"América"
 	],
 	[
+		"GUY",
+		"GY",
 		"+592",
 		"Guiana",
 		"América"
 	],
 	[
+		"ECU",
+		"EC",
 		"+593",
 		"Equador",
 		"América"
 	],
 	[
+		"GUF",
+		"GF",
 		"+594",
 		"Guiana Francesa",
 		"América"
 	],
 	[
+		"PRY",
+		"PY",
 		"+595",
 		"Paraguai",
 		"América"
 	],
 	[
+		"MTQ",
+		"MQ",
 		"+596",
 		"Martinica",
 		"América"
 	],
 	[
+		"SUR",
+		"SR",
 		"+597",
 		"Suriname",
 		"América"
 	],
 	[
+		"URY",
+		"UY",
 		"+598",
 		"Uruguai",
 		"América"
 	],
 	[
+		"BES",
+		"BQ",
 		"+599",
-		"Bonaire",
+		"Bonaire / Santo Eustáquio / Saba",
 		"América"
 	],
 	[
+		"CUW",
+		"CW",
 		"+599",
 		"Curação",
 		"América"
 	],
 	[
-		"+599",
-		"Saba",
-		"América"
-	],
-	[
-		"+599",
-		"Santo Eustáquio",
-		"América"
-	],
-	[
+		"MYS",
+		"MY",
 		"+60",
 		"Malásia",
 		"Ásia"
