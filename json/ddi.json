@@ -168,181 +168,246 @@
 		"América"
 	],
 	[
+		"EGY",
+		"EG",
 		"+20",
 		"Egito",
 		"África"
 	],
 	[
-		"+20",
-		"Egito",
-		"África"
-	],
-	[
+		"SSD",
+		"SS",
 		"+211",
 		"Sudão do Sul",
 		"África"
 	],
 	[
+		"MAR",
+		"MA",
 		"+212",
 		"Marrocos",
 		"África"
 	],
 	[
+		"ESH",
+		"EH",
 		"+212",
 		"Saara Ocidental",
 		"África"
 	],
 	[
+		"DZA",
+		"DZ",
 		"+213",
 		"Argélia",
 		"África"
 	],
 	[
+		"TUN",
+		"TN",
 		"+216",
 		"Tunísia",
 		"África"
 	],
 	[
+		"LBY",
+		"LY",
 		"+218",
 		"Líbia",
 		"África"
 	],
 	[
+		"GMB",
+		"GM",
 		"+220",
 		"Gâmbia",
 		"África"
 	],
 	[
+		"SEN",
+		"SN",
 		"+221",
 		"Senegal",
 		"África"
 	],
 	[
+		"MRT",
+		"MR",
 		"+222",
 		"Mauritânia",
 		"África"
 	],
 	[
+		"MLI",
+		"ML",
 		"+223",
 		"Mali",
 		"África"
 	],
 	[
+		"GIN",
+		"GN",
 		"+224",
 		"Guiné",
 		"África"
 	],
 	[
+		"CIV",
+		"CI",
 		"+225",
 		"Costa do Marfim",
 		"África"
 	],
 	[
+		"BFA",
+		"BF",
 		"+226",
 		"Burquina Fasso",
 		"África"
 	],
 	[
+		"NER",
+		"NE",
 		"+227",
 		"Níger",
 		"África"
 	],
 	[
+		"TGO",
+		"TG",
 		"+228",
 		"Togo",
 		"África"
 	],
 	[
+		"BEN",
+		"BJ",
 		"+228",
 		"Benim",
 		"África"
 	],
 	[
+		"MUS",
+		"MU",
 		"+230",
 		"Maurícia",
 		"África"
 	],
 	[
+		"LBR",
+		"LR",
 		"+231",
 		"Libéria",
 		"África"
 	],
 	[
+		"SLE",
+		"SL",
 		"+232",
 		"Serra Leoa",
 		"África"
 	],
 	[
+		"GHA",
+		"GH",
 		"+233",
 		"Gana",
 		"África"
 	],
 	[
+		"NGA",
+		"NG",
 		"+234",
 		"Nigéria",
 		"África"
 	],
 	[
+		"TCD",
+		"TD",
 		"+235",
 		"Chade",
 		"África"
 	],
 	[
+		"CAF",
+		"CF",
 		"+236",
 		"República Centro-Africana",
 		"África"
 	],
 	[
+		"CMR",
+		"CM",
 		"+237",
 		"Camarões",
 		"África"
 	],
 	[
+		"CPV",
+		"CV",
 		"+238",
 		"Cabo Verde",
 		"África"
 	],
 	[
+		"STP",
+		"ST",
 		"+239",
 		"São Tomé e Príncipe",
 		"África"
 	],
 	[
+		"GNQ",
+		"GQ",
 		"+240",
 		"Guiné Equatorial",
 		"África"
 	],
 	[
+		"GAB",
+		"GA",
 		"+241",
 		"Gabão",
 		"África"
 	],
 	[
+		"COG",
+		"CG",
 		"+242",
 		"Congo-Brazavile",
 		"África"
 	],
 	[
+		"COD",
+		"CD",
 		"+243",
 		"Congo-Quinxassa",
 		"África"
 	],
 	[
+		"AGO",
+		"AO",
 		"+244",
 		"Angola",
 		"África"
 	],
 	[
+		"GNB",
+		"GW",
 		"+245",
 		"Guiné-Bissau",
 		"África"
 	],
 	[
+		"IOT",
+		"IO",
 		"+246",
 		"Território Britânico do Oceano Índico",
 		"África"
 	],
 	[
+		"ASC",
+		"AC",
 		"+247",
 		"Ascensão",
 		"África"
@@ -463,6 +528,8 @@
 		"África"
 	],
 	[
+		"SHN",
+		"SH",
 		"+290",
 		"Santa Helena",
 		"África"
