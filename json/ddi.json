@@ -861,61 +861,85 @@
 		"Europa"
 	],
 	[
+		"ROU",
+		"RO",
 		"+40",
 		"Romênia",
 		"Europa"
 	],
 	[
+		"CHE",
+		"CH",
 		"+41",
 		"Suíça",
 		"Europa"
 	],
 	[
+		"CZE",
+		"CZ",
 		"+420",
 		"Tchéquia",
 		"Europa"
 	],
 	[
+		"SVK",
+		"SK",
 		"+421",
 		"Eslováquia",
 		"Europa"
 	],
 	[
+		"LIE",
+		"LI",
 		"+423",
 		"Liechtenstein",
 		"Europa"
 	],
 	[
+		"AUT",
+		"AT",
 		"+43",
 		"Áustria",
 		"Europa"
 	],
 	[
+		"GBR",
+		"GB",
 		"+44",
 		"Reino Unido",
 		"Europa"
 	],
 	[
+		"DNK",
+		"DK",
 		"+45",
 		"Dinamarca",
 		"Europa"
 	],
 	[
+		"SWE",
+		"SE",
 		"+46",
 		"Suécia",
 		"Europa"
 	],
 	[
+		"NOR",
+		"NO",
 		"+47",
 		"Noruega",
 		"Europa"
 	],
 	[
+		"POL",
+		"PL",
 		"+48",
 		"Polônia",
 		"Europa"
 	],
 	[
+		"DEU",
+		"DE",
 		"+49",
 		"Alemanha",
 		"Europa"
