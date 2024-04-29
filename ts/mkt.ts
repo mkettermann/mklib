@@ -66,6 +66,7 @@ class mktm {
 	filtroOperador: string = ""; // Usado para preencher o valor de data-mkfoperador
 	field: string = ""; // Representa o elemento HTML inteiro.
 	requer: boolean = false; // Permite saber qualquer vai ativar o Regrar
+	regrar: any = []; // Aloja os objetos da regra a serem usados neste campo
 	url: string = ""; // Aloja a URL. Usada pra download de um refill.
 	constructor(o: any) {
 		if (o.k) this.k = o.k;
@@ -83,6 +84,7 @@ class mktm {
 		if (o.url) this.url = o.url;
 		if (o.f == false) this.f = false;
 		if (o.requer == true) this.requer = true;
+		if (o.regrar == true) this.regrar = o.regrar;
 		// Limpar nulos
 		if (!this.k) this.k = "";
 		if (!this.v) this.v = "";
