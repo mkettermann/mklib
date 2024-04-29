@@ -1176,86 +1176,113 @@
 		"Ásia"
 	],
 	[
+		"AUS",
+		"AU",
 		"+61",
 		"Austrália",
 		"Oceania"
 	],
 	[
+		"CXR",
+		"CX",
 		"+61",
 		"Ilha Christmas",
 		"Oceania"
 	],
 	[
+		"CCK",
+		"CC",
 		"+61",
 		"Ilhas Cocos",
 		"Oceania"
 	],
 	[
+		"IDN",
+		"ID",
 		"+62",
 		"Indonésia",
 		"Ásia"
 	],
 	[
+		"PHL",
+		"PH",
 		"+63",
 		"Filipinas",
 		"Ásia"
 	],
 	[
+		"NZL",
+		"NZ",
 		"+64",
 		"Nova Zelândia",
 		"Oceania"
 	],
 	[
+		"PCN",
+		"PN",
 		"+64",
 		"Ilhas Pitcairn",
 		"Oceania"
 	],
 	[
+		"SGP",
+		"SG",
 		"+65",
 		"Singapura",
 		"Ásia"
 	],
 	[
+		"THA",
+		"TH",
 		"+66",
 		"Tailândia",
 		"Ásia"
 	],
 	[
+		"TLS",
+		"TL",
 		"+670",
 		"Timor-Leste",
 		"Ásia"
 	],
 	[
+		"NFK",
+		"NF",
 		"+672",
 		"Ilha Norfolque",
 		"Oceania"
 	],
 	[
-		"+672",
-		"Território Antártico Australiano",
-		"Oceania"
-	],
-	[
+		"BRN",
+		"BN",
 		"+673",
 		"Brunei",
 		"Ásia"
 	],
 	[
+		"NRU",
+		"NR",
 		"+674",
 		"Nauru",
 		"Oceania"
 	],
 	[
+		"PNG",
+		"PG",
 		"+675",
 		"Papua-Nova",
 		"Oceania"
 	],
 	[
+		"TON",
+		"TO",
 		"+676",
 		"Tonga",
 		"Oceania"
 	],
 	[
+		"SLB",
+		"SB",
 		"+677",
 		"Ilhas Salomão",
 		"Oceania"
