@@ -102,7 +102,7 @@ class mktm {
     }
     toObject = () => {
         let o = {};
-        ["pk", "k", "v", "l", "r", "tag", "atr", "classes", "target", "f", "opcoes", "field", "requer", "url"].forEach(k => {
+        ["pk", "k", "v", "l", "r", "tag", "atr", "classes", "target", "f", "opcoes", "field", "requer", "regras", "url"].forEach(k => {
             o[k] = this[k];
         });
         return o;
