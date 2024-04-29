@@ -40,7 +40,7 @@ class mktm {
     filtroOperador = "";
     field = "";
     requer = false;
-    regrar = [];
+    regras = [];
     url = "";
     constructor(o) {
         if (o.k)
@@ -67,14 +67,14 @@ class mktm {
             this.classes = o.classes;
         if (o.target)
             this.target = o.target;
+        if (o.regras)
+            this.regras = o.regras;
         if (o.url)
             this.url = o.url;
         if (o.f == false)
             this.f = false;
         if (o.requer == true)
             this.requer = true;
-        if (o.regrar == true)
-            this.regrar = o.regrar;
         if (!this.k)
             this.k = "";
         if (!this.v)
