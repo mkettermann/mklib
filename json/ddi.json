@@ -1288,286 +1288,400 @@
 		"Oceania"
 	],
 	[
+		"VUT",
+		"VU",
 		"+678",
 		"Vanuatu",
 		"Oceania"
 	],
 	[
+		"FJI",
+		"FJ",
 		"+679",
 		"Fiji",
 		"Oceania"
 	],
 	[
+		"PLW",
+		"PW",
 		"+680",
 		"Palau",
 		"Oceania"
 	],
 	[
+		"WLF",
+		"WF",
 		"+681",
 		"Wallis e Futuna",
 		"Oceania"
 	],
 	[
+		"COK",
+		"CK",
 		"+682",
 		"Ilhas Cook",
 		"Oceania"
 	],
 	[
+		"NIU",
+		"NU",
 		"+683",
 		"Niue",
 		"Oceania"
 	],
 	[
+		"WSM",
+		"WS",
 		"+685",
 		"Samoa",
 		"Oceania"
 	],
 	[
+		"KIR",
+		"KI",
 		"+686",
 		"Quiribáti",
 		"Oceania"
 	],
 	[
+		"NCL",
+		"NC",
 		"+687",
 		"Nova Caledônia",
 		"Oceania"
 	],
 	[
+		"TUV",
+		"TV",
 		"+688",
 		"Tuvalu",
 		"Oceania"
 	],
 	[
+		"PYF",
+		"PF",
 		"+689",
 		"Polinésia Francesa",
 		"Oceania"
 	],
 	[
+		"TKL",
+		"TK",
 		"+690",
 		"Toquelau",
 		"Oceania"
 	],
 	[
+		"FSM",
+		"FM",
 		"+691",
 		"Estados Federados da Micronésia",
 		"Oceania"
 	],
 	[
+		"MHL",
+		"MH",
 		"+692",
 		"Ilhas Marshall",
 		"Oceania"
 	],
 	[
+		"KAZ",
+		"KZ",
 		"+7",
 		"Cazaquistão",
 		"Ásia"
 	],
 	[
+		"RUS",
+		"RU",
 		"+7",
 		"Rússia",
 		"Europa"
 	],
 	[
+		"JPN",
+		"JP",
 		"+81",
 		"Japão",
 		"Ásia"
 	],
 	[
+		"KOR",
+		"KR",
 		"+82",
 		"Coreia do Sul",
 		"Ásia"
 	],
 	[
+		"VNM",
+		"VN",
 		"+84",
 		"Vietnã",
 		"Ásia"
 	],
 	[
+		"PRK",
+		"KP",
 		"+850",
 		"Coreia do Norte",
 		"Ásia"
 	],
 	[
+		"HKG",
+		"HK",
 		"+852",
 		"Hong Kong",
 		"Ásia"
 	],
 	[
+		"MAC",
+		"MO",
 		"+853",
 		"Macau",
 		"Ásia"
 	],
 	[
+		"KHM",
+		"KH",
 		"+855",
 		"Camboja",
 		"Ásia"
 	],
 	[
+		"LAO",
+		"LA",
 		"+856",
 		"Laos",
 		"Ásia"
 	],
 	[
+		"CHN",
+		"CN",
 		"+86",
 		"China",
 		"Ásia"
 	],
 	[
+		"BGD",
+		"BD",
 		"+880",
 		"Bangladexe",
 		"Ásia"
 	],
 	[
+		"TWN",
+		"TW",
 		"+886",
 		"Taiwan",
 		"Ásia"
 	],
 	[
+		"TUR",
+		"TR",
 		"+90",
 		"Turquia",
 		"Ásia"
 	],
 	[
+		"IND",
+		"IN",
 		"+91",
 		"Índia",
 		"Ásia"
 	],
 	[
+		"PAK",
+		"PK",
 		"+92",
 		"Paquistão",
 		"Ásia"
 	],
 	[
+		"AFG",
+		"AF",
 		"+93",
 		"Afeganistão",
 		"Ásia"
 	],
 	[
+		"LKA",
+		"LK",
 		"+94",
 		"Seri Lanca",
 		"Ásia"
 	],
 	[
+		"MMR",
+		"MM",
 		"+95",
 		"Mianmar",
 		"Ásia"
 	],
 	[
+		"MDV",
+		"MV",
 		"+960",
 		"Maldivas",
 		"Ásia"
 	],
 	[
+		"LBN",
+		"LB",
 		"+961",
 		"Líbano",
 		"Ásia"
 	],
 	[
+		"JOR",
+		"JO",
 		"+962",
 		"Jordânia",
 		"Ásia"
 	],
 	[
+		"SYR",
+		"SY",
 		"+963",
 		"Síria",
 		"Ásia"
 	],
 	[
+		"IRQ",
+		"IQ",
 		"+964",
 		"Iraque",
 		"Ásia"
 	],
 	[
+		"KWT",
+		"KW",
 		"+965",
 		"Kuwait",
 		"Ásia"
 	],
 	[
+		"SAU",
+		"SA",
 		"+966",
 		"Arábia Saudita",
 		"Ásia"
 	],
 	[
+		"YEM",
+		"YE",
 		"+967",
 		"Iêmen",
 		"Ásia"
 	],
 	[
+		"OMN",
+		"OM",
 		"+968",
 		"Omã",
 		"Ásia"
 	],
 	[
+		"PSE",
+		"PS",
 		"+970",
 		"Palestina",
 		"Ásia"
 	],
 	[
+		"ARE",
+		"AE",
 		"+971",
 		"Emirados Árabes Unidos",
 		"Ásia"
 	],
 	[
+		"ISR",
+		"IL",
 		"+972",
 		"Israel",
 		"Ásia"
 	],
 	[
+		"BHR",
+		"BH",
 		"+973",
 		"Barém",
 		"Ásia"
 	],
 	[
+		"QAT",
+		"QA",
 		"+974",
 		"Catar",
 		"Ásia"
 	],
 	[
+		"BTN",
+		"BT",
 		"+975",
 		"Butão",
 		"Ásia"
 	],
 	[
+		"MNG",
+		"MN",
 		"+976",
 		"Mongólia",
 		"Ásia"
 	],
 	[
+		"NPL",
+		"NP",
 		"+977",
 		"Nepal",
 		"Ásia"
 	],
 	[
+		"IRN",
+		"IR",
 		"+98",
 		"Irã",
 		"Ásia"
 	],
 	[
+		"TJK",
+		"TJ",
 		"+992",
 		"Tajiquistão",
 		"Ásia"
 	],
 	[
+		"TKM",
+		"TM",
 		"+993",
 		"Turcomenistão",
 		"Ásia"
 	],
 	[
+		"AZE",
+		"AZ",
 		"+994",
 		"Azerbaijão",
 		"Ásia"
 	],
 	[
+		"GEO",
+		"GE",
 		"+995",
 		"Geórgia",
 		"Ásia"
 	],
 	[
+		"KGZ",
+		"KG",
 		"+996",
 		"Quirguistão",
 		"Ásia"
 	],
 	[
+		"UZB",
+		"UZ",
 		"+998",
 		"Uzbequistão",
 		"Ásia"
