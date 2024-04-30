@@ -1931,10 +1931,10 @@ class mkt {
                             }
                         });
                         let vOut = v;
-                        if (mkt.a.util.data[1].test(vOut)) {
+                        if (new RegExp(mkt.a.util.data[1]).test(vOut)) {
                             vOut = mkt.dataToLocale(vOut);
                         }
-                        else if (mkt.a.util.dataIso8601[1].test(vOut)) {
+                        else if (new RegExp(mkt.a.util.dataIso8601[1]).test(vOut)) {
                             vOut = mkt.dataToLocale(vOut);
                         }
                         vOut = vOut.toString();
@@ -2438,14 +2438,14 @@ class mkt {
             if (mkt.classof(valor) == "Number") {
                 valor = valor.toFixed(2);
             }
-            let d = [...valor.toString()].filter(a => { return mkt.a.util.numeros[1].test(a); }).join("").padStart(3, "0");
+            let d = [...valor.toString()].filter(a => { return new RegExp(mkt.a.util.numeros[1]).test(a); }).join("").padStart(3, "0");
             return new Intl.NumberFormat("pt-BR", { style: 'currency', currency: 'BRL' }).format(Number(d.slice(0, -2) + "." + d.slice(-2)));
         }
         return "";
     };
     static fromMoeda = (texto) => {
         if (texto) {
-            let d = [...texto.toString()].filter(a => { return mkt.a.util.numeros[1].test(a); }).join("").padStart(3, "0");
+            let d = [...texto.toString()].filter(a => { return new RegExp(mkt.a.util.numeros[1]).test(a); }).join("").padStart(3, "0");
             return Number(d.slice(0, -2) + "." + d.slice(-2));
         }
         return 0;
@@ -2460,12 +2460,12 @@ class mkt {
                 if (posPonto >= 0) {
                     let i = valor.slice(0, posPonto);
                     let d = valor.slice(posPonto + 1).slice(0, 2).padEnd(2, "0");
-                    i = [...i.toString()].filter(a => { return mkt.a.util.numeros[1].test(a); }).join("");
-                    d = [...d.toString()].filter(a => { return mkt.a.util.numeros[1].test(a); }).join("");
+                    i = [...i.toString()].filter(a => { return new RegExp(mkt.a.util.numeros[1]).test(a); }).join("");
+                    d = [...d.toString()].filter(a => { return new RegExp(mkt.a.util.numeros[1]).test(a); }).join("");
                     valor = i + "." + d;
                 }
                 else {
-                    valor = [...valor.toString()].filter(a => { return mkt.a.util.numeros[1].test(a); }).join("").padStart(3, "0");
+                    valor = [...valor.toString()].filter(a => { return new RegExp(mkt.a.util.numeros[1]).test(a); }).join("").padStart(3, "0");
                     valor = valor.slice(0, -(c.casas)) + "." + valor.slice(-(c.casas));
                 }
             }
@@ -2546,7 +2546,7 @@ class mkt {
         return stringRetorno;
     };
     static isData = (i) => {
-        return mkt.a.util.data[1].test(i);
+        return new RegExp(mkt.a.util.data[1]).test(i);
     };
     static dataFormatarSOA = (soa, reverse = false) => {
         function dataFormatarS_Execute(s, rev = false) {
@@ -2885,7 +2885,7 @@ class mkt {
                                     prom(re.k);
                                     break;
                                 case "numero":
-                                    if (!(mkt.a.util.numerosvirgula[1].test(e[re.target]))) {
+                                    if (!(new RegExp(mkt.a.util.numerosvirgula[1]).test(e[re.target]))) {
                                         if (!re.m)
                                             re.m = mkt.a.msg.apenasnumerosvirgula;
                                         erros.push(re);
@@ -2912,7 +2912,7 @@ class mkt {
                                     prom(re.k);
                                     break;
                                 case "apenasnumeros":
-                                    if (!(mkt.a.util.numeros[1].test(e[re.target]))) {
+                                    if (!(new RegExp(mkt.a.util.numeros[1]).test(e[re.target]))) {
                                         if (!re.m)
                                             re.m = mkt.a.msg.apenasnumeros;
                                         erros.push(re);
@@ -2921,7 +2921,7 @@ class mkt {
                                     prom(re.k);
                                     break;
                                 case "apenasletras":
-                                    if (!(mkt.a.util.letras[1].test(e[re.target]))) {
+                                    if (!(new RegExp(mkt.a.util.letras[1]).test(e[re.target]))) {
                                         if (!re.m)
                                             re.m = mkt.a.msg.apenasletras;
                                         erros.push(re);
