@@ -25,6 +25,18 @@ function fazerRefill() {
 	mkt.Q("mk-sel[name='staRefill']").setAttribute("refill", "");
 }
 
+async function refillUrl() {
+	let e = mkt.Q("mk-sel[name='codAreaRefillUrl']");
+	let re = await mkt.get.json(e.dataset.url);
+	if (re) {
+		let map = new Map(re.retorno.map(i => { return [i[1], `${i[2]} ${i[1]} ${i[3]}`]; }))
+		let opcoes = map;
+		mkz = opcoes;
+		e.opcoes = JSON.stringify([...opcoes]);
+	}
+
+}
+
 async function validarSeletor() {
 	await mkt.regrasValidas(".testeForm");
 }
