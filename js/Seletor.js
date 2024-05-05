@@ -29,7 +29,7 @@ async function refillUrl() {
 	let e = mkt.Q("mk-sel[name='codAreaRefillUrl']");
 	let re = await mkt.get.json(e.dataset.url);
 	if (re) {
-		let map = new Map(re.retorno.map(i => { return [i[1], `${i[2]} ${i[1]} ${i[3]}`]; }))
+		let map = new Map(re.retorno.map(i => { return [i[1], `<div class="flr">${i[2]} <img part="flag" src="/img/Paises/${i[1]}.svg"> ${i[3]}</div>`]; }))
 		let opcoes = map;
 		mkz = opcoes;
 		e.opcoes = JSON.stringify([...opcoes]);
