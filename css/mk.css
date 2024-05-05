@@ -2034,6 +2034,12 @@ fieldset {
 	-webkit-box-reflect: below -10px linear-gradient(0deg, #FFF9, #FFF5, #FFF1, transparent, transparent);
 }
 
+::part(flag) {
+	height: 15.40px;
+	width: 22px;
+	aspect-ratio: 10 / 7;
+}
+
 /* DIALOG */
 dialog {
 	/* Inicial Size Mobile S8+ */
