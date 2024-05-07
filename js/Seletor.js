@@ -31,7 +31,6 @@ async function refillUrl() {
 	if (re) {
 		let map = new Map(re.retorno.map(i => { return [i[1], `<div class="flr">${i[2]} <img part="flag" src="/img/Paises/${i[1]}.svg"> ${i[3]}</div>`]; }))
 		let opcoes = map;
-		mkz = opcoes;
 		e.opcoes = JSON.stringify([...opcoes]);
 	}
 
