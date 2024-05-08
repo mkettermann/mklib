@@ -1417,6 +1417,20 @@ class mkt {
 		limparIndivisual: "Limpar filtros de",
 		limparTodos: "Limpar todos filtros",
 		log: true, // Desliga / Liga Log do console
+		meses: [
+			[1, "Janeiro", "JAN", "01"],
+			[2, "Fevereiro", "FEV", "02"],
+			[3, "Março", "MAR", "03"],
+			[4, "Abril", "ABR", "04"],
+			[5, "Maio", "MAI", "05"],
+			[6, "Junho", "JUN", "06"],
+			[7, "Julho", "JUL", "07"],
+			[8, "Agosto", "AGO", "08"],
+			[9, "Setembro", "SET", "09"],
+			[10, "Outubro", "OUT", "10"],
+			[11, "Novembro", "NOV", "11"],
+			[12, "Dezembro", "DEZ", "12"],
+		],
 		msg: { // Mensagens padroes
 			po: "Preenchimento Obrigatório",
 			so: "Seleção Obrigatória",
