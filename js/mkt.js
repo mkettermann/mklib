@@ -6156,7 +6156,7 @@ class mkSel extends HTMLElement {
         },
         set: (key, value) => {
             this.config._data.set(key, value);
-            this.setAttribute("opcoes", mkt.stringify([...this.config._dat]));
+            this.setAttribute("opcoes", mkt.stringify([...this.config._data]));
         },
         del: (key) => {
             this.config._data.delete(key);
