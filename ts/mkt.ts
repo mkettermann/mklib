@@ -1702,6 +1702,10 @@ class mkt {
 		return eAfetados;
 	}
 
+	static eventInput = (e: any) => {
+		e.dispatchEvent(new Event("input"));
+	}
+
 	static QSubSet = (queryContainer: string, dados: any, eventInput = true) => {
 		let eAfetados: any = [];
 		if (mkt.classof(dados) == "Object") { // Apenas Objeto
@@ -1723,7 +1727,7 @@ class mkt {
 				}
 				eAfetados.push(e);
 				if (eventInput) {
-					e.dispatchEvent(new Event("input"));
+					mkt.eventInput(e);
 				}
 			});
 		}
