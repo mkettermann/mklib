@@ -74,8 +74,6 @@ class mktm {
 		if (o.l) this.l = o.l;
 		if (o.r) this.r = o.r;
 		if (o.v) this.v = o.v;
-		if (o.on) this.on = o.on;
-		if (o.crud) this.crud = o.crud;
 		if (o.tag) this.tag = o.tag;
 		if (o.atr) this.atr = o.atr;
 		if (o.opcoes) this.opcoes = o.opcoes;
@@ -85,6 +83,8 @@ class mktm {
 		if (o.target) this.target = o.target;
 		if (o.regras) this.regras = o.regras;
 		if (o.url) this.url = o.url;
+		if (o.on != null) this.on = o.on;
+		if (o.crud != null) this.crud = o.crud;
 		if (o.f == false) this.f = false;
 		if (o.requer == true) this.requer = true;
 		// Limpar nulos
