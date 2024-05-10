@@ -4616,15 +4616,6 @@ class mkSel extends HTMLElement {
 :host([hidden]) {
 	display: none;
 }
-:host([disabled]) {
-	opacity: 0.4;
-	cursor: not-allowed;
-	pointer-events: auto;
-}
-:host([disabled]) *{
-	cursor: not-allowed;
-	pointer-events: auto;
-}
 :host([focused]) {
 	outline: 1px solid #666;
 }
@@ -4643,6 +4634,15 @@ class mkSel extends HTMLElement {
 }
 :host(:not([focused])) *{
 	cursor: pointer;
+}
+:host([disabled]) {
+	opacity: 0.4;
+	cursor: not-allowed;
+	pointer-events: auto;
+}
+:host([disabled]) *{
+	cursor: not-allowed;
+	pointer-events: auto;
 }
 .mkSeletor{
 	display:flex;
