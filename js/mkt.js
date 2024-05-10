@@ -1364,13 +1364,16 @@ class mkt {
             e.removeAttribute("tabindex");
         });
     };
-    static Ao = (tipoEvento = "click", query, executar, config = mkt.a.AoConfig) => {
+    static Ao = (tipoEvento = "click", query, executar, autoExecutar = false, config = mkt.a.AoConfig) => {
         mkt.QAll(query).forEach((e) => {
             e.addEventListener(tipoEvento, (ev) => {
                 if (ev)
                     ev.stopPropagation();
                 executar(e, ev);
             }, config);
+            if (autoExecutar === true) {
+                executar(e, null);
+            }
         });
     };
     static atribuir = (e, gatilho, atributo = "oninput") => {

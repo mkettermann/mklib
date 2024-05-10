@@ -1621,7 +1621,7 @@ class mkt {
 		});
 	};
 
-	static Ao = (tipoEvento: string = "click", query: any, executar: any, config: Object | undefined = mkt.a.AoConfig) => {
+	static Ao = (tipoEvento: string = "click", query: any, executar: any, autoExecutar: boolean = false, config: Object | undefined = mkt.a.AoConfig) => {
 		// Adiciona LISTNER em todos elementos do query usando uma config preventiva.
 		// Em QAll, pois o Filtro pega todos os .iConsultas
 		mkt.QAll(query).forEach((e: HTMLElement) => {
@@ -1629,6 +1629,9 @@ class mkt {
 				if (ev) ev.stopPropagation(); // Não se reexecuta quando o botão está dentro do outro. (HM inside Sort por exemplo)
 				executar(e, ev);
 			}, config);
+			if (autoExecutar === true) {
+				executar(e, null); // Pode ser solicitado já executar um Ao assim que criado. Mas não tem evento.
+			}
 		});
 	};
 
