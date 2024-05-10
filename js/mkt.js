@@ -42,6 +42,8 @@ class mktm {
     requer = false;
     regras = [];
     url = "";
+    on = true;
+    crud = true;
     constructor(o) {
         if (o.k)
             this.k = o.k;
@@ -53,6 +55,10 @@ class mktm {
             this.r = o.r;
         if (o.v)
             this.v = o.v;
+        if (o.on)
+            this.on = o.on;
+        if (o.crud)
+            this.crud = o.crud;
         if (o.tag)
             this.tag = o.tag;
         if (o.atr)
@@ -94,7 +100,10 @@ class mktm {
             let opcoes = "";
             if (this.opcoes != "")
                 opcoes = ` opcoes='${this.opcoes}'`;
-            this.field = `<${this.tag} name="${this.k}" value="${this.v}" class="${this.classes}" data-mkfformato="${this.filtroFormato}"${varfOperador}${varUrl}${opcoes} ${this.atr}>`;
+            let disabled = "";
+            if (this.on == false)
+                disabled = " disabled";
+            this.field = `<${this.tag} name="${this.k}" value="${this.v}" class="${this.classes}${disabled}"${disabled} data-mkfformato="${this.filtroFormato}"${varfOperador}${varUrl}${opcoes} ${this.atr}>`;
             if (this.tag != "input") {
                 this.field += `</${this.tag}>`;
             }
@@ -102,7 +111,7 @@ class mktm {
     }
     toObject = () => {
         let o = {};
-        ["pk", "k", "v", "l", "r", "tag", "atr", "classes", "target", "f", "opcoes", "field", "requer", "regras", "url"].forEach(k => {
+        ["pk", "k", "v", "l", "r", "on", "crud", "tag", "atr", "classes", "target", "f", "opcoes", "field", "requer", "regras", "url"].forEach(k => {
             o[k] = this[k];
         });
         return o;

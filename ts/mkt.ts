@@ -68,12 +68,16 @@ class mktm {
 	requer: boolean = false; // Permite saber qualquer vai ativar o Regrar
 	regras: any = []; // Aloja os objetos da regra a serem usados neste campo
 	url: string = ""; // Aloja a URL. Usada pra download de um refill.
+	on: boolean = true; // Aloja se ele deve ser inicialmente disabled
+	crud: boolean = true; // Aloja a configuração se deve ou não ser usado esse campo para crud
 	constructor(o: any) {
 		if (o.k) this.k = o.k;
 		if (o.pk) this.pk = o.pk;
 		if (o.l) this.l = o.l;
 		if (o.r) this.r = o.r;
 		if (o.v) this.v = o.v;
+		if (o.on) this.on = o.on;
+		if (o.crud) this.crud = o.crud;
 		if (o.tag) this.tag = o.tag;
 		if (o.atr) this.atr = o.atr;
 		if (o.opcoes) this.opcoes = o.opcoes;
@@ -100,7 +104,9 @@ class mktm {
 			if (this.url != "") varUrl = ` data-url="${this.url}"`;
 			let opcoes = ""; // Opções é utilizado em mk-sel.
 			if (this.opcoes != "") opcoes = ` opcoes='${this.opcoes}'`;
-			this.field = `<${this.tag} name="${this.k}" value="${this.v}" class="${this.classes}" data-mkfformato="${this.filtroFormato}"${varfOperador}${varUrl}${opcoes} ${this.atr}>`;
+			let disabled = "";
+			if (this.on == false) disabled = " disabled";
+			this.field = `<${this.tag} name="${this.k}" value="${this.v}" class="${this.classes}${disabled}"${disabled} data-mkfformato="${this.filtroFormato}"${varfOperador}${varUrl}${opcoes} ${this.atr}>`;
 			if (this.tag != "input") {
 				this.field += `</${this.tag}>`;
 			}
@@ -109,7 +115,7 @@ class mktm {
 	}
 	toObject: Function = () => {
 		let o: any = {};
-		["pk", "k", "v", "l", "r", "tag", "atr", "classes", "target", "f", "opcoes", "field", "requer", "regras", "url"].forEach(k => {
+		["pk", "k", "v", "l", "r", "on", "crud", "tag", "atr", "classes", "target", "f", "opcoes", "field", "requer", "regras", "url"].forEach(k => {
 			o[k] = this[k as keyof mktm];
 		});
 		return o;
