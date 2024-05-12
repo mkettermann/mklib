@@ -57,6 +57,7 @@ class mktm {
 	tag: string | null = "input"; // Qual é a tag do campo caso ele precise preencher?
 	atr: string | null = "type='text'" // Todos os atributos padrões deste campo.
 	classes: string = "iConsultas" // Classes padrões / iniciais deste campo
+	lclasses: string = "" // Classes para o label do campo
 	target: string = "value" // Propriedade para edição (value, innerHTML).
 	f: boolean = true; // Ativa ou desativa o filtro nesse campo (HeadMenu ok)
 	opcoes: string = ""; // Aloja as opcoes em JSON de um seletor.
@@ -80,6 +81,7 @@ class mktm {
 		if (o.filtroFormato) this.filtroFormato = o.filtroFormato;
 		if (o.filtroOperador) this.filtroOperador = o.filtroOperador;
 		if (o.classes) this.classes = o.classes;
+		if (o.lclasses) this.lclasses = o.lclasses;
 		if (o.target) this.target = o.target;
 		if (o.regras) this.regras = o.regras;
 		if (o.url) this.url = o.url;
@@ -113,7 +115,7 @@ class mktm {
 	}
 	toObject: Function = () => {
 		let o: any = {};
-		["pk", "k", "v", "l", "r", "on", "crud", "tag", "atr", "classes", "target", "f", "opcoes", "field", "requer", "regras", "url"].forEach(k => {
+		["pk", "k", "v", "l", "r", "on", "crud", "tag", "atr", "classes", "lclasses", "target", "f", "opcoes", "field", "requer", "regras", "url"].forEach(k => {
 			o[k] = this[k as keyof mktm];
 		});
 		return o;
