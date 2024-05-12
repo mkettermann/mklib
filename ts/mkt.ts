@@ -1713,19 +1713,19 @@ class mkt {
 		let eAfetados: any = [];
 		if (mkt.classof(dados) == "Object") { // Apenas Objeto
 			mkt.QAll(queryContainer).forEach(e => {
-				if (e.tagName == "IMG") {
-					let src = mkt.getV(e.name, dados)
-					if (src) {
-						e.src = src;
-					} else {
-						mkt.w(e.name + " SRC: ", src);
-					}
+				let v = mkt.getV(e.getAttribute("name"), dados)
+				if (v == null) {
+					e.setAttribute("value", "");
 				} else {
-					let v = mkt.getV(e.name, dados)
-					if (v != null) {
-						e.value = v;
+					if (e.tagName == "IMG") {
+						// IMG
+						e.src = v;
+					} else if (e.tagName == "DIV") {
+						// DIV
+						e.innerHTML = v;
 					} else {
-						e.value = "";
+						// INPUT / TEXTAREA ...
+						e.value = v;
 					}
 				}
 				eAfetados.push(e);
