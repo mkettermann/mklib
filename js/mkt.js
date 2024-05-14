@@ -4051,7 +4051,7 @@ class mkt {
         }
     };
     static eventBlock = (ev) => {
-        mkt.w("Negado");
+        mkt.w("Negado", ev);
         ev.preventDefault();
     };
     static selecionarInner = (e) => {

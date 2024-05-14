@@ -4755,7 +4755,7 @@ class mkt {
 
 	static eventBlock = (ev: Event) => {
 		// Bloqueios de eventos especificos (varios, exemplo: onContextMenu)
-		mkt.w("Negado");
+		mkt.w("Negado", ev);
 		ev.preventDefault();
 	}
 
