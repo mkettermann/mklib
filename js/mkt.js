@@ -2084,8 +2084,9 @@ class mkt {
         return `<div class="CarregadorMk ${classe}" style="${estilo}"></div>`;
     };
     static detectedServerOff = (mensagem = "Servidor OFF-LINE") => {
+        let divOfflineBlock = null;
         if (mkt.Q("body .offlineBlock") == null) {
-            let divOfflineBlock = document.createElement("div");
+            divOfflineBlock = document.createElement("div");
             divOfflineBlock.className = "offlineBlock";
             let divOfflineBlockInterna = document.createElement("div");
             divOfflineBlockInterna.className = "text-center";
@@ -2101,6 +2102,7 @@ class mkt {
         }
         mkt.Q("body .offlineBlock").classList.remove("oculto");
         mkt.Q("body").classList.add("CarregadorMkSemScrollY");
+        return divOfflineBlock;
     };
     static detectedServerOn = () => {
         mkt.Q("body .offlineBlock")?.classList?.add("oculto");

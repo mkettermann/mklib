@@ -2428,8 +2428,9 @@ class mkt {
 
 	static detectedServerOff = (mensagem: string = "Servidor OFF-LINE") => {
 		// Gera e exibe um elemento que representa o servidor offline com opção de ocultar.
+		let divOfflineBlock = null;
 		if (mkt.Q("body .offlineBlock") == null) {
-			let divOfflineBlock = document.createElement("div");
+			divOfflineBlock = document.createElement("div");
 			divOfflineBlock.className = "offlineBlock";
 			let divOfflineBlockInterna = document.createElement("div");
 			divOfflineBlockInterna.className = "text-center";
@@ -2445,6 +2446,7 @@ class mkt {
 		}
 		mkt.Q("body .offlineBlock").classList.remove("oculto");
 		mkt.Q("body").classList.add("CarregadorMkSemScrollY");
+		return divOfflineBlock;
 	};
 
 	static detectedServerOn = () => {
