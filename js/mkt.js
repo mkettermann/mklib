@@ -1321,7 +1321,7 @@ class mkt {
             numerosvirgula: ["0", "^[0-9,]*$"],
             letras: ["A", "^[A-Za-z]*$"],
             telefone_ddd: ["(00) 00000-00000", "^[0-9]{11}$"],
-            email: ["S", "^([a-zA-Z0-9_\.]+[a-zA-Z0-9_]+)+@([a-zA-Z0-9_]\.+[a-zA-Z]+)+$"],
+            email: ["S", "^(([a-zA-Z0-9_\.]+[a-zA-Z0-9_]+)+)@([a-zA-Z0-9_]\.+[a-zA-Z]+)+$"],
         },
         wpool: null,
     };
