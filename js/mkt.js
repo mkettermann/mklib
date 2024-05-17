@@ -3268,6 +3268,27 @@ class mkt {
         });
         mkt.regras = tempRegras;
     };
+    static regrarAtivador = (e, nomeRegra, turnON = true) => {
+        if (nomeRegra != null) {
+            e = mkt.Q(e);
+            if (e) {
+                let eRegras = mkt.regras.filter(r => { return r.e == e; });
+                eRegras.forEach((r) => {
+                    r.r.forEach((re) => {
+                        if (nomeRegra == re.k) {
+                            re.on = turnON;
+                        }
+                    });
+                });
+            }
+            else {
+                mkt.w("regrarOn - Elemento não encontrado: ", e);
+            }
+        }
+        else {
+            mkt.w("regrarOn - Requer parametro 'nomeRegra' com uma string: ", nomeRegra);
+        }
+    };
     static regrar = (container, nome, ...obj) => {
         if (typeof nome != "string") {
             return mkt.w("Regrar() precisa receber o nome do input como string");

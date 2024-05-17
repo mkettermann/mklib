@@ -3762,6 +3762,29 @@ class mkt {
 		mkt.regras = tempRegras; // Requer Propriedade destravada
 	}
 
+	static regrarAtivador = (e: any, nomeRegra: string, turnON = true) => {
+		if (nomeRegra != null) {
+			e = mkt.Q(e);
+			if (e) {
+				let eRegras = mkt.regras.filter(r => { return r.e == e });
+				// A cada regrar da lista
+				eRegras.forEach((r) => {
+					// A cada regra K deste elemento
+					r.r.forEach((re: any) => {
+						// Ativa apenas a informada
+						if (nomeRegra == re.k) {
+							re.on = turnON;
+						}
+					});
+				});
+			} else {
+				mkt.w("regrarOn - Elemento não encontrado: ", e);
+			}
+		} else {
+			mkt.w("regrarOn - Requer parametro 'nomeRegra' com uma string: ", nomeRegra);
+		}
+	}
+
 	static regrar = (container: any, nome: string, ...obj: any) => {
 		/** Informar o Container, Nome do input e OBJ (Regra)
 		 * Atributos do Objeto
