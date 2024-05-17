@@ -1456,6 +1456,7 @@ class mkt {
 			datamaiorque: "Deve ser maior que hoje",
 			datamenorque: "Deve ser menor que hoje",
 			carregarmais: "Carregar Mais Resultados",
+			emailinvalido: "Email com formato inválido",
 		},
 		mkFaseAtual: 1, // DEPRECATED - Faseador antigo (Usando em G5_Fichas)
 		poppers: new Map(),
@@ -3520,6 +3521,17 @@ class mkt {
 									if ((tipoEvento == "full") || (tipoEvento == "blur")) {
 										if (!(new RegExp(re.v).test(e[re.target]))) {
 											if (!re.m) re.m = mkt.a.msg.fi;
+											erros.push(re);
+										}
+									}
+									prom(re.k);
+									break;
+
+								case "email": // INFO
+									if ((tipoEvento == "full") || (tipoEvento == "blur")) {
+										if (!re.v) re.v = mkt.a.util.email;
+										if (!(new RegExp(re.v).test(e[re.target]))) {
+											if (!re.m) re.m = mkt.a.msg.emailinvalido;
 											erros.push(re);
 										}
 									}
