@@ -3529,7 +3529,7 @@ class mkt {
 
 								case "email": // INFO
 									if ((tipoEvento == "full") || (tipoEvento == "blur")) {
-										if (!re.v) re.v = mkt.a.util.email;
+										if (!re.v) re.v = mkt.a.util.email[1];
 										if (!(new RegExp(re.v).test(e[re.target]))) {
 											if (!re.m) re.m = mkt.a.msg.emailinvalido;
 											erros.push(re);
