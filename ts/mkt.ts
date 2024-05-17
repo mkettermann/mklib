@@ -1557,6 +1557,7 @@ class mkt {
 			numerosvirgula: ["0", "^[0-9,]*$"],
 			letras: ["A", "^[A-Za-z]*$"],
 			telefone_ddd: ["(00) 00000-00000", "^[0-9]{11}$"],
+			email: ["S", "^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+\.([a-zA-Z]+)?$"],
 		} as any, // Util: Mascarar, Regex, Funcao Validadora
 		wpool: null as any | null, // WorkerPool quando iniciado
 	};
