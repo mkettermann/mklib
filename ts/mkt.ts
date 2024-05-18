@@ -3763,6 +3763,7 @@ class mkt {
 	}
 
 	static regrarAtivador = (e: any, nomeRegra: string, turnON = true) => {
+		// Permite ativar ou desativar uma regra, informando o elemento e qual regra vai desabilitar.
 		if (nomeRegra != null) {
 			e = mkt.Q(e);
 			if (e) {
