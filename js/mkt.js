@@ -1061,16 +1061,18 @@ class mkt {
     getAllTr = () => {
         return Array.from(mkt.QAll(this.c.container + " tbody tr"));
     };
-    add = (objDados) => {
+    add = (objDados, ordenar = true) => {
         objDados = this.c.aoReceberDados(objDados, this);
         this.dadosFull.push(objDados);
-        mkt.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
+        if (ordenar)
+            mkt.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
         this.atualizarListagem();
     };
-    edit = (objDados, k, v) => {
+    edit = (objDados, k, v, ordenar = true) => {
         objDados = this.c.aoReceberDados(objDados, this);
         this.dadosFull = mkt.setObjetoFromId(k, v, objDados, this.dadosFull);
-        mkt.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
+        if (ordenar)
+            mkt.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
         this.atualizarListagem();
     };
     del = (k, v) => {

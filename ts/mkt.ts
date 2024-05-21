@@ -1283,19 +1283,19 @@ class mkt {
 	};
 
 	// USER INTERFACE - UI FOR CRUD
-	add = (objDados: object) => {
+	add = (objDados: object, ordenar = true) => {
 		// Adicionar na listagem
 		objDados = this.c.aoReceberDados(objDados, this);
 		this.dadosFull.push(objDados);
-		mkt.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
+		if (ordenar) mkt.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
 		this.atualizarListagem();
 	};
 
-	edit = (objDados: object, k: string, v: any) => {
+	edit = (objDados: object, k: string, v: any, ordenar = true) => {
 		// Editar na listagem
 		objDados = this.c.aoReceberDados(objDados, this);
 		this.dadosFull = mkt.setObjetoFromId(k, v, objDados, this.dadosFull);
-		mkt.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
+		if (ordenar) mkt.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
 		this.atualizarListagem();
 	};
 
