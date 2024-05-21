@@ -4118,7 +4118,7 @@ class mkt {
 	static limparFull = (sub: object | object[]) => {
 		// Converte (OBJ / ARRAY) Limpar Nulos e Vazios
 		return mkt.aCadaSubPropriedade(sub, (v: any, i: any, a: any) => {
-			if (v === null || v === undefined || v === "" || v === "undefined") {
+			if (v === null || v === undefined || v === "undefined") {
 				delete a[i];
 			}
 		});
