@@ -3557,7 +3557,6 @@ class mkt {
             for (let propName in o) {
                 if (o[propName] === null ||
                     o[propName] === undefined ||
-                    o[propName] === "" ||
                     o[propName] === "undefined") {
                     delete o[propName];
                 }
