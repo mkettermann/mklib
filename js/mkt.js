@@ -3557,6 +3557,7 @@ class mkt {
             for (let propName in o) {
                 if (o[propName] === null ||
                     o[propName] === undefined ||
+                    o[propName] === "" ||
                     o[propName] === "undefined") {
                     delete o[propName];
                 }
@@ -3567,7 +3568,7 @@ class mkt {
     };
     static limparFull = (sub) => {
         return mkt.aCadaSubPropriedade(sub, (v, i, a) => {
-            if (v === null || v === undefined || v === "undefined") {
+            if (v === null || v === undefined || v === "" || v === "undefined") {
                 delete a[i];
             }
         });

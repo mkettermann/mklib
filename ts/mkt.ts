@@ -4105,6 +4105,7 @@ class mkt {
 				if (
 					o[propName as keyof typeof o] === null ||
 					o[propName as keyof typeof o] === undefined ||
+					o[propName as keyof typeof o] === "" ||
 					o[propName as keyof typeof o] === "undefined"
 				) {
 					delete o[propName as keyof typeof o];
@@ -4118,7 +4119,7 @@ class mkt {
 	static limparFull = (sub: object | object[]) => {
 		// Converte (OBJ / ARRAY) Limpar Nulos e Vazios
 		return mkt.aCadaSubPropriedade(sub, (v: any, i: any, a: any) => {
-			if (v === null || v === undefined || v === "undefined") {
+			if (v === null || v === undefined || v === "" || v === "undefined") {
 				delete a[i];
 			}
 		});
