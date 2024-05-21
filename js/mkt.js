@@ -1298,6 +1298,24 @@ class mkt {
                     }
                     return true;
                 }],
+            rg: ["00.000.000-0", "^[0-9]{2}([\.]?[0-9]{3}){2})[-]?[0-9]$", (rg) => {
+                    rg = rg.replace(/[^0-9]/g, '');
+                    if (rg.length !== 9)
+                        return false;
+                    let soma = 0;
+                    const pesos = [2, 3, 4, 5, 6, 7, 8, 9, 100];
+                    for (let i = 0; i < 8; i++) {
+                        soma += parseInt(rg[i]) * pesos[i];
+                    }
+                    let resto = soma % 11;
+                    let dig = resto === 0 ? 0 : 11 - resto;
+                    if (dig === 10)
+                        dig = 0;
+                    if (parseInt(rg[8]) !== dig) {
+                        return false;
+                    }
+                    return true;
+                }],
             placa: ["AAA-0S00", "^([A-Za-z]{3}[-]?[0-9]{1}[A-Za-z0-9]{1}[0-9]{2})$"],
             placaAntesMercosul: ["AAA-0000", "^([A-Za-z]{3}[-]?[0-9]{4})$"],
             placaMercosul: [

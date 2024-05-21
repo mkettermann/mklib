@@ -1533,6 +1533,26 @@ class mkt {
 				if (cnh.length != 11) { return false; }
 				return true;
 			}],
+			rg: ["00.000.000-0", "^[0-9]{2}([\.]?[0-9]{3}){2})[-]?[0-9]$", (rg: string) => {
+				// Remove todos os caracteres que não são números
+				rg = rg.replace(/[^0-9]/g, '');
+				// Verifica se o RG tem 9 dígitos
+				if (rg.length !== 9) return false;
+				// Calcula o dígito verificador
+				let soma = 0;
+				const pesos = [2, 3, 4, 5, 6, 7, 8, 9, 100]; // Pesos aplicados aos 8 primeiros dígitos do RG
+				for (let i = 0; i < 8; i++) {
+					soma += parseInt(rg[i]) * pesos[i];
+				}
+				let resto = soma % 11;
+				let dig = resto === 0 ? 0 : 11 - resto;
+				if (dig === 10) dig = 0; // Ajuste para o caso de resto 10
+				// Verifica se o dígito verificador está correto
+				if (parseInt(rg[8]) !== dig) {
+					return false;
+				}
+				return true;
+			}],
 			placa: ["AAA-0S00", "^([A-Za-z]{3}[-]?[0-9]{1}[A-Za-z0-9]{1}[0-9]{2})$"],
 			placaAntesMercosul: ["AAA-0000", "^([A-Za-z]{3}[-]?[0-9]{4})$"],
 			placaMercosul: [
