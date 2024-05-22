@@ -84,11 +84,11 @@ class mktm {
             this.f = false;
         if (o.requer == true)
             this.requer = true;
-        if (!this.k)
+        if (this.k == null)
             this.k = "";
-        if (!this.v)
+        if (this.v == null)
             this.v = "";
-        if (!this.l)
+        if (this.l == null)
             this.l = "";
         if (o.field) {
             this.field = o.field;

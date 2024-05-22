@@ -90,9 +90,9 @@ class mktm {
 		if (o.f == false) this.f = false;
 		if (o.requer == true) this.requer = true;
 		// Limpar nulos
-		if (!this.k) this.k = "";
-		if (!this.v) this.v = "";
-		if (!this.l) this.l = "";
+		if (this.k == null) this.k = "";
+		if (this.v == null) this.v = "";
+		if (this.l == null) this.l = "";
 		if (o.field) {
 			// Quando o campo já vem com o formato no modelo
 			this.field = o.field;
