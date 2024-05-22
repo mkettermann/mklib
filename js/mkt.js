@@ -46,35 +46,35 @@ class mktm {
     on = true;
     crud = true;
     constructor(o) {
-        if (o.k)
+        if (o.k != null)
             this.k = o.k;
-        if (o.pk)
+        if (o.pk != null)
             this.pk = o.pk;
-        if (o.l)
+        if (o.l != null)
             this.l = o.l;
-        if (o.r)
+        if (o.r != null)
             this.r = o.r;
-        if (o.v)
+        if (o.v != null)
             this.v = o.v;
-        if (o.tag)
+        if (o.tag != null)
             this.tag = o.tag;
-        if (o.atr)
+        if (o.atr != null)
             this.atr = o.atr;
-        if (o.opcoes)
+        if (o.opcoes != null)
             this.opcoes = o.opcoes;
-        if (o.filtroFormato)
+        if (o.filtroFormato != null)
             this.filtroFormato = o.filtroFormato;
-        if (o.filtroOperador)
+        if (o.filtroOperador != null)
             this.filtroOperador = o.filtroOperador;
-        if (o.classes)
+        if (o.classes != null)
             this.classes = o.classes;
-        if (o.lclasses)
+        if (o.lclasses != null)
             this.lclasses = o.lclasses;
-        if (o.target)
+        if (o.target != null)
             this.target = o.target;
-        if (o.regras)
+        if (o.regras != null)
             this.regras = o.regras;
-        if (o.url)
+        if (o.url != null)
             this.url = o.url;
         if (o.on != null)
             this.on = o.on;
