@@ -2884,8 +2884,6 @@ class mkt {
                 if (mkt.isInsideDom(r.e)) {
                     tempRegras.push(r);
                 }
-                else {
-                }
                 ;
             });
             mkt.regras = tempRegras;
@@ -3336,11 +3334,17 @@ class mkt {
                     }
                     else {
                         mkt.regras[posE].r.push(i);
+                        if (i.a)
+                            auto = true;
                     }
                 });
             }
             else {
                 mkt.regras.push(novaregra);
+                novaregra.r.forEach((i) => {
+                    if (i.a)
+                        auto = true;
+                });
             }
             if (auto) {
                 mkt.regraExe(e, "inicial");
@@ -5170,7 +5174,8 @@ li[m="1"] {
     geraListaAntesDoElemento() {
         let divLabelsSelecionadas = document.createElement("ul");
         divLabelsSelecionadas.setAttribute("class", "mkSelOutDisplay");
-        divLabelsSelecionadas.innerHTML = [...this.selecionadosMap.values()].map((i) => "<li>" + i + "</li>").join("");
+        let valoresNotNull = [...this.selecionadosMap.values()].filter((i) => i != null);
+        divLabelsSelecionadas.innerHTML = valoresNotNull.map((i) => "<li>" + i + "</li>").join("");
         this.before(divLabelsSelecionadas);
         mkt.Ao("input", this, (e) => {
             e.updateListaAntesDoElemento(divLabelsSelecionadas);

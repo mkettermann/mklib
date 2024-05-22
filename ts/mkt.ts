@@ -3355,10 +3355,6 @@ class mkt {
 			mkt.regras.forEach((r) => {
 				if (mkt.isInsideDom(r.e)) {
 					tempRegras.push(r);
-				} else {
-					// Não está mais no DOM e será removida.
-					// Mas emite aviso, pois não foi removida naturalmente.
-					//mkt.l("Regrar > AutoRemoção de Validação do campo: ", r.n);
 				};
 			});
 			mkt.regras = tempRegras; // Requer Propriedade destravada
@@ -3846,12 +3842,16 @@ class mkt {
 						}
 					} else {
 						mkt.regras[posE].r.push(i);
+						if (i.a) auto = true;
 					}
 				});
 			} else {
 				mkt.regras.push(novaregra);
+				novaregra.r.forEach((i: any) => {
+					if (i.a) auto = true;
+				});
 			}
-			// Auto Executa
+			// Auto Executa 1x o conjunto de regras enviado se houver a: true.
 			if (auto) {
 				mkt.regraExe(e, "inicial");
 			}
@@ -6023,7 +6023,8 @@ li[m="1"] {
 	geraListaAntesDoElemento() {
 		let divLabelsSelecionadas = document.createElement("ul");
 		divLabelsSelecionadas.setAttribute("class", "mkSelOutDisplay");
-		divLabelsSelecionadas.innerHTML = [...this.selecionadosMap.values()].map((i) => "<li>" + i + "</li>").join("");
+		let valoresNotNull = [...this.selecionadosMap.values()].filter((i) => i != null);
+		divLabelsSelecionadas.innerHTML = valoresNotNull.map((i) => "<li>" + i + "</li>").join("");
 		this.before(divLabelsSelecionadas);
 		mkt.Ao("input", this, (e: mkSel) => {
 			e.updateListaAntesDoElemento(divLabelsSelecionadas);
