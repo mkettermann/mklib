@@ -1533,7 +1533,7 @@ class mkt {
 				if (cnh.length != 11) { return false; }
 				return true;
 			}],
-			rg: ["00.000.000-0", "^[0-9]{2}([\.]?[0-9]{3}){2})[-]?[0-9]$", (rg: string) => {
+			rg: ["00.000.000-0", "^[0-9]{2}([\.]?[0-9]{3}){2}[-]?[0-9]$", (rg: string) => {
 				// Remove todos os caracteres que não são números
 				rg = rg.replace(/[^0-9]/g, '');
 				// Verifica se o RG tem 9 dígitos
