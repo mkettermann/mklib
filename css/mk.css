@@ -1241,13 +1241,25 @@ ul.mkUlFase li.disabled a {
 	align-content: flex-end;
 }
 
-/* GRID */
+
+/* .:ESTRATEGIAS MK CSS:. */
+/* CARD RESPONSIVO MINMAX */
+.gridCard {
+	--minGridCard: 350px;
+	display: grid !important;
+	grid-template-columns: repeat(auto-fill, minmax(var(--minGridCard), auto));
+	gap: 10px;
+	padding: 15px;
+}
+
+/* GRID ENCAIXADO */
 .macroGrid {
-	--min: 180px;
+	--min: 300px;
 	--max: 1fr;
-	display: grid;
+	display: grid !important;
 	grid-template-columns: repeat(auto-fit, minmax(var(--min), var(--max)));
 }
+
 
 /* ABSOLUTE */
 .absPos1 {
@@ -2024,16 +2036,6 @@ svg {
 
 .grid {
 	display: grid;
-}
-
-/* .:ESTRATEGIAS MK CSS:. 
-	GRIDEADO MINMAX */
-.gridCard {
-	--minGridCard: 350px;
-	display: grid !important;
-	grid-template-columns: repeat(auto-fill, minmax(var(--minGridCard), auto));
-	gap: 10px;
-	padding: 15px;
 }
 
 .flex {
