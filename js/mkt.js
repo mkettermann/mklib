@@ -1043,9 +1043,11 @@ class mkt {
         if (valorKey) {
             let obj = this.getObj(valorKey);
             if (obj != null) {
-                return this.c.model.map(m => {
-                    m.v = obj[m.k];
+                let model = mkt.clonar(this.c.model);
+                model.forEach((i) => {
+                    i.v = obj[i.k];
                 });
+                return model;
             }
             else {
                 mkt.w("getModel() - Objeto solicitado inexistente: ", valorKey);
