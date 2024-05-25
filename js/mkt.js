@@ -1039,8 +1039,22 @@ class mkt {
         }
         return temp;
     };
-    getModel = () => {
-        return this.c.model;
+    getModel = (valorKey) => {
+        if (valorKey) {
+            let obj = this.getObj(valorKey);
+            if (obj != null) {
+                return this.c.model.map(m => {
+                    m.v = obj[m.k];
+                });
+            }
+            else {
+                mkt.w("getModel() - Objeto solicitado inexistente: ", valorKey);
+                return null;
+            }
+        }
+        else {
+            return this.c.model;
+        }
     };
     getUsedKeys = (formatoKV = false) => {
         let kv = [];
