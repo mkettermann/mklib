@@ -1052,8 +1052,11 @@ class mkt {
                     if (i.tag == "textarea") {
                         field.innerHTML = obj[i.k];
                     }
+                    else if (i.tag == "img") {
+                        field.setAttribute("src", obj[i.k]);
+                    }
                     else {
-                        field.value = obj[i.k];
+                        field.setAttribute("value", obj[i.k]);
                     }
                     i.field = field?.outerHTML;
                 });
