@@ -1264,7 +1264,6 @@ class mkt {
 					}
 					i.field = field?.outerHTML;
 				})
-				mkt.l("Model populado: ", model);
 				return model;
 			} else {
 				mkt.w("getModel() - Objeto solicitado inexistente: ", valorKey)
