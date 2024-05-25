@@ -2026,6 +2026,16 @@ svg {
 	display: grid;
 }
 
+/* .:ESTRATEGIAS MK CSS:. 
+	GRIDEADO MINMAX */
+.gridCard {
+	--minGridCard: 350px;
+	display: grid !important;
+	grid-template-columns: repeat(auto-fill, minmax(var(--minGridCard), auto));
+	gap: 10px;
+	padding: 15px;
+}
+
 .flex {
 	display: flex;
 }
