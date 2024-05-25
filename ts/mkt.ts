@@ -5197,6 +5197,15 @@ class mkt {
 		});
 	}
 
+	// String qualquer para B64
+	static to64 = (texto = "") => {
+		return btoa(encodeURIComponent(texto));
+	};
+
+	// B64 para String
+	static from64 = (texto = "") => {
+		return decodeURIComponent(atob(texto));
+	};
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
 	//  FIM DAS FUNCÕES ESTÁTICAS       \\

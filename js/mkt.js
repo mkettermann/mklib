@@ -4465,6 +4465,12 @@ class mkt {
             }
         });
     };
+    static to64 = (texto = "") => {
+        return btoa(encodeURIComponent(texto));
+    };
+    static from64 = (texto = "") => {
+        return decodeURIComponent(atob(texto));
+    };
 }
 Object.keys(mkt).forEach((n) => {
     if (!mkt.a.definePropertyExceptions.includes(n)) {
