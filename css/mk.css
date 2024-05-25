@@ -2022,6 +2022,10 @@ svg {
 	overflow-y: hidden;
 }
 
+.grid {
+	display: grid;
+}
+
 .flex {
 	display: flex;
 }
