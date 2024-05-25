@@ -1256,11 +1256,11 @@ class mkt {
 					temp.innerHTML = i.field;
 					let field = (temp.content.cloneNode(true) as any).querySelector("*");
 					if (i.tag == "textarea") {
-						field.innerHTML = obj[i.k as keyof typeof obj];
+						field.innerHTML = obj[i.k as keyof typeof obj] ? obj[i.k as keyof typeof obj] : "";
 					} else if (i.tag == "img") {
-						field.setAttribute("src", obj[i.k as keyof typeof obj]);
+						field.setAttribute("src", obj[i.k as keyof typeof obj] ? obj[i.k as keyof typeof obj] : "");
 					} else {
-						field.setAttribute("value", obj[i.k as keyof typeof obj]);
+						field.setAttribute("value", obj[i.k as keyof typeof obj] ? obj[i.k as keyof typeof obj] : "");
 					}
 					i.field = field?.outerHTML;
 				})

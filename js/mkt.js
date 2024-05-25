@@ -1050,13 +1050,13 @@ class mkt {
                     temp.innerHTML = i.field;
                     let field = temp.content.cloneNode(true).querySelector("*");
                     if (i.tag == "textarea") {
-                        field.innerHTML = obj[i.k];
+                        field.innerHTML = obj[i.k] ? obj[i.k] : "";
                     }
                     else if (i.tag == "img") {
-                        field.setAttribute("src", obj[i.k]);
+                        field.setAttribute("src", obj[i.k] ? obj[i.k] : "");
                     }
                     else {
-                        field.setAttribute("value", obj[i.k]);
+                        field.setAttribute("value", obj[i.k] ? obj[i.k] : "");
                     }
                     i.field = field?.outerHTML;
                 });
