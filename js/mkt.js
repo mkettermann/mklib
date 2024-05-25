@@ -1046,7 +1046,18 @@ class mkt {
                 let model = mkt.clonar(this.c.model);
                 model.forEach((i) => {
                     i.v = obj[i.k];
+                    let temp = document.createElement("template");
+                    temp.innerHTML = i.field;
+                    let field = temp.content.cloneNode(true).querySelector("*");
+                    if (i.tag == "textarea") {
+                        field.innerHTML = obj[i.k];
+                    }
+                    else {
+                        field.value = obj[i.k];
+                    }
+                    i.field = field?.outerHTML;
                 });
+                mkt.l("Model populado: ", model);
                 return model;
             }
             else {

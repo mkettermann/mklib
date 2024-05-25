@@ -1252,7 +1252,17 @@ class mkt {
 				let model = mkt.clonar(this.c.model);
 				model.forEach((i: any) => {
 					i.v = obj[i.k as keyof typeof obj];
+					let temp = document.createElement("template");
+					temp.innerHTML = i.field;
+					let field = (temp.content.cloneNode(true) as any).querySelector("*");
+					if (i.tag == "textarea") {
+						field.innerHTML = obj[i.k as keyof typeof obj]
+					} else {
+						field.value = obj[i.k as keyof typeof obj];
+					}
+					i.field = field?.outerHTML;
 				})
+				mkt.l("Model populado: ", model);
 				return model;
 			} else {
 				mkt.w("getModel() - Objeto solicitado inexistente: ", valorKey)
