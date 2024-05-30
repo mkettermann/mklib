@@ -1658,6 +1658,8 @@ thead td:hover .mkhmHeadIco {
 
 .mkHeadMenu li .possibilidades {
 	max-height: 200px;
+	height: 200px;
+	max-height: 200px;
 	overflow: auto;
 }
 

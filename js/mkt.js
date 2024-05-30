@@ -784,7 +784,7 @@ class mkt {
 			<div class='hmin fimsecao'>
 				<div class='i htit'>
 					<div class='col10 microPos5 botao hmPrevious'>${mkt.a.SVGINI}${mkt.a.svgLeft}${mkt.a.SVGFIM}</div>
-					<div class='col70 hmTitulo'>
+					<div class='col70 hmTitulo nosel'>
 						Filtro
 					</div>
 					<div class='col10 microPos5 botao hmNext'>${mkt.a.SVGINI}${mkt.a.svgRight}${mkt.a.SVGFIM}</div>
