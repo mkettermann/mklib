@@ -35,6 +35,7 @@ lista_mkt2.url = "http://127.0.0.1:5501/GetList2";
 lista_mkt2.nomeTabela = "Listagem2";
 lista_mkt2.container = "#tabela2";
 lista_mkt2.idmodelo = "#modelo2";
+lista_mkt2.filtro = ".fTabela2";
 lista_mkt2.container_importar = true;
 var lista2 = new mkt(lista_mkt2);
 
