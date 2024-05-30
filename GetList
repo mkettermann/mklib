@@ -29,18 +29,6 @@
 		"mStatus": "True"
 	},
 	{
-		"mId": 3,
-		"mNome": "Ciclano Santos [DUPLICADO]",
-		"mDataCadastro": "2008-02-06",
-		"mDataUltimoAcesso": "2023-06-23",
-		"mTotalAcessos": {
-			"a": {
-				"b": 3
-			}
-		},
-		"mStatus": "True"
-	},
-	{
 		"mId": 4,
 		"mNome": "Beltrano Silva",
 		"mDataCadastro": "2000-06-06",
