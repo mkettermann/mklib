@@ -546,9 +546,6 @@ class mkt {
         });
     };
     atualizarListagem = async () => {
-        if (this.c.filtroDinamico) {
-            this._RecoletarFiltros();
-        }
         let pagBotoes = mkt.Q(this.c.pagBotoes);
         this.dadosFiltrado = mkt.processoFiltragem(this.dadosFull, this.c.objFiltro, this);
         this.atualizarStatusListagem();
@@ -1972,12 +1969,15 @@ class mkt {
             mkt.getThis(Number(iof)).atualizarListagem();
         },
         ContemInput: (v, colName, iof) => {
-            console.log(`ContemInput: `, "color:yellow;", "V:", v, "colName:", colName, "iof", iof);
+            mkt.l(`%cContemInput: `, "color:yellow;", "V:", v, "colName:", colName, "iof", iof);
             mkt.getThis(Number(iof)).c.objFiltro[colName] = {
                 formato: "string",
                 operador: "",
                 conteudo: v,
             };
+            let getCampoUI = mkt.Q(`${mkt.getThis(Number(iof)).c.filtro}[name="${colName}"]`);
+            if (getCampoUI)
+                getCampoUI.value = v;
             mkt.getThis(Number(iof)).atualizaNaPaginaUm();
         },
         FiltraExclusivo: (v, iof) => {

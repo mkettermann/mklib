@@ -653,9 +653,12 @@ class mkt {
 	atualizarListagem = async () => {
 		// Atualiza Status, Filtra, Botão Mais...
 		// A cada atualizar listagem, atualiza o filtro por garantia.
-		if (this.c.filtroDinamico) { // Não refiltrar caso for por consulta
-			this._RecoletarFiltros();
-		}
+		// if (this.c.filtroDinamico) { // Não refiltrar caso for por consulta
+		// 	this._RecoletarFiltros();
+		// } // << Comentado:
+		// Após análise, não é possível limpar o filtro no ato da atualização.
+		// O correto é chamar o this.updateFiltro() ou this.updateFiltroElemento
+		// e daí esses se encarregam de atualizar a listagem diretamente.
 		let pagBotoes = mkt.Q(this.c.pagBotoes);
 		// Processo de filtro que usa o objFiltro nos dadosFull e retorna dadosFiltrado já filtrado.
 		this.dadosFiltrado = mkt.processoFiltragem(
@@ -2303,12 +2306,14 @@ class mkt {
 			mkt.getThis(Number(iof)).atualizarListagem();
 		},
 		ContemInput: (v: any, colName: string, iof: string | null | undefined) => {
-			console.log(`ContemInput: `, "color:yellow;", "V:", v, "colName:", colName, "iof", iof);
+			mkt.l(`%cContemInput: `, "color:yellow;", "V:", v, "colName:", colName, "iof", iof);
 			mkt.getThis(Number(iof)).c.objFiltro[colName] = {
 				formato: "string",
 				operador: "",
 				conteudo: v,
 			};
+			let getCampoUI = mkt.Q(`${mkt.getThis(Number(iof)).c.filtro}[name="${colName}"]`)
+			if (getCampoUI) getCampoUI.value = v;
 			mkt.getThis(Number(iof)).atualizaNaPaginaUm();
 			// // Limpar outros filtros
 			// mkt.getThis(Number(iof)).hmunsel = [];
