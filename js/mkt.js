@@ -1971,7 +1971,6 @@ class mkt {
             mkt.getThis(Number(iof)).atualizarListagem();
         },
         ContemInput: (v, colName, iof) => {
-            mkt.l(`%cContemInput: `, "color:yellow;", "V:", v, "colName:", colName, "iof", iof);
             mkt.getThis(Number(iof)).c.objFiltro[colName] = {
                 formato: "string",
                 operador: "",
