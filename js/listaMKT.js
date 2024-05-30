@@ -13,7 +13,7 @@ var modeloList1 = [
 
 // CONFIGURAÇÃO Para iniciar a construção
 var lista_mkt = new mktc(modeloList1);
-lista_mkt.nomeTabela = " Listagem 1 !";
+lista_mkt.nomeTabela = "Listagem1";
 lista_mkt.container = "#tabela1";
 lista_mkt.idmodelo = "#modelo1";
 lista_mkt.container_importar = true;
