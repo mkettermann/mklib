@@ -258,7 +258,7 @@ class mkt {
                 this.c.pk = modelo;
             }
             else {
-                mkt.l(`%cNenhuma Primary Key encontrada no Config ou no Template (${this.c.idmodelo}). thisListNum:[${this.thisListNum}] Config:`, "color:red;background-color:black;border-radius:5px;padding:0px 2px;font-weight:bold;", this.c);
+                mkt.l(`%c Nenhuma Primary Key encontrada no Config ou no Template (${this.c.idmodelo}) %c [${this.thisListNum}] Config:`, "color:red;background-color:black;border-radius:5px;padding:0px 2px;font-weight:bold;", "color:white;", this.c);
             }
         }
         if (mkt.Q(this.c.container)) {
