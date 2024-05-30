@@ -1013,7 +1013,6 @@ class mkt {
 			})
 			mkt.Ao("input", ".mkHeadMenu .hmContemInput", (e: HTMLInputElement) => {
 				let eHmenu = mkt.Q("body .mkHeadMenu");
-				// console.log(`%cInput: ${e.value}`, "color:red;")
 				mkt.hm.ContemInput(e.value, eHmenu?.getAttribute("data-colname"), e.closest(".mkHeadMenu")?.getAttribute("data-mkt"));
 			})
 		}
@@ -2304,15 +2303,16 @@ class mkt {
 			mkt.getThis(Number(iof)).atualizarListagem();
 		},
 		ContemInput: (v: any, colName: string, iof: string | null | undefined) => {
+			console.log(`ContemInput: `, "color:yellow;", "V:", v, "colName:", colName, "iof", iof);
 			mkt.getThis(Number(iof)).c.objFiltro[colName] = {
 				formato: "string",
 				operador: "",
 				conteudo: v,
 			};
 			mkt.getThis(Number(iof)).atualizaNaPaginaUm();
-			// Limpar outros filtros
-			mkt.getThis(Number(iof)).hmunsel = [];
-			mkt.hm.FiltraExclusivo("", iof);
+			// // Limpar outros filtros
+			// mkt.getThis(Number(iof)).hmunsel = [];
+			// mkt.hm.FiltraExclusivo("", iof);
 		},
 		FiltraExclusivo: (v: string, iof: string | null | undefined) => {
 			if (mkt.classof(iof) == "String") {

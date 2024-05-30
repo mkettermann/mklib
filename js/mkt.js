@@ -1972,14 +1972,13 @@ class mkt {
             mkt.getThis(Number(iof)).atualizarListagem();
         },
         ContemInput: (v, colName, iof) => {
+            console.log(`ContemInput: `, "color:yellow;", "V:", v, "colName:", colName, "iof", iof);
             mkt.getThis(Number(iof)).c.objFiltro[colName] = {
                 formato: "string",
                 operador: "",
                 conteudo: v,
             };
             mkt.getThis(Number(iof)).atualizaNaPaginaUm();
-            mkt.getThis(Number(iof)).hmunsel = [];
-            mkt.hm.FiltraExclusivo("", iof);
         },
         FiltraExclusivo: (v, iof) => {
             if (mkt.classof(iof) == "String") {
