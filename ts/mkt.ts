@@ -277,7 +277,7 @@ class mkt {
 			if (modelo) {
 				this.c.pk = modelo;
 			} else {
-				mkt.w("Nenhuma Primary Key encontrada no Config ou no Template)");
+				mkt.l(`%cNenhuma Primary Key encontrada no Config ou no Template (${this.c.idmodelo}). thisListNum:[${this.thisListNum}] Config:`, "color:red;background-color:black;border-radius:5px;padding:0px 2px;font-weight:bold;", this.c);
 			}
 		}
 		if (mkt.Q(this.c.container)) {
@@ -587,13 +587,21 @@ class mkt {
 		// Verificação de ChavesRepetidas
 		mkt.addTask({ k: "ChavesRepetidas", v: this.dadosFull, target: this.c.pk }).then((r: any) => {
 			if (r.v.length > 0) {
-				mkt.l("ALERTA!", this.c.nomeTabela, "possui CHAVES PRIMARIAS DUPLICADAS:", r.v);
+				let chaves = r.v.filter((i: any) => i != null);
+				if (chaves.length == 0) {
+					mkt.l(`%c ALERTA! %c ${this.c.nomeTabela}: Chaves primárias NULAS! Nome da PK: %c${this.c.pk}`, "color:red;background-color:black;border-radius:5px;padding:1px;font-weight:bold;", "color:yellow;", "color:white;");
+				} else {
+					mkt.l(`%c ALERTA! %c ${this.c.nomeTabela}: Chaves primárias duplicadas:`, "color:red;background-color:black;border-radius:5px;padding:1px;font-weight:bold;", "color:yellow;", chaves);
+				}
 			}
 		});
 		// Verificação de Duplices
 		mkt.addTask({ k: "Duplices", v: this.dadosFull, target: this.c.pk }).then((r: any) => {
 			if (r.v.length > 0) {
-				mkt.l("ALERTA!", this.c.nomeTabela, "possui CONTEÚDO REPETIDO:", r.v);
+				let chaves = r.v.filter((i: any) => i != null);
+				if (chaves.length != 0) {
+					mkt.l(`%c ATENÇÃO! %c ${this.c.nomeTabela}: Conteúdo repetido:`, "color:orange;background-color:black;border-radius:5px;padding:0px 2px;font-weight:bold;", "color:yellow;", chaves);
+				}
 			}
 		});
 	}
@@ -1005,6 +1013,7 @@ class mkt {
 			})
 			mkt.Ao("input", ".mkHeadMenu .hmContemInput", (e: HTMLInputElement) => {
 				let eHmenu = mkt.Q("body .mkHeadMenu");
+				// console.log(`%cInput: ${e.value}`, "color:red;")
 				mkt.hm.ContemInput(e.value, eHmenu?.getAttribute("data-colname"), e.closest(".mkHeadMenu")?.getAttribute("data-mkt"));
 			})
 		}
@@ -2656,6 +2665,12 @@ class mkt {
 			config.headers.append("MKANTI-FORGERY-TOKEN", aft || "");
 		}
 		if (!config.quiet) config.quiet = false;
+		if (!config.colorConteudo) config.colorConteudo = "#FFF";
+		if (!config.colorRequest) config.colorRequest = "#777";
+		if (!config.colorResponse) config.colorResponse = "#0F0";
+		if (!config.colorType) config.colorType = "#777";
+		if (!config.colorStatusCode) config.colorStatusCode = "#777";
+
 		// TIPO DE ENVIO
 		config.json = mkt.stringify(config.dados);
 		if (config.metodo != mkt.a.GET) {
@@ -2668,7 +2683,7 @@ class mkt {
 		// config.dev = true;
 		// INFO
 		if (!config.quiet) {
-			mkt.gc(nomeRequest);
+			mkt.gc(`%c${config.metodo}:%c ${config.url}`, `color:${config.colorRequest}`, `color:${config.colorConteudo}`);
 			if (config.dev) {
 				mkt.l("Header: ", Object.fromEntries(config.headers.entries()));
 				mkt.l("Config: ", config);
@@ -2707,7 +2722,7 @@ class mkt {
 				config.statusCode = config.pacote.status;
 				config.erros = await config.pacote.text();
 				mkt.gc(
-					"HTTP RETURNO: " + config.pacote.status + " " + config.pacote.statusText
+					`HTTP RETURNO: ${config.pacote.status} ${config.pacote.statusText}`
 				);
 				mkt.l(config.erros);
 				mkt.ge();
@@ -2753,12 +2768,19 @@ class mkt {
 					if (!tam) {
 						tam = "";
 					} else {
-						tam = "{" + tam + "} ";
+						tam = "[" + tam + "] ";
 					}
+					let tipo = "";
+					if (config.tipo.includes("json")) {
+						tipo = "JSON"
+					} else if (config.tipo.includes("html")) {
+						tipo = "HTML"
+					}
+
 					mkt.gc(
-						"Retorno " + config.pacote.status +
-						" (" + config.metodo + "): " + tam +
-						config.url + " (" + config.tipo + ")"
+						`%cRetorno %c${config.pacote.status} %c(${config.metodo}) %c${tipo} %c${tam} ${config.url}`,
+						`color:${config.colorResponse}`, `color:${config.colorStatusCode}`, `color:${config.colorRequest}`,
+						`color:${config.colorType}`, `color:${config.colorConteudo}`
 					);
 				}
 				mkt.cte("Request: " + nomeRequest, config.quiet);
