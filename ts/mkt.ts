@@ -277,7 +277,7 @@ class mkt {
 			if (modelo) {
 				this.c.pk = modelo;
 			} else {
-				mkt.l(`%c Nenhuma Primary Key encontrada no Config ou no Template (${this.c.idmodelo}) %c [${this.thisListNum}] Config:`, "color:red;background-color:black;border-radius:5px;padding:0px 2px;font-weight:bold;", "color:white;", this.c);
+				mkt.l(`%c Nenhuma Primary Key encontrada no Config ou no Template (${this.c.idmodelo}) %c Config:`, "color:red;background-color:black;border-radius:5px;padding:0px 2px;font-weight:bold;", "color:white;", this.c);
 			}
 		}
 		if (mkt.Q(this.c.container)) {
@@ -2665,9 +2665,8 @@ class mkt {
 			config.headers.append("MKANTI-FORGERY-TOKEN", aft || "");
 		}
 		if (!config.quiet) config.quiet = false;
-		if (!config.colorConteudo) config.colorConteudo = "#FFF";
+		if (!config.colorConteudo) config.colorConteudo = "#BAF";
 		if (!config.colorRequest) config.colorRequest = "#777";
-		if (!config.colorResponse) config.colorResponse = "#0F0";
 		if (!config.colorType) config.colorType = "#777";
 		if (!config.colorStatusCode) config.colorStatusCode = "#777";
 
@@ -2683,7 +2682,7 @@ class mkt {
 		// config.dev = true;
 		// INFO
 		if (!config.quiet) {
-			mkt.gc(`%c${config.metodo}:%c ${config.url}`, `color:${config.colorRequest}`, `color:${config.colorConteudo}`);
+			mkt.gc(`%c${config.metodo}: ${config.url}`, `color:${config.colorRequest}`);
 			if (config.dev) {
 				mkt.l("Header: ", Object.fromEntries(config.headers.entries()));
 				mkt.l("Config: ", config);
@@ -2777,9 +2776,16 @@ class mkt {
 						tipo = "HTML"
 					}
 
+					if (config.pacote.status == "200" && tipo == "JSON" && tam != "") {
+						if (!config.colorResponseOK) config.colorResponseOK = "#0F0";
+						config.colorConteudo = config.colorResponseOK;
+					} else {
+						config.colorResponseOK = config.colorRequest;
+						config.colorConteudo = config.colorRequest;
+					}
 					mkt.gc(
 						`%cRetorno %c${config.pacote.status} %c(${config.metodo}) %c${tipo} %c${tam} ${config.url}`,
-						`color:${config.colorResponse}`, `color:${config.colorStatusCode}`, `color:${config.colorRequest}`,
+						`color:${config.colorResponseOK}`, `color:${config.colorStatusCode}`, `color:${config.colorRequest}`,
 						`color:${config.colorType}`, `color:${config.colorConteudo}`
 					);
 				}
