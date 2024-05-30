@@ -956,14 +956,16 @@ class mkt {
                 th.classList.remove("mkEfeitoSobe");
             });
         }
-        let thsSort = mkt.QAll(this.c.ths + ".sort-" + this.c.sortBy);
+        let thsSort = mkt.QAll(this.c.ths);
         if (thsSort.length != 0) {
             thsSort.forEach((thSort) => {
-                if (this.c.sortDir == 1) {
-                    thSort.classList.add("mkEfeitoDesce");
-                }
-                else {
-                    thSort.classList.add("mkEfeitoSobe");
+                if (thSort.classList.contains(`sort-${this.c.sortBy}`)) {
+                    if (this.c.sortDir == 1) {
+                        thSort.classList.add("mkEfeitoDesce");
+                    }
+                    else {
+                        thSort.classList.add("mkEfeitoSobe");
+                    }
                 }
             });
         }

@@ -414,8 +414,8 @@ class mkt {
 		this.aindaTemMais = true;
 		this.totalappends = 0;
 		this.c.objFiltro = {}; // Limpa Filtro sem limpar os campos
+		// Auto Inicia a lista, e deve passar pelo startListagem onde refaz o filtro atual dos campos atuais.
 		await this.autoStartConfig();
-		//this.startListagem()
 	}
 
 	mais = async (parametros: string | null = null, novaurl: string | null = null) => {
@@ -1158,14 +1158,17 @@ class mkt {
 			});
 		}
 		// Busca elemento que está sendo ordenado
-		let thsSort = mkt.QAll(this.c.ths + ".sort-" + this.c.sortBy);
+		let thsSort = mkt.QAll(this.c.ths);
 		if (thsSort.length != 0) {
 			thsSort.forEach((thSort: HTMLTableCellElement) => {
-				if (this.c.sortDir == 1) {
-					thSort.classList.add("mkEfeitoDesce");
-				} else {
-					thSort.classList.add("mkEfeitoSobe");
+				if (thSort.classList.contains(`sort-${this.c.sortBy}`)) {
+					if (this.c.sortDir == 1) {
+						thSort.classList.add("mkEfeitoDesce");
+					} else {
+						thSort.classList.add("mkEfeitoSobe");
+					}
 				}
+
 			});
 		}
 	};
