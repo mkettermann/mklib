@@ -2696,12 +2696,11 @@ class mkt {
 		if (!config.url.includes("://")) {
 			mkt.w("Informe o caminho completo da URL ao fazer uma requisição. Url informada:", config.url);
 			// Modifica URL relativa pra completa.
-			// let changeUrl = window.location.origin
-			// if (config.url.charAt(0) == ".") {
-			// 	// A URL era relativa, mas o href termina com /. Remove barra
-			// 	changeUrl = changeUrl.slice(0, changeUrl.length - 1)
-			// }
-			// config.url = changeUrl + config.url;
+			let urlAndPath = window.location.href.slice(0, window.location.href.length - 1)
+			if (config.url.charAt(0) == ".") {
+				// A URL era relativa, mas o href termina com /. Remove barra
+				config.url = urlAndPath + config.url
+			}
 			// mkt.l("Link: ", config.url)
 		}
 		config._url = new URL(config.url);
