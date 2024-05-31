@@ -1866,7 +1866,7 @@ class mkt {
 		}
 	};
 
-	static cte = (s: any, quietMode: any = false) => {
+	static cte = (s: any, quietMode: any = false, ...rest: any) => {
 		// FIM do CONTA TEMPO utillizado pra saber o tempo dos GET e POST.
 		let t = mkt.a.timers.find((t: any) => t.name == s);
 		if (t.fim == 0) {
@@ -1874,7 +1874,7 @@ class mkt {
 			t.tempo = t.fim - t.ini;
 		}
 		if (!quietMode) {
-			mkt.l(s + " \t-> " + t.tempo + " ms");
+			mkt.l("%c" + t.tempo.toString().padStart(5) + `%c ms -> ${s}`, "color:#FF0;", "color:#777;", ``, ...rest);
 		}
 	};
 
@@ -2673,7 +2673,7 @@ class mkt {
 			config.headers.append("MKANTI-FORGERY-TOKEN", aft || "");
 		}
 		if (!config.quiet) config.quiet = false;
-		if (!config.colorConteudo) config.colorConteudo = "#BAF";
+		if (!config.colorConteudo) config.colorConteudo = "#ACF";
 		if (!config.colorRequest) config.colorRequest = "#777";
 		if (!config.colorType) config.colorType = "#777";
 		if (!config.colorStatusCode) config.colorStatusCode = "#777";
@@ -2786,10 +2786,8 @@ class mkt {
 
 					if (config.pacote.status == "200" && tipo == "JSON") {
 						if (!config.colorResponseOK) config.colorResponseOK = "#0F0";
-						config.colorConteudo = config.colorResponseOK;
 					} else {
 						config.colorResponseOK = config.colorRequest;
-						config.colorConteudo = config.colorRequest;
 					}
 					mkt.gc(
 						`%cRetorno %c${config.pacote.status} %c(${config.metodo}) %c${tipo} %c${tam} ${config.url}`,

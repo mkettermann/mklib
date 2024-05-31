@@ -1583,14 +1583,14 @@ class mkt {
             });
         }
     };
-    static cte = (s, quietMode = false) => {
+    static cte = (s, quietMode = false, ...rest) => {
         let t = mkt.a.timers.find((t) => t.name == s);
         if (t.fim == 0) {
             t.fim = mkt.dataGetMs();
             t.tempo = t.fim - t.ini;
         }
         if (!quietMode) {
-            mkt.l(s + " \t-> " + t.tempo + " ms");
+            mkt.l("%c" + t.tempo.toString().padStart(5) + `%c ms -> ${s}`, "color:#FF0;", "color:#777;", ``, ...rest);
         }
     };
     static errosLog = () => {
@@ -2299,7 +2299,7 @@ class mkt {
         if (!config.quiet)
             config.quiet = false;
         if (!config.colorConteudo)
-            config.colorConteudo = "#BAF";
+            config.colorConteudo = "#ACF";
         if (!config.colorRequest)
             config.colorRequest = "#777";
         if (!config.colorType)
@@ -2406,11 +2406,9 @@ class mkt {
                     if (config.pacote.status == "200" && tipo == "JSON") {
                         if (!config.colorResponseOK)
                             config.colorResponseOK = "#0F0";
-                        config.colorConteudo = config.colorResponseOK;
                     }
                     else {
                         config.colorResponseOK = config.colorRequest;
-                        config.colorConteudo = config.colorRequest;
                     }
                     mkt.gc(`%cRetorno %c${config.pacote.status} %c(${config.metodo}) %c${tipo} %c${tam} ${config.url}`, `color:${config.colorResponseOK}`, `color:${config.colorStatusCode}`, `color:${config.colorRequest}`, `color:${config.colorType}`, `color:${config.colorConteudo}`);
                 }
