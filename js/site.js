@@ -5,7 +5,8 @@ const menuAbrir = async (t) => {
 	let e = mkt.Q("#" + t);
 	let destino = e.dataset["go"];
 	if (destino != null) {
-		let pac = await mkt.get.html("./html/" + destino + "?" + mkt.uuid());
+		let urlInstalada = window.location.href + "/html/";
+		let pac = await mkt.get.html(urlInstalada + destino + "?" + mkt.uuid());
 		if (pac.retorno != null) {
 			mkt.Q(".conteudo").innerHTML = pac.retorno;
 			mkt.nodeToScript(mkt.Q(".conteudo"));
