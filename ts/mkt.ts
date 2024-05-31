@@ -2720,8 +2720,7 @@ class mkt {
 		// INFO
 		if (!config.quiet) {
 			mkt.gc(`%c${config.metodo}: ${config._url.pathname}`, `color:${config.colorRequest}`);
-			mkt.l(`${config._url.origin}${config._url.pathname}`)
-			mkt.l(`%c${config._url.search}`, "color:yellow;")
+			mkt.l(`${config._url.origin}${config._url.pathname}%c${config._url.search}`, "color:yellow;")
 			if (config.dev) {
 				mkt.l("Header: ", Object.fromEntries(config.headers.entries()));
 				mkt.l("Config: ", config);
