@@ -2322,9 +2322,9 @@ class mkt {
         if (!config.colorStatusCode)
             config.colorStatusCode = "#777";
         if (!config.url.includes("://")) {
-            let changeUrl = window.location.origin;
+            let changeUrl = window.location.href;
             if (config.url.charAt(0) == ".") {
-                changeUrl += "/";
+                changeUrl = changeUrl.slice(0, changeUrl.length - 1);
             }
             config.url = changeUrl + config.url;
             mkt.l("Link: ", config.url);

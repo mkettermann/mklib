@@ -2694,10 +2694,10 @@ class mkt {
 		if (!config.colorStatusCode) config.colorStatusCode = "#777";
 		if (!config.url.includes("://")) {
 			// Modifica URL relativa pra completa.
-			let changeUrl = window.location.origin
+			let changeUrl = window.location.href
 			if (config.url.charAt(0) == ".") {
-				// A URL era relativa, então vai faltar a barra divisória
-				changeUrl += "/";
+				// A URL era relativa, mas o href termina com /. Remove barra
+				changeUrl = changeUrl.slice(0, changeUrl.length - 1)
 			}
 			config.url = changeUrl + config.url;
 			mkt.l("Link: ", config.url)
