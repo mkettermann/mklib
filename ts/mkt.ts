@@ -2696,9 +2696,9 @@ class mkt {
 		if (!config.url.includes("://")) {
 			mkt.w("Informe o caminho completo da URL ao fazer uma requisição. Url informada:", config.url);
 			// Modifica URL relativa pra completa.
-			let urlAndPath = window.location.href.slice(0, window.location.href.length - 1)
+			let urlAndPath = window.location.href
 			if (config.url.charAt(0) == ".") {
-				// A URL era relativa, mas o href termina com /. Remove barra
+				// A URL era relativa, incrementa url e path atual para completar
 				config.url = urlAndPath + config.url
 			}
 			// mkt.l("Link: ", config.url)
