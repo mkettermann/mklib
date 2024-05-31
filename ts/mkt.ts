@@ -1866,15 +1866,17 @@ class mkt {
 		}
 	};
 
-	static cte = (s: any, quietMode: any = false, ...rest: any) => {
+	static cte = (s: any, config: any = null, ...rest: any) => {
 		// FIM do CONTA TEMPO utillizado pra saber o tempo dos GET e POST.
 		let t = mkt.a.timers.find((t: any) => t.name == s);
 		if (t.fim == 0) {
 			t.fim = mkt.dataGetMs();
 			t.tempo = t.fim - t.ini;
 		}
-		if (!quietMode) {
-			mkt.l("%c" + t.tempo.toString().padStart(5) + `%c ms -> ${s}`, "color:#FF0;", "color:#777;", ``, ...rest);
+		if (config) {
+			if (!config.quiet) {
+				mkt.l("%c" + t.tempo.toString().padStart(5) + `%c ms -> ${config._url.pathname}`, "color:#FF0;", "color:#777;", ``, ...rest);
+			}
 		}
 	};
 
@@ -2677,6 +2679,8 @@ class mkt {
 		if (!config.colorRequest) config.colorRequest = "#777";
 		if (!config.colorType) config.colorType = "#777";
 		if (!config.colorStatusCode) config.colorStatusCode = "#777";
+		if (!config.url.includes("://")) { config.url = window.location.origin + config.url; }
+		config._url = new URL(config.url);
 
 		// TIPO DE ENVIO
 		config.json = mkt.stringify(config.dados);
@@ -2690,7 +2694,9 @@ class mkt {
 		// config.dev = true;
 		// INFO
 		if (!config.quiet) {
-			mkt.gc(`%c${config.metodo}: ${config.url}`, `color:${config.colorRequest}`);
+			mkt.gc(`%c${config.metodo}: ${config._url.pathname}`, `color:${config.colorRequest}`);
+			mkt.l(`${config._url.origin}${config._url.pathname}`)
+			mkt.l(`%c${config._url.search}`, "color:yellow;")
 			if (config.dev) {
 				mkt.l("Header: ", Object.fromEntries(config.headers.entries()));
 				mkt.l("Config: ", config);
@@ -2790,12 +2796,12 @@ class mkt {
 						config.colorResponseOK = config.colorRequest;
 					}
 					mkt.gc(
-						`%cRetorno %c${config.pacote.status} %c(${config.metodo}) %c${tipo} %c${tam} ${config.url}`,
+						`%cRetorno %c${config.pacote.status} %c(${config.metodo}) %c${tipo} %c${tam} ${config._url.pathname}`,
 						`color:${config.colorResponseOK}`, `color:${config.colorStatusCode}`, `color:${config.colorRequest}`,
 						`color:${config.colorType}`, `color:${config.colorConteudo}`
 					);
 				}
-				mkt.cte("Request: " + nomeRequest, config.quiet);
+				mkt.cte("Request: " + nomeRequest, config);
 				if (!config.quiet) {
 					mkt.l(config.retorno);
 					mkt.ge();
