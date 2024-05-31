@@ -2322,10 +2322,11 @@ class mkt {
         if (!config.colorStatusCode)
             config.colorStatusCode = "#777";
         if (!config.url.includes("://")) {
-            mkt.w("Informe o caminho completo da URL ao fazer uma requisição. Url informada:", config.url);
-            let urlAndPath = window.location.href;
             if (config.url.charAt(0) == ".") {
-                config.url = urlAndPath + config.url;
+                config.url = window.location.href + config.url;
+            }
+            else if (config.url.charAt(0) == "/") {
+                config.url = window.location.origin + config.url;
             }
         }
         config._url = new URL(config.url);

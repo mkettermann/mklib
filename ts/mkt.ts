@@ -2694,12 +2694,14 @@ class mkt {
 		if (!config.colorStatusCode) config.colorStatusCode = "#777";
 		// PRECISA DO LINK COMPLETO. Resolver problema do appPath, enviando o link inteiro na requisição.
 		if (!config.url.includes("://")) {
-			mkt.w("Informe o caminho completo da URL ao fazer uma requisição. Url informada:", config.url);
+			//mkt.w("Url informada:", config.url);
 			// Modifica URL relativa pra completa.
-			let urlAndPath = window.location.href
 			if (config.url.charAt(0) == ".") {
 				// A URL era relativa, incrementa url e path atual para completar
-				config.url = urlAndPath + config.url
+				config.url = window.location.href + config.url
+			} else if (config.url.charAt(0) == "/") {
+				// A URL era o path, incrementa a origem.
+				config.url = window.location.origin + config.url
 			}
 			// mkt.l("Link: ", config.url)
 		}
