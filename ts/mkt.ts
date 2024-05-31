@@ -2692,7 +2692,15 @@ class mkt {
 		if (!config.colorRequest) config.colorRequest = "#777";
 		if (!config.colorType) config.colorType = "#777";
 		if (!config.colorStatusCode) config.colorStatusCode = "#777";
-		if (!config.url.includes("://")) { config.url = window.location.origin + config.url; }
+		if (!config.url.includes("://")) {
+			// Modifica URL relativa pra completa.
+			let changeUrl = window.location.origin
+			if (config.url.charAt(0) == ".") {
+				// A URL era relativa, então vai faltar a barra divisória
+				changeUrl += "/";
+			}
+			config.url = changeUrl + config.url;
+		}
 		config._url = new URL(config.url);
 
 		// TIPO DE ENVIO

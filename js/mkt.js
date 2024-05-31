@@ -2322,7 +2322,11 @@ class mkt {
         if (!config.colorStatusCode)
             config.colorStatusCode = "#777";
         if (!config.url.includes("://")) {
-            config.url = window.location.origin + config.url;
+            let changeUrl = window.location.origin;
+            if (config.url.charAt(0) == ".") {
+                changeUrl += "/";
+            }
+            config.url = changeUrl + config.url;
         }
         config._url = new URL(config.url);
         config.json = mkt.stringify(config.dados);
