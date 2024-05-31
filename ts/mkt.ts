@@ -2692,15 +2692,17 @@ class mkt {
 		if (!config.colorRequest) config.colorRequest = "#777";
 		if (!config.colorType) config.colorType = "#777";
 		if (!config.colorStatusCode) config.colorStatusCode = "#777";
+		// PRECISA DO LINK COMPLETO. Resolver problema do appPath, enviando o link inteiro na requisição.
 		if (!config.url.includes("://")) {
+			mkt.w("Informe o caminho completo da URL ao fazer uma requisição. Url informada:", config.url);
 			// Modifica URL relativa pra completa.
-			let changeUrl = window.location.href
-			if (config.url.charAt(0) == ".") {
-				// A URL era relativa, mas o href termina com /. Remove barra
-				changeUrl = changeUrl.slice(0, changeUrl.length - 1)
-			}
-			config.url = changeUrl + config.url;
-			mkt.l("Link: ", config.url)
+			// let changeUrl = window.location.origin
+			// if (config.url.charAt(0) == ".") {
+			// 	// A URL era relativa, mas o href termina com /. Remove barra
+			// 	changeUrl = changeUrl.slice(0, changeUrl.length - 1)
+			// }
+			// config.url = changeUrl + config.url;
+			// mkt.l("Link: ", config.url)
 		}
 		config._url = new URL(config.url);
 

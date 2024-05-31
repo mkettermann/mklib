@@ -2322,12 +2322,7 @@ class mkt {
         if (!config.colorStatusCode)
             config.colorStatusCode = "#777";
         if (!config.url.includes("://")) {
-            let changeUrl = window.location.href;
-            if (config.url.charAt(0) == ".") {
-                changeUrl = changeUrl.slice(0, changeUrl.length - 1);
-            }
-            config.url = changeUrl + config.url;
-            mkt.l("Link: ", config.url);
+            mkt.w("Informe o caminho completo da URL ao fazer uma requisição. Url informada:", config.url);
         }
         config._url = new URL(config.url);
         config.json = mkt.stringify(config.dados);
