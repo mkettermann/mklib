@@ -1591,7 +1591,20 @@ class mkt {
         }
         if (config) {
             if (!config.quiet) {
-                mkt.l("%c" + t.tempo.toString().padStart(5) + `%c ms -> ${config._url.pathname}`, "color:#FF0;", "color:#777;", ``, ...rest);
+                let corTempo = "#0F0";
+                if (t.tempo > 80) {
+                    corTempo = "#9F0;";
+                }
+                if (t.tempo > 200) {
+                    corTempo = "#FF0;";
+                }
+                if (t.tempo > 500) {
+                    corTempo = "#F90;";
+                }
+                if (t.tempo > 2000) {
+                    corTempo = "#F00;";
+                }
+                mkt.l("%c" + t.tempo.toString().padStart(5) + `%c ms -> ${config._url.pathname}`, `color:${corTempo};`, "color:#777;", ``, ...rest);
             }
         }
     };
