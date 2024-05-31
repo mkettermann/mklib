@@ -2327,6 +2327,7 @@ class mkt {
                 changeUrl += "/";
             }
             config.url = changeUrl + config.url;
+            mkt.l("Link: ", config.url);
         }
         config._url = new URL(config.url);
         config.json = mkt.stringify(config.dados);
