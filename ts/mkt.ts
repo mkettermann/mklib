@@ -2784,7 +2784,7 @@ class mkt {
 						tipo = "HTML"
 					}
 
-					if (config.pacote.status == "200" && tipo == "JSON" && tam != "") {
+					if (config.pacote.status == "200" && tipo == "JSON") {
 						if (!config.colorResponseOK) config.colorResponseOK = "#0F0";
 						config.colorConteudo = config.colorResponseOK;
 					} else {
