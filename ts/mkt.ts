@@ -965,7 +965,7 @@ class mkt {
 				<div class='i htit nosel'>
 					<div class='microPos5 botao hmPrevious'>${mkt.a.SVGINI}${mkt.a.svgLeft}${mkt.a.SVGFIM}</div>
 					<div class='hmTitulo'>Filtro</div>
-					<div>
+					<div class='flr'>
 						<div class='microPos5 botao hmNext'>${mkt.a.SVGINI}${mkt.a.svgRight}${mkt.a.SVGFIM}</div>
 						<div class='fechar botao hmHide'>${mkt.a.SVGINI}${mkt.a.svgFecha}${mkt.a.SVGFIM}</div>
 					</div>
