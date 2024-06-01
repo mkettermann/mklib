@@ -962,14 +962,12 @@ class mkt {
 			ehm.className = "mkHeadMenu oculto";
 			ehm.innerHTML = `
 			<div class='hmin fimsecao'>
-				<div class='i htit'>
-					<div class='col10 microPos5 botao hmPrevious'>${mkt.a.SVGINI}${mkt.a.svgLeft}${mkt.a.SVGFIM}</div>
-					<div class='col70 hmTitulo nosel'>
-						Filtro
-					</div>
-					<div class='col10 microPos5 botao hmNext'>${mkt.a.SVGINI}${mkt.a.svgRight}${mkt.a.SVGFIM}</div>
-					<div class='col10 fechar botao nosel hmHide'>
-					${mkt.a.SVGINI}${mkt.a.svgFecha}${mkt.a.SVGFIM}
+				<div class='i htit nosel'>
+					<div class='microPos5 botao hmPrevious'>${mkt.a.SVGINI}${mkt.a.svgLeft}${mkt.a.SVGFIM}</div>
+					<div class='hmTitulo'>Filtro</div>
+					<div>
+						<div class='microPos5 botao hmNext'>${mkt.a.SVGINI}${mkt.a.svgRight}${mkt.a.SVGFIM}</div>
+						<div class='fechar botao hmHide'>${mkt.a.SVGINI}${mkt.a.svgFecha}${mkt.a.SVGFIM}</div>
 					</div>
 				</div>
 				<ul>
