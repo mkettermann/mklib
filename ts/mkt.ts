@@ -1,16 +1,16 @@
 //
-//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+/**********************************\\
 //  MK - MASTER KEY LIBRARY         \\
 //      By Marcos Kettermann         \\
-//___________Desde 2023_______________\\
+//___________Desde 2023______________*/
 //
 // Variável de teste:
 var mkz = null;
 declare const Popper: any; // Esta biblioteca requer Popper
 
-//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
-//  FUNCOES EXTERNAS                \\
-//___________________________________\\
+/**********************************\\
+//  FUNCOES SUPORTE				          \\
+//__________________________________*/
 (String.prototype as any).removeRaw = function (fix = false) {
 	// Função que tira os elementos de quebra de linha e tabela da string.
 	let r = this.replaceAll("\n", "")
@@ -43,9 +43,9 @@ declare const Popper: any; // Esta biblioteca requer Popper
 	})
 };
 
-//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+/**********************************\\
 //  MODELO DOS DADOS DA LISTA       \\
-//___________________________________\\
+//__________________________________*/
 // CLASSE Do Design das colunas para formar a listagem da classe mktm.
 class mktm {
 	// Classe Modelo: Serve para assossiar uma regra / tipo / padronização a um campo
@@ -123,9 +123,9 @@ class mktm {
 	get [Symbol.toStringTag]() { return "mktm"; }
 }
 
-//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+/**********************************\\
 //  PRÉ CONFIGURAÇÃO DA LISTAGEM    \\
-//___________________________________\\
+//__________________________________*/
 class mktc {
 	// CLASSE que de configuração para que a listagem seja iniciada de forma personalizada.
 	url: string | null = window.location.href.split("?")[0] + "/GetList"; // Requer a URL para o fetch dos dados. Se não tiver, passar os dados no parametros dados e tornar esse null.
@@ -212,9 +212,9 @@ class mktc {
 	get [Symbol.toStringTag]() { return "mktc"; }
 }
 
-//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+/**********************************\\
 //  CLASSE MKT ESTÁTICA e LISTAGEM  \\
-//___________________________________\\
+//__________________________________*/
 class mkt {
 	// Classe contendo uma grande ferramenta de gerenciamento de dados em massa é construida e diveras funções estáticas facilitadoras.
 	c: mktc;
@@ -235,9 +235,9 @@ class mkt {
 	aindaTemMais = true;
 	totalappends = 0;
 
-	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+	/**********************************\\
 	//  CONSTRUTOR DA GRANDE LISTAGEM   \\
-	//___________________________________\\
+	//__________________________________*/
 	constructor(_mktc: mktc | null) {
 		if (_mktc == null) {
 			this.c = new mktc([]);
@@ -287,9 +287,9 @@ class mkt {
 		mkt.a.build.push(this);
 	}
 
-	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+	/**********************************\\
 	//  INICIO DOS MÉTODOS MKT          \\
-	//___________________________________\\
+	//__________________________________*/
 	autoStartConfig = async (arg: any = {}) => {
 		// Apos instanciar a classe mkt, essa função tenta iniciar a listagem baseado nas regras.
 		if (!this.started) { // <= Previne que Reset duplique os Listners
@@ -1363,9 +1363,9 @@ class mkt {
 		return this.dadosFull.find((o: any) => o[k] == v);
 	};
 
-	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+	/**********************************\\
 	//  DEFINIÇÕES DA CLASSE MKT        \\
-	//___________________________________\\
+	//__________________________________*/
 
 	getIndexOf = () => {
 		// Retorna a Posição deste Build (new mkt) no container local
@@ -1417,13 +1417,13 @@ class mkt {
 		};
 	}
 
-	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+	/**********************************\\
 	//  FIM DOS MÉTODOS MKT             \\
-	//___________________________________\\
+	//__________________________________*/
 
-	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+	/**********************************\\
 	//  INÍCIO FUNCÕES ESTÁTICAS        \\
-	//___________________________________\\
+	//__________________________________*/
 
 
 	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
@@ -5294,15 +5294,15 @@ class mkt {
 		return decodeURIComponent(atob(texto));
 	};
 
-	//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+	/**********************************\\
 	//  FIM DAS FUNCÕES ESTÁTICAS       \\
-	//___________________________________\\
+	//__________________________________*/
 } // <= FIM CLASSE MKT
 
 
-//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+/**********************************\\
 //  DEFINE PROPERTY                 \\
-//___________________________________\\
+//__________________________________*/
 
 Object.keys(mkt).forEach((n) => {
 	// Excessões
@@ -5311,9 +5311,9 @@ Object.keys(mkt).forEach((n) => {
 	}
 });
 
-//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+/**********************************\\
 //  Web Component MkSel - Seletor   \\
-//___________________________________\\
+//__________________________________*/
 class mkSel extends HTMLElement {
 	config: any = {
 		name: "",
@@ -6251,9 +6251,9 @@ li[m="1"] {
 }
 customElements.define("mk-sel", mkSel);
 
-//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+/**********************************\\
 //  Web Component MkBot - Botao PDF \\
-//___________________________________\\
+//__________________________________*/
 class mkBot extends HTMLElement {
 	config: any = {
 		dados: null,
@@ -6439,9 +6439,9 @@ class mkBot extends HTMLElement {
 }
 customElements.define("mk-bot", mkBot);
 
-//°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°\\
+/**********************************\\
 //   Auto Inicializar               \\
-//___________________________________\\
+//__________________________________*/
 mkt.Inicializar();
 
 
