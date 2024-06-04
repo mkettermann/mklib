@@ -105,6 +105,13 @@
 	--tonalidadeVerde: #090;
 	--tonalidadeVermelho: #900;
 	--tonalidadeCinza: #999;
+	--tonalidadeAzul: #009;
+	--tonalidadeAzulCeu: #08F;
+	--tonalidadeRosa: #F08;
+	--tonalidadeRoxo: #80F;
+	--tonalidadeLaranja: #F80;
+	--tonalidadeBranco: #FFF;
+	--tonalidadePreto: #000;
 	/* DIMENCOES */
 	--timerW: 30px;
 	/* ELEVACOES */
@@ -913,52 +920,141 @@ button.CarregadorMkTopoDireito:hover {
 }
 
 .bVerde {
-	--botaoFundo: var(--tonalidadeVerde);
+	--bVerdeCor: var(--tonalidadeVerde);
+	--botaoFundo: var(--bVerdeCor);
 	--botaoFundo2: linear-gradient(0deg,
-			var(--tonalidadeVerde) 0%,
-			var(--tonalidadeVerde) 10%,
+			var(--bVerdeCor) 0%,
+			var(--bVerdeCor) 10%,
 			#fff 70%,
 			#fff 100%);
 	--botaoFHover: linear-gradient(0deg,
-			var(--tonalidadeVerde) 0%,
-			var(--tonalidadeVerde) 10%,
+			var(--bVerdeCor) 0%,
+			var(--bVerdeCor) 10%,
 			#fff 70%,
 			#fff 100%);
-	--botaoCorHover: #fff;
-	--botaoCor: #000;
+	--botaoCorHover: var(--tonalidadeBranco);
+	--botaoCor: var(--tonalidadePreto);
 }
 
 .bVermelho {
-	--botaoFundo: var(--tonalidadeVermelho);
+	--bVermelhoCor: var(--tonalidadeVermelho);
+	--botaoFundo: var(--bVermelhoCor);
 	--botaoFundo2: linear-gradient(0deg,
-			var(--tonalidadeVermelho) 0%,
-			var(--tonalidadeVermelho) 10%,
+			var(--bVermelhoCor) 0%,
+			var(--bVermelhoCor) 10%,
 			#fff 70%,
 			#fff 100%);
 	--botaoFHover: linear-gradient(0deg,
-			var(--tonalidadeVermelho) 0%,
-			var(--tonalidadeVermelho) 10%,
+			var(--bVermelhoCor) 0%,
+			var(--bVermelhoCor) 10%,
+			#fff 70%,
+			#fff 100%);
+	--botaoCorHover: var(--tonalidadeBranco);
+	--botaoCor: var(--tonalidadePreto);
+}
+
+.bCinza {
+	--bCinzaCor: var(--tonalidadeCinza);
+	--botaoFundo: var(--bCinzaCor);
+	--botaoFundo2: linear-gradient(0deg,
+			var(--bCinzaCor) 0%,
+			var(--bCinzaCor) 10%,
+			#fff 70%,
+			#fff 100%);
+	--botaoFHover: linear-gradient(0deg,
+			var(--bCinzaCor) 0%,
+			var(--bCinzaCor) 10%,
 			#fff 70%,
 			#fff 100%);
 	--botaoCorHover: #fff;
 	--botaoCor: #000;
 }
 
-.bCinza {
-	--botaoFundo: var(--tonalidadeCinza);
+.bAzul {
+	--bAzulCor: var(--tonalidadeAzul);
+	--botaoFundo: var(--bAzulCor);
 	--botaoFundo2: linear-gradient(0deg,
-			var(--tonalidadeCinza) 0%,
-			var(--tonalidadeCinza) 10%,
+			var(--bAzulCor) 0%,
+			var(--bAzulCor) 10%,
 			#fff 70%,
 			#fff 100%);
 	--botaoFHover: linear-gradient(0deg,
-			var(--tonalidadeCinza) 0%,
-			var(--tonalidadeCinza) 10%,
+			var(--bAzulCor) 0%,
+			var(--bAzulCor) 10%,
 			#fff 70%,
 			#fff 100%);
-	--botaoCorHover: #fff;
-	--botaoCor: #000;
+	--botaoCorHover: var(--tonalidadeBranco);
+	--botaoCor: var(--tonalidadePreto);
 }
+
+.bLaranja {
+	--bLaranjaCor: var(--tonalidadeLaranja);
+	--botaoFundo: var(--bLaranjaCor);
+	--botaoFundo2: linear-gradient(0deg,
+			var(--bLaranjaCor) 0%,
+			var(--bLaranjaCor) 10%,
+			#fff 70%,
+			#fff 100%);
+	--botaoFHover: linear-gradient(0deg,
+			var(--bLaranjaCor) 0%,
+			var(--bLaranjaCor) 10%,
+			#fff 70%,
+			#fff 100%);
+	--botaoCorHover: var(--tonalidadeBranco);
+	--botaoCor: var(--tonalidadePreto);
+}
+
+.bAzulCeu {
+	--bAzulCeuCor: var(--tonalidadeAzulCeu);
+	--botaoFundo: var(--bAzulCeuCor);
+	--botaoFundo2: linear-gradient(0deg,
+			var(--bAzulCeuCor) 0%,
+			var(--bAzulCeuCor) 10%,
+			#fff 70%,
+			#fff 100%);
+	--botaoFHover: linear-gradient(0deg,
+			var(--bAzulCeuCor) 0%,
+			var(--bAzulCeuCor) 10%,
+			#fff 70%,
+			#fff 100%);
+	--botaoCorHover: var(--tonalidadeBranco);
+	--botaoCor: var(--tonalidadePreto);
+}
+
+.bRosa {
+	--bRosaCor: var(--tonalidadeRosa);
+	--botaoFundo: var(--bRosaCor);
+	--botaoFundo2: linear-gradient(0deg,
+			var(--bRosaCor) 0%,
+			var(--bRosaCor) 10%,
+			#fff 70%,
+			#fff 100%);
+	--botaoFHover: linear-gradient(0deg,
+			var(--bRosaCor) 0%,
+			var(--bRosaCor) 10%,
+			#fff 70%,
+			#fff 100%);
+	--botaoCorHover: var(--tonalidadeBranco);
+	--botaoCor: var(--tonalidadePreto);
+}
+
+.bRoxo {
+	--bRoxoCor: var(--tonalidadeRoxo);
+	--botaoFundo: var(--bRoxoCor);
+	--botaoFundo2: linear-gradient(0deg,
+			var(--bRoxoCor) 0%,
+			var(--bRoxoCor) 10%,
+			#fff 70%,
+			#fff 100%);
+	--botaoFHover: linear-gradient(0deg,
+			var(--bRoxoCor) 0%,
+			var(--bRoxoCor) 10%,
+			#fff 70%,
+			#fff 100%);
+	--botaoCorHover: var(--tonalidadeBranco);
+	--botaoCor: var(--tonalidadePreto);
+}
+
 
 /* =======================
 	AREA MODAL
