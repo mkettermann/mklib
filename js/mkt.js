@@ -1791,28 +1791,17 @@ class mkt {
                             }
                         }
                         else if (k.formato === "stringNumerosVirgula") {
-                            let filtroInvertido = false;
-                            if (mkt.isJson(k.conteudo)) {
-                                let arrayM = m.toString().split(",");
-                                let mayBeArrayK = mkt.parseJSON(k.conteudo);
-                                if (Array.isArray(mayBeArrayK)) {
-                                    mayBeArrayK.forEach((numeroK) => {
-                                        filtroInvertido = arrayM.some((numeroM) => {
-                                            return Number(numeroM) == Number(numeroK);
-                                        });
-                                    });
-                                }
-                                else {
-                                    filtroInvertido = arrayM.some((numeroM) => {
-                                        return Number(numeroM) == Number(mayBeArrayK);
-                                    });
-                                }
-                                if (!filtroInvertido) {
-                                    podeExibir = false;
-                                }
+                            let algum = false;
+                            let arrayM = m.toString().split(",");
+                            let arrayK = k.conteudo.toString().split(",");
+                            arrayK.forEach((numeroK) => {
+                                algum = arrayM.some((numeroM) => {
+                                    return Number(numeroM) == Number(numeroK);
+                                });
+                            });
+                            if (!algum) {
+                                podeExibir = false;
                             }
-                            else
-                                mkt.w("Não é um JSON");
                         }
                         else if (k.formato === "number") {
                             if (Number(m) !== Number(k.conteudo) &&

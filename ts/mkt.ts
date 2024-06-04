@@ -2104,38 +2104,34 @@ class mkt {
 					if (m != null) {
 						// Cruzar referencia com objFiltro e se so avancar se realmente for um objeto
 						let k: any = objFiltro[propFiltro]; // k representa a config do filtro para essa propriedade
+
 						if (k.formato === "string") {
 							k.conteudo = k.conteudo.toString().toLowerCase();
 							if (!mkt.contem(m, k.conteudo)) {
 								podeExibir = false;
 							}
+
 						} else if (k.formato === "mkHeadMenuSel") {
 							let item = mkt.removeEspecias(m).toString().toLowerCase().trim();
 							if (k.conteudo.includes(item)) {
 								podeExibir = false;
 							}
+
 						} else if (k.formato === "stringNumerosVirgula") {
-							// Filtro por numero exado. Provavelmente sejam duas arrays (MultiSelect), O filtro precisa encontrar tudo no objeto.
-							let filtroInvertido = false;
-							if (mkt.isJson(k.conteudo)) {
-								let arrayM = m.toString().split(","); // String de Numeros em Array de Strings
-								let mayBeArrayK = mkt.parseJSON(k.conteudo); // << No objFiltro
-								if (Array.isArray(mayBeArrayK)) {
-									mayBeArrayK.forEach((numeroK: any) => {
-										// A cada numero encontrado pos split na string do item verificado
-										filtroInvertido = arrayM.some((numeroM: any) => {
-											return Number(numeroM) == Number(numeroK);
-										});
-									});
-								} else {
-									filtroInvertido = arrayM.some((numeroM: any) => {
-										return Number(numeroM) == Number(mayBeArrayK);
-									});
-								}
-								if (!filtroInvertido) {
-									podeExibir = false;
-								}
-							} else mkt.w("Não é um JSON");
+							// Formato: "123,123,124,11,01,1,10". O filtro precisa encontrar tudo no objeto.
+							let algum = false;
+							let arrayM = m.toString().split(","); // Dados dos Registros da Listagem
+							let arrayK = k.conteudo.toString().split(","); // Multi Seletor do Filtro
+							arrayK.forEach((numeroK: any) => {
+								// A cada numero encontrado pos split na string do item verificado
+								algum = arrayM.some((numeroM: any) => {
+									return Number(numeroM) == Number(numeroK);
+								});
+							});
+							if (!algum) {
+								podeExibir = false;
+							}
+
 						} else if (k.formato === "number") {
 							// Filtro por numero exado. Apenas exibe este exato numero.
 							// Ignorar filtro com 0
@@ -2145,6 +2141,7 @@ class mkt {
 							) {
 								podeExibir = false;
 							}
+
 						} else if (k.formato === "date") {
 							// Filtro por Data (Gera milissegundos e faz comparacao)
 							let dateM = new Date(m).getTime();
