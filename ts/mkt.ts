@@ -3843,7 +3843,7 @@ class mkt {
 		if (eDisplay) eDisplay.innerHTML = mensagem;
 	};
 
-	static regraOcultar = (container: any) => {
+	static regraOcultar = (container: any, deixaValido = false) => {
 		// Atualiza Displays .mkRegrar baseado no Container
 		container = mkt.Q(container);
 		// A cada regra envia um OCULTAR ERROS
@@ -3852,10 +3852,10 @@ class mkt {
 			let eDisplay = r.c.querySelector(".mkRegrar[data-valmsg-for='" + r.n + "']")
 			if (container) {
 				if (mkt.isInside(e, container)) {
-					mkt.regraDisplay(e, false, eDisplay);
+					mkt.regraDisplay(e, deixaValido, eDisplay);
 				}
 			} else {
-				mkt.regraDisplay(e, false, eDisplay);
+				mkt.regraDisplay(e, deixaValido, eDisplay);
 			}
 		})
 	};

@@ -3349,18 +3349,18 @@ class mkt {
         if (eDisplay)
             eDisplay.innerHTML = mensagem;
     };
-    static regraOcultar = (container) => {
+    static regraOcultar = (container, deixaValido = false) => {
         container = mkt.Q(container);
         mkt.regras.forEach((r) => {
             let e = r.e;
             let eDisplay = r.c.querySelector(".mkRegrar[data-valmsg-for='" + r.n + "']");
             if (container) {
                 if (mkt.isInside(e, container)) {
-                    mkt.regraDisplay(e, false, eDisplay);
+                    mkt.regraDisplay(e, deixaValido, eDisplay);
                 }
             }
             else {
-                mkt.regraDisplay(e, false, eDisplay);
+                mkt.regraDisplay(e, deixaValido, eDisplay);
             }
         });
     };
