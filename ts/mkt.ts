@@ -3819,19 +3819,24 @@ class mkt {
 		return validou;
 	};
 
-	static regraDisplay = (e: any, erro: boolean, eDisplay: any, mensagem: string = "") => {
+	static regraDisplay = (e: any, erro: boolean | null, eDisplay: any, mensagem: string = "") => {
 		// Reagindo similar ao Unobtrusive, mas usando oculto no span.
-		if (erro) {
-			// EXIBE ERRO
+		if (erro === true) {
+			// VIRA UM ERRO
 			e.classList.remove("valid");
 			e.classList.add("input-validation-error");
 			eDisplay?.classList.remove("oculto");
 			eDisplay?.classList.add("field-validation-error");
-		} else {
-			// OCULTA ERRO
+		} else if (erro === false) {
+			// VIRA UM ACERTO
 			if (e.offsetParent && !e.classList.contains("disabled")) { // Não setar valido nos desativados/invisiveis
 				e.classList.add("valid");
 			}
+			e.classList.remove("input-validation-error");
+			eDisplay?.classList.add("oculto");
+		} else {
+			// REMOVE OS VIRA
+			e.classList.remove("valid");
 			e.classList.remove("input-validation-error");
 			eDisplay?.classList.add("oculto");
 		}

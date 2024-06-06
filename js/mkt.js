@@ -3328,16 +3328,21 @@ class mkt {
         return validou;
     };
     static regraDisplay = (e, erro, eDisplay, mensagem = "") => {
-        if (erro) {
+        if (erro === true) {
             e.classList.remove("valid");
             e.classList.add("input-validation-error");
             eDisplay?.classList.remove("oculto");
             eDisplay?.classList.add("field-validation-error");
         }
-        else {
+        else if (erro === false) {
             if (e.offsetParent && !e.classList.contains("disabled")) {
                 e.classList.add("valid");
             }
+            e.classList.remove("input-validation-error");
+            eDisplay?.classList.add("oculto");
+        }
+        else {
+            e.classList.remove("valid");
             e.classList.remove("input-validation-error");
             eDisplay?.classList.add("oculto");
         }
