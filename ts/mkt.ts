@@ -1489,6 +1489,7 @@ class mkt {
 			datamax: "Data maior que o esperado",
 			charproibido: "Não utilize: ",
 			apenasnumeros: "Apenas Números",
+			apenasnumerosletras: "Apenas Números e Letras",
 			apenasnumerosvirgula: "Apenas Números e Virgula",
 			apenasletras: "Apenas Letras",
 			datamaiorque: "Deve ser maior que hoje",
@@ -1615,6 +1616,7 @@ class mkt {
 			numeros: ["0", "^[0-9]*$"],
 			numerosvirgula: ["0", "^[0-9,]*$"],
 			letras: ["A", "^[A-Za-z]*$"],
+			numeroELetras: ["S", "^[A-Za-z0-9]*$"],
 			telefone_ddd: ["(00) 00000-00000", "^[0-9]{11}$"],
 			email: ["S", "^(([a-zA-Z0-9_\.]+[a-zA-Z0-9_]+)+)@([a-zA-Z0-9_]\.+[a-zA-Z]+)+$"],
 		} as any, // Util: Mascarar, Regex, Funcao Validadora
@@ -3541,6 +3543,15 @@ class mkt {
 								case "apenasletras": // EXE
 									if (!(new RegExp(mkt.a.util.letras[1]).test(e[re.target]))) {
 										if (!re.m) re.m = mkt.a.msg.apenasletras;
+										erros.push(re);
+										e[re.target] = e[re.target].replaceAll(/((?![a-zA-Z]).)/g, "")
+									}
+									prom(re.k);
+									break;
+
+								case "apenasnumeroseletras": // EXE
+									if (!(new RegExp(mkt.a.util.numeroELetras[1]).test(e[re.target]))) {
+										if (!re.m) re.m = mkt.a.msg.apenasnumerosletras;
 										erros.push(re);
 										e[re.target] = e[re.target].replaceAll(/((?![a-zA-Z]).)/g, "")
 									}
