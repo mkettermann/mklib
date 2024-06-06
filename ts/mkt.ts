@@ -3553,7 +3553,7 @@ class mkt {
 									if (!(new RegExp(mkt.a.util.numeroELetras[1]).test(e[re.target]))) {
 										if (!re.m) re.m = mkt.a.msg.apenasnumerosletras;
 										erros.push(re);
-										e[re.target] = e[re.target].replaceAll(/((?![a-zA-Z]).)/g, "")
+										e[re.target] = e[re.target].replaceAll(/((?![a-zA-Z0-9]).)/g, "")
 									}
 									prom(re.k);
 									break;
