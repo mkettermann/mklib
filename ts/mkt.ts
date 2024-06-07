@@ -1054,7 +1054,7 @@ class mkt {
 
 		mkt.atribuir(mkt.Q("body"), () => { mkt.hm.Hide(event) }, "onclick");
 		let colNameLabel = colName;
-		let esteLabel = this.getModel()?.filter((f) => { return f.k == colName })?.[0]?.l;
+		let esteLabel = this.getModel(null)?.filter((f) => { return f.k == colName })?.[0]?.l;
 		if (esteLabel) {
 			colNameLabel = esteLabel;
 		}
@@ -4731,6 +4731,9 @@ class mkt {
 		let div = document.createElement("div");
 		if (e) {
 			let ePai: any = e.parentElement;
+			// Por Padrão já remove as classes de validacao.
+			e.classList.remove("valid");
+			e.classList.remove("input-validation-error");
 			classes = e.classList.toString();
 			if (mkt.classof(e) == "HTMLTextAreaElement") {
 				v = e.innerHTML;
