@@ -1054,7 +1054,7 @@ class mkt {
 
 		mkt.atribuir(mkt.Q("body"), () => { mkt.hm.Hide(event) }, "onclick");
 		let colNameLabel = colName;
-		let esteLabel = this.getModel(null)?.filter((f) => { return f.k == colName })?.[0]?.l;
+		let esteLabel = this.getModel(null)?.filter((f: any) => { return f.k == colName })?.[0]?.l;
 		if (esteLabel) {
 			colNameLabel = esteLabel;
 		}
