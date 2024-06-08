@@ -2158,6 +2158,7 @@ fieldset {
 /* DIALOG */
 dialog {
 	/* Inicial Size Mobile S8+ */
+	opacity: 0;
 	min-width: 100px;
 	width: 360px;
 	padding: 0px;
@@ -2165,10 +2166,41 @@ dialog {
 	border-radius: 6px;
 	overflow-y: auto;
 	overflow-x: hidden;
+	opacity: 0;
+	height: fit-content;
 }
 
 dialog::backdrop {
 	background-color: #0008;
+}
+
+dialog:focus-visible {
+	outline: 0px;
+}
+
+dialog[open] {
+	opacity: 0;
+	transition: all 0.3s;
+}
+
+dialog[open].visivel {
+	opacity: 1;
+}
+
+dialog[open] .fixedTopRight {
+	opacity: 0;
+}
+
+dialog[open].visivel .fixedTopRight {
+	opacity: 1;
+}
+
+.fixedTopRight {
+	position: fixed;
+	right: 0px;
+	top: 0px;
+	font-size: 1.5rem;
+	border: 0px solid transparent;
 }
 
 /* SELETOR */
