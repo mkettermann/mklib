@@ -106,7 +106,7 @@ class mktm {
 			if (this.opcoes != "") opcoes = ` opcoes='${this.opcoes}'`;
 			let disabled = "";
 			if (this.on == false) disabled = " disabled";
-			this.field = `<${this.tag} name="${this.k}" value="${this.v}" class="${this.classes}${disabled}"${disabled} data-mkfformato="${this.filtroFormato}"${varfOperador}${varUrl}${opcoes} ${this.atr}>`;
+			this.field = `<${this.tag} name="${this.k}" value="${this.v}" aria-label="${this.l}" class="${this.classes}${disabled}"${disabled} data-mkfformato="${this.filtroFormato}"${varfOperador}${varUrl}${opcoes} ${this.atr}>`;
 			if (this.tag != "input") {
 				this.field += `</${this.tag}>`;
 			}
