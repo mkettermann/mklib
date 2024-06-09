@@ -6385,7 +6385,7 @@ class mkBot extends HTMLElement {
 
 			// FORMATOS DE ARQUIVO
 			if (tipo == "pdf") {
-				retornar += `<embed type="application/pdf" class="imagem" part="imagem" src="${this.config.dados}`;
+				retornar += `<embed type="application/pdf" class="imagem" alt="PDF" part="imagem" src="${this.config.dados}`;
 				if (!this.config.exibirbarra) {
 					retornar += `#toolbar=0`;
 				}
