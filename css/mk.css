@@ -1802,7 +1802,6 @@ thead td:hover .mkhmHeadIco {
 
 .pagBotao.disabled {
 	filter: grayscale(1);
-	opacity: 0.5;
 	pointer-events: none;
 }
 
