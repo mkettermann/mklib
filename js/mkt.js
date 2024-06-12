@@ -4078,24 +4078,25 @@ class mkt {
     static eToText = (query) => {
         let e = mkt.Q(query);
         let v = "";
-        let classes = "";
         let div = document.createElement("div");
         if (e) {
             let ePai = e.parentElement;
             e.classList.remove("valid");
             e.classList.remove("input-validation-error");
-            classes = e.classList.toString();
+            v = e.value;
             if (mkt.classof(e) == "HTMLTextAreaElement") {
                 v = e.innerHTML;
-            }
-            if (mkt.classof(e) == "HTMLInputElement") {
-                v = e.value;
             }
             else if (mkt.classof(e) == "mkSelElement") {
                 v = e.values.join(", ");
             }
+            if (v == null) {
+                v = "";
+            }
             div.innerHTML = v;
-            div.setAttribute("class", classes);
+            [...e.attributes].forEach((v) => {
+                div.setAttribute(v.name, e.getAttribute(v.name));
+            });
             ePai?.insertBefore(div, ePai?.children[Array.from(ePai?.children).indexOf(e) + 1]);
             e.remove();
             return div;
@@ -5519,7 +5520,7 @@ class mkBot extends HTMLElement {
                 tipo = "pdf";
             }
             if (tipo == "pdf") {
-                retornar += `<embed type="application/pdf" class="imagem" part="imagem" src="${this.config.dados}`;
+                retornar += `<embed type="application/pdf" class="imagem" alt="PDF" part="imagem" src="${this.config.dados}`;
                 if (!this.config.exibirbarra) {
                     retornar += `#toolbar=0`;
                 }

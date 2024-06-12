@@ -4721,30 +4721,32 @@ class mkt {
 	}
 
 	static eToText = (query: any) => {
-		// - Pega o Valor ou Inner do elemento e as classes,
-		// - Remove o Elemento
-		// - Coloca o conteudo dentro duma Div
-		// - Mantem as classes
+		// - Transfere todos dados de um elemento pra uma DIV. Ficando imutavel.
+		// - Remove o Elemento original e coloca a div na sua antiga posição
 		let e = mkt.Q(query);
 		let v = "";
-		let classes = "";
 		let div = document.createElement("div");
 		if (e) {
 			let ePai: any = e.parentElement;
 			// Por Padrão já remove as classes de validacao.
 			e.classList.remove("valid");
 			e.classList.remove("input-validation-error");
-			classes = e.classList.toString();
+			// Coleta value, mas algum elementos coletar de outro lugar.
+			v = e.value;
 			if (mkt.classof(e) == "HTMLTextAreaElement") {
 				v = e.innerHTML;
-			}
-			if (mkt.classof(e) == "HTMLInputElement") {
-				v = e.value;
 			} else if (mkt.classof(e) == "mkSelElement") {
 				v = e.values.join(", ");
 			}
+			// Se v chegou nulo até aqui, limpa pra por no inner
+			if (v == null) {
+				v = "";
+			}
 			div.innerHTML = v;
-			div.setAttribute("class", classes);
+			// Transfere atributos
+			[...e.attributes].forEach((v) => {
+				div.setAttribute(v.name, e.getAttribute(v.name));
+			})
 			ePai?.insertBefore(div, ePai?.children[Array.from(ePai?.children).indexOf(e) + 1]);
 			e.remove();
 			return div;
