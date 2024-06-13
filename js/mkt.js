@@ -1311,6 +1311,9 @@ class mkt {
                     return cnpj.charAt(13) == r.toString();
                 }
             ],
+            cnpj_filial: [
+                "0000-00"
+            ],
             cpf_cnpj: [
                 (str) => {
                     if (mkt.apenasNumeros(str).length <= 11) {
