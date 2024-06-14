@@ -1355,6 +1355,22 @@ ul.mkUlFase li.disabled a {
 	grid-template-columns: repeat(auto-fit, minmax(var(--minGridMacro), var(--maxGridMacro)));
 }
 
+.colspan-2 {
+	grid-column: span 2;
+}
+
+.colspan-3 {
+	grid-column: span 3;
+}
+
+.rowspan-2 {
+	grid-row: span 2;
+}
+
+.rowspan-3 {
+	grid-row: span 3;
+}
+
 
 /* ABSOLUTE */
 .absPos1 {
