@@ -314,7 +314,7 @@ input {
 	padding: 3px 6px;
 }
 
-.listBody tr:has(td.sort-mStatus.False) td {
+.listBody tr:has(td.campok-mStatus.False) td {
 	background-color: #ff000015;
 }
 

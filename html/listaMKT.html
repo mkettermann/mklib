@@ -95,11 +95,11 @@
 			<table class="tableListagem">
 				<thead>
 					<tr>
-						<th class="sort-mNome">Usuário</th>
-						<th class="sort-mDataCadastro">Data Cadastro</th>
-						<th class="sort-mDataUltimoAcesso">Último Acesso</th>
-						<th class="sort-mTotalAcessos.a.b">Tot. Acessos</th>
-						<th class="sort-mStatus">Status</th>
+						<th class="campok-mNome">Usuário</th>
+						<th class="campok-mDataCadastro">Data Cadastro</th>
+						<th class="campok-mDataUltimoAcesso">Último Acesso</th>
+						<th class="campok-mTotalAcessos.a.b">Tot. Acessos</th>
+						<th class="campok-mStatus">Status</th>
 						<th class="acao">Editar</th>
 						<th class="acao">Deletar</th>
 					</tr>
@@ -159,8 +159,8 @@
 			<table class="tableListagem">
 				<thead>
 					<tr>
-						<th class="sort-mNome">Usuário</th>
-						<th class="sort-mStatus">Status</th>
+						<th class="campok-mNome">Usuário</th>
+						<th class="campok-mStatus">Status</th>
 						<th class="acao">Editar</th>
 						<th class="acao">Deletar</th>
 					</tr>
@@ -279,13 +279,13 @@
 <!-- MODELO LISTAGEM 1 -->
 <template id="modelo1">
 	<tr id="${mId}">
-		<td class="sort-mNome">${mNome}</td>
-		<td class="sort-mDataCadastro">
+		<td class="campok-mNome">${mNome}</td>
+		<td class="campok-mDataCadastro">
 			<input type="date" value="${mDataCadastro}" />
 		</td>
-		<td class="sort-mDataUltimoAcesso">${mDataUltimoAcesso}</td>
-		<td class="sort-mTotalAcessos.a.b">${mTotalAcessos.a.b}</td>
-		<td class="sort-mStatus ${mStatus}"></td>
+		<td class="campok-mDataUltimoAcesso">${mDataUltimoAcesso}</td>
+		<td class="campok-mTotalAcessos.a.b">${mTotalAcessos.a.b}</td>
+		<td class="campok-mStatus ${mStatus}"></td>
 		<td class="acao">
 			<a onclick="uiGetEDIT(this,0);">EDIT</a>
 		</td>
@@ -298,8 +298,8 @@
 <!-- MODELO LISTAGEM 2 -->
 <template id="modelo2" pk="mId">
 	<tr id="${mId}">
-		<td class="sort-mNome">${mNome}</td>
-		<td class="sort-mStatus ${mStatus}"></td>
+		<td class="campok-mNome">${mNome}</td>
+		<td class="campok-mStatus ${mStatus}"></td>
 		<td class="acao">
 			<a onclick="uiGetEDIT(this,1);">EDIT</a>
 		</td>
