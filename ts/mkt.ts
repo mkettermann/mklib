@@ -4,9 +4,9 @@
 //      By Marcos Kettermann         \\
 //___________Desde 2023______________*/
 //
-// Variável de teste:
+// Declarações:
 var mkz = null;
-declare const Popper: any; // Esta biblioteca requer Popper
+declare const Popper: any; // Esta biblioteca requer Popper para o funcionamento correto do mk-sel e do mkRec.
 
 /**********************************\\
 //  FUNCOES SUPORTE				          \\
@@ -53,16 +53,17 @@ class mktm {
 	k: string | null = null; // Key / Chave (Propriedade do objeto)
 	v: any = null;	// Valor (Inicialmente nulo, mas ao recuperar o objeto da lista ele vem preenchido)
 	l: string | null = null; // Label (Texto que descreve o campo)
+	head: boolean = true; // Ativa ou desativa o HeadMenu nesse campo. Requer o label (l) para exibição.
 	r: RegExp | null = null; // Regex para validar o campo
 	tag: string | null = "input"; // Qual é a tag do campo caso ele precise preencher?
 	atr: string | null = "type='text'" // Todos os atributos padrões deste campo.
 	classes: string = "iConsultas" // Classes padrões / iniciais deste campo
 	lclasses: string = "" // Classes para o label do campo
 	target: string = "value" // Propriedade para edição (value, innerHTML).
-	f: boolean = true; // Ativa ou desativa o filtro nesse campo (HeadMenu ok)
+	f: boolean = true; // Ativa ou desativa o filtro nesse campo ()
 	opcoes: string = ""; // Aloja as opcoes em JSON de um seletor.
-	filtroFormato: string = "string"; // Usado para preencher o valor de data-mkfformato
-	filtroOperador: string = ""; // Usado para preencher o valor de data-mkfoperador
+	tipofiltro: string = "string"; // Usado para preencher o valor de data-tipofiltro //old mkfformato
+	tipofiltroOperador: string = ""; // Usado para preencher o valor de data-tipofiltroOperador // old mkfoperador
 	field: string = ""; // Representa o elemento HTML inteiro.
 	requer: boolean = false; // Permite saber qualquer vai ativar o Regrar
 	regras: any = []; // Aloja os objetos da regra a serem usados neste campo
@@ -73,13 +74,14 @@ class mktm {
 		if (o.k != null) this.k = o.k;
 		if (o.pk != null) this.pk = o.pk;
 		if (o.l != null) this.l = o.l;
+		if (o.head != null) this.head = o.head;
 		if (o.r != null) this.r = o.r;
 		if (o.v != null) this.v = o.v;
 		if (o.tag != null) this.tag = o.tag;
 		if (o.atr != null) this.atr = o.atr;
 		if (o.opcoes != null) this.opcoes = o.opcoes;
-		if (o.filtroFormato != null) this.filtroFormato = o.filtroFormato;
-		if (o.filtroOperador != null) this.filtroOperador = o.filtroOperador;
+		if (o.tipofiltro != null) this.tipofiltro = o.tipofiltro;
+		if (o.tipofiltroOperador != null) this.tipofiltroOperador = o.tipofiltroOperador;
 		if (o.classes != null) this.classes = o.classes;
 		if (o.lclasses != null) this.lclasses = o.lclasses;
 		if (o.target != null) this.target = o.target;
@@ -99,14 +101,14 @@ class mktm {
 		} else {
 			// Quando não vem, monta sozinho.
 			let varfOperador = ""; // Operador é necessário quando o filtro é Data.
-			if (this.filtroOperador != "") varfOperador = ` data-mkfoperador="${this.filtroOperador}"`;
+			if (this.tipofiltroOperador != "") varfOperador = ` data-tipofiltroOperador="${this.tipofiltroOperador}"`;
 			let varUrl = ""; // Operador é necessário quando o filtro é Data.
 			if (this.url != "") varUrl = ` data-url="${this.url}"`;
 			let opcoes = ""; // Opções é utilizado em mk-sel.
 			if (this.opcoes != "") opcoes = ` opcoes='${this.opcoes}'`;
 			let disabled = "";
 			if (this.on == false) disabled = " disabled";
-			this.field = `<${this.tag} name="${this.k}" value="${this.v}" aria-label="${this.l}" class="${this.classes}${disabled}"${disabled} data-mkfformato="${this.filtroFormato}"${varfOperador}${varUrl}${opcoes} ${this.atr}>`;
+			this.field = `<${this.tag} name="${this.k}" value="${this.v}" aria-label="${this.l}" class="${this.classes}${disabled}"${disabled} data-tipofiltro="${this.tipofiltro}"${varfOperador}${varUrl}${opcoes} ${this.atr}>`;
 			if (this.tag != "input") {
 				this.field += `</${this.tag}>`;
 			}
@@ -115,9 +117,10 @@ class mktm {
 	}
 	toObject: Function = () => {
 		let o: any = {};
-		["pk", "k", "v", "l", "r", "on", "crud", "tag", "atr", "classes", "lclasses", "target", "f", "opcoes", "field", "requer", "regras", "url"].forEach(k => {
-			o[k] = this[k as keyof mktm];
-		});
+		["pk", "k", "v", "l", "r", "on", "crud", "tag", "atr", "classes", "lclasses",
+			"target", "f", "opcoes", "field", "requer", "regras", "url", "head"].forEach(k => {
+				o[k] = this[k as keyof mktm];
+			});
 		return o;
 	}
 	get [Symbol.toStringTag]() { return "mktm"; }
@@ -878,11 +881,11 @@ class mkt {
 
 	updateFiltroElemento = (e: any) => {
 		// Gerar Filtro baseado nos atributos do MKF gerados no campo.
-		// Para ignorar filtro: data-mkfignore="true" (Ou nao colocar o atributo mkfformato no elemento)
+		// Para ignorar filtro: data-mkfignore="true" (Ou nao colocar o atributo tipofiltro no elemento)
 		if (e.value != null && e.getAttribute("data-mkfignore") != "true") {
 			this.c.objFiltro[e.name] = {
-				formato: e.getAttribute("data-mkfformato"),
-				operador: e.getAttribute("data-mkfoperador"),
+				formato: e.getAttribute("data-tipofiltro"),
+				operador: e.getAttribute("data-tipofiltroOperador"),
 				conteudo: e.value,
 			};
 		}
@@ -2082,8 +2085,8 @@ class mkt {
 		 * Executa a redução da listagem basedo no objFiltro.
 		 * Usando filtroExtra(), pode-se filtrar o objeto da lista também.
 		 * Atributos:
-		 * 		data-mkfformato = "date"
-		 * 		data-mkfoperador = "<="
+		 * 		data-tipofiltro = "date"
+		 * 		data-tipofiltroOperador = "<="
 		 */
 		let aFiltrada = [];
 		if (Array.isArray(aTotal)) {

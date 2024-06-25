@@ -466,11 +466,11 @@ class mk {
     };
     // Gerar Filtro baseado nos atributos do MKF gerados no campo.
     gerarFiltro = (e) => {
-        // Para ignorar filtro: data-mkfignore="true" (Ou nao colocar o atributo mkfformato no elemento)
+        // Para ignorar filtro: data-mkfignore="true" (Ou nao colocar o atributo tipofiltro no elemento)
         if (e.value != null && e.getAttribute("data-mkfignore") != "true") {
             this.c.objFiltro[e.name] = {
-                formato: e.getAttribute("data-mkfformato"),
-                operador: e.getAttribute("data-mkfoperador"),
+                formato: e.getAttribute("data-tipofiltro"),
+                operador: e.getAttribute("data-tipofiltroOperador"),
                 conteudo: e.value,
             };
         }
@@ -2784,8 +2784,8 @@ class mk {
      * Executa a redução da listagem basedo no objFiltro.
      * Usando modificaFiltro(), pode-se filtrar o objeto da lista também.
      * Atributos:
-     * 		data-mkfformato = "date"
-     * 		data-mkfoperador = "<="
+     * 		data-tipofiltro = "date"
+     * 		data-tipofiltroOperador = "<="
      */
     static processoFiltragem = (aTotal, objFiltro, inst) => {
         let aFiltrada = [];

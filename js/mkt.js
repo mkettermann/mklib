@@ -29,6 +29,7 @@ class mktm {
     k = null;
     v = null;
     l = null;
+    head = true;
     r = null;
     tag = "input";
     atr = "type='text'";
@@ -37,8 +38,8 @@ class mktm {
     target = "value";
     f = true;
     opcoes = "";
-    filtroFormato = "string";
-    filtroOperador = "";
+    tipofiltro = "string";
+    tipofiltroOperador = "";
     field = "";
     requer = false;
     regras = [];
@@ -52,6 +53,8 @@ class mktm {
             this.pk = o.pk;
         if (o.l != null)
             this.l = o.l;
+        if (o.head != null)
+            this.head = o.head;
         if (o.r != null)
             this.r = o.r;
         if (o.v != null)
@@ -62,10 +65,10 @@ class mktm {
             this.atr = o.atr;
         if (o.opcoes != null)
             this.opcoes = o.opcoes;
-        if (o.filtroFormato != null)
-            this.filtroFormato = o.filtroFormato;
-        if (o.filtroOperador != null)
-            this.filtroOperador = o.filtroOperador;
+        if (o.tipofiltro != null)
+            this.tipofiltro = o.tipofiltro;
+        if (o.tipofiltroOperador != null)
+            this.tipofiltroOperador = o.tipofiltroOperador;
         if (o.classes != null)
             this.classes = o.classes;
         if (o.lclasses != null)
@@ -95,8 +98,8 @@ class mktm {
         }
         else {
             let varfOperador = "";
-            if (this.filtroOperador != "")
-                varfOperador = ` data-mkfoperador="${this.filtroOperador}"`;
+            if (this.tipofiltroOperador != "")
+                varfOperador = ` data-tipofiltroOperador="${this.tipofiltroOperador}"`;
             let varUrl = "";
             if (this.url != "")
                 varUrl = ` data-url="${this.url}"`;
@@ -106,7 +109,7 @@ class mktm {
             let disabled = "";
             if (this.on == false)
                 disabled = " disabled";
-            this.field = `<${this.tag} name="${this.k}" value="${this.v}" aria-label="${this.l}" class="${this.classes}${disabled}"${disabled} data-mkfformato="${this.filtroFormato}"${varfOperador}${varUrl}${opcoes} ${this.atr}>`;
+            this.field = `<${this.tag} name="${this.k}" value="${this.v}" aria-label="${this.l}" class="${this.classes}${disabled}"${disabled} data-tipofiltro="${this.tipofiltro}"${varfOperador}${varUrl}${opcoes} ${this.atr}>`;
             if (this.tag != "input") {
                 this.field += `</${this.tag}>`;
             }
@@ -114,7 +117,8 @@ class mktm {
     }
     toObject = () => {
         let o = {};
-        ["pk", "k", "v", "l", "r", "on", "crud", "tag", "atr", "classes", "lclasses", "target", "f", "opcoes", "field", "requer", "regras", "url"].forEach(k => {
+        ["pk", "k", "v", "l", "r", "on", "crud", "tag", "atr", "classes", "lclasses",
+            "target", "f", "opcoes", "field", "requer", "regras", "url", "head"].forEach(k => {
             o[k] = this[k];
         });
         return o;
@@ -719,8 +723,8 @@ class mkt {
     updateFiltroElemento = (e) => {
         if (e.value != null && e.getAttribute("data-mkfignore") != "true") {
             this.c.objFiltro[e.name] = {
-                formato: e.getAttribute("data-mkfformato"),
-                operador: e.getAttribute("data-mkfoperador"),
+                formato: e.getAttribute("data-tipofiltro"),
+                operador: e.getAttribute("data-tipofiltroOperador"),
                 conteudo: e.value,
             };
         }
