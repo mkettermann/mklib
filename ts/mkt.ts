@@ -957,7 +957,7 @@ class mkt {
 	headMenuAbrir = async (colName: string) => {
 		// HEAD MENU (O mesmo por documento)
 		// Função que cria, exibe e seta as funções para filtrar baseado na coluna.
-		let eHead = mkt.Q(this.c.container + " .sort-" + colName);
+		let eHead = mkt.Q(this.c.container + " .campok-" + colName);
 		let eHm = mkt.Q("body .mkHeadMenu");
 		// CRIA A ESTRUTURA
 		if (eHm == null) {
@@ -1079,21 +1079,20 @@ class mkt {
 	}
 
 	headAtivar = () => {
-		// Gera Listeners na THEAD da tabela (Requer classe: "sort-campo")
+		// Gera Listeners na THEAD da tabela (Requer classe: "campok-NomeDoCampo")
 		let eTrHeadPai = mkt.Q(this.c.container + " thead tr");
 		// Coleta as labels
-		let opcoes = this.getModel(null).map((o: any) => { if (o.f == false) { return o.k; } }).filter((r: any) => { return r != null });
 		if (eTrHeadPai) {
 			Array.from(eTrHeadPai.children).forEach((th: any) => {
 				let possui: any = false;
 				[...th.classList].forEach((classe) => {
-					// Verifica se contém sort- no inicio da class
-					if (classe.indexOf("sort-") == 0) {
+					// Verifica se contém campok- no inicio da class
+					if (classe.indexOf("campok-") == 0) {
 						possui = classe;
 					}
 				});
 				if (possui != false) {
-					let colName = possui.replace("sort-", "");
+					let colName = possui.replace("campok-", "");
 					//mkt.l("HM?", this.c.headMenu, "Col:", colName, "Model:", opcoes);
 					if (colName != "") {
 						if (this.c.headSort == true) {
@@ -1103,6 +1102,8 @@ class mkt {
 						}
 						if (this.c.headMenu == true) { // Se Ativo
 							// Ignora caso a coluna estiver impedida de filtrar. mktm({f:false})
+							let opcoes = this.getModel(null).filter((o: any) => o.head == true);
+							//let opcoes = this.getModel(null).map((o: any) => { if (o.f == false) { return o.k; } }).filter((r: any) => { return r != null });
 							if (!opcoes?.includes(colName)) {
 								mkt.Ao("mousemove", th, (e: HTMLTableCellElement) => {
 									this.headSeeMenuAbrir(colName, e);
@@ -1162,7 +1163,7 @@ class mkt {
 		let thsSort = mkt.QAll(this.c.ths);
 		if (thsSort.length != 0) {
 			thsSort.forEach((thSort: HTMLTableCellElement) => {
-				if (thSort.classList.contains(`sort-${this.c.sortBy}`)) {
+				if (thSort.classList.contains(`campok-${this.c.sortBy}`)) {
 					if (this.c.sortDir == 1) {
 						thSort.classList.add("mkEfeitoDesce");
 					} else {
