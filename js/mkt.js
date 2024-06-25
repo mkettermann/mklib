@@ -875,7 +875,7 @@ class mkt {
         mkt.hm.FiltraExclusivo("", thisList);
         mkt.atribuir(mkt.Q("body"), () => { mkt.hm.Hide(event); }, "onclick");
         let colNameLabel = colName;
-        let esteLabel = this.getModel(null)?.filter((f) => { return f.k == colName; })?.[0]?.l;
+        let esteLabel = this.getModel().filter((f) => { return f.k == colName; })?.[0]?.l;
         if (esteLabel) {
             colNameLabel = esteLabel;
         }
@@ -907,15 +907,14 @@ class mkt {
                     let colName = possui.replace("campok-", "");
                     if (colName != "") {
                         if (this.c.headSort == true) {
-                            let opcoes = this.getModel(null).filter((o) => o.sort == true).map((o) => o.k);
-                            if (!opcoes?.includes(colName)) {
+                            if (this.getModel().filter((o) => (o.sort == true)).some((o) => o.k == colName)) {
                                 mkt.Ao("click", th, (e) => {
                                     this.orderBy(colName);
                                 });
                             }
                         }
                         if (this.c.headMenu == true) {
-                            if (this.getModel(null).filter((o) => (o.head == true)).some((o) => o.k == colName)) {
+                            if (this.getModel().filter((o) => (o.head == true)).some((o) => o.k == colName)) {
                                 mkt.Ao("mousemove", th, (e) => {
                                     this.headSeeMenuAbrir(colName, e);
                                 });
@@ -1050,7 +1049,7 @@ class mkt {
         }
         return temp;
     };
-    getModel = (valorKey) => {
+    getModel = (valorKey = null) => {
         if (valorKey) {
             let obj = this.getObj(valorKey);
             if (obj != null) {
@@ -1917,8 +1916,7 @@ class mkt {
         },
         Previous: (colName, iof) => {
             if ((mkt.classof(iof) == "String") && (mkt.classof(colName) == "String")) {
-                let opcoes = mkt.getThis(Number(iof)).getModel().map((o) => { if (o.f)
-                    return o.k; }).filter((r) => { return r != null; });
+                let opcoes = mkt.getThis(Number(iof)).getModel().filter((o) => (o.head == true)).map((o) => o.k);
                 let posAtual = opcoes.indexOf(colName);
                 let posAnterior = 0;
                 if (posAtual >= 0) {
@@ -1936,8 +1934,7 @@ class mkt {
         },
         Next: (colName, iof) => {
             if (mkt.classof(iof) == "String") {
-                let opcoes = mkt.getThis(Number(iof)).getModel().map((o) => { if (o.f)
-                    return o.k; }).filter((r) => { return r != null; });
+                let opcoes = mkt.getThis(Number(iof)).getModel().filter((o) => (o.head == true)).map((o) => o.k);
                 let posAtual = opcoes.indexOf(colName);
                 let posSeguinte = 0;
                 if (posAtual >= 0) {
