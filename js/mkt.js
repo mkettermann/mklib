@@ -779,7 +779,7 @@ class mkt {
         }
     };
     headMenuAbrir = async (colName) => {
-        let eHead = mkt.Q(this.c.container + " .sort-" + colName);
+        let eHead = mkt.Q(this.c.container + " .campok-" + colName);
         let eHm = mkt.Q("body .mkHeadMenu");
         if (eHm == null) {
             let ehm = document.createElement("div");
@@ -894,19 +894,16 @@ class mkt {
     };
     headAtivar = () => {
         let eTrHeadPai = mkt.Q(this.c.container + " thead tr");
-        let opcoes = this.getModel(null).map((o) => { if (o.f == false) {
-            return o.k;
-        } }).filter((r) => { return r != null; });
         if (eTrHeadPai) {
             Array.from(eTrHeadPai.children).forEach((th) => {
                 let possui = false;
                 [...th.classList].forEach((classe) => {
-                    if (classe.indexOf("sort-") == 0) {
+                    if (classe.indexOf("campok-") == 0) {
                         possui = classe;
                     }
                 });
                 if (possui != false) {
-                    let colName = possui.replace("sort-", "");
+                    let colName = possui.replace("campok-", "");
                     if (colName != "") {
                         if (this.c.headSort == true) {
                             mkt.Ao("click", th, (e) => {
@@ -914,6 +911,7 @@ class mkt {
                             });
                         }
                         if (this.c.headMenu == true) {
+                            let opcoes = this.getModel(null).filter((o) => o.head == true);
                             if (!opcoes?.includes(colName)) {
                                 mkt.Ao("mousemove", th, (e) => {
                                     this.headSeeMenuAbrir(colName, e);
@@ -961,7 +959,7 @@ class mkt {
         let thsSort = mkt.QAll(this.c.ths);
         if (thsSort.length != 0) {
             thsSort.forEach((thSort) => {
-                if (thSort.classList.contains(`sort-${this.c.sortBy}`)) {
+                if (thSort.classList.contains(`campok-${this.c.sortBy}`)) {
                     if (this.c.sortDir == 1) {
                         thSort.classList.add("mkEfeitoDesce");
                     }
