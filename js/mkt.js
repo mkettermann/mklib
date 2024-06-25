@@ -29,7 +29,6 @@ class mktm {
     k = null;
     v = null;
     l = null;
-    head = true;
     r = null;
     tag = "input";
     atr = "type='text'";
@@ -46,6 +45,8 @@ class mktm {
     url = "";
     on = true;
     crud = true;
+    head = true;
+    sort = true;
     constructor(o) {
         if (o.k != null)
             this.k = o.k;
@@ -906,13 +907,15 @@ class mkt {
                     let colName = possui.replace("campok-", "");
                     if (colName != "") {
                         if (this.c.headSort == true) {
-                            mkt.Ao("click", th, (e) => {
-                                this.orderBy(colName);
-                            });
+                            let opcoes = this.getModel(null).filter((o) => o.sort == true).map((o) => o.k);
+                            if (!opcoes?.includes(colName)) {
+                                mkt.Ao("click", th, (e) => {
+                                    this.orderBy(colName);
+                                });
+                            }
                         }
                         if (this.c.headMenu == true) {
-                            let opcoes = this.getModel(null).filter((o) => o.head == true);
-                            if (!opcoes?.includes(colName)) {
+                            if (this.getModel(null).filter((o) => (o.head == true)).some((o) => o.k == colName)) {
                                 mkt.Ao("mousemove", th, (e) => {
                                     this.headSeeMenuAbrir(colName, e);
                                 });

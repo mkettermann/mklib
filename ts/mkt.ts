@@ -53,7 +53,6 @@ class mktm {
 	k: string | null = null; // Key / Chave (Propriedade do objeto)
 	v: any = null;	// Valor (Inicialmente nulo, mas ao recuperar o objeto da lista ele vem preenchido)
 	l: string | null = null; // Label (Texto que descreve o campo)
-	head: boolean = true; // Ativa ou desativa o HeadMenu nesse campo. Requer o label (l) para exibição.
 	r: RegExp | null = null; // Regex para validar o campo
 	tag: string | null = "input"; // Qual é a tag do campo caso ele precise preencher?
 	atr: string | null = "type='text'" // Todos os atributos padrões deste campo.
@@ -70,6 +69,8 @@ class mktm {
 	url: string = ""; // Aloja a URL. Usada pra download de um refill.
 	on: boolean = true; // Aloja se ele deve ser inicialmente disabled
 	crud: boolean = true; // Aloja a configuração se deve ou não ser usado esse campo para crud
+	head: boolean = true; // HeadMenu individual do campo. Requer o label (l) para exibição.
+	sort: boolean = true; // headSort individual do campo.
 	constructor(o: any) {
 		if (o.k != null) this.k = o.k;
 		if (o.pk != null) this.pk = o.pk;
@@ -143,8 +144,8 @@ class mktc {
 	filtroExtra: Function | null = null; // modificaFiltro Retorna um booleano que permite um filtro configurado externamente do processo Filtragem.
 	filtro: string | null = ".iConsultas"; // Busca por esta classe para filtrar campos por nome do input.
 	filtroDinamico: boolean | null = null; // Nessa listagem o filtro por tecla não é dinâmico por padrão.
-	headSort: boolean = true; // Indicador se ativará o ordenamento ao clicar no cabeçalho
-	headMenu: boolean = true; // Indicador se ativará o botãozinho que abre o filtro completo do campo.
+	headSort: boolean = true; // Indicador se ativará o ordenamento ao clicar no cabeçalho. (Para todos os campos)
+	headMenu: boolean = true; // Indicador se ativará o botãozinho que abre o filtro completo do campo. (Para todos os campos)
 	exibeBotaoMais: boolean = true; // Indicador se ativará o botãozinho que abre o filtro completo do campo.
 	// Os demais podem se alterar durante as operações da listagem.
 	sortBy: string | null = null; // Campo a ser ordenado inicialmente;
@@ -1093,18 +1094,19 @@ class mkt {
 				});
 				if (possui != false) {
 					let colName = possui.replace("campok-", "");
-					//mkt.l("HM?", this.c.headMenu, "Col:", colName, "Model:", opcoes);
 					if (colName != "") {
 						if (this.c.headSort == true) {
-							mkt.Ao("click", th, (e: HTMLTableCellElement) => {
-								this.orderBy(colName);
-							});
+							// Ignora caso a coluna estiver impedida de ordenar. mktm({sort:false})
+							let opcoes = this.getModel(null).filter((o: any) => o.sort == true).map((o: any) => o.k);
+							if (!opcoes?.includes(colName)) {
+								mkt.Ao("click", th, (e: HTMLTableCellElement) => {
+									this.orderBy(colName);
+								});
+							}
 						}
 						if (this.c.headMenu == true) { // Se Ativo
-							// Ignora caso a coluna estiver impedida de filtrar. mktm({f:false})
-							let opcoes = this.getModel(null).filter((o: any) => o.head == true);
-							//let opcoes = this.getModel(null).map((o: any) => { if (o.f == false) { return o.k; } }).filter((r: any) => { return r != null });
-							if (!opcoes?.includes(colName)) {
+							// Ignora caso a coluna estiver impedida de filtrar. mktm({head:false})
+							if (this.getModel(null).filter((o: any) => (o.head == true)).some((o: any) => o.k == colName)) {
 								mkt.Ao("mousemove", th, (e: HTMLTableCellElement) => {
 									this.headSeeMenuAbrir(colName, e);
 								});
