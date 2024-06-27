@@ -2612,7 +2612,6 @@ class mkt {
 		}
 	};
 
-
 	static get = {
 		// Este objeto contém funções para solicitar dados de um formato e espera-se que voltem neste formato.
 		json: async (config: any) => {
@@ -2638,7 +2637,7 @@ class mkt {
 	};
 
 	static delete = {
-		// Normalmente DELETE espera-se um 204, mas caso venha conteúdo, espera-se no mesmo formato.
+		// Normalmente DELETE retorna um 204, mas caso venha conteúdo, espera-se no mesmo formato.
 		json: async (config: any) => {
 			if (typeof config != "object") config = { url: config };
 			config.metodo = mkt.a.DELETE;
