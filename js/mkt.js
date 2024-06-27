@@ -1176,6 +1176,7 @@ class mkt {
         HTML: "text/html",
         JSON: "application/json",
         POST: "POST",
+        DELETE: "DELETE",
         SVGINI: "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'>",
         SVGFIM: "</svg>",
         AoConfig: {
@@ -2270,6 +2271,15 @@ class mkt {
             let retorno = await mkt.request(config);
             return retorno;
         }
+    };
+    static delete = {
+        json: async (config) => {
+            if (typeof config != "object")
+                config = { url: config };
+            config.metodo = mkt.a.DELETE;
+            config.tipo = mkt.a.JSON;
+            return await mkt.request(config);
+        },
     };
     static request = async (config) => {
         if (typeof config != "object") {

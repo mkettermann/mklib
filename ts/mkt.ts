@@ -1439,6 +1439,7 @@ class mkt {
 		HTML: "text/html", // ContentType HTML
 		JSON: "application/json", // ContentType JSON
 		POST: "POST", // Api Method POST
+		DELETE: "DELETE", // Api Method DELETE
 		SVGINI: "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'>",
 		SVGFIM: "</svg>",
 		AoConfig: {
@@ -2627,6 +2628,16 @@ class mkt {
 			return retorno;
 		}
 	};
+
+	static delete = {
+		// Normalmente DELETE espera-se um 204, mas caso venha conteúdo, espera-se no mesmo formato.
+		json: async (config: any) => {
+			if (typeof config != "object") config = { url: config };
+			config.metodo = mkt.a.DELETE;
+			config.tipo = mkt.a.JSON;
+			return await mkt.request(config);
+		},
+	}
 
 	static request = async (config: any) => {
 		// Função para transferencia HTTP que utiliza o FETCH e agrega um config do início da solicitação até o fim.
