@@ -37,14 +37,16 @@ class mktm {
     target = "value";
     f = true;
     opcoes = "";
-    filtroFormato = "string";
-    filtroOperador = "";
+    tipofiltro = "string";
+    tipofiltroOperador = "";
     field = "";
     requer = false;
     regras = [];
     url = "";
     on = true;
     crud = true;
+    head = true;
+    sort = true;
     constructor(o) {
         if (o.k != null)
             this.k = o.k;
@@ -52,6 +54,8 @@ class mktm {
             this.pk = o.pk;
         if (o.l != null)
             this.l = o.l;
+        if (o.head != null)
+            this.head = o.head;
         if (o.r != null)
             this.r = o.r;
         if (o.v != null)
@@ -62,10 +66,10 @@ class mktm {
             this.atr = o.atr;
         if (o.opcoes != null)
             this.opcoes = o.opcoes;
-        if (o.filtroFormato != null)
-            this.filtroFormato = o.filtroFormato;
-        if (o.filtroOperador != null)
-            this.filtroOperador = o.filtroOperador;
+        if (o.tipofiltro != null)
+            this.tipofiltro = o.tipofiltro;
+        if (o.tipofiltroOperador != null)
+            this.tipofiltroOperador = o.tipofiltroOperador;
         if (o.classes != null)
             this.classes = o.classes;
         if (o.lclasses != null)
@@ -95,8 +99,8 @@ class mktm {
         }
         else {
             let varfOperador = "";
-            if (this.filtroOperador != "")
-                varfOperador = ` data-mkfoperador="${this.filtroOperador}"`;
+            if (this.tipofiltroOperador != "")
+                varfOperador = ` data-tipofiltroOperador="${this.tipofiltroOperador}"`;
             let varUrl = "";
             if (this.url != "")
                 varUrl = ` data-url="${this.url}"`;
@@ -106,7 +110,7 @@ class mktm {
             let disabled = "";
             if (this.on == false)
                 disabled = " disabled";
-            this.field = `<${this.tag} name="${this.k}" value="${this.v}" aria-label="${this.l}" class="${this.classes}${disabled}"${disabled} data-mkfformato="${this.filtroFormato}"${varfOperador}${varUrl}${opcoes} ${this.atr}>`;
+            this.field = `<${this.tag} name="${this.k}" value="${this.v}" aria-label="${this.l}" class="${this.classes}${disabled}"${disabled} data-tipofiltro="${this.tipofiltro}"${varfOperador}${varUrl}${opcoes} ${this.atr}>`;
             if (this.tag != "input") {
                 this.field += `</${this.tag}>`;
             }
@@ -114,7 +118,8 @@ class mktm {
     }
     toObject = () => {
         let o = {};
-        ["pk", "k", "v", "l", "r", "on", "crud", "tag", "atr", "classes", "lclasses", "target", "f", "opcoes", "field", "requer", "regras", "url"].forEach(k => {
+        ["pk", "k", "v", "l", "r", "on", "crud", "tag", "atr", "classes", "lclasses",
+            "target", "f", "opcoes", "field", "requer", "regras", "url", "head"].forEach(k => {
             o[k] = this[k];
         });
         return o;
@@ -719,8 +724,8 @@ class mkt {
     updateFiltroElemento = (e) => {
         if (e.value != null && e.getAttribute("data-mkfignore") != "true") {
             this.c.objFiltro[e.name] = {
-                formato: e.getAttribute("data-mkfformato"),
-                operador: e.getAttribute("data-mkfoperador"),
+                formato: e.getAttribute("data-tipofiltro"),
+                operador: e.getAttribute("data-tipofiltroOperador"),
                 conteudo: e.value,
             };
         }
@@ -775,7 +780,7 @@ class mkt {
         }
     };
     headMenuAbrir = async (colName) => {
-        let eHead = mkt.Q(this.c.container + " .sort-" + colName);
+        let eHead = mkt.Q(this.c.container + " .campok-" + colName);
         let eHm = mkt.Q("body .mkHeadMenu");
         if (eHm == null) {
             let ehm = document.createElement("div");
@@ -870,7 +875,7 @@ class mkt {
         mkt.hm.FiltraExclusivo("", thisList);
         mkt.atribuir(mkt.Q("body"), () => { mkt.hm.Hide(event); }, "onclick");
         let colNameLabel = colName;
-        let esteLabel = this.getModel(null)?.filter((f) => { return f.k == colName; })?.[0]?.l;
+        let esteLabel = this.getModel().filter((f) => { return f.k == colName; })?.[0]?.l;
         if (esteLabel) {
             colNameLabel = esteLabel;
         }
@@ -890,27 +895,26 @@ class mkt {
     };
     headAtivar = () => {
         let eTrHeadPai = mkt.Q(this.c.container + " thead tr");
-        let opcoes = this.getModel(null).map((o) => { if (o.f == false) {
-            return o.k;
-        } }).filter((r) => { return r != null; });
         if (eTrHeadPai) {
             Array.from(eTrHeadPai.children).forEach((th) => {
                 let possui = false;
                 [...th.classList].forEach((classe) => {
-                    if (classe.indexOf("sort-") == 0) {
+                    if (classe.indexOf("campok-") == 0) {
                         possui = classe;
                     }
                 });
                 if (possui != false) {
-                    let colName = possui.replace("sort-", "");
+                    let colName = possui.replace("campok-", "");
                     if (colName != "") {
                         if (this.c.headSort == true) {
-                            mkt.Ao("click", th, (e) => {
-                                this.orderBy(colName);
-                            });
+                            if (this.getModel().filter((o) => (o.sort == true)).some((o) => o.k == colName)) {
+                                mkt.Ao("click", th, (e) => {
+                                    this.orderBy(colName);
+                                });
+                            }
                         }
                         if (this.c.headMenu == true) {
-                            if (!opcoes?.includes(colName)) {
+                            if (this.getModel().filter((o) => (o.head == true)).some((o) => o.k == colName)) {
                                 mkt.Ao("mousemove", th, (e) => {
                                     this.headSeeMenuAbrir(colName, e);
                                 });
@@ -957,7 +961,7 @@ class mkt {
         let thsSort = mkt.QAll(this.c.ths);
         if (thsSort.length != 0) {
             thsSort.forEach((thSort) => {
-                if (thSort.classList.contains(`sort-${this.c.sortBy}`)) {
+                if (thSort.classList.contains(`campok-${this.c.sortBy}`)) {
                     if (this.c.sortDir == 1) {
                         thSort.classList.add("mkEfeitoDesce");
                     }
@@ -1045,7 +1049,7 @@ class mkt {
         }
         return temp;
     };
-    getModel = (valorKey) => {
+    getModel = (valorKey = null) => {
         if (valorKey) {
             let obj = this.getObj(valorKey);
             if (obj != null) {
@@ -1913,8 +1917,7 @@ class mkt {
         },
         Previous: (colName, iof) => {
             if ((mkt.classof(iof) == "String") && (mkt.classof(colName) == "String")) {
-                let opcoes = mkt.getThis(Number(iof)).getModel().map((o) => { if (o.f)
-                    return o.k; }).filter((r) => { return r != null; });
+                let opcoes = mkt.getThis(Number(iof)).getModel().filter((o) => (o.head == true)).map((o) => o.k);
                 let posAtual = opcoes.indexOf(colName);
                 let posAnterior = 0;
                 if (posAtual >= 0) {
@@ -1932,8 +1935,7 @@ class mkt {
         },
         Next: (colName, iof) => {
             if (mkt.classof(iof) == "String") {
-                let opcoes = mkt.getThis(Number(iof)).getModel().map((o) => { if (o.f)
-                    return o.k; }).filter((r) => { return r != null; });
+                let opcoes = mkt.getThis(Number(iof)).getModel().filter((o) => (o.head == true)).map((o) => o.k);
                 let posAtual = opcoes.indexOf(colName);
                 let posSeguinte = 0;
                 if (posAtual >= 0) {
