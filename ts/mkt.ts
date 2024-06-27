@@ -2612,6 +2612,7 @@ class mkt {
 		}
 	};
 
+
 	static get = {
 		// Este objeto contém funções para solicitar dados de um formato e espera-se que voltem neste formato.
 		json: async (config: any) => {
