@@ -2883,7 +2883,6 @@ class mkt {
 		p: any = null
 	) => {
 		// p { corSim: "bVerde", corNao: "bCinza"}
-		//let possiveisBotoes = ["bCinza", "bVermelho", "bVerde"];
 		let corSim = "bVerde";
 		if (p?.corSim != undefined) corSim = p.corSim;
 		let corNao = "bCinza";
@@ -2916,12 +2915,6 @@ class mkt {
 					</div>
 				</div>`);
 			}
-			// Limpeza de cores anteriores para setar o novo
-			// possiveisBotoes.forEach((s) => {
-			// 	mkt.QAll(".mkConfirmadorBloco .bBotao").forEach((botao: any) => {
-			// 		botao.classList.remove(s);
-			// 	});
-			// });
 			// Atualiza dados
 			mkt.Q(".mkConfirmadorBloco .mkConfirmadorArea").setAttribute("class", `mkConfirmadorArea microPos5 tb fsb ${classContainer}`);
 			mkt.Q(".mkConfirmadorBloco .mkConfirmadorTituloInner").innerHTML = titulo;
@@ -2931,7 +2924,6 @@ class mkt {
 			mkt.Q(".mkConfirmadorBloco .bBotao.icoSim").setAttribute("class", `bBotao icoSim ${corSim}`);
 			mkt.Q(".mkConfirmadorBloco .bBotao.icoNao").setAttribute("class", `bBotao icoNao ${corNao}`);
 			mkt.Q(".mkConfirmadorBloco").classList.remove("oculto");
-
 			const checkResposta = setInterval(() => {
 				let resposta = null;
 				if (mkt.Q(".mkConfirmadorBloco .mkConfirmadorArea .bBotao.icoSim.true")) {
@@ -2954,7 +2946,6 @@ class mkt {
 			}
 		});
 	}
-
 
 	// ================ Gerenciamento Monetário / Numérico / Locale =================== \\
 	// ================================================================================= \\
