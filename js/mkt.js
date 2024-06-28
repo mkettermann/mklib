@@ -907,14 +907,14 @@ class mkt {
                     let colName = possui.replace("campok-", "");
                     if (colName != "") {
                         if (this.c.headSort == true) {
-                            if (this.getModel().filter((o) => (o.sort == true)).some((o) => o.k == colName)) {
+                            if (this.getModel().filter((o) => (o.sort != false)).some((o) => o.k == colName)) {
                                 mkt.Ao("click", th, (e) => {
                                     this.orderBy(colName);
                                 });
                             }
                         }
                         if (this.c.headMenu == true) {
-                            if (this.getModel().filter((o) => (o.head == true)).some((o) => o.k == colName)) {
+                            if (this.getModel().filter((o) => (o.head != false)).some((o) => o.k == colName)) {
                                 mkt.Ao("mousemove", th, (e) => {
                                     this.headSeeMenuAbrir(colName, e);
                                 });

@@ -1097,7 +1097,7 @@ class mkt {
 					if (colName != "") {
 						if (this.c.headSort == true) {
 							// Ignora caso a coluna estiver impedida de ordenar. mktm({sort:false})
-							if (this.getModel().filter((o: any) => (o.sort == true)).some((o: any) => o.k == colName)) {
+							if (this.getModel().filter((o: any) => (o.sort != false)).some((o: any) => o.k == colName)) {
 								mkt.Ao("click", th, (e: HTMLTableCellElement) => {
 									this.orderBy(colName);
 								});
@@ -1105,7 +1105,7 @@ class mkt {
 						}
 						if (this.c.headMenu == true) { // Se Ativo
 							// Ignora caso a coluna estiver impedida de filtrar. mktm({head:false})
-							if (this.getModel().filter((o: any) => (o.head == true)).some((o: any) => o.k == colName)) {
+							if (this.getModel().filter((o: any) => (o.head != false)).some((o: any) => o.k == colName)) {
 								mkt.Ao("mousemove", th, (e: HTMLTableCellElement) => {
 									this.headSeeMenuAbrir(colName, e);
 								});
