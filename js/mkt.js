@@ -2737,6 +2737,10 @@ class mkt {
         return mkt.dataMsToDias(msNew - msOld);
     };
     static dataGetTempoDiferenca = (msOld, msNew = null) => {
+        if (mkt.classof(msOld) == "String")
+            msOld = mkt.dataGetMs(msOld);
+        if (mkt.classof(msNew) == "String")
+            msNew = mkt.dataGetMs(msNew);
         let dias = mkt.dataGetDiasDiferenca(msOld, msNew);
         if (dias < 0) {
             dias = dias * -1;

@@ -3189,8 +3189,10 @@ class mkt {
 		return mkt.dataMsToDias(msNew! - msOld);
 	};
 
-	static dataGetTempoDiferenca = (msOld: number, msNew: number | null = null) => {
-		let dias = mkt.dataGetDiasDiferenca(msOld, msNew);
+	static dataGetTempoDiferenca = (msOld: number | string, msNew: number | string | null = null) => {
+		if (mkt.classof(msOld) == "String") msOld = mkt.dataGetMs(msOld as string);
+		if (mkt.classof(msNew) == "String") msNew = mkt.dataGetMs(msNew as string);
+		let dias = mkt.dataGetDiasDiferenca(msOld as number, msNew as number | null);
 		if (dias < 0) {
 			dias = dias * -1;
 		}
@@ -3220,7 +3222,7 @@ class mkt {
 			}
 		} else {
 			if (dias < 1) {
-				let segundos = mkt.dataGetSegundosDiferenca(msOld, msNew);
+				let segundos = mkt.dataGetSegundosDiferenca(msOld as number, msNew as number);
 				if (segundos > 7199) { // Em Horas
 					strTempo = Math.floor(segundos / 3600) + " horas";
 				} else {
