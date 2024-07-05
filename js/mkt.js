@@ -2803,6 +2803,8 @@ class mkt {
                 strTempo = dias + " dias";
             }
         }
+        if (mkt.classof(strTempo) != "Number")
+            return "";
         return strTempo;
     };
     static dataGetMs = (data = null) => {
