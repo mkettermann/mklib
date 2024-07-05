@@ -4572,6 +4572,15 @@ class mkt {
     static from64 = (texto = "") => {
         return decodeURIComponent(atob(texto));
     };
+    static loadImage = async (urlData) => {
+        const eImg = document.createElement('img');
+        eImg.src = urlData;
+        return new Promise((resolve, reject) => {
+            eImg.onload = () => resolve(eImg);
+            eImg.onerror = reject;
+            eImg.src = urlData;
+        });
+    };
 }
 Object.keys(mkt).forEach((n) => {
     if (!mkt.a.definePropertyExceptions.includes(n)) {

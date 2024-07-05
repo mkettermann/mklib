@@ -5308,15 +5308,26 @@ class mkt {
 		});
 	}
 
-	// String qualquer para B64
 	static to64 = (texto = "") => {
+		// String qualquer para B64
 		return btoa(encodeURIComponent(texto));
 	};
 
-	// B64 para String
 	static from64 = (texto = "") => {
+		// B64 para String
 		return decodeURIComponent(atob(texto));
 	};
+
+	static loadImage = async (urlData: string) => {
+		// Gera o Elemento da imagem e já retorna se o carregamento foi OK via Promomise
+		const eImg = document.createElement('img')
+		eImg.src = urlData
+		return new Promise((resolve, reject) => {
+			eImg.onload = () => resolve(eImg);
+			eImg.onerror = reject;
+			eImg.src = urlData;
+		})
+	}
 
 	/**********************************\\
 	//  FIM DAS FUNCÕES ESTÁTICAS       \\
