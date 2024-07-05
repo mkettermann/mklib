@@ -2803,7 +2803,7 @@ class mkt {
                 strTempo = dias + " dias";
             }
         }
-        if (mkt.classof(strTempo) != "Number")
+        if (strTempo.includes("NaN"))
             return "";
         return strTempo;
     };
