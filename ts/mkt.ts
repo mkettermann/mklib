@@ -5329,9 +5329,21 @@ class mkt {
 		})
 	}
 
-	static dataAsUtf8 = (s: string, h = "data:image/svg+xml;charset=utf-8;") => `${h},${encodeURIComponent(s)}`
-
 	static serializeAsXML = (e: any) => (new XMLSerializer()).serializeToString(e);
+
+	static svgToImg = async (foreignObject: string, formatoDestino = "png", largura = 800, altura = 600) => {
+		let svgData = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="${largura}" height="${altura}">
+		<foreignObject width="100%" height="100%">${foreignObject}</foreignObject></svg>`)}`;
+		let eImg = await mkt.loadImage(svgData).catch(e => console.error(e));
+		if (eImg) {
+			const eCanvas = document.createElement('canvas');
+			eCanvas.width = largura;
+			eCanvas.height = altura;
+			eCanvas?.getContext('2d')?.drawImage(eImg as HTMLImageElement, 0, 0);
+
+			return await eCanvas.toDataURL(`image/${formatoDestino}`, 1.0);
+		}
+	}
 
 	/**********************************\\
 	//  FIM DAS FUNCÕES ESTÁTICAS       \\
