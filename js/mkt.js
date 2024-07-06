@@ -4582,7 +4582,7 @@ class mkt {
         });
     };
     static serializeAsXML = (e) => (new XMLSerializer()).serializeToString(e);
-    static svgToImg = async (foreignObject, formatoDestino = "png", largura = 800, altura = 600) => {
+    static svgToImg = async (foreignObject, formatoDestino = "png", largura = 800, altura = 600, qualidade = 1.0) => {
         let svgData = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="${largura}" height="${altura}">
 		<foreignObject width="100%" height="100%">${foreignObject}</foreignObject></svg>`)}`;
         let eImg = await mkt.loadImage(svgData).catch(e => console.error(e));
@@ -4591,7 +4591,7 @@ class mkt {
             eCanvas.width = largura;
             eCanvas.height = altura;
             eCanvas?.getContext('2d')?.drawImage(eImg, 0, 0);
-            return await eCanvas.toDataURL(`image/${formatoDestino}`, 1.0);
+            return await eCanvas.toDataURL(`image/${formatoDestino}`, qualidade);
         }
     };
 }
