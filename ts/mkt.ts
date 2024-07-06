@@ -5331,6 +5331,8 @@ class mkt {
 
 	static dataAsUtf8 = (s: string, h = "data:image/svg+xml;charset=utf-8;") => `${h},${encodeURIComponent(s)}`
 
+	static serializeAsXML = (e: any) => (new XMLSerializer()).serializeToString(e);
+
 	/**********************************\\
 	//  FIM DAS FUNCÕES ESTÁTICAS       \\
 	//__________________________________*/
