@@ -4581,6 +4581,7 @@ class mkt {
             eImg.src = urlData;
         });
     };
+    static dataAsUtf8 = (s, h = "data:image/svg+xml;charset=utf-8;") => `${h},${encodeURIComponent(s)}`;
 }
 Object.keys(mkt).forEach((n) => {
     if (!mkt.a.definePropertyExceptions.includes(n)) {

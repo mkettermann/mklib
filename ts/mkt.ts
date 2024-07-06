@@ -5329,6 +5329,8 @@ class mkt {
 		})
 	}
 
+	static dataAsUtf8 = (s: string, h = "data:image/svg+xml;charset=utf-8;") => `${h},${encodeURIComponent(s)}`
+
 	/**********************************\\
 	//  FIM DAS FUNCÕES ESTÁTICAS       \\
 	//__________________________________*/
