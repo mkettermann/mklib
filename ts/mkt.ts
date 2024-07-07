@@ -12,35 +12,30 @@ declare const Popper: any; // Esta biblioteca requer Popper para o funcionamento
 //  FUNCOES SUPORTE				          \\
 //__________________________________*/
 (String.prototype as any).removeRaw = function (fix = false) {
-	// Função que tira os elementos de quebra de linha e tabela da string.
 	let r = this.replaceAll("\n", "")
 		.replaceAll("\r", "")
 		.replaceAll("\t", "")
 		.replaceAll("\b", "")
-		.replaceAll("\f", "")
+		.replaceAll("\f", "");
 	if (fix.toString() == "2") {
 		r = r.replaceAll("&quot;", '"')
 			.replaceAll("&#39;", "'")
 			.replaceAll("&amp;", "&")
-		r = r.replaceAll("\\", "/");
+			.replaceAll("\\", "/");
 	}
-	//
-	// \u00E3 == ã, viraria /u00E3
 	return r;
 };
+
 (String.prototype as any).toEntities = function () {
-	// Transforma todas os caracteres especiais em entidades HTML.
-	// "'".toEntities() == '&#39;'
-	return this.replace(/./gm, function (s: string) {
-		return (s.match(/[a-z0-9\s]+/i)) ? s : "&#" + s.charCodeAt(0) + ";";
+	return this.replace(/./gm, (s: string) => {
+		return s.match(/[a-z0-9\s]+/i) ? s : `&#${s.charCodeAt(0)};`;
 	});
 };
+
 (String.prototype as any).fromEntities = function () {
-	// Transforma todas entidades HTML numeradas em caracteres especiáis.
-	// '&#39;'.fromEntities() == "'"
-	return (this + "").replace(/&#\d+;/gm, function (s: any) {
+	return this.replace(/&#\d+;/gm, (s: any) => {
 		return String.fromCharCode(s.match(/\d+/gm)[0]);
-	})
+	});
 };
 
 /**********************************\\

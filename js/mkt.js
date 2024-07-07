@@ -9,18 +9,18 @@ String.prototype.removeRaw = function (fix = false) {
     if (fix.toString() == "2") {
         r = r.replaceAll("&quot;", '"')
             .replaceAll("&#39;", "'")
-            .replaceAll("&amp;", "&");
-        r = r.replaceAll("\\", "/");
+            .replaceAll("&amp;", "&")
+            .replaceAll("\\", "/");
     }
     return r;
 };
 String.prototype.toEntities = function () {
-    return this.replace(/./gm, function (s) {
-        return (s.match(/[a-z0-9\s]+/i)) ? s : "&#" + s.charCodeAt(0) + ";";
+    return this.replace(/./gm, (s) => {
+        return s.match(/[a-z0-9\s]+/i) ? s : `&#${s.charCodeAt(0)};`;
     });
 };
 String.prototype.fromEntities = function () {
-    return (this + "").replace(/&#\d+;/gm, function (s) {
+    return this.replace(/&#\d+;/gm, (s) => {
         return String.fromCharCode(s.match(/\d+/gm)[0]);
     });
 };
