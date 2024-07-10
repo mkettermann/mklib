@@ -5022,7 +5022,6 @@ li[m="1"] {
                 if (mkt.classof(colect[0]) == "Array") {
                     colect.forEach((v, i, a) => {
                         a[i][0] = a[i][0].toString().replaceAll(",", "");
-                        a[i][1] = a[i][1].toString();
                     });
                 }
                 else {
@@ -5159,11 +5158,11 @@ li[m="1"] {
     }
     async maisLinhas(inicio, total) {
         let linha = document.createElement("template");
-        linha.innerHTML = "<li k='${0}'>${1}</li>";
+        linha.innerHTML = "<li class='ml' k='${0}'>${1}</li>";
         let hold = document.createElement("template");
         let ate = inicio + total;
         let dados = [...this.config._data];
-        if (this.config.name == "multiSelecionado" || this.config.name == "staPersonalizado") {
+        if (this.config.selapenas != 1 || this.config.scrollcharge == false) {
             this.config.selecionados.keys().forEach((k) => {
                 let indexof = dados.findIndex(o => { return o[0] == k; });
                 if (indexof >= 0) {

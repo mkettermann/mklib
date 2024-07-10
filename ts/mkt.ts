@@ -5812,16 +5812,14 @@ li[m="1"] {
 					//[["","Todos"],["False","N\u00E3o"],["True","Sim"]]
 					colect.forEach((v: any, i: any, a: any) => {
 						a[i][0] = a[i][0].toString().replaceAll(",", ""); // Proibido Virgula na Key
-						a[i][1] = a[i][1].toString();
-						//mkt.l("v: ", v, " i: ", i, " a: ", a)
+						//a[i][1] = a[i][1].toString(); // Desabilitei liberar array
 					});
 				} else {
 					if (mkt.classof(colect[0]) == "Object") {
 						// Formato KV
 						//[{"k":"","v":"Todos"},{"k":"False","v":"N\\u00E3o"},{"k":"True","v":"Sim"}]
 						colect = colect.map((r: any) => { return [r.k?.toString().replaceAll(",", ""), r.v?.toString()]; });
-					}
-					else {
+					} else {
 						colect = null;
 					}
 				}
@@ -5984,13 +5982,13 @@ li[m="1"] {
 
 	async maisLinhas(inicio: number, total: number) {
 		let linha = document.createElement("template");
-		linha.innerHTML = "<li k='${0}'>${1}</li>"
+		linha.innerHTML = "<li class='ml' k='${0}'>${1}</li>"
 		let hold = document.createElement("template");
 		let ate = inicio + total;
 		let dados = [...this.config._data];
 		// A ideia era trazer pro início os já selecionados.
 		// A CADA JÁ SELECIONADO
-		if (this.config.name == "multiSelecionado" || this.config.name == "staPersonalizado") {
+		if (this.config.selapenas != 1 || this.config.scrollcharge == false) {
 			this.config.selecionados.keys().forEach((k: string) => {
 				// Se encontrar essa chave na array de dados
 				let indexof = dados.findIndex(o => { return o[0] == k });
