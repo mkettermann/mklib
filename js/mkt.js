@@ -5158,10 +5158,21 @@ li[m="1"] {
     }
     async maisLinhas(inicio, total) {
         let linha = document.createElement("template");
-        linha.innerHTML = "<li class='ml' k='${0}'>${1}</li>";
+        linha.innerHTML = "<li${2} k='${0}'>${1}</li>";
         let hold = document.createElement("template");
         let ate = inicio + total;
         let dados = [...this.config._data];
+        dados.forEach((a) => {
+            let y = a[1];
+            let c = "";
+            if (mkt.classof(y) == "Array") {
+                y = a[1][0];
+                c = a[1][1] || "";
+            }
+            if (c && c != "")
+                c = ` style='${c}'`;
+            return [a[0], y, c];
+        });
         if (this.config.selapenas != 1 || this.config.scrollcharge == false) {
             this.config.selecionados.keys().forEach((k) => {
                 let indexof = dados.findIndex(o => { return o[0] == k; });

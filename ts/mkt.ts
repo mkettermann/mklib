@@ -5982,10 +5982,21 @@ li[m="1"] {
 
 	async maisLinhas(inicio: number, total: number) {
 		let linha = document.createElement("template");
-		linha.innerHTML = "<li class='ml' k='${0}'>${1}</li>"
+		linha.innerHTML = "<li${2} k='${0}'>${1}</li>"
 		let hold = document.createElement("template");
 		let ate = inicio + total;
 		let dados = [...this.config._data];
+		// Extrai posição 1 do array e coloca no style
+		dados.forEach((a) => {
+			let y = a[1];
+			let c = "";
+			if (mkt.classof(y) == "Array") {
+				y = a[1][0];
+				c = a[1][1] || "";
+			}
+			if (c && c != "") c = ` style='${c}'`;
+			return [a[0], y, c];
+		})
 		// A ideia era trazer pro início os já selecionados.
 		// A CADA JÁ SELECIONADO
 		if (this.config.selapenas != 1 || this.config.scrollcharge == false) {
@@ -5997,7 +6008,7 @@ li[m="1"] {
 				}
 			})
 		}
-		//
+		// Os mesmos dados, filtrados por inicio e fim
 		let dadosFiltrado = dados.slice(inicio, ate);
 		this.config.populado = Math.max(this.config.populado, ate);
 		await mkt.moldeOA(dadosFiltrado, linha, hold);
