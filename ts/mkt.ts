@@ -5987,7 +5987,7 @@ li[m="1"] {
 		let ate = inicio + total;
 		let dados = [...this.config._data];
 		// Extrai posição 1 do array e coloca no style
-		dados.forEach((a) => {
+		dados = dados.map((a) => {
 			let y = a[1];
 			let c = "";
 			if (mkt.classof(y) == "Array") {

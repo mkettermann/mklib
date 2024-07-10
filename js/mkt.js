@@ -5162,7 +5162,7 @@ li[m="1"] {
         let hold = document.createElement("template");
         let ate = inicio + total;
         let dados = [...this.config._data];
-        dados.forEach((a) => {
+        dados = dados.map((a) => {
             let y = a[1];
             let c = "";
             if (mkt.classof(y) == "Array") {
