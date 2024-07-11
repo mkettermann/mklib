@@ -4097,6 +4097,21 @@ class mkt {
 	// ============================ TOOLS e JS HELPERS ================================ \\
 	// ================================================================================= \\
 
+	static cssClassEmStyle = (e: any) => {
+		e = mkt.Q(e);
+		const eStyles = window.getComputedStyle(e);
+		let eStyleInline = '';
+		// Itera computado
+		for (let i = 0; i < eStyles.length; i++) {
+			eStyleInline += `${eStyles[i]}: ${eStyles.getPropertyValue(eStyles[i])}; `;
+		}
+		e.setAttribute('style', eStyleInline);
+		// Recursiva
+		Array.from(e.children).forEach(eFilho => {
+			mkt.cssClassEmStyle(eFilho);
+		});
+	}
+
 	static contem = (strMaior: string, strMenor: string): boolean => {
 		// Comparardor de string CONTEM
 		strMaior = mkt.removeEspecias(strMaior).toLowerCase();

@@ -3577,6 +3577,18 @@ class mkt {
         mkt.l("Tel DDI: ", texto, " -> ", resultado);
         return resultado;
     };
+    static cssClassEmStyle = (e) => {
+        e = mkt.Q(e);
+        const eStyles = window.getComputedStyle(e);
+        let eStyleInline = '';
+        for (let i = 0; i < eStyles.length; i++) {
+            eStyleInline += `${eStyles[i]}: ${eStyles.getPropertyValue(eStyles[i])}; `;
+        }
+        e.setAttribute('style', eStyleInline);
+        Array.from(e.children).forEach(eFilho => {
+            mkt.cssClassEmStyle(eFilho);
+        });
+    };
     static contem = (strMaior, strMenor) => {
         strMaior = mkt.removeEspecias(strMaior).toLowerCase();
         strMenor = mkt.removeEspecias(strMenor).toLowerCase();
