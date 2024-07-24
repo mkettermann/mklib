@@ -269,6 +269,9 @@ class mkt {
         if (mkt.Q(this.c.container)) {
             this.autoStartConfig();
         }
+        else {
+            mkt.w("Não iniciado. A Listagem precisa de um container destino para iniciar.");
+        }
         mkt.a.build.push(this);
     }
     autoStartConfig = async (arg = {}) => {

@@ -281,6 +281,8 @@ class mkt {
 		}
 		if (mkt.Q(this.c.container)) {
 			this.autoStartConfig();
+		} else {
+			mkt.w("Não iniciado. A Listagem precisa de um container destino para iniciar.");
 		}
 		// Guarda a instância para facilitar o acesso aos métodos.
 		mkt.a.build.push(this);
