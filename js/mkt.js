@@ -738,8 +738,10 @@ class mkt {
                 if (eData.length >= 2) {
                     this.c.objFiltro[e.name].operador = eData[0]?.getAttribute("data-tipofiltroOperador");
                     this.c.objFiltro[e.name].operador2 = eData[1]?.getAttribute("data-tipofiltroOperador");
-                    this.c.objFiltro[e.name].conteudo = eData[0]?.value;
-                    this.c.objFiltro[e.name].conteudo2 = eData[1]?.value;
+                    if (eData[0]?.value != "")
+                        this.c.objFiltro[e.name].conteudo = eData[0]?.value;
+                    if (eData[1]?.value != "")
+                        this.c.objFiltro[e.name].conteudo2 = eData[1]?.value;
                 }
             }
         }
