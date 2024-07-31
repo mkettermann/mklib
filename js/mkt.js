@@ -1841,7 +1841,8 @@ class mkt {
                                 || (k.operador === "<=" && (!(dateM <= dateK)))
                                 || (k.operador === ">" && (!(dateM > dateK)))
                                 || (k.operador === "<" && (!(dateM < dateK)))
-                                || (k.operador === "==" && (!(dateM == dateK)))) {
+                                || (k.operador === "==" && (!(dateM == dateK)))
+                                || (k.operador === null && (!(dateM == dateK)))) {
                                 podeExibir = false;
                             }
                             if (k.operador2 != null && k.conteudo2 != null && k.conteudo2 != "") {
@@ -1850,7 +1851,8 @@ class mkt {
                                     || (k.operador2 === "<=" && (!(dateM <= dateK2)))
                                     || (k.operador2 === ">" && (!(dateM > dateK2)))
                                     || (k.operador2 === "<" && (!(dateM < dateK2)))
-                                    || (k.operador2 === "==" && (!(dateM == dateK2)))) {
+                                    || (k.operador2 === "==" && (!(dateM == dateK2)))
+                                    || (k.operador2 === null && (!(dateM == dateK2)))) {
                                     podeExibir = false;
                                 }
                             }
