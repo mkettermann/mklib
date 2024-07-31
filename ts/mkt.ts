@@ -1347,7 +1347,16 @@ class mkt {
 		objDados = this.c.aoReceberDados(objDados, this);
 		this.dadosFull.push(objDados);
 		if (ordenar) mkt.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
-		this.atualizarListagem();
+		this.atualizarListagem().then(re => {
+			let pkV = objDados[this.c.pk as keyof typeof objDados];
+			if (pkV != null) {
+				this.getAllTr().forEach(tr => {
+					if (tr.id == pkV) {
+						mkt.timerClasse(tr, "displayLinhaNova", 3100)
+					}
+				})
+			}
+		});
 	};
 
 	edit = (objDados: object, k: string, v: any, ordenar = true) => {
@@ -1355,7 +1364,16 @@ class mkt {
 		objDados = this.c.aoReceberDados(objDados, this);
 		this.dadosFull = mkt.setObjetoFromId(k, v, objDados, this.dadosFull);
 		if (ordenar) mkt.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
-		this.atualizarListagem();
+		this.atualizarListagem().then(re => {
+			let pkV = objDados[this.c.pk as keyof typeof objDados];
+			if (pkV != null) {
+				this.getAllTr().forEach(tr => {
+					if (tr.id == pkV) {
+						mkt.timerClasse(tr, "displayLinhaNova", 3100)
+					}
+				})
+			}
+		});
 	};
 
 	del = (k: any, v: any) => {
