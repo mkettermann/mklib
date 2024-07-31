@@ -2180,7 +2180,7 @@ class mkt {
 									podeExibir = false;
 								}
 							}
-							if (k.operador2 != null) {
+							if (k.operador2 != null && k.conteudo2 != null && k.conteudo2 != "") {
 								// Se houver 2 input date, mesmo nome de propriedade, com operador diferente
 								let dateK2 = new Date(k.conteudo2).getTime();
 								if (
