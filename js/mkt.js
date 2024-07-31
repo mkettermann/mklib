@@ -726,15 +726,24 @@ class mkt {
     };
     updateFiltroElemento = (e) => {
         if (e.value != null && e.getAttribute("data-mkfignore") != "true") {
+            let tipo = e.getAttribute("data-tipofiltro");
+            let operador = e.getAttribute("data-tipofiltroOperador");
             this.c.objFiltro[e.name] = {
-                formato: e.getAttribute("data-tipofiltro"),
-                operador: e.getAttribute("data-tipofiltroOperador"),
+                formato: tipo,
+                operador: operador,
                 conteudo: e.value,
             };
+            if (tipo == "date") {
+                let eData = mkt.QAll(this.c.filtro + "[name='" + e.name + "']");
+                if (eData.length >= 2) {
+                    this.c.objFiltro[e.name].operador = eData[0]?.getAttribute("data-tipofiltroOperador");
+                    this.c.objFiltro[e.name].operador2 = eData[1]?.getAttribute("data-tipofiltroOperador");
+                    this.c.objFiltro[e.name].conteudo = eData[0]?.value;
+                    this.c.objFiltro[e.name].conteudo2 = eData[1]?.value;
+                }
+            }
         }
         if (this.c.objFiltro[e.name]["conteudo"] == "" ||
-            this.c.objFiltro[e.name]["conteudo"] == "0" ||
-            this.c.objFiltro[e.name]["conteudo"] == 0 ||
             this.c.objFiltro[e.name]["conteudo"] === null) {
             delete this.c.objFiltro[e.name];
         }
@@ -1826,29 +1835,29 @@ class mkt {
                         else if (k.formato === "date") {
                             let dateM = new Date(m).getTime();
                             let dateK = new Date(k.conteudo).getTime();
-                            if (k.operador === ">=") {
-                                if (!(dateM >= dateK)) {
-                                    podeExibir = false;
-                                }
-                            }
-                            else if (k.operador === "<=") {
-                                if (!(dateM <= dateK)) {
-                                    podeExibir = false;
-                                }
-                            }
-                            else if (k.operador === ">") {
-                                if (!(dateM > dateK)) {
-                                    podeExibir = false;
-                                }
-                            }
-                            else if (k.operador === "<") {
-                                if (!(dateM < dateK)) {
-                                    podeExibir = false;
-                                }
+                            if ((k.operador === ">=" && !(dateM >= dateK))
+                                || (k.operador === "<=" && !(dateM <= dateK))
+                                || (k.operador === ">" && !(dateM > dateK))
+                                || (k.operador === "<" && !(dateM < dateK))) {
+                                podeExibir = false;
                             }
                             else {
                                 if (!(dateM == dateK)) {
                                     podeExibir = false;
+                                }
+                            }
+                            if (k.operador2 != null) {
+                                let dateK2 = new Date(k.conteudo2).getTime();
+                                if ((k.operador2 === ">=" && !(dateM >= dateK2))
+                                    || (k.operador2 === "<=" && !(dateM <= dateK2))
+                                    || (k.operador2 === ">" && !(dateM > dateK2))
+                                    || (k.operador2 === "<" && !(dateM < dateK2))) {
+                                    podeExibir = false;
+                                }
+                                else {
+                                    if (!(dateM == dateK2)) {
+                                        podeExibir = false;
+                                    }
                                 }
                             }
                         }

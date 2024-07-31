@@ -881,17 +881,29 @@ class mkt {
 		// Gerar Filtro baseado nos atributos do MKF gerados no campo.
 		// Para ignorar filtro: data-mkfignore="true" (Ou nao colocar o atributo tipofiltro no elemento)
 		if (e.value != null && e.getAttribute("data-mkfignore") != "true") {
+			let tipo = e.getAttribute("data-tipofiltro");
+			let operador = e.getAttribute("data-tipofiltroOperador");
 			this.c.objFiltro[e.name] = {
-				formato: e.getAttribute("data-tipofiltro"),
-				operador: e.getAttribute("data-tipofiltroOperador"),
+				formato: tipo,
+				operador: operador,
 				conteudo: e.value,
 			};
+			if (tipo == "date") {
+				// Havendo 2 propriedades com mesmo nome e formato date, gera operador2 e conteudo2
+				let eData = mkt.QAll(this.c.filtro + "[name='" + e.name + "']");
+				if (eData.length >= 2) {
+					this.c.objFiltro[e.name].operador = eData[0]?.getAttribute("data-tipofiltroOperador");
+					this.c.objFiltro[e.name].operador2 = eData[1]?.getAttribute("data-tipofiltroOperador");
+					this.c.objFiltro[e.name].conteudo = eData[0]?.value;
+					this.c.objFiltro[e.name].conteudo2 = eData[1]?.value;
+				}
+			}
 		}
 		// Limpar filtro caso o usuario limpe o campo
 		if (
 			this.c.objFiltro[e.name]["conteudo"] == "" ||
-			this.c.objFiltro[e.name]["conteudo"] == "0" ||
-			this.c.objFiltro[e.name]["conteudo"] == 0 ||
+			//this.c.objFiltro[e.name]["conteudo"] == "0" ||
+			//this.c.objFiltro[e.name]["conteudo"] == 0 ||
 			this.c.objFiltro[e.name]["conteudo"] === null
 		) {
 			delete this.c.objFiltro[e.name];
@@ -1265,16 +1277,16 @@ class mkt {
 			if (obj != null) {
 				let model = mkt.clonar(this.c.model);
 				model.forEach((i: any) => {
-					i.v = obj[i.k as keyof typeof obj];
+					i.v = obj![i.k as keyof typeof obj];
 					let temp = document.createElement("template");
 					temp.innerHTML = i.field;
 					let field = (temp.content.cloneNode(true) as any).querySelector("*");
 					if (i.tag == "textarea") {
-						field.innerHTML = obj[i.k as keyof typeof obj] ? obj[i.k as keyof typeof obj] : "";
+						field.innerHTML = obj![i.k as keyof typeof obj] ? obj![i.k as keyof typeof obj] : "";
 					} else if (i.tag == "img") {
-						field.setAttribute("src", obj[i.k as keyof typeof obj] ? obj[i.k as keyof typeof obj] : "");
+						field.setAttribute("src", obj![i.k as keyof typeof obj] ? obj![i.k as keyof typeof obj] : "");
 					} else {
-						field.setAttribute("value", obj[i.k as keyof typeof obj] ? obj[i.k as keyof typeof obj] : "");
+						field.setAttribute("value", obj![i.k as keyof typeof obj] ? obj![i.k as keyof typeof obj] : "");
 					}
 					i.field = field?.outerHTML;
 				})
@@ -2155,30 +2167,34 @@ class mkt {
 							// Filtro por Data (Gera milissegundos e faz comparacao)
 							let dateM = new Date(m).getTime();
 							let dateK = new Date(k.conteudo).getTime();
-							if (k.operador === ">=") {
-								// MAIOR OU IGUAL
-								if (!(dateM >= dateK)) {
-									podeExibir = false;
-								}
-							} else if (k.operador === "<=") {
-								// MENOR OU IGUAL
-								if (!(dateM <= dateK)) {
-									podeExibir = false;
-								}
-							} else if (k.operador === ">") {
-								// MAIOR
-								if (!(dateM > dateK)) {
-									podeExibir = false;
-								}
-							} else if (k.operador === "<") {
-								// MENOR
-								if (!(dateM < dateK)) {
-									podeExibir = false;
-								}
+							if (
+								(k.operador === ">=" && !(dateM >= dateK))
+								|| (k.operador === "<=" && !(dateM <= dateK))
+								|| (k.operador === ">" && !(dateM > dateK))
+								|| (k.operador === "<" && !(dateM < dateK))
+							) {
+								podeExibir = false;
 							} else {
-								// IGUAL ou nao informado
+								// Operador não listado / Nulo: ==
 								if (!(dateM == dateK)) {
 									podeExibir = false;
+								}
+							}
+							if (k.operador2 != null) {
+								// Se houver 2 input date, mesmo nome de propriedade, com operador diferente
+								let dateK2 = new Date(k.conteudo2).getTime();
+								if (
+									(k.operador2 === ">=" && !(dateM >= dateK2))
+									|| (k.operador2 === "<=" && !(dateM <= dateK2))
+									|| (k.operador2 === ">" && !(dateM > dateK2))
+									|| (k.operador2 === "<" && !(dateM < dateK2))
+								) {
+									podeExibir = false;
+								} else {
+									// Operador não listado / Nulo: ==
+									if (!(dateM == dateK2)) {
+										podeExibir = false;
+									}
 								}
 							}
 						}
