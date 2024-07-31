@@ -1840,26 +1840,18 @@ class mkt {
                             if ((k.operador === ">=" && (!(dateM >= dateK)))
                                 || (k.operador === "<=" && (!(dateM <= dateK)))
                                 || (k.operador === ">" && (!(dateM > dateK)))
-                                || (k.operador === "<" && (!(dateM < dateK)))) {
+                                || (k.operador === "<" && (!(dateM < dateK)))
+                                || (k.operador === "==" && (!(dateM == dateK)))) {
                                 podeExibir = false;
-                            }
-                            else {
-                                if (!(dateM == dateK)) {
-                                    podeExibir = false;
-                                }
                             }
                             if (k.operador2 != null && k.conteudo2 != null && k.conteudo2 != "") {
                                 let dateK2 = new Date(k.conteudo2).getTime();
                                 if ((k.operador2 === ">=" && (!(dateM >= dateK2)))
                                     || (k.operador2 === "<=" && (!(dateM <= dateK2)))
                                     || (k.operador2 === ">" && (!(dateM > dateK2)))
-                                    || (k.operador2 === "<" && (!(dateM < dateK2)))) {
+                                    || (k.operador2 === "<" && (!(dateM < dateK2)))
+                                    || (k.operador2 === "==" && (!(dateM == dateK2)))) {
                                     podeExibir = false;
-                                }
-                                else {
-                                    if (!(dateM == dateK2)) {
-                                        podeExibir = false;
-                                    }
                                 }
                             }
                         }

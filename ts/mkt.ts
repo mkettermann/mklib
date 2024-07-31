@@ -2172,13 +2172,9 @@ class mkt {
 								|| (k.operador === "<=" && (!(dateM <= dateK)))
 								|| (k.operador === ">" && (!(dateM > dateK)))
 								|| (k.operador === "<" && (!(dateM < dateK)))
+								|| (k.operador === "==" && (!(dateM == dateK)))
 							) {
 								podeExibir = false;
-							} else {
-								// Operador não listado / Nulo: ==
-								if (!(dateM == dateK)) {
-									podeExibir = false;
-								}
 							}
 							if (k.operador2 != null && k.conteudo2 != null && k.conteudo2 != "") {
 								// Se houver 2 input date, mesmo nome de propriedade, com operador diferente
@@ -2188,13 +2184,9 @@ class mkt {
 									|| (k.operador2 === "<=" && (!(dateM <= dateK2)))
 									|| (k.operador2 === ">" && (!(dateM > dateK2)))
 									|| (k.operador2 === "<" && (!(dateM < dateK2)))
+									|| (k.operador2 === "==" && (!(dateM == dateK2)))
 								) {
 									podeExibir = false;
-								} else {
-									// Operador não listado / Nulo: ==
-									if (!(dateM == dateK2)) {
-										podeExibir = false;
-									}
 								}
 							}
 						}
