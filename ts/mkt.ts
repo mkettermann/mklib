@@ -1352,7 +1352,7 @@ class mkt {
 			if (pkV != null) {
 				this.getAllTr().forEach(tr => {
 					if (tr.id == pkV) {
-						mkt.timerClasse(tr, "displayLinhaNova", 3100)
+						mkt.timerClasse(tr, "displayLinhaNova", 5000);
 					}
 				})
 			}
@@ -1369,7 +1369,7 @@ class mkt {
 			if (pkV != null) {
 				this.getAllTr().forEach(tr => {
 					if (tr.id == pkV) {
-						mkt.timerClasse(tr, "displayLinhaNova", 3100)
+						mkt.timerClasse(tr, "displayLinhaNova", 5000);
 					}
 				})
 			}
