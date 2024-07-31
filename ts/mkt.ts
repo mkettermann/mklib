@@ -2168,10 +2168,10 @@ class mkt {
 							let dateM = new Date(m).getTime();
 							let dateK = new Date(k.conteudo).getTime();
 							if (
-								(k.operador === ">=" && !(dateM >= dateK))
-								|| (k.operador === "<=" && !(dateM <= dateK))
-								|| (k.operador === ">" && !(dateM > dateK))
-								|| (k.operador === "<" && !(dateM < dateK))
+								(k.operador === ">=" && (!(dateM >= dateK)))
+								|| (k.operador === "<=" && (!(dateM <= dateK)))
+								|| (k.operador === ">" && (!(dateM > dateK)))
+								|| (k.operador === "<" && (!(dateM < dateK)))
 							) {
 								podeExibir = false;
 							} else {
@@ -2184,10 +2184,10 @@ class mkt {
 								// Se houver 2 input date, mesmo nome de propriedade, com operador diferente
 								let dateK2 = new Date(k.conteudo2).getTime();
 								if (
-									(k.operador2 === ">=" && !(dateM >= dateK2))
-									|| (k.operador2 === "<=" && !(dateM <= dateK2))
-									|| (k.operador2 === ">" && !(dateM > dateK2))
-									|| (k.operador2 === "<" && !(dateM < dateK2))
+									(k.operador2 === ">=" && (!(dateM >= dateK2)))
+									|| (k.operador2 === "<=" && (!(dateM <= dateK2)))
+									|| (k.operador2 === ">" && (!(dateM > dateK2)))
+									|| (k.operador2 === "<" && (!(dateM < dateK2)))
 								) {
 									podeExibir = false;
 								} else {
