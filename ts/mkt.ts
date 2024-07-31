@@ -5299,12 +5299,16 @@ class mkt {
 	};
 
 	static Terremoto = (e: any = null): void => {
+		mkt.timerClasse(e, "mkTerremoto", 500);
+	};
+
+	static timerClasse = (e: any, classe: string, tempo = 1000): void => {
 		e = mkt.Q(e);
-		// Efeito de terremoto no elemento
+		// Mantem uma classe em um elemento por um determinado tempo.
 		if (e) {
-			e.classList.add("mkTerremoto");
-			mkt.wait(500).then(r => {
-				e.classList.remove("mkTerremoto");
+			e.classList.add(classe);
+			mkt.wait(tempo).then(r => {
+				e.classList.remove(classe);
 			});
 		}
 	};

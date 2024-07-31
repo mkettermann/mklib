@@ -4560,11 +4560,14 @@ class mkt {
         }
     };
     static Terremoto = (e = null) => {
+        mkt.timerClasse(e, "mkTerremoto", 500);
+    };
+    static timerClasse = (e, classe, tempo = 1000) => {
         e = mkt.Q(e);
         if (e) {
-            e.classList.add("mkTerremoto");
-            mkt.wait(500).then(r => {
-                e.classList.remove("mkTerremoto");
+            e.classList.add(classe);
+            mkt.wait(tempo).then(r => {
+                e.classList.remove(classe);
             });
         }
     };
