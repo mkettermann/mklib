@@ -314,7 +314,7 @@ class mkt {
         }
         if (!this.c.sortBy)
             this.c.sortBy = this.c.pk;
-        if (!this.c.sortDir)
+        if (this.c.sortDir == null)
             this.c.sortDir = 1;
         this.setDirSort(this.c.sortBy, Number(this.c.sortDir));
         if (this.c.dados != null) {

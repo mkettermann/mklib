@@ -344,7 +344,7 @@ class mkt {
 		if (!this.c.sortBy)
 			this.c.sortBy = this.c.pk; // Padrão PK
 		// Inicial SortDir
-		if (!this.c.sortDir)
+		if (this.c.sortDir == null)
 			this.c.sortDir = 1; // Padrão 0 Decrescente por ID Deixando a Ultima ID no topo
 
 		// Inicial Sort
