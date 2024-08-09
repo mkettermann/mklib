@@ -5140,17 +5140,14 @@ li[m="1"] {
         mkt.a.poppers.get(this.config.eList).update();
         this.config.checkMaisLinhas();
     }
-    aoBlur() {
-        mkt.wait(150).then(r => {
-            if (document.activeElement !== this) {
-                this.atualizarDisplay();
-                this.removeAttribute("focused");
-                if (this.config.changed) {
-                    this.config.changed = false;
-                    this.dispatchEvent(new Event("change"));
-                }
-            }
-        });
+    async aoBlur() {
+        await mkt.wait(1);
+        this.atualizarDisplay();
+        this.removeAttribute("focused");
+        if (this.config.changed) {
+            this.config.changed = false;
+            this.dispatchEvent(new Event("change"));
+        }
     }
     async aoInput() {
         let strInputado = this.config.eK.value;

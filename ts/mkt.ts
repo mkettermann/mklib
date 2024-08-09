@@ -5965,21 +5965,19 @@ li[m="1"] {
 	}
 
 	// Quando sai do botão de pesquisar principal
-	aoBlur() {
+	async aoBlur() {
 		// Ao perder foco
-		mkt.wait(150).then(r => {
-			if (document.activeElement !== this) {
-				// SE REALMENTE Saiu do elemento:
-				// Seta Valor do display
-				this.atualizarDisplay();
-				// Remove Status de focus pra sumir
-				this.removeAttribute("focused");
-				if (this.config.changed) {
-					this.config.changed = false;
-					this.dispatchEvent(new Event("change"));
-				}
-			}
-		});
+		await mkt.wait(1);
+		// SE REALMENTE Saiu do elemento:
+		// <= Removi a checagem do multi seletor, 
+		// Seta Valor do display
+		this.atualizarDisplay();
+		// Remove Status de focus pra sumir
+		this.removeAttribute("focused");
+		if (this.config.changed) {
+			this.config.changed = false;
+			this.dispatchEvent(new Event("change"));
+		}
 	}
 
 	// Exibe a lista baseado no filtro de pesquisa
