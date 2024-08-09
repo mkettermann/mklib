@@ -4163,11 +4163,13 @@ class mkt {
             e.setSelectionRange(len, len);
         });
     };
-    static geraObjForm = (form, bool = false) => {
+    static geraObjForm = (form, bool = false, clear = false) => {
         if (mkt.classof(form) != "Object") {
             form = mkt.Q(form);
         }
-        let rObjeto = mkt.limparOA(Object.fromEntries(new FormData(form).entries()));
+        let rObjeto = Object.fromEntries(new FormData(form).entries());
+        if (clear)
+            rObjeto = mkt.limparOA(rObjeto);
         if (form) {
             if (bool) {
                 rObjeto = mkt.toBooleanOA(rObjeto);
@@ -4178,17 +4180,18 @@ class mkt {
                     delete rObjeto[k];
                 }
             }
-            Array.from(form.querySelectorAll("mk-sel")).forEach((mk) => {
-                mkt.setV(mk.name, mk.value, rObjeto);
+            Array.from(form.querySelectorAll("mk-sel")).forEach((e) => {
+                mkt.setV(e.name, e.value, rObjeto);
             });
-            Array.from(form.querySelectorAll("mk-bot.changed")).forEach((mk) => {
-                mkt.setV(mk.name, mk.value, rObjeto);
+            Array.from(form.querySelectorAll("mk-bot.changed")).forEach((e) => {
+                mkt.setV(e.name, e.value, rObjeto);
             });
         }
         if (bool) {
             rObjeto = mkt.toBooleanOA(rObjeto);
         }
-        mkt.limparFull(rObjeto);
+        if (clear)
+            mkt.limparFull(rObjeto);
         return rObjeto;
     };
     static QScrollTo = (query = "body") => {

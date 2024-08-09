@@ -4822,13 +4822,14 @@ class mkt {
 		})
 	}
 
-	static geraObjForm = (form: any, bool = false) => {
+	static geraObjForm = (form: any, bool = false, clear = false) => {
 		// Gerar Objeto a partir de um Form Entries
 		if (mkt.classof(form) != "Object") {
 			// Se vier o Elemento Form / o Query do Form
 			form = mkt.Q(form);
 		}
-		let rObjeto: any = mkt.limparOA(Object.fromEntries(new FormData(form).entries()));
+		let rObjeto: any = Object.fromEntries(new FormData(form).entries());
+		if (clear) rObjeto = mkt.limparOA(rObjeto);
 		if (form) {
 			if (bool) {
 				rObjeto = mkt.toBooleanOA(rObjeto);
@@ -4839,25 +4840,20 @@ class mkt {
 					delete rObjeto[k];
 				}
 			}
-			Array.from(form.querySelectorAll("mk-sel")).forEach((mk: any) => {
+			Array.from(form.querySelectorAll("mk-sel")).forEach((e: any) => {
 				// rObjeto[mk.name] = mk.value;
-				mkt.setV(mk.name, mk.value, rObjeto);
+				mkt.setV(e.name, e.value, rObjeto);
 			});
 			// Aqui apenas coleta os mkBot que foram modificados pelo usuário.
-			Array.from(form.querySelectorAll("mk-bot.changed")).forEach((mk: any) => {
+			Array.from(form.querySelectorAll("mk-bot.changed")).forEach((e: any) => {
 				// rObjeto[mk.name] = mk.value;
-				mkt.setV(mk.name, mk.value, rObjeto);
+				mkt.setV(e.name, e.value, rObjeto);
 			});
 		}
-
-		// rObjeto = mkt.setVAll(rObjeto);
-		// mkt.gc("Objeto Gerado: ");
-		// mkt.w(rObjeto);
-		// mkt.ge();
 		if (bool) {
 			rObjeto = mkt.toBooleanOA(rObjeto);
 		}
-		mkt.limparFull(rObjeto);
+		if (clear) mkt.limparFull(rObjeto);
 		return rObjeto;
 	}
 
