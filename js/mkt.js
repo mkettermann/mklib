@@ -180,6 +180,7 @@ class mktc {
     aoAntesDePopularTabela = async (dadosExibidos, este) => { };
     aoConcluirExibicao = async (este) => { };
     aoReceberDados = (o, este) => { return o; };
+    aoAddEditDelLista = async (operacao, objeto, este) => { };
     constructor(array) {
         if (mkt.classof(array) == "Array") {
             this.model = array;
@@ -1144,6 +1145,8 @@ class mkt {
                 });
             }
         });
+        mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoAddEditDelLista"));
+        this.c.aoAddEditDelLista("1", objDados, this);
     };
     edit = (objDados, k, v, ordenar = true) => {
         objDados = this.c.aoReceberDados(objDados, this);
@@ -1160,11 +1163,15 @@ class mkt {
                 });
             }
         });
+        mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoAddEditDelLista"));
+        this.c.aoAddEditDelLista("2", objDados, this);
     };
     del = (k, v) => {
         this.dadosFull = mkt.delObjetoFromId(k, v, this.dadosFull);
         mkt.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
         this.atualizarListagem();
+        mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoAddEditDelLista"));
+        this.c.aoAddEditDelLista("3", { [k]: v }, this);
     };
     addMany = (arrayDados) => {
         this.dadosFull.push(...arrayDados);

@@ -182,6 +182,7 @@ class mktc {
 	aoAntesDePopularTabela = async (dadosExibidos: any, este: mkt) => { }; // Recebe os dados a serem exibidos desta página
 	aoConcluirExibicao = async (este: mkt) => { };
 	aoReceberDados = (o: any, este: mkt) => { return o; }; // Função que se executa nos Cruds de objetos e quando se constroi a listagem.
+	aoAddEditDelLista = async (operacao: string, objeto: any, este: mkt) => { };
 	constructor(array: Array<mktm>) {
 		if (mkt.classof(array) == "Array") {
 			this.model = array;
@@ -1357,6 +1358,10 @@ class mkt {
 				})
 			}
 		});
+
+		//EVENT: aoAddEditDelLista (1)
+		mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoAddEditDelLista"));
+		this.c.aoAddEditDelLista("1", objDados, this);
 	};
 
 	edit = (objDados: object, k: string, v: any, ordenar = true) => {
@@ -1374,6 +1379,10 @@ class mkt {
 				})
 			}
 		});
+
+		//EVENT: aoAddEditDelLista (2)
+		mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoAddEditDelLista"));
+		this.c.aoAddEditDelLista("2", objDados, this);
 	};
 
 	del = (k: any, v: any) => {
@@ -1381,6 +1390,10 @@ class mkt {
 		this.dadosFull = mkt.delObjetoFromId(k, v, this.dadosFull);
 		mkt.ordenar(this.dadosFull, this.c.sortBy, this.c.sortDir);
 		this.atualizarListagem();
+
+		//EVENT: aoAddEditDelLista (2)
+		mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoAddEditDelLista"));
+		this.c.aoAddEditDelLista("3", { [k]: v }, this);
 	};
 
 	// mkt.aoReceberDados e mkt.ordenar Não se executam pra acelerar a inserção assincrona da listagem
