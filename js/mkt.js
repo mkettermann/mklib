@@ -3165,6 +3165,9 @@ class mkt {
                                     if (re.v == null)
                                         re.v = "true";
                                     if (re.v == "true") {
+                                        if (e[re.target] == undefined) {
+                                            e[re.target] = e.getAttribute(re.target) ?? "";
+                                        }
                                         if (e[re.target] == "") {
                                             if (!re.m) {
                                                 if (mkt.classof(e) == "mkSelElement") {
