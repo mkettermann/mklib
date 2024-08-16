@@ -3634,22 +3634,22 @@ class mkt {
 									prom(re.k);
 									break;
 
-								case "nummin": // EXE
+								case "nummin": // INFO
 									e.setAttribute("min", re.v);
 									if (mkt.toNumber(Number(e[re.target])) < Number(re.v)) {
 										if (!re.m) re.m = mkt.a.msg.nummin + re.v;
 										erros.push(re);
-										e[re.target] = re.v;
+										if (re.force == true) e[re.target] = re.v;
 									}
 									prom(re.k);
 									break;
 
-								case "nummax": // EXE
+								case "nummax": // INFO
 									e.setAttribute("max", re.v);
 									if (mkt.toNumber(Number(e[re.target])) > Number(re.v)) {
 										if (!re.m) re.m = mkt.a.msg.nummax + re.v;
 										erros.push(re);
-										e[re.target] = re.v;
+										if (re.force == true) e[re.target] = re.v;
 									}
 									prom(re.k);
 									break;
