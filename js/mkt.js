@@ -1130,7 +1130,7 @@ class mkt {
     getAllTr = () => {
         return Array.from(mkt.QAll(this.c.container + " tbody tr"));
     };
-    add = (objDados, ordenar = true) => {
+    add = (objDados, ordenar = true, comEvento = true) => {
         objDados = this.c.aoReceberDados(objDados, this);
         this.dadosFull.push(objDados);
         if (ordenar)
@@ -1145,10 +1145,12 @@ class mkt {
                 });
             }
         });
-        mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoAddEditDelLista"));
-        this.c.aoAddEditDelLista("1", objDados, this);
+        if (comEvento == true) {
+            mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoAddEditDelLista"));
+            this.c.aoAddEditDelLista("1", objDados, this);
+        }
     };
-    edit = (objDados, k, v, ordenar = true) => {
+    edit = (objDados, k, v, ordenar = true, comEvento = true) => {
         objDados = this.c.aoReceberDados(objDados, this);
         this.dadosFull = mkt.setObjetoFromId(k, v, objDados, this.dadosFull);
         if (ordenar)
@@ -1163,8 +1165,10 @@ class mkt {
                 });
             }
         });
-        mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoAddEditDelLista"));
-        this.c.aoAddEditDelLista("2", objDados, this);
+        if (comEvento == true) {
+            mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoAddEditDelLista"));
+            this.c.aoAddEditDelLista("2", objDados, this);
+        }
     };
     del = (k, v) => {
         this.dadosFull = mkt.delObjetoFromId(k, v, this.dadosFull);

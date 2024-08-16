@@ -1343,7 +1343,7 @@ class mkt {
 	};
 
 	// USER INTERFACE - UI FOR CRUD
-	add = (objDados: object, ordenar = true) => {
+	add = (objDados: object, ordenar = true, comEvento = true) => {
 		// Adicionar na listagem
 		objDados = this.c.aoReceberDados(objDados, this);
 		this.dadosFull.push(objDados);
@@ -1360,11 +1360,13 @@ class mkt {
 		});
 
 		//EVENT: aoAddEditDelLista (1)
-		mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoAddEditDelLista"));
-		this.c.aoAddEditDelLista("1", objDados, this);
+		if (comEvento == true) {
+			mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoAddEditDelLista"));
+			this.c.aoAddEditDelLista("1", objDados, this);
+		}
 	};
 
-	edit = (objDados: object, k: string, v: any, ordenar = true) => {
+	edit = (objDados: object, k: string, v: any, ordenar = true, comEvento = true) => {
 		// Editar na listagem
 		objDados = this.c.aoReceberDados(objDados, this);
 		this.dadosFull = mkt.setObjetoFromId(k, v, objDados, this.dadosFull);
@@ -1381,8 +1383,10 @@ class mkt {
 		});
 
 		//EVENT: aoAddEditDelLista (2)
-		mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoAddEditDelLista"));
-		this.c.aoAddEditDelLista("2", objDados, this);
+		if (comEvento == true) {
+			mkt.Q(this.c.container).dispatchEvent(new CustomEvent("aoAddEditDelLista"));
+			this.c.aoAddEditDelLista("2", objDados, this);
+		}
 	};
 
 	del = (k: any, v: any) => {
