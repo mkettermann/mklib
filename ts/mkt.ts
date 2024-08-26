@@ -2600,6 +2600,8 @@ class mkt {
 				// Checar se termina com Element
 				if (mkt.classof(tagBuscar).endsWith("Element")) {
 					elementos = [...(tagBuscar as HTMLElement).querySelectorAll("*")];
+				} else {
+					mkt.w("Tipo de dado incorreto para importar: ", mkt.classof(tagBuscar));
 				}
 			}
 			elementos.forEach((e: HTMLElement) => {

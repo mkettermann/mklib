@@ -2231,6 +2231,9 @@ class mkt {
                 if (mkt.classof(tagBuscar).endsWith("Element")) {
                     elementos = [...tagBuscar.querySelectorAll("*")];
                 }
+                else {
+                    mkt.w("Tipo de dado incorreto para importar: ", mkt.classof(tagBuscar));
+                }
             }
             elementos.forEach((e) => {
                 let destino = e.getAttribute("mkImportar");
