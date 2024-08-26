@@ -2585,7 +2585,7 @@ class mkt {
 		mkt.Q("body").classList.remove("CarregadorMkSemScrollY");
 	};
 
-	static importar = async (tagBuscar = ".divListagemContainer", tipo: any = "race", quiet: boolean = true) => {
+	static importar = async (tagBuscar: string | HTMLElement = ".divListagemContainer", tipo: any = "race", quiet: boolean = true) => {
 		// IMPORTAR - Coleta o html externo através da classe mkImportar contendo a url.
 		return new Promise((r, x) => {
 			let num = mkt.a.contaImportados++;
@@ -2593,7 +2593,16 @@ class mkt {
 				mkt.gc("\t(" + num + ") Executando Importador no modo: ", tipo)
 			}
 			let ps: any = [];
-			mkt.QAll(tagBuscar + " *").forEach((e: HTMLElement) => {
+			let elementos = [];
+			if (mkt.classof(tagBuscar) == "String") {
+				elementos = mkt.QAll(tagBuscar + " *");
+			} else {
+				// Checar se termina com Element
+				if (mkt.classof(tagBuscar).endsWith("Element")) {
+					elementos = [...(tagBuscar as HTMLElement).querySelectorAll("*")];
+				}
+			}
+			elementos.forEach((e: HTMLElement) => {
 				let destino = e.getAttribute("mkImportar");
 				if (destino != null) {
 					ps.push({ p: mkt.get.html({ url: destino, quiet: quiet, carregador: false }), e: e, n: num });
