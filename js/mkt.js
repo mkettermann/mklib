@@ -2863,20 +2863,16 @@ class mkt {
         if (cfg.meses < 0)
             cfg.meses = 12;
         cfg.tipoMes = cfg.tipoMes || 0;
-        let mesAtual = mkt.dataGetMes(cfg.desde);
+        let currentMes = mkt.dataGetMes(cfg.desde);
         if (cfg.tipoAno == null) {
             cfg.tipoAno = null;
-            if (cfg.meses > mesAtual)
+            if (cfg.meses > currentMes)
                 cfg.tipoAno = "short";
         }
         let ultimosMeses = [];
-        let anoAtual = mkt.dataGetAno(cfg.desde);
-        let currentMes = mesAtual;
-        let currentAno = anoAtual;
+        let currentAno = mkt.dataGetAno(cfg.desde);
         for (let i = 1; i <= cfg.meses; i++) {
-            console.log(currentMes);
-            let retorno = "";
-            retorno = retorno + mkt.a.meses[currentMes - 1][cfg.tipoMes];
+            let retorno = mkt.a.meses[currentMes - 1][cfg.tipoMes];
             if (cfg.tipoAno != null) {
                 let ano = String(currentAno);
                 if (cfg.tipoAno == "short") {
