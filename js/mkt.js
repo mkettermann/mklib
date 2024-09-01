@@ -2862,7 +2862,7 @@ class mkt {
         cfg.meses = cfg.meses || 12;
         if (cfg.meses < 0)
             cfg.meses = 12;
-        cfg.tipo = cfg.tipo || 1;
+        cfg.tipo = cfg.tipo || 0;
         let ultimosMeses = [];
         let mesAtual = mkt.dataGetMes(cfg.desde) - 1;
         for (let i = 0; i < cfg.meses; i++) {

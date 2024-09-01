@@ -3307,7 +3307,7 @@ class mkt {
 		cfg.desde = cfg.desde || null;
 		cfg.meses = cfg.meses || 12;
 		if (cfg.meses < 0) cfg.meses = 12;
-		cfg.tipo = cfg.tipo || 1;
+		cfg.tipo = cfg.tipo || 0;
 
 		let ultimosMeses: Array<number> = [];
 		let mesAtual = mkt.dataGetMes(cfg.desde) - 1;
