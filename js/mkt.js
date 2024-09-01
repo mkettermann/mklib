@@ -2223,7 +2223,19 @@ class mkt {
                 mkt.gc("\t(" + num + ") Executando Importador no modo: ", tipo);
             }
             let ps = [];
-            mkt.QAll(tagBuscar + " *").forEach((e) => {
+            let elementos = [];
+            if (mkt.classof(tagBuscar) == "String") {
+                elementos = mkt.QAll(tagBuscar + " *");
+            }
+            else {
+                if (mkt.classof(tagBuscar).endsWith("Element")) {
+                    elementos = [...tagBuscar.querySelectorAll("*")];
+                }
+                else {
+                    mkt.w("Tipo de dado incorreto para importar: ", mkt.classof(tagBuscar));
+                }
+            }
+            elementos.forEach((e) => {
                 let destino = e.getAttribute("mkImportar");
                 if (destino != null) {
                     ps.push({ p: mkt.get.html({ url: destino, quiet: quiet, carregador: false }), e: e, n: num });
