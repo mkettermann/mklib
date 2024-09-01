@@ -3302,22 +3302,42 @@ class mkt {
 	}
 
 
-	static dataUltimosMeses = (config: any): Array<number> => {
+	static dataUltimosMeses = (config: any): Array<string> => {
+		// {desde: "", meses: 12, tipoMes: 1, tipoAno: "short"}
 		var cfg = config || {};
 		cfg.desde = cfg.desde || null;
 		cfg.meses = cfg.meses || 12;
 		if (cfg.meses < 0) cfg.meses = 12;
-		cfg.tipo = cfg.tipo || 0;
-
-		let ultimosMeses: Array<number> = [];
-		let mesAtual = mkt.dataGetMes(cfg.desde) - 1;
-
-		for (let i = 0; i < cfg.meses; i++) {
-			const mesAnterior = (mesAtual - i + 12 * cfg.meses) % 12;
-			ultimosMeses.push(mkt.a.meses[mesAnterior][cfg.tipo]);
+		cfg.tipoMes = cfg.tipoMes || 0;
+		let mesAtual = mkt.dataGetMes(cfg.desde); // 9
+		if (cfg.tipoAno == null) {
+			cfg.tipoAno = null;
+			if (cfg.meses > mesAtual)
+				cfg.tipoAno = "short";
 		}
-
-		return ultimosMeses.reverse();
+		let ultimosMeses: Array<string> = [];
+		let anoAtual = mkt.dataGetAno(cfg.desde); // 2024
+		let currentMes = mesAtual;
+		let currentAno = anoAtual;
+		for (let i = 1; i <= cfg.meses; i++) {
+			console.log(currentMes);
+			let retorno = "";
+			retorno = retorno + mkt.a.meses[currentMes - 1][cfg.tipoMes];
+			if (cfg.tipoAno != null) {
+				let ano = String(currentAno);
+				if (cfg.tipoAno == "short") {
+					ano = ano.slice(2);
+				}
+				retorno = ano + "-" + retorno;
+			}
+			ultimosMeses.push(retorno);
+			currentMes--;
+			if (currentMes <= 0) {
+				currentMes = 12;
+				currentAno--;
+			}
+		}
+		return ultimosMeses;
 	}
 
 	static dataGetMs = (data: string | null = null): number => {
