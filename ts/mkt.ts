@@ -3078,7 +3078,7 @@ class mkt {
 	};
 
 	static dataGetMes = (ms = null) => {
-		// GET UTC Ano - '02'
+		// GET UTC Mês - '02'
 		if (ms != null) return Number(mkt.dataGetData(ms).split("-")[1]);
 		else return Number(mkt.dataGetData().split("-")[1]);
 	};
@@ -3288,6 +3288,24 @@ class mkt {
 		}
 		if (strTempo.includes("NaN")) return "";
 		return strTempo;
+	}
+
+	static dataUltimosMeses = (config: any): Array<number> => {
+		var cfg = config || {};
+		cfg.desde = cfg.desde || null;
+		cfg.meses = cfg.meses || 12;
+		if (cfg.meses < 0) cfg.meses = 12;
+		cfg.tipo = cfg.tipo || 1;
+
+		let ultimosMeses: Array<number> = [];
+		let mesAtual = mkt.dataGetMes(cfg.desde) - 1;
+
+		for (let i = 0; i < cfg.meses; i++) {
+			const mesAnterior = (mesAtual - i + 12 * cfg.meses) % 12;
+			ultimosMeses.push(mkt.a.meses[mesAnterior][cfg.tipo]);
+		}
+
+		return ultimosMeses.reverse();
 	}
 
 	static dataGetMs = (data: string | null = null): number => {

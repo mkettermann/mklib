@@ -2844,6 +2844,21 @@ class mkt {
             return "";
         return strTempo;
     };
+    static dataUltimosMeses = (config) => {
+        var cfg = config || {};
+        cfg.desde = cfg.desde || null;
+        cfg.meses = cfg.meses || 12;
+        if (cfg.meses < 0)
+            cfg.meses = 12;
+        cfg.tipo = cfg.tipo || 1;
+        let ultimosMeses = [];
+        let mesAtual = mkt.dataGetMes(cfg.desde) - 1;
+        for (let i = 0; i < cfg.meses; i++) {
+            const mesAnterior = (mesAtual - i + 12 * cfg.meses) % 12;
+            ultimosMeses.push(mkt.a.meses[mesAnterior][cfg.tipo]);
+        }
+        return ultimosMeses.reverse();
+    };
     static dataGetMs = (data = null) => {
         if (data != null) {
             if (data.length > 10) {
