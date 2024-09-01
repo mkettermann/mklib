@@ -3311,7 +3311,7 @@ class mkt {
 		cfg.tipoMes = cfg.tipoMes || 0;
 		let currentMes = mkt.dataGetMes(cfg.desde); // 9
 		if (cfg.tipoAno == null) {
-			cfg.tipoAno = null;
+			cfg.tipoAno = "none";
 			if (cfg.meses > currentMes)
 				cfg.tipoAno = "short";
 		}
@@ -3319,7 +3319,7 @@ class mkt {
 		let currentAno = mkt.dataGetAno(cfg.desde); // 2024
 		for (let i = 1; i <= cfg.meses; i++) {
 			let retorno = mkt.a.meses[currentMes - 1][cfg.tipoMes];
-			if (cfg.tipoAno != null) {
+			if (cfg.tipoAno != null && cfg.tipoAno != "none") {
 				let ano = String(currentAno);
 				if (cfg.tipoAno == "short") {
 					ano = ano.slice(2);
