@@ -3301,6 +3301,7 @@ class mkt {
 		return strTempo;
 	}
 
+
 	static dataUltimosMeses = (config: any): Array<number> => {
 		var cfg = config || {};
 		cfg.desde = cfg.desde || null;
