@@ -4699,6 +4699,26 @@ class mkt {
             return await eCanvas.toDataURL(`image/${formatoDestino}`, qualidade);
         }
     };
+    static convertToNumeric = (texto) => {
+        let arrayDeNumeros = [];
+        for (const char of texto) {
+            arrayDeNumeros.push(char.codePointAt(0));
+        }
+        return arrayDeNumeros;
+    };
+    static convertToTexto = (numeric) => {
+        return String.fromCodePoint(...numeric);
+    };
+    static frequencia = (array) => {
+        let f = {};
+        for (let e of array) {
+            let s = e;
+            if (mkt.classof(e) == "Object")
+                s = JSON.stringify(e);
+            f[s] ? f[s]++ : (f[s] = 1);
+        }
+        return f;
+    };
 }
 Object.keys(mkt).forEach((n) => {
     if (!mkt.a.definePropertyExceptions.includes(n)) {

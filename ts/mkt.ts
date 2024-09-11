@@ -5452,6 +5452,30 @@ class mkt {
 		}
 	}
 
+	static convertToNumeric = (texto: string) => {
+		let arrayDeNumeros = [];
+		for (const char of texto) {
+			arrayDeNumeros.push(char.codePointAt(0));
+		}
+		return arrayDeNumeros;
+	}
+
+	static convertToTexto = (numeric: Array<number>) => {
+		return String.fromCodePoint(...numeric);
+	}
+
+	static frequencia = (array: any): object => {
+		// Retorna o total de encontro na array.
+		// Quando é objeto converte pra string pra poder contar
+		let f: any = {};
+		for (let e of array) {
+			let s = e;
+			if (mkt.classof(e) == "Object") s = JSON.stringify(e);
+			f[s] ? f[s]++ : (f[s] = 1);
+		}
+		return f;
+	};
+
 	/**********************************\\
 	//  FIM DAS FUNCÕES ESTÁTICAS       \\
 	//__________________________________*/
