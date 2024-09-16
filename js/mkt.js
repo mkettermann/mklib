@@ -34,6 +34,7 @@ class mktm {
     atr = "type='text'";
     classes = "iConsultas";
     lclasses = "";
+    paiclasses = "";
     target = "value";
     f = true;
     opcoes = "";
@@ -72,8 +73,8 @@ class mktm {
             this.tipofiltroOperador = o.tipofiltroOperador;
         if (o.classes != null)
             this.classes = o.classes;
-        if (o.lclasses != null)
-            this.lclasses = o.lclasses;
+        if (o.paiclasses != null)
+            this.paiclasses = o.paiclasses;
         if (o.target != null)
             this.target = o.target;
         if (o.regras != null)
@@ -118,7 +119,7 @@ class mktm {
     }
     toObject = () => {
         let o = {};
-        ["pk", "k", "v", "l", "r", "on", "crud", "tag", "atr", "classes", "lclasses",
+        ["pk", "k", "v", "l", "r", "on", "crud", "tag", "atr", "classes", "lclasses", "paiclasses",
             "target", "f", "opcoes", "field", "requer", "regras", "url", "head"].forEach(k => {
             o[k] = this[k];
         });
