@@ -3066,7 +3066,6 @@ class mkt {
 					valor = [...valor.toString()].filter(a => { return new RegExp(mkt.a.util.numeros[1]).test(a) }).join("").padStart(3, "0")
 					valor = valor.padStart(c.casas, "0");
 					valor = valor.slice(0, -(c.casas)) + (c.casas > 0 ? "." : "") + valor.slice(-(c.casas));
-					console.log(valor);
 				}
 			} else if (mkt.classof(valor) == "Number") {
 				valor = valor.toFixed(c.casas); // <= Vira String, mas essa função apenas devolve Number
