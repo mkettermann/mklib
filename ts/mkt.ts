@@ -6056,7 +6056,7 @@ li[m="1"] {
 	// Quando sai do botão de pesquisar principal
 	async aoBlur() {
 		// Ao perder foco
-		await mkt.wait(1);
+		//await mkt.wait(1);
 		// SE REALMENTE Saiu do elemento:
 		// <= Removi a checagem do multi seletor, 
 		// Seta Valor do display

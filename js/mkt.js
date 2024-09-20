@@ -5227,7 +5227,6 @@ li[m="1"] {
         this.config.checkMaisLinhas();
     }
     async aoBlur() {
-        await mkt.wait(1);
         this.atualizarDisplay();
         this.removeAttribute("focused");
         if (this.config.changed) {
