@@ -4725,7 +4725,7 @@ class mkt {
 		}
 	}
 
-	static Reposicionar = (e: any, largura: boolean | null = null) => {
+	static Reposicionar = (e: any, largura: boolean | null = null, local = "bottom-start") => {
 		// REPOSICIONA o elemento E abaixo do elemento anterior.
 		// Precisa de position: fixed;
 		// Atenção: Essa função precisa ser rápida.
@@ -4782,7 +4782,7 @@ class mkt {
 				eAnterior,
 				e,
 				{
-					placement: "bottom-start",
+					placement: local,
 					strategy: "fixed",
 					modifiers: [],
 				}

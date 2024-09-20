@@ -4130,7 +4130,7 @@ class mkt {
             return conta;
         }
     };
-    static Reposicionar = (e, largura = null) => {
+    static Reposicionar = (e, largura = null, local = "bottom-start") => {
         let eAnterior = e.previousElementSibling;
         if (largura) {
             e.style.minWidth = (eAnterior.offsetWidth - 3) + "px";
@@ -4138,7 +4138,7 @@ class mkt {
         }
         if (mkt.a.poppers.get(e) == null) {
             mkt.a.poppers.set(e, Popper.createPopper(eAnterior, e, {
-                placement: "bottom-start",
+                placement: local,
                 strategy: "fixed",
                 modifiers: [],
             }));
