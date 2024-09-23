@@ -5363,6 +5363,7 @@ li[m="1"] {
         });
     }
     maisLinhas(inicio, total) {
+        var _c;
         return __awaiter(this, void 0, void 0, function* () {
             let linha = document.createElement("template");
             linha.innerHTML = "<li${2} k='${0}'>${1}</li>";
@@ -5381,7 +5382,7 @@ li[m="1"] {
                 return [a[0], y, c];
             });
             if (this.config.selapenas != 1 || this.config.scrollcharge == false) {
-                this.config.selecionados.keys().forEach((k) => {
+                (_c = this.config.selecionados.keys()) === null || _c === void 0 ? void 0 : _c.forEach((k) => {
                     let indexof = dados.findIndex(o => { return o[0] == k; });
                     if (indexof >= 0) {
                         dados.unshift(dados.splice(indexof, 1)[0]);

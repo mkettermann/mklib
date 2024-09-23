@@ -6136,7 +6136,7 @@ li[m="1"] {
 		// A ideia era trazer pro início os já selecionados.
 		// A CADA JÁ SELECIONADO
 		if (this.config.selapenas != 1 || this.config.scrollcharge == false) {
-			this.config.selecionados.keys().forEach((k: string) => {
+			this.config.selecionados.keys()?.forEach((k: string) => {
 				// Se encontrar essa chave na array de dados
 				let indexof = dados.findIndex(o => { return o[0] == k });
 				if (indexof >= 0) {
