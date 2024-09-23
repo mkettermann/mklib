@@ -34,6 +34,7 @@ class mktm {
     atr = "type='text'";
     classes = "iConsultas";
     lclasses = "";
+    paiclasses = "";
     target = "value";
     f = true;
     opcoes = "";
@@ -72,8 +73,8 @@ class mktm {
             this.tipofiltroOperador = o.tipofiltroOperador;
         if (o.classes != null)
             this.classes = o.classes;
-        if (o.lclasses != null)
-            this.lclasses = o.lclasses;
+        if (o.paiclasses != null)
+            this.paiclasses = o.paiclasses;
         if (o.target != null)
             this.target = o.target;
         if (o.regras != null)
@@ -118,7 +119,7 @@ class mktm {
     }
     toObject = () => {
         let o = {};
-        ["pk", "k", "v", "l", "r", "on", "crud", "tag", "atr", "classes", "lclasses",
+        ["pk", "k", "v", "l", "r", "on", "crud", "tag", "atr", "classes", "lclasses", "paiclasses",
             "target", "f", "opcoes", "field", "requer", "regras", "url", "head"].forEach(k => {
             o[k] = this[k];
         });
@@ -2646,7 +2647,8 @@ class mkt {
                 }
                 else {
                     valor = [...valor.toString()].filter(a => { return new RegExp(mkt.a.util.numeros[1]).test(a); }).join("").padStart(3, "0");
-                    valor = valor.slice(0, -(c.casas)) + "." + valor.slice(-(c.casas));
+                    valor = valor.padStart(c.casas, "0");
+                    valor = valor.slice(0, -(c.casas)) + (c.casas > 0 ? "." : "") + valor.slice(-(c.casas));
                 }
             }
             else if (mkt.classof(valor) == "Number") {
@@ -2855,6 +2857,39 @@ class mkt {
         if (strTempo.includes("NaN"))
             return "";
         return strTempo;
+    };
+    static dataUltimosMeses = (config) => {
+        var cfg = config || {};
+        cfg.desde = cfg.desde || null;
+        cfg.meses = cfg.meses || 12;
+        if (cfg.meses < 0)
+            cfg.meses = 12;
+        cfg.tipoMes = cfg.tipoMes || 0;
+        let currentMes = mkt.dataGetMes(cfg.desde);
+        if (cfg.tipoAno == null) {
+            cfg.tipoAno = "none";
+            if (cfg.meses > currentMes)
+                cfg.tipoAno = "short";
+        }
+        let ultimosMeses = [];
+        let currentAno = mkt.dataGetAno(cfg.desde);
+        for (let i = 1; i <= cfg.meses; i++) {
+            let retorno = mkt.a.meses[currentMes - 1][cfg.tipoMes];
+            if (cfg.tipoAno != null && cfg.tipoAno != "none") {
+                let ano = String(currentAno);
+                if (cfg.tipoAno == "short") {
+                    ano = ano.slice(2);
+                }
+                retorno = ano + "-" + retorno;
+            }
+            ultimosMeses.push(retorno);
+            currentMes--;
+            if (currentMes <= 0) {
+                currentMes = 12;
+                currentAno--;
+            }
+        }
+        return ultimosMeses;
     };
     static dataGetMs = (data = null) => {
         if (data != null) {
@@ -4095,7 +4130,7 @@ class mkt {
             return conta;
         }
     };
-    static Reposicionar = (e, largura = null) => {
+    static Reposicionar = (e, largura = null, local = "bottom-start") => {
         let eAnterior = e.previousElementSibling;
         if (largura) {
             e.style.minWidth = (eAnterior.offsetWidth - 3) + "px";
@@ -4103,7 +4138,7 @@ class mkt {
         }
         if (mkt.a.poppers.get(e) == null) {
             mkt.a.poppers.set(e, Popper.createPopper(eAnterior, e, {
-                placement: "bottom-start",
+                placement: local,
                 strategy: "fixed",
                 modifiers: [],
             }));
@@ -4666,6 +4701,26 @@ class mkt {
             return await eCanvas.toDataURL(`image/${formatoDestino}`, qualidade);
         }
     };
+    static convertToNumeric = (texto) => {
+        let arrayDeNumeros = [];
+        for (const char of texto) {
+            arrayDeNumeros.push(char.codePointAt(0));
+        }
+        return arrayDeNumeros;
+    };
+    static convertToTexto = (numeric) => {
+        return String.fromCodePoint(...numeric);
+    };
+    static frequencia = (array) => {
+        let f = {};
+        for (let e of array) {
+            let s = e;
+            if (mkt.classof(e) == "Object")
+                s = JSON.stringify(e);
+            f[s] ? f[s]++ : (f[s] = 1);
+        }
+        return f;
+    };
 }
 Object.keys(mkt).forEach((n) => {
     if (!mkt.a.definePropertyExceptions.includes(n)) {
@@ -5172,7 +5227,6 @@ li[m="1"] {
         this.config.checkMaisLinhas();
     }
     async aoBlur() {
-        await mkt.wait(1);
         this.atualizarDisplay();
         this.removeAttribute("focused");
         if (this.config.changed) {

@@ -53,6 +53,7 @@ class mktm {
 	atr: string | null = "type='text'" // Todos os atributos padrões deste campo.
 	classes: string = "iConsultas" // Classes padrões / iniciais deste campo
 	lclasses: string = "" // Classes para o label do campo
+	paiclasses: string = "" // Classes para o pai do campo
 	target: string = "value" // Propriedade para edição (value, innerHTML).
 	f: boolean = true; // Ativa ou desativa o filtro nesse campo ()
 	opcoes: string = ""; // Aloja as opcoes em JSON de um seletor.
@@ -79,7 +80,7 @@ class mktm {
 		if (o.tipofiltro != null) this.tipofiltro = o.tipofiltro;
 		if (o.tipofiltroOperador != null) this.tipofiltroOperador = o.tipofiltroOperador;
 		if (o.classes != null) this.classes = o.classes;
-		if (o.lclasses != null) this.lclasses = o.lclasses;
+		if (o.paiclasses != null) this.paiclasses = o.paiclasses;
 		if (o.target != null) this.target = o.target;
 		if (o.regras != null) this.regras = o.regras;
 		if (o.url != null) this.url = o.url;
@@ -113,7 +114,7 @@ class mktm {
 	}
 	toObject: Function = () => {
 		let o: any = {};
-		["pk", "k", "v", "l", "r", "on", "crud", "tag", "atr", "classes", "lclasses",
+		["pk", "k", "v", "l", "r", "on", "crud", "tag", "atr", "classes", "lclasses", "paiclasses",
 			"target", "f", "opcoes", "field", "requer", "regras", "url", "head"].forEach(k => {
 				o[k] = this[k as keyof mktm];
 			});
@@ -3063,7 +3064,8 @@ class mkt {
 					valor = i + "." + d;
 				} else {
 					valor = [...valor.toString()].filter(a => { return new RegExp(mkt.a.util.numeros[1]).test(a) }).join("").padStart(3, "0")
-					valor = valor.slice(0, -(c.casas)) + "." + valor.slice(-(c.casas));
+					valor = valor.padStart(c.casas, "0");
+					valor = valor.slice(0, -(c.casas)) + (c.casas > 0 ? "." : "") + valor.slice(-(c.casas));
 				}
 			} else if (mkt.classof(valor) == "Number") {
 				valor = valor.toFixed(c.casas); // <= Vira String, mas essa função apenas devolve Number
@@ -3089,7 +3091,7 @@ class mkt {
 	};
 
 	static dataGetMes = (ms = null) => {
-		// GET UTC Ano - '02'
+		// GET UTC Mês - '02'
 		if (ms != null) return Number(mkt.dataGetData(ms).split("-")[1]);
 		else return Number(mkt.dataGetData().split("-")[1]);
 	};
@@ -3299,6 +3301,41 @@ class mkt {
 		}
 		if (strTempo.includes("NaN")) return "";
 		return strTempo;
+	}
+
+
+	static dataUltimosMeses = (config: any): Array<string> => {
+		// {desde: "", meses: 12, tipoMes: 1, tipoAno: "short"}
+		var cfg = config || {};
+		cfg.desde = cfg.desde || null;
+		cfg.meses = cfg.meses || 12;
+		if (cfg.meses < 0) cfg.meses = 12;
+		cfg.tipoMes = cfg.tipoMes || 0;
+		let currentMes = mkt.dataGetMes(cfg.desde); // 9
+		if (cfg.tipoAno == null) {
+			cfg.tipoAno = "none";
+			if (cfg.meses > currentMes)
+				cfg.tipoAno = "short";
+		}
+		let ultimosMeses: Array<string> = [];
+		let currentAno = mkt.dataGetAno(cfg.desde); // 2024
+		for (let i = 1; i <= cfg.meses; i++) {
+			let retorno = mkt.a.meses[currentMes - 1][cfg.tipoMes];
+			if (cfg.tipoAno != null && cfg.tipoAno != "none") {
+				let ano = String(currentAno);
+				if (cfg.tipoAno == "short") {
+					ano = ano.slice(2);
+				}
+				retorno = ano + "-" + retorno;
+			}
+			ultimosMeses.push(retorno);
+			currentMes--;
+			if (currentMes <= 0) {
+				currentMes = 12;
+				currentAno--;
+			}
+		}
+		return ultimosMeses;
 	}
 
 	static dataGetMs = (data: string | null = null): number => {
@@ -4688,7 +4725,7 @@ class mkt {
 		}
 	}
 
-	static Reposicionar = (e: any, largura: boolean | null = null) => {
+	static Reposicionar = (e: any, largura: boolean | null = null, local = "bottom-start") => {
 		// REPOSICIONA o elemento E abaixo do elemento anterior.
 		// Precisa de position: fixed;
 		// Atenção: Essa função precisa ser rápida.
@@ -4745,7 +4782,7 @@ class mkt {
 				eAnterior,
 				e,
 				{
-					placement: "bottom-start",
+					placement: local,
 					strategy: "fixed",
 					modifiers: [],
 				}
@@ -5417,6 +5454,30 @@ class mkt {
 		}
 	}
 
+	static convertToNumeric = (texto: string) => {
+		let arrayDeNumeros = [];
+		for (const char of texto) {
+			arrayDeNumeros.push(char.codePointAt(0));
+		}
+		return arrayDeNumeros;
+	}
+
+	static convertToTexto = (numeric: Array<number>) => {
+		return String.fromCodePoint(...numeric);
+	}
+
+	static frequencia = (array: any): object => {
+		// Retorna o total de encontro na array.
+		// Quando é objeto converte pra string pra poder contar
+		let f: any = {};
+		for (let e of array) {
+			let s = e;
+			if (mkt.classof(e) == "Object") s = JSON.stringify(e);
+			f[s] ? f[s]++ : (f[s] = 1);
+		}
+		return f;
+	};
+
 	/**********************************\\
 	//  FIM DAS FUNCÕES ESTÁTICAS       \\
 	//__________________________________*/
@@ -5995,7 +6056,7 @@ li[m="1"] {
 	// Quando sai do botão de pesquisar principal
 	async aoBlur() {
 		// Ao perder foco
-		await mkt.wait(1);
+		//await mkt.wait(1);
 		// SE REALMENTE Saiu do elemento:
 		// <= Removi a checagem do multi seletor, 
 		// Seta Valor do display
