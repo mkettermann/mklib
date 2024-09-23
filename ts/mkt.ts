@@ -5645,7 +5645,7 @@ class mkSel extends HTMLElement {
 						if (this.config.selecionados.size == 0) {
 							this.value = "";
 						} else {
-							this.value = [...this.config.selecionados.keys()].join(",");
+							this.value = Array.from(this.config.selecionados.keys()).join(",");
 						}
 						this.config.updateSelecionadosValues();
 						this.config.geraInputEvent();
@@ -5674,7 +5674,7 @@ class mkSel extends HTMLElement {
 		},
 		updateSelecionadosValues: () => {
 			// A cada chave no selecionado, seta o valor correspondente no opções
-			[...this.config.selecionados.keys()].forEach(k => {
+			Array.from(this.config.selecionados.keys()).forEach(k => {
 				this.config.selecionados.set(k, this.opcoes.get(k));
 			});
 		},
@@ -6136,7 +6136,7 @@ li[m="1"] {
 		// A ideia era trazer pro início os já selecionados.
 		// A CADA JÁ SELECIONADO
 		if (this.config.selapenas != 1 || this.config.scrollcharge == false) {
-			this.config.selecionados.keys()?.forEach((k: string) => {
+			Array.from(this.config.selecionados.keys()).forEach((k: string) => {
 				// Se encontrar essa chave na array de dados
 				let indexof = dados.findIndex(o => { return o[0] == k });
 				if (indexof >= 0) {
@@ -6380,7 +6380,7 @@ li[m="1"] {
 	get selecionadosMap() { return this.config.selecionados; }
 	get values() { return [...this.selecionadosMap.values()]; }
 	get valuesOk() { return this.values.map(i => { if (i) { return mkt.removeEspecias(i).toLowerCase() } else { return ""; } }); }
-	get keys() { return [...this.selecionadosMap.keys()]; }
+	get keys() { return Array.from(this.selecionadosMap.keys()); }
 	// Recuperar as opções
 	get opcoes() { return this.config._data; }
 	// Alterar as opções
