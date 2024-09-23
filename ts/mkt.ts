@@ -1800,7 +1800,7 @@ class mkt {
 		let eAfetados: any = [];
 		if (mkt.classof(dados) == "Object") { // Apenas Objeto
 			for (let p in dados) {
-				let eDynamicQuery = mkt.Q(query.replaceAll("#PROP#", p));
+				let eDynamicQuery = mkt.Q(query.replace(new RegExp("#PROP#", 'g'), p));
 				if (eDynamicQuery) {
 					if (mkt.getV(p, dados) != null) {
 						eDynamicQuery.value = mkt.getV(p, dados);
@@ -2044,8 +2044,8 @@ class mkt {
 			mkt.aCadaObjExecuta(dados, moldeO_Execute);
 			//Allow Tags
 			if (allowTags) {
-				listaNode = listaNode.replaceAll("&lt;", "<");
-				listaNode = listaNode.replaceAll("&gt;", ">");
+				listaNode = listaNode.replace(new RegExp("&lt;", 'g'), "<");
+				listaNode = listaNode.replace(new RegExp("&gt;", 'g'), ">");
 			}
 			eRepositorio.innerHTML = listaNode;
 			// Após todos elementos inseridos, remove os r_e_m
@@ -3184,7 +3184,7 @@ class mkt {
 				let busca2 = new RegExp("^[0-2][0-9]{3}[-][0-1][0-9][-][0-3][0-9][T| ][0-2][0-9]:[0-5][0-9]"); // Entre 0000-00-00T00:00 a 2999-19-39T29:59 (Se iniciar nesse formato de ISO )
 
 				if (busca2.test(s)) {
-					s = mkt.dataToLocale(s).replaceAll(",", "");
+					s = mkt.dataToLocale(s).replace(new RegExp(",", 'g'), "");
 				} else if (busca.test(s)) {
 					s = mkt.dataToBRData(s);
 				}
@@ -3604,7 +3604,7 @@ class mkt {
 										let posPonto = valor.lastIndexOf([".", ","].reduce((x, y) => (valor.lastIndexOf(x) > valor.lastIndexOf(y)) ? x : y));
 										if (posPonto >= 0) {
 											// Se houver ponto
-											e[re.target] = Number(mkt.apenasNumeros(valor.slice(0, posPonto)) + "." + mkt.apenasNumeros(valor.slice(posPonto + 1))).toString().replaceAll(".", ",");
+											e[re.target] = Number(mkt.apenasNumeros(valor.slice(0, posPonto)) + "." + mkt.apenasNumeros(valor.slice(posPonto + 1))).toString().replace(new RegExp(".", 'g'), ",");
 										}
 									}
 									prom(re.k);
@@ -4131,7 +4131,7 @@ class mkt {
 			let parteDDI = "";
 			let parteDDDTelefone = "";
 			if (str.indexOf("+") >= 0) { // true (2)
-				str = str.replaceAll("+", ""); // "55 (48) 99968-0348"
+				str = str.replace(new RegExp("+", 'g'), ""); // "55 (48) 99968-0348"
 				// ETAPA 1: Difivir o DDI do DDD+TELEFONE
 				if (str.indexOf(" ") >= 0) { // true (2)
 					// Encontrou Espaço. (Supor que seja a divisória do DDI com o DDD)
@@ -4399,11 +4399,11 @@ class mkt {
 	static stringify = (o: any): string => {
 		// Converte o Objeto em String JSON, e aproveita e já remove alguns caracteres de controle.
 		return JSON.stringify(o)
-			?.replaceAll("\n", "")
-			?.replaceAll("\r", "")
-			?.replaceAll("\t", "")
-			?.replaceAll("\b", "")
-			?.replaceAll("\f", "")
+			?.replace(new RegExp("\n", 'g'), "")
+			?.replace(new RegExp("\r", 'g'), "")
+			?.replace(new RegExp("\t", 'g'), "")
+			?.replace(new RegExp("\b", 'g'), "")
+			?.replace(new RegExp("\f", 'g'), "")
 		//?.replaceAll('&', "&amp;") // Post C# não identifica os campos do JSON
 		//?.replaceAll('"', "&quot;")
 		//.replaceAll("'", "&#39;");
@@ -4825,8 +4825,8 @@ class mkt {
 		// Converte Tags como [b] e [/b] em <b> e </b>
 		// Impede que o usuário faça uso do html de forma descontrolada.
 		return texto
-			.replaceAll("[b]", "<b>")
-			.replaceAll("[/b]", "</b>");
+			.replace(new RegExp("[b]", 'g'), "<b>")
+			.replace(new RegExp("[/b]", 'g'), "</b>");
 	}
 
 	static eToText = (query: any) => {
