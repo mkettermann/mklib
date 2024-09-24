@@ -1913,100 +1913,71 @@ thead td:hover .mkhmHeadIco {
 }
 
 @media (min-width: 768px) {
-
-	.iSemGap .col7,
-	.iComGap .col7,
-	.i .col7 {
+	.col7 {
 		flex: 1 0 7% !important;
 	}
 
-	.iSemGap .col10,
-	.iComGap .col10,
-	.i .col10 {
+	.col10 {
 		flex: 1 0 10% !important;
 	}
 
-	.iSemGap .col15,
-	.iComGap .col15,
-	.i .col15 {
+	.col15 {
 		flex: 1 0 15% !important;
 	}
 
-	.iSemGap .col20,
-	.iComGap .col20,
-	.i .col20 {
+	.col20 {
 		flex: 1 0 20% !important;
 	}
 
-	.iSemGap .col25,
-	.iComGap .col25,
-	.i .col25 {
+	.col25 {
 		flex: 1 1 25% !important;
 	}
 
-	.iSemGap .col30,
-	.iComGap .col30,
-	.i .col30 {
+	.col30 {
 		flex: 1 0 30% !important;
 	}
 
-	.iSemGap .col33,
-	.iComGap .col33,
-	.i .col33 {
+	.col33 {
 		flex: 1 0 33.33% !important;
 	}
 
-	.iSemGap .col40,
-	.iComGap .col40,
-	.i .col40 {
+	.col37 {
+		flex: 1 0 37.5% !important;
+	}
+
+	.col40 {
 		flex: 1 0 40% !important;
 	}
 
-	.iSemGap .col50,
-	.iComGap .col50,
-	.i .col50 {
+	.col50 {
 		flex: 1 0 50% !important;
 	}
 
-	.iSemGap .col60,
-	.iComGap .col60,
-	.i .col60 {
+	.col60 {
 		flex: 1 0 60% !important;
 	}
 
-	.iSemGap .col66,
-	.iComGap .col66,
-	.i .col66 {
+	.col66 {
 		flex: 1 0 66.66% !important;
 	}
 
-	.iSemGap .col70,
-	.iComGap .col70,
-	.i .col70 {
+	.col70 {
 		flex: 1 0 70% !important;
 	}
 
-	.iSemGap .col75,
-	.iComGap .col75,
-	.i .col75 {
+	.col75 {
 		flex: 1 0 75% !important;
 	}
 
-	.iSemGap .col80,
-	.iComGap .col80,
-	.i .col80 {
+	.col80 {
 		flex: 1 0 80% !important;
 	}
 
-	.iSemGap .col90,
-	.iComGap .col90,
-	.i .col90 {
+	.col90 {
 		flex: 1 0 90% !important;
 	}
 
-	.iSemGap .col100,
-	.iComGap .col100,
-	.i .col100 {
+	.col100 {
 		flex: 1 0 100% !important;
 	}
 
