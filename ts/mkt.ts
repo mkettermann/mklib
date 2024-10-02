@@ -1576,7 +1576,15 @@ class mkt {
 				for (let i = 0; i < 10; i++) { c += Number(temp.charAt(i)) * m2[i]; }
 				r = c % 11;
 				(r < 2) ? r = 0 : r = 11 - r;
-				return cpf.charAt(10) == r.toString();
+				if (cpf.charAt(10) != r.toString()) {
+					return false;
+				};
+				let char0 = cpf.charAt(0);
+				let repChar0 = mkt.frequencia(cpf)[char0];
+				if (repChar0 >= 11) {
+					return false;
+				}
+				return true;
 			}],
 			cep: ["00.000-000", "^([0-9]{2}[\.]?[0-9]{3}[-]?[0-9]{3})$", (cep: any) => {
 				if (!cep) { return false; }
@@ -5466,7 +5474,7 @@ class mkt {
 		return String.fromCodePoint(...numeric);
 	}
 
-	static frequencia = (array: any): object => {
+	static frequencia = (array: any): any => {
 		// Retorna o total de encontro na array.
 		// Quando é objeto converte pra string pra poder contar
 		let f: any = {};
