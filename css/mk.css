@@ -2,7 +2,7 @@
 :root {
 	--tClaroTexto: #000;
 	--tClaroTextoHigh: #333;
-	--tClaroFundo: #fff;
+	--tClaroFundo: #ccc;
 	--tClaroFundoForte: #f7f7f7;
 	--tClaroFundoHigh: #ddd;
 	--MkFaseCorFundo: #f7f7f7;
@@ -22,8 +22,8 @@
 	--corSombra: #333333;
 
 	--carregadorInterno1: black;
-	--carregadorInterno2: black;
-	--carregadorExterno1: black;
+	--carregadorInterno2: green;
+	--carregadorExterno1: green;
 	--carregadorExterno2: black;
 	--carregadorCentro: black;
 	--zCarregador: 5011;
@@ -117,7 +117,6 @@
 	/* ELEVACOES */
 	--mkConfirmadorIndex: 1600;
 	--mkSelIndex: 2000;
-	--cardGap: 5px;
 }
 
 /* BLOQUEIA SCROLL, Colocar no Body ou onde tiver scroll */
@@ -330,50 +329,46 @@ button.CarregadorMkTopoDireito:hover {
 }
 
 .CarregadorMk {
-	margin-top: 10px;
 	width: 80px;
 	height: 80px;
 	color: transparent;
 	background: transparent;
-	border: transparent double 10px;
+	border: transparent dotted 10px;
+	border-left-style: double;
+	border-right-style: double;
 	border-left-color: var(--carregadorExterno2);
-	border-left-style: solid;
-	border-right-color: var(--carregadorExterno2);
-	border-right-style: solid;
+	border-right-color: var(--carregadorExterno1);
 	border-top-color: var(--carregadorExterno1);
-	border-bottom-color: var(--carregadorExterno1);
+	border-bottom-color: var(--carregadorExterno2);
 	border-radius: 100%;
 	position: absolute;
-	left: 50%;
-	top: 50%;
 	z-index: var(--zCarregador);
-	animation: _360Graus 4000ms linear infinite;
-	overflow: hidden;
+	animation: _360Graus 2000ms linear infinite;
 }
 
 .CarregadorMk::before {
-	border: transparent solid 10px;
+	border: solid 12px var(--carregadorInterno1);
 	border-left-color: var(--carregadorInterno1);
 	border-right-color: var(--carregadorInterno2);
 	content: "";
-	top: -10px;
-	left: -10px;
-	right: 0px;
-	bottom: 0px;
+	top: 2px;
+	left: 10px;
 	border-radius: 100%;
 	position: absolute;
-	animation: _360Graus 2s linear infinite;
+	animation: _360Graus 0.5s linear infinite;
 }
 
 .CarregadorMk:not(.semAfter)::after {
-	border: var(--carregadorCentro) inset 3px;
+	border: transparent solid 3px;
+	border-left-color: var(--carregadorInterno1);
+	border-right-color: var(--carregadorInterno2);
 	position: absolute;
 	content: "";
 	top: 25px;
 	left: 25px;
 	right: 25px;
 	bottom: 25px;
-	animation: _360Graus 200ms linear infinite;
+	animation: _360Graus 220ms linear infinite reverse;
 }
 
 @keyframes _360Graus {
