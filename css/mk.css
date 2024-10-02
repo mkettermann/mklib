@@ -21,6 +21,7 @@
 	--timerConsumido: #e0e0e0;
 	--corSombra: #333333;
 
+
 	--carregadorInterno1: black;
 	--carregadorInterno2: green;
 	--carregadorExterno1: green;
@@ -114,9 +115,12 @@
 	--tonalidadePreto: #000;
 	/* DIMENCOES */
 	--timerW: 30px;
+	--cardGap: 5px;
 	/* ELEVACOES */
 	--mkConfirmadorIndex: 1600;
 	--mkSelIndex: 2000;
+
+
 }
 
 /* BLOQUEIA SCROLL, Colocar no Body ou onde tiver scroll */
