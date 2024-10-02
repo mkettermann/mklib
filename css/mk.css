@@ -1347,6 +1347,10 @@ ul.mkUlFase li.disabled a {
 	grid-template-columns: repeat(auto-fill, minmax(var(--minGridCard), var(--maxGridCard)));
 }
 
+.gridCard.auto {
+	grid-template-columns: auto;
+}
+
 
 .gridCard>.divCard {
 	background-color: var(--tClaroFundoForte);
