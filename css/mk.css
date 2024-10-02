@@ -1345,10 +1345,10 @@ ul.mkUlFase li.disabled a {
 
 
 .gridCard>.divCard {
-	background-color: var(--proCafeBranco);
+	background-color: var(--tClaroFundoForte);
 	border-radius: 10px;
 	padding: 10px;
-	box-shadow: 1px 5px 10px var(--procafeCinzaSuave);
+	box-shadow: 1px 5px 10px var(--tClaroTextoHigh);
 	overflow: hidden;
 }
 
