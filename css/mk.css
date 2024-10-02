@@ -1357,6 +1357,7 @@ ul.mkUlFase li.disabled a {
 }
 
 .divCard {
+	display: flex;
 	gap: var(--cardGap);
 	max-width: calc(100% - var(--cardGap));
 	width: calc(100% - var(--cardGap));
