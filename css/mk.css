@@ -2186,11 +2186,11 @@ fieldset {
 	-webkit-box-reflect: below -10px linear-gradient(0deg, #FFF9, #FFF5, #FFF1, transparent, transparent);
 }
 
-::part(flag) {
+/* ::part(flag) {
 	height: 15.40px;
 	width: 22px;
 	aspect-ratio: 10 / 7;
-}
+} */
 
 /* DIALOG */
 dialog {
@@ -2248,13 +2248,13 @@ mk-sel:not(:defined) {
 	height: 28px;
 }
 
-mk-sel.input-validation-error::part(arrowAbreFecha) {
+/* mk-sel.input-validation-error::part(arrowAbreFecha) {
 	fill: red;
-}
+} */
 
-mk-sel.valid::part(arrowAbreFecha) {
+/* mk-sel.valid::part(arrowAbreFecha) {
 	fill: #090;
-}
+} */
 
 ul.mkSelOutDisplay {
 	display: flex;
