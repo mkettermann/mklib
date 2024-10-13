@@ -5517,11 +5517,11 @@ class mkt {
 				nums2[i + 1] = t;
 			}
 		}
-		return nums2.join("");
+		return btoa(nums2.join(""));
 	}
 
 	static decod = (input: string) => {
-		let nums2 = input.toString().replace(/(\d{2})(?=\d)/g, '$1,').split(",").map(i => Number(i));
+		let nums2 = atob(input).toString().replace(/(\d{2})(?=\d)/g, '$1,').split(",").map(i => Number(i));
 		let t = 0;
 		for (let i = 0; i < nums2.length; i = i + 4) {
 			if ((i + 4) <= nums2.length) {
