@@ -4812,16 +4812,6 @@ class mkt {
         }
         return mkt.convertToTexto(nums);
     };
-    static teste = () => {
-        console.clear();
-        let texto2 = "!■!■!■!■!■!■!■!■!■!■!■";
-        console.log("Entrada", texto2);
-        let cod2 = mkt.encod(texto2);
-        console.log("Cod: ", cod2);
-        let decod2 = mkt.decod(cod2);
-        console.log("Decoded: ", decod2);
-        console.log("=== => ", texto2 === decod2);
-    };
     static frequencia = (array) => {
         let f = {};
         for (let e of array) {

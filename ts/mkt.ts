@@ -5564,18 +5564,6 @@ class mkt {
 		return mkt.convertToTexto(nums);
 	}
 
-	static teste = () => {
-		console.clear();
-		let texto2 = "!■!■!■!■!■!■!■!■!■!■!■"
-		console.log("Entrada", texto2);
-		let cod2 = mkt.encod(texto2)
-		console.log("Cod: ", cod2);
-		//console.log("Cod: ", mkt.convertToTexto(cod2.split(",").map(i => Number(i))));
-		let decod2 = mkt.decod(cod2);
-		console.log("Decoded: ", decod2);
-		console.log("=== => ", texto2 === decod2);
-	}
-
 	static frequencia = (array: any): any => {
 		// Retorna o total de encontro na array.
 		// Quando é objeto converte pra string pra poder contar
