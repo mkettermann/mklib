@@ -5480,8 +5480,7 @@ class mkt {
 
 	static encod = (input: string) => {
 		let nums = mkt.convertToNumeric(input.toString());
-		//1234
-		//3142
+		//Key 1234-3142
 		let t = 0;
 		for (let i = 0; i < nums.length; i = i + 4) {
 			if ((i + 4) <= nums.length) {
