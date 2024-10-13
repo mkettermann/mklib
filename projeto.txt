@@ -1,0 +1,4 @@
+// Para watch, instalar o tsc: watch 
+
+// Para gerar para produção:
+uglifyjs ./js/mkt.js -o ./js/mkt.min.js --compress --mangle
