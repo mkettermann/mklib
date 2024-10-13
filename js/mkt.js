@@ -4713,12 +4713,29 @@ class mkt {
     static convertToNumeric = (texto) => {
         let arrayDeNumeros = [];
         for (const char of texto) {
-            arrayDeNumeros.push(char.codePointAt(0));
+            arrayDeNumeros.push(char.codePointAt(0) || 0);
         }
         return arrayDeNumeros;
     };
-    static convertToTexto = (numeric) => {
-        return String.fromCodePoint(...numeric);
+    static convertToTexto = (arrayNumeros) => {
+        return String.fromCodePoint(...arrayNumeros);
+    };
+    static convertToTexto2 = (stringNumeros) => {
+        return String.fromCodePoint(...stringNumeros.split(",").map(i => Number(i)));
+    };
+    static encod = (input) => {
+        let output = "";
+        let texto = mkt.convertToNumeric(input).join();
+        console.log("String: ", texto);
+        output = texto;
+        return output;
+    };
+    static decod = (input) => {
+        let output = "";
+        let numeric = mkt.convertToTexto2(input);
+        console.log("Numeros: ", numeric);
+        output = numeric;
+        return output;
     };
     static frequencia = (array) => {
         let f = {};

@@ -5462,16 +5462,36 @@ class mkt {
 		}
 	}
 
-	static convertToNumeric = (texto: string) => {
+	// String qualquer em string com números
+	static convertToNumeric = (texto: string): Array<number> => {
 		let arrayDeNumeros = [];
 		for (const char of texto) {
-			arrayDeNumeros.push(char.codePointAt(0));
+			arrayDeNumeros.push(char.codePointAt(0) || 0);
 		}
 		return arrayDeNumeros;
 	}
 
-	static convertToTexto = (numeric: Array<number>) => {
-		return String.fromCodePoint(...numeric);
+	static convertToTexto = (arrayNumeros: Array<number>): string => {
+		return String.fromCodePoint(...arrayNumeros);
+	}
+	static convertToTexto2 = (stringNumeros: string): string => {
+		return String.fromCodePoint(...stringNumeros.split(",").map(i => Number(i)));
+	}
+
+	static encod = (input: string) => {
+		let output = "";
+		let texto = mkt.convertToNumeric(input).join();
+		console.log("String: ", texto);
+		output = texto;
+		return output;
+	}
+
+	static decod = (input: string) => {
+		let output = "";
+		let numeric = mkt.convertToTexto2(input);
+		console.log("Numeros: ", numeric);
+		output = numeric;
+		return output;
 	}
 
 	static frequencia = (array: any): any => {
