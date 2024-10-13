@@ -5474,9 +5474,6 @@ class mkt {
 	static convertToTexto = (arrayNumeros: Array<number>): string => {
 		return String.fromCodePoint(...arrayNumeros);
 	}
-	static convertToTexto2 = (stringNumeros: string): string => {
-		return String.fromCodePoint(...stringNumeros.split(",").map(i => Number(i)));
-	}
 
 	static frequencia = (array: any): any => {
 		// Retorna o total de encontro na array.

@@ -4720,9 +4720,6 @@ class mkt {
     static convertToTexto = (arrayNumeros) => {
         return String.fromCodePoint(...arrayNumeros);
     };
-    static convertToTexto2 = (stringNumeros) => {
-        return String.fromCodePoint(...stringNumeros.split(",").map(i => Number(i)));
-    };
     static frequencia = (array) => {
         let f = {};
         for (let e of array) {
