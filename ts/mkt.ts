@@ -4362,6 +4362,10 @@ class mkt {
 			if (mkt.classof(OA[a]) == "Object") {
 				c += mkt.aCadaSubPropriedade(OA[a], funcao, exceto);
 			}
+			// Se o atual é array, itera internamente
+			if (mkt.classof(OA[a]) == "Array") {
+				c += mkt.aCadaSubPropriedade(OA[a], funcao, exceto);
+			}
 		}
 		return c;
 	};
