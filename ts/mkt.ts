@@ -1761,6 +1761,9 @@ class mkt {
 		});
 	};
 
+	/**
+	* @deprecated Esta função utiliza atributos de baixa performance. Utilizar o mkt.Ao().
+	*/
 	static atribuir = (e: any, gatilho: any, atributo: string = "oninput") => {
 		// Incrementa no ATRIBUTO do elemento E o texto do GATILHO.
 		if (e) {
