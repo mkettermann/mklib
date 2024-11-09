@@ -1370,9 +1370,11 @@ ul.mkUlFase li.disabled a {
 }
 
 .divTitulo {
+	display: flex;
 	height: min-content;
-	margin: 0px 0px 8px 0px;
-	outline: 8px solid var(--corNeutra);
+	padding-top: 4px;
+	margin: -2px 0px 12px 0px;
+	outline: 12px solid var(--corNeutra);
 	background-color: var(--corNeutra);
 	font-weight: 700;
 	align-items: center;
