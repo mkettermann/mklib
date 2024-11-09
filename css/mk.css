@@ -1372,7 +1372,6 @@ ul.mkUlFase li.disabled a {
 .divTitulo {
 	height: min-content;
 	margin: 0px 0px 8px 0px;
-	padding-top: 5px;
 	outline: 8px solid var(--corNeutra);
 	background-color: var(--corNeutra);
 	font-weight: 700;
@@ -2028,6 +2027,11 @@ thead td:hover .mkhmHeadIco {
 	flex-wrap: wrap !important;
 	justify-content: space-evenly !important;
 	align-content: space-evenly !important;
+}
+
+*.fse.gap {
+	padding: 10px;
+	gap: 10px;
 }
 
 *.tb,
