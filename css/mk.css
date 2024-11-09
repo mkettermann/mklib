@@ -116,7 +116,7 @@
 	/* DIMENCOES */
 	--timerW: 30px;
 	--cardGap: 5px;
-	--min-grid-card: 350px;
+	--min-grid-card: 1fr;
 	--max-grid-card: auto;
 	/* ELEVACOES */
 	--mkConfirmadorIndex: 1600;
