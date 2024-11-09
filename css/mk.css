@@ -1363,6 +1363,7 @@ ul.mkUlFase li.disabled a {
 
 .divCard {
 	display: flex;
+	flex-direction: column;
 	gap: var(--cardGap);
 	width: 100%;
 	max-width: 100%;
@@ -2020,6 +2021,13 @@ thead td:hover .mkhmHeadIco {
 	flex-wrap: wrap !important;
 	justify-content: space-between !important;
 	align-content: space-between !important;
+}
+
+*.fse {
+	display: flex !important;
+	flex-wrap: wrap !important;
+	justify-content: space-evenly !important;
+	align-content: space-evenly !important;
 }
 
 *.tb,
