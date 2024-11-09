@@ -1344,7 +1344,7 @@ ul.mkUlFase li.disabled a {
 /* CARD RESPONSIVO MINMAX */
 .gridCard {
 	display: grid !important;
-	gap: 10px;
+	gap: 5px;
 	padding: 5px 0px 0px 5px;
 	grid-template-columns: repeat(auto-fill, minmax(var(--min-grid-card), var(--max-grid-card)));
 }
@@ -1356,7 +1356,7 @@ ul.mkUlFase li.disabled a {
 .gridCard>.divCard {
 	background-color: var(--tClaroFundoForte);
 	border-radius: 10px;
-	padding: 10px;
+	padding: 5px;
 	box-shadow: 1px 5px 10px var(--tClaroTextoHigh);
 	overflow: hidden;
 }
