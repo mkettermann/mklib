@@ -1343,16 +1343,15 @@ ul.mkUlFase li.disabled a {
 /* .:ESTRATEGIAS MK CSS:. */
 /* CARD RESPONSIVO MINMAX */
 .gridCard {
-	gap: 10px;
-	padding: 15px;
 	display: grid !important;
+	gap: 10px;
+	padding: 5px;
 	grid-template-columns: repeat(auto-fill, minmax(var(--min-grid-card), var(--max-grid-card)));
 }
 
 .gridCard.auto {
 	grid-template-columns: auto;
 }
-
 
 .gridCard>.divCard {
 	background-color: var(--tClaroFundoForte);
@@ -1365,8 +1364,19 @@ ul.mkUlFase li.disabled a {
 .divCard {
 	display: flex;
 	gap: var(--cardGap);
-	max-width: calc(100% - var(--cardGap));
-	width: calc(100% - var(--cardGap));
+	width: 100%;
+	max-width: 100%;
+}
+
+.divTitulo {
+	height: min-content;
+	margin: 0px 0px 8px 0px;
+	padding-top: 5px;
+	outline: 8px solid var(--corNeutra);
+	background-color: var(--corNeutra);
+	font-weight: 700;
+	align-items: center;
+	justify-content: center;
 }
 
 /* GRID ENCAIXADO */
