@@ -856,6 +856,8 @@ button.CarregadorMkTopoDireito:hover {
 	border-radius: 5px;
 	width: 100%;
 	user-select: none;
+	padding: 5px;
+	gap: 10px;
 }
 
 .mkConfirmadorTitulo svg {
@@ -881,7 +883,7 @@ button.CarregadorMkTopoDireito:hover {
 }
 
 .mkConfirmadorTexto {
-	padding: 5px;
+	padding: 10px;
 	color: var(--tClaroTexto);
 }
 
